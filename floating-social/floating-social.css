@@ -1,0 +1,192 @@
+/* Floating retractable social widget */
+.floating-social {
+  position: fixed;
+  bottom: max(56px, env(safe-area-inset-bottom, 0px) + 48px);
+  left: max(24px, env(safe-area-inset-left, 0px) + 20px);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.floating-social__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.28s;
+  pointer-events: none;
+}
+
+.floating-social.is-open .floating-social__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.floating-social__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  text-decoration: none;
+}
+
+.floating-social__link:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+  filter: brightness(1.08);
+}
+
+.floating-social__link--facebook {
+  background: #1877f2;
+  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.45);
+}
+
+.floating-social__link--facebook:hover {
+  box-shadow: 0 6px 20px rgba(24, 119, 242, 0.55);
+}
+
+.floating-social__link--tiktok {
+  background: #010101;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.floating-social__link--tiktok:hover {
+  filter: brightness(1.2);
+}
+
+.floating-social__link--instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  box-shadow: 0 4px 14px rgba(220, 39, 67, 0.45);
+}
+
+.floating-social__link--instagram:hover {
+  box-shadow: 0 6px 20px rgba(220, 39, 67, 0.55);
+}
+
+.floating-social__link--whatsapp {
+  background: #25d366;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+}
+
+.floating-social__link--whatsapp:hover {
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.55);
+}
+
+.floating-social__link--youtube {
+  background: #ff0000;
+  box-shadow: 0 4px 14px rgba(255, 0, 0, 0.4);
+}
+
+.floating-social__link--youtube:hover {
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
+}
+
+.floating-social__icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.floating-social__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+  background: linear-gradient(145deg, var(--tan, #b8864b), var(--brown-600, #6b4f3a));
+  color: var(--white, #fff);
+  box-shadow: 0 6px 24px rgba(42, 31, 23, 0.45);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-social__toggle:hover {
+  transform: scale(1.06);
+  box-shadow: 0 8px 28px rgba(42, 31, 23, 0.5);
+}
+
+.floating-social__toggle:focus-visible {
+  outline: 2px solid var(--tan-light, #d4a574);
+  outline-offset: 3px;
+}
+
+.floating-social__toggle-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-social.is-open .floating-social__toggle-icon {
+  transform: rotate(90deg);
+}
+
+.floating-social__toggle-icon-close {
+  display: none;
+}
+
+.floating-social.is-open .floating-social__toggle-icon-share {
+  display: none;
+}
+
+.floating-social.is-open .floating-social__toggle-icon-close {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .floating-social {
+    bottom: max(48px, env(safe-area-inset-bottom, 0px) + 40px);
+    left: max(16px, env(safe-area-inset-left, 0px) + 12px);
+  }
+
+  body.nav-menu-open .floating-social {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .floating-social__toggle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .floating-social__link {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-social__panel,
+  .floating-social__toggle,
+  .floating-social__toggle-icon,
+  .floating-social__link {
+    transition: none;
+  }
+
+  .floating-social.is-open .floating-social__toggle-icon {
+    transform: none;
+  }
+}
