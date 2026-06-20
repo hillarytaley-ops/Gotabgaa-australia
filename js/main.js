@@ -1,6 +1,7 @@
 // Gotabgaa Australia — Main JavaScript
 
 document.addEventListener('DOMContentLoaded', () => {
+  initSiteConfig();
   initHeader();
   initNavigation();
   initScrollProgress();
@@ -11,6 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroParallax();
   initTiltCards();
 });
+
+function initSiteConfig() {
+  const cfg = window.SITE_CONFIG;
+  if (!cfg) return;
+
+  const social = cfg.social || {};
+  document.querySelectorAll('[data-social]').forEach(link => {
+    const key = link.getAttribute('data-social');
+    if (social[key]) link.href = social[key];
+  });
+
+  if (cfg.contactEmail) {
+    document.querySelectorAll('[data-contact-email]').forEach(el => {
+      if (el.tagName === 'A') el.href = `mailto:${cfg.contactEmail}`;
+      else el.textContent = cfg.contactEmail;
+    });
+  }
+}
 
 // Sticky header on scroll
 function initHeader() {
@@ -145,33 +164,28 @@ function initCounters() {
   counters.forEach(counter => observer.observe(counter));
 }
 
-// Contact form handling
+// Contact form — submits via FormSubmit.co; shows success after redirect
 function initContactForm() {
   const form = document.getElementById('contactForm');
   if (!form) return;
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
+  const cfg = window.SITE_CONFIG || {};
+  const siteUrl = (cfg.siteUrl || window.location.origin).replace(/\/$/, '');
+  const nextField = form.querySelector('[name="_next"]');
+  if (nextField) nextField.value = `${siteUrl}/contact.html?sent=1`;
 
+  const successEl = document.getElementById('contactSuccess');
+  if (successEl && new URLSearchParams(window.location.search).get('sent') === '1') {
+    successEl.hidden = false;
+    successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  form.addEventListener('submit', () => {
     const btn = form.querySelector('button[type="submit"]');
-    const originalText = btn.textContent;
-
+    if (!btn) return;
     btn.textContent = 'Sending...';
     btn.disabled = true;
     btn.classList.add('btn--loading');
-
-    setTimeout(() => {
-      btn.textContent = 'Message Sent!';
-      btn.classList.remove('btn--loading');
-      btn.classList.add('btn--success');
-      form.reset();
-
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.disabled = false;
-        btn.classList.remove('btn--success');
-      }, 3000);
-    }, 1200);
   });
 }
 
