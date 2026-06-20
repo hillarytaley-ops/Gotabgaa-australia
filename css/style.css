@@ -2558,7 +2558,15 @@ body.modal-open {
     width: 100%;
     grid-template-columns: 1fr;
     gap: 28px;
-    text-align: left;
+    text-align: center;
+  }
+
+  .footer__links {
+    text-align: center;
+  }
+
+  .footer__links ul {
+    padding-left: 0;
   }
 
   .footer__links--connect {
