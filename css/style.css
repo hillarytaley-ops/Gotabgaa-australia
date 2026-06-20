@@ -917,6 +917,92 @@ body.page-sub .section {
   color: var(--tan);
 }
 
+/* Home — About preview */
+.about-preview__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 56px);
+  align-items: center;
+}
+
+.about-preview__content p {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.75;
+}
+
+.about-preview__visual {
+  position: relative;
+}
+
+.about-preview__slideshow {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--brown-800);
+}
+
+.about-preview__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  will-change: opacity, transform;
+}
+
+.about-preview__photo--1 {
+  object-position: center 35%;
+  animation: about-preview-show-1 12s ease-in-out infinite;
+}
+
+.about-preview__photo--2 {
+  object-position: center 40%;
+  animation: about-preview-show-2 12s ease-in-out infinite;
+}
+
+@keyframes about-preview-show-1 {
+  0%, 45% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  52%, 93% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes about-preview-show-2 {
+  0%, 45% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  52%, 93% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+.about-preview__caption {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
 /* About */
 .about__grid {
   display: grid;
@@ -2336,6 +2422,15 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 
+  .about-preview__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .about-preview__visual {
+    order: -1;
+  }
+
   .about__quote {
     position: relative;
     bottom: auto;
@@ -3012,6 +3107,7 @@ body.modal-open {
   .btn--pulse,
   .cta-banner::before,
   .about__logo-watermark,
+  .about-preview__photo,
   .impact::after,
   .logo-spinner__img {
     animation: none !important;
@@ -3035,6 +3131,16 @@ body.modal-open {
 
   .hero__slide:first-child {
     opacity: 1 !important;
+  }
+
+  .about-preview__photo--1 {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .about-preview__photo--2 {
+    opacity: 0 !important;
+    transform: none !important;
   }
 }
 
