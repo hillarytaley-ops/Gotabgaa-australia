@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminPortalLinks();
 });
 
+document.addEventListener('cms-ready', () => {
+  initScrollAnimations();
+  initTiltCards();
+});
+
 function initSiteConfig() {
   const cfg = window.SITE_CONFIG;
   if (!cfg) return;

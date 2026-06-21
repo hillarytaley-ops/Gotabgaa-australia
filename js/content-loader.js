@@ -66,6 +66,24 @@
     });
   }
 
+  function getCurrentPage() {
+    const file = window.location.pathname.split('/').pop() || 'index.html';
+    const map = {
+      '': 'home',
+      'index.html': 'home',
+      'about.html': 'about',
+      'programs.html': 'programs',
+      'events.html': 'events',
+      'leadership.html': 'leadership',
+      'gallery.html': 'gallery',
+      'contact.html': 'contact',
+      'privacy.html': 'privacy',
+      'terms.html': 'terms',
+      'portal.html': 'portal'
+    };
+    return map[file] || null;
+  }
+
   function applyPageHero(pageKey, pages) {
     const hero = pages?.[pageKey]?.hero;
     const section = document.querySelector('.page-hero');
@@ -447,21 +465,23 @@
   function hydrate(content) {
     window.CMS_CONTENT = content;
     applySiteConfig(content.site);
-    applyPageHero('about', content.pages);
-    applyPageHero('programs', content.pages);
-    applyPageHero('events', content.pages);
-    applyPageHero('leadership', content.pages);
-    applyPageHero('gallery', content.pages);
-    applyPageHero('contact', content.pages);
-    applyPageHero('privacy', content.pages);
-    applyPageHero('terms', content.pages);
-    applyHome(content);
-    applyAbout(content);
-    applyContact(content);
-    renderEvents(content);
-    renderPrograms(content);
-    renderLeadership(content);
-    renderGallery(content);
+
+    const page = getCurrentPage();
+
+    if (page === 'home') {
+      applyHome(content);
+      renderPrograms(content);
+    } else if (page && content.pages?.[page]?.hero) {
+      applyPageHero(page, content.pages);
+    }
+
+    if (page === 'about') applyAbout(content);
+    if (page === 'contact') applyContact(content);
+    if (page === 'events') renderEvents(content);
+    if (page === 'programs') renderPrograms(content);
+    if (page === 'leadership') renderLeadership(content);
+    if (page === 'gallery') renderGallery(content);
+
     document.dispatchEvent(new CustomEvent('cms-ready', { detail: content }));
   }
 
