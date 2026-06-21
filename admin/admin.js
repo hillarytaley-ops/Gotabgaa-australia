@@ -7,15 +7,6 @@
   let content = null;
   let activeSection = 'dashboard';
   let isPreviewMode = false;
-  let authFlowId = 0;
-
-  function beginAuthFlow() {
-    return ++authFlowId;
-  }
-
-  function isAuthFlowCurrent(flowId) {
-    return authFlowId === flowId;
-  }
 
   const els = {
     loginScreen: document.getElementById('loginScreen'),
@@ -63,15 +54,12 @@
   }
 
   async function enterPreview() {
-    const flowId = beginAuthFlow();
     clearLoginMessages();
     try {
       await loadContent();
-      if (!isAuthFlowCurrent(flowId)) return;
       setPreviewMode(true);
       showApp();
     } catch (err) {
-      if (!isAuthFlowCurrent(flowId)) return;
       showLoginError(err.message);
     }
   }
@@ -84,12 +72,29 @@
   }
 
   function getToken() {
-    return sessionStorage.getItem(TOKEN_KEY);
+    try {
+      return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+    } catch {
+      try {
+        return sessionStorage.getItem(TOKEN_KEY);
+      } catch {
+        return null;
+      }
+    }
   }
 
   function setToken(token) {
-    if (token) sessionStorage.setItem(TOKEN_KEY, token);
-    else sessionStorage.removeItem(TOKEN_KEY);
+    try {
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+        sessionStorage.setItem(TOKEN_KEY, token);
+      } else {
+        localStorage.removeItem(TOKEN_KEY);
+        sessionStorage.removeItem(TOKEN_KEY);
+      }
+    } catch {
+      throw new Error('This browser blocked site storage. Allow cookies/data for this site and try again.');
+    }
   }
 
   function isContentEmpty(data) {
@@ -857,7 +862,11 @@
     }
 
     if (!res.ok) {
-      throw new Error(data.error || data.detail || `Login failed (${res.status})`);
+      const msg = data.error || data.detail || `Login failed (${res.status})`;
+      if (res.status === 401) {
+        throw new Error(`${msg} — check ADMIN_PASSWORD in Vercel matches exactly (no extra spaces).`);
+      }
+      throw new Error(msg);
     }
 
     if (!data.token) {
@@ -883,10 +892,11 @@
   function showApp() {
     if (els.loginScreen) {
       els.loginScreen.hidden = true;
-      els.loginScreen.setAttribute('hidden', '');
+      els.loginScreen.classList.add('is-hidden');
     }
     if (els.app) {
       els.app.hidden = false;
+      els.app.classList.add('is-visible');
       els.app.removeAttribute('hidden');
     }
   }
@@ -894,10 +904,12 @@
   function showLogin(message) {
     if (els.loginScreen) {
       els.loginScreen.hidden = false;
+      els.loginScreen.classList.remove('is-hidden');
       els.loginScreen.removeAttribute('hidden');
     }
     if (els.app) {
       els.app.hidden = true;
+      els.app.classList.remove('is-visible');
       els.app.setAttribute('hidden', '');
     }
     setToken(null);
@@ -905,20 +917,18 @@
     if (message) showLoginError(message);
   }
 
-  async function restoreSession() {
-    const flowId = beginAuthFlow();
-    const tokenAtStart = getToken();
-    if (!tokenAtStart) return;
+  async function bootAuthenticated() {
+    if (!getToken()) return;
 
+    setLoginStatus('Loading dashboard…');
     try {
       await loadContent();
-      if (!isAuthFlowCurrent(flowId) || getToken() !== tokenAtStart) return;
       setPreviewMode(false);
+      clearLoginMessages();
       showApp();
       openSectionFromHash();
     } catch (err) {
-      if (!isAuthFlowCurrent(flowId) || getToken() !== tokenAtStart) return;
-      showLogin(err.message || 'Session expired. Sign in again.');
+      showLogin(err.message || 'Could not load dashboard. Sign in again.');
     }
   }
 
@@ -929,7 +939,6 @@
 
   els.loginForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const flowId = beginAuthFlow();
     clearLoginMessages();
     const btn = els.loginSubmitBtn;
     const originalLabel = btn?.textContent || 'Sign In';
@@ -942,21 +951,12 @@
 
     try {
       await login(els.password.value);
-      if (!isAuthFlowCurrent(flowId)) return;
-
-      setLoginStatus('Loading dashboard…');
-      await loadContent();
-      if (!isAuthFlowCurrent(flowId)) return;
-
-      setPreviewMode(false);
-      clearLoginMessages();
-      showApp();
-      openSectionFromHash();
+      sessionStorage.removeItem(PREVIEW_KEY);
+      setLoginStatus('Signed in! Opening dashboard…');
+      window.location.reload();
     } catch (err) {
-      if (!isAuthFlowCurrent(flowId)) return;
       showLoginError(err.message || 'Sign in failed');
       setLoginStatus('');
-    } finally {
       if (btn) {
         btn.disabled = false;
         btn.textContent = originalLabel;
@@ -1012,8 +1012,8 @@
   });
 
   if (getToken()) {
-    restoreSession();
-  } else if (sessionStorage.getItem(PREVIEW_KEY) || new URLSearchParams(location.search).get('preview') === '1') {
+    bootAuthenticated();
+  } else if (new URLSearchParams(location.search).get('preview') === '1') {
     enterPreview().then(() => openSectionFromHash());
   }
 })();

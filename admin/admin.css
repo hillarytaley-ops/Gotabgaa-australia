@@ -76,14 +76,32 @@ body {
   margin-bottom: 12px;
 }
 
-.login-card__error { color: var(--danger); font-size: 0.9rem; margin-top: 12px; font-weight: 600; }
-.login-card__status { color: var(--brown-700); font-size: 0.9rem; margin-top: 12px; }
+.login-screen.is-hidden {
+  display: none !important;
+}
+
+.login-card__error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-top: 4px;
+  font-weight: 600;
+  background: #fff3f3;
+  border: 2px solid var(--danger);
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+}
+.login-card__status { color: var(--brown-700); font-size: 0.9rem; margin-top: 4px; }
 .login-card__hint { color: var(--text-muted); font-size: 0.8rem; margin-top: 16px; }
 
 .app {
-  display: grid;
+  display: none;
   grid-template-columns: 260px 1fr;
   min-height: 100vh;
+}
+
+.app.is-visible {
+  display: grid;
 }
 
 .sidebar {
