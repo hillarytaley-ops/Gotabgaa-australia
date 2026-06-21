@@ -17,7 +17,10 @@ export default async function handler(req, res) {
   }
 
   const { password: attempt } = req.body || {};
-  if (!attempt || attempt !== password) {
+  const normalizedAttempt = typeof attempt === 'string' ? attempt.trim() : '';
+  const normalizedPassword = password.trim();
+
+  if (!normalizedAttempt || normalizedAttempt !== normalizedPassword) {
     res.status(401).json({ error: 'Invalid password' });
     return;
   }

@@ -13,6 +13,8 @@
     app: document.getElementById('app'),
     loginForm: document.getElementById('loginForm'),
     loginError: document.getElementById('loginError'),
+    loginStatus: document.getElementById('loginStatus'),
+    loginSubmitBtn: document.getElementById('loginSubmitBtn'),
     password: document.getElementById('password'),
     logoutBtn: document.getElementById('logoutBtn'),
     publishBtn: document.getElementById('publishBtn'),
@@ -79,18 +81,72 @@
     else sessionStorage.removeItem(TOKEN_KEY);
   }
 
+  function isContentEmpty(data) {
+    if (!data || typeof data !== 'object') return true;
+    return !data.site && !data.pages;
+  }
+
   async function loadContent() {
-    const res = await fetch('/api/content');
+    let res;
+    try {
+      res = await fetch('/api/content', { cache: 'no-cache' });
+    } catch {
+      res = { ok: false };
+    }
+
     if (!res.ok) {
-      const fallback = await fetch('/data/content.json');
+      const fallback = await fetch('/data/content.json', { cache: 'no-cache' });
       if (!fallback.ok) throw new Error('Could not load content');
       content = await fallback.json();
     } else {
-      content = await res.json();
+      const text = await res.text();
+      try {
+        content = JSON.parse(text);
+      } catch {
+        throw new Error('Content API returned invalid JSON');
+      }
+    }
+
+    if (isContentEmpty(content)) {
+      const fallback = await fetch('/data/content.json', { cache: 'no-cache' });
+      if (fallback.ok) {
+        content = await fallback.json();
+      }
+    }
+
+    if (isContentEmpty(content)) {
+      throw new Error('No site content found. Sign in and use “Load content into Supabase”.');
     }
     updateMeta();
     renderSection(activeSection);
     renderDashboardStats();
+  }
+
+  function setLoginStatus(msg, isError = false) {
+    if (!els.loginStatus) return;
+    if (!msg) {
+      els.loginStatus.hidden = true;
+      els.loginStatus.textContent = '';
+      return;
+    }
+    els.loginStatus.hidden = false;
+    els.loginStatus.textContent = msg;
+    els.loginStatus.style.color = isError ? '' : '';
+  }
+
+  function showLoginError(msg) {
+    if (!els.loginError) return;
+    els.loginError.textContent = msg;
+    els.loginError.hidden = false;
+    els.loginError.removeAttribute('hidden');
+  }
+
+  function clearLoginMessages() {
+    if (els.loginError) {
+      els.loginError.hidden = true;
+      els.loginError.textContent = '';
+    }
+    setLoginStatus('');
   }
 
   function updateMeta() {
@@ -766,20 +822,43 @@
   }
 
   async function login(password) {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
+    let res;
+    try {
+      res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password.trim() })
+      });
+    } catch {
+      throw new Error('Cannot reach /api/login. Redeploy on Vercel after adding ADMIN_PASSWORD.');
+    }
 
-    const data = await res.json().catch(() => ({}));
+    const text = await res.text();
+    let data = {};
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Login API error (${res.status}). Check Vercel deployment logs.`);
+    }
 
     if (!res.ok) {
-      throw new Error(data.error || 'Login failed');
+      throw new Error(data.error || data.detail || `Login failed (${res.status})`);
+    }
+
+    if (!data.token) {
+      throw new Error('Login succeeded but no token returned.');
     }
 
     setToken(data.token);
     return true;
+  }
+
+  function openSectionFromHash() {
+    const section = location.hash.replace('#', '');
+    if (section && SECTION_TITLES[section]) {
+      collectFromForm();
+      renderSection(section);
+    }
   }
 
   function showApp() {
@@ -794,18 +873,39 @@
     setPreviewMode(false);
   }
 
+  if (!els.loginForm) {
+    console.error('Admin login form not found');
+    return;
+  }
+
   els.loginForm.addEventListener('submit', async e => {
     e.preventDefault();
-    els.loginError.hidden = true;
+    clearLoginMessages();
+    const btn = els.loginSubmitBtn;
+    const originalLabel = btn?.textContent || 'Sign In';
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+    }
+    setLoginStatus('Checking password…');
+
     try {
       await login(els.password.value);
+      setLoginStatus('Loading dashboard…');
       await loadContent();
       setPreviewMode(false);
+      clearLoginMessages();
       showApp();
       openSectionFromHash();
     } catch (err) {
-      els.loginError.textContent = err.message;
-      els.loginError.hidden = false;
+      showLoginError(err.message || 'Sign in failed');
+      setLoginStatus('');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+      }
     }
   });
 
@@ -864,13 +964,5 @@
     }).catch(() => showLogin());
   } else if (sessionStorage.getItem(PREVIEW_KEY) || new URLSearchParams(location.search).get('preview') === '1') {
     enterPreview().then(() => openSectionFromHash());
-  }
-
-  function openSectionFromHash() {
-    const section = location.hash.replace('#', '');
-    if (section && SECTION_TITLES[section]) {
-      collectFromForm();
-      renderSection(section);
-    }
   }
 })();

@@ -71,7 +71,8 @@ body {
   font: inherit;
 }
 
-.login-card__error { color: var(--danger); font-size: 0.9rem; margin-top: 12px; }
+.login-card__error { color: var(--danger); font-size: 0.9rem; margin-top: 12px; font-weight: 600; }
+.login-card__status { color: var(--brown-700); font-size: 0.9rem; margin-top: 12px; }
 .login-card__hint { color: var(--text-muted); font-size: 0.8rem; margin-top: 16px; }
 
 .app {

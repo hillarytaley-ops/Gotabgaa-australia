@@ -64,7 +64,12 @@ async function readFromSupabase() {
     .maybeSingle();
 
   if (error || !data?.data) return null;
-  return JSON.stringify(data.data);
+
+  const payload = data.data;
+  if (!payload || typeof payload !== 'object') return null;
+  if (!payload.site && !payload.pages) return null;
+
+  return JSON.stringify(payload);
 }
 
 async function saveToSupabase(content) {
