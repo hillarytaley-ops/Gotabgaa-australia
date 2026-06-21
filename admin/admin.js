@@ -814,6 +814,33 @@
   els.publishBtn.addEventListener('click', publish);
   els.exportBtn.addEventListener('click', exportJson);
 
+  document.getElementById('seedSupabaseBtn')?.addEventListener('click', async () => {
+    if (isPreviewMode) {
+      showStatus('Sign in to load content into Supabase.', 'error');
+      return;
+    }
+    const token = getToken();
+    if (!token) return;
+
+    const btn = document.getElementById('seedSupabaseBtn');
+    if (btn) btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/seed-content', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.detail || data.error || 'Seed failed');
+      showStatus(data.message || 'Content loaded into Supabase.', 'success');
+      await loadContent();
+    } catch (err) {
+      showStatus(err.message, 'error');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  });
+
   els.sidebarNav.addEventListener('click', e => {
     const btn = e.target.closest('button[data-section]');
     if (!btn) return;

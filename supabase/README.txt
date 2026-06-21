@@ -1,22 +1,35 @@
-Gotabgaa Australia — Supabase Setup
-=====================================
+CREATE TABLES IN SUPABASE (do this once)
+=======================================
 
-1. Open your Supabase project → SQL Editor
-2. Run the full script: supabase/schema.sql
-3. In Vercel → Settings → Environment Variables, add:
-   - SUPABASE_URL          (Project Settings → API → Project URL)
-   - SUPABASE_SERVICE_ROLE_KEY  (Project Settings → API → service_role — keep secret)
-4. Redeploy the site on Vercel
+STEP 1 — Open SQL Editor
+  https://supabase.com/dashboard
+  → your project
+  → left menu: SQL Editor
+  → New query
 
-FIRST-TIME CONTENT
-  Admin → Sign in → Publish Changes
-  (copies data/content.json into Postgres)
+STEP 2 — Run the schema
+  Open this file in your repo: supabase/schema.sql
+  Copy ALL of it → paste into SQL Editor → click RUN
 
-CONTACT INBOX
-  Contact form saves to contact_submissions table
-  Admin → Inbox (after sign in)
+STEP 3 — Check results
+  You should see a small table at the bottom:
 
-LOCAL API TEST
-  npm install
-  vercel dev
-  (with .env.local containing the variables above)
+  table_name          | row_count
+  site_content        | 1
+  contact_submissions | 0
+
+STEP 4 — Load website content into Postgres
+  Option A: Admin dashboard (after Vercel env vars + redeploy)
+    /admin/ → Sign in → Dashboard → "Load content into Supabase"
+
+  Option B: Admin → Publish Changes (after editing anything)
+
+TABLES CREATED
+  site_content         — all CMS data (events, programs, pages, etc.)
+  contact_submissions  — contact form inbox
+
+VERCEL ENV (required before step 4)
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+  ADMIN_PASSWORD
+  ADMIN_SECRET
