@@ -296,10 +296,10 @@
 
   function renderGallery(content) {
     const grid = document.querySelector('.gallery__grid');
-    if (!grid || !content.gallery) return;
+    if (!grid || !content.gallery?.length) return;
 
     grid.innerHTML = content.gallery.map((item, i) => `
-      <div class="gallery__item${item.wide ? ' gallery__item--wide' : ''} animate-on-scroll" data-animate="zoom-in" data-delay="${i}">
+      <div class="gallery__item${item.wide ? ' gallery__item--wide' : ''} animate-on-scroll is-visible" data-animate="zoom-in" data-delay="${i}">
         <div class="gallery__photo-wrap">
           <img class="gallery__photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt)}" loading="lazy" decoding="async">
           <span class="gallery__caption">${escapeHtml(item.caption)}</span>

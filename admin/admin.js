@@ -50,7 +50,7 @@
       els.publishBtn.disabled = on;
       els.publishBtn.textContent = on ? 'Publish (sign in required)' : 'Publish Changes';
     }
-    if (on) showStatus('Preview mode — edit and export JSON, or sign in to publish to the live site.', '');
+    if (on) showStatus('Preview mode — changes are only in this browser until you sign in and click Publish Changes.', 'error');
   }
 
   async function enterPreview() {
@@ -396,6 +396,9 @@
 
   function renderGalleryPanel() {
     return `
+      <div class="card card--notice">
+        <p><strong>Public site:</strong> Gallery photos appear on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a> only after you click <strong>Publish Changes</strong> (sign in required — preview mode does not update the live site).</p>
+      </div>
       <div class="card">
         <div class="list-item__header"><h3>Gallery photos</h3>
           <button type="button" class="btn btn--outline btn--sm" id="addGallery">+ Add Photo</button>

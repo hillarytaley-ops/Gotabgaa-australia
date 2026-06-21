@@ -274,7 +274,18 @@ function initScrollAnimations() {
     }
   );
 
-  elements.forEach(el => observer.observe(el));
+  elements.forEach(el => {
+    observer.observe(el);
+
+    const rect = el.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (inView) {
+      const delay = parseInt(el.dataset.delay || '0', 10) * (isMobile ? 60 : 100);
+      setTimeout(() => {
+        el.classList.add('is-visible');
+      }, delay);
+    }
+  });
 }
 
 // Size each hero slide to show the complete photo (no CSS crop)
