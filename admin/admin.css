@@ -67,8 +67,13 @@ body {
   padding: 12px 14px;
   border: 1px solid var(--cream-dark);
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   font: inherit;
+}
+
+.login-card__error,
+.login-card__status {
+  margin-bottom: 12px;
 }
 
 .login-card__error { color: var(--danger); font-size: 0.9rem; margin-top: 12px; font-weight: 600; }

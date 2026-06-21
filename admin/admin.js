@@ -7,6 +7,15 @@
   let content = null;
   let activeSection = 'dashboard';
   let isPreviewMode = false;
+  let authFlowId = 0;
+
+  function beginAuthFlow() {
+    return ++authFlowId;
+  }
+
+  function isAuthFlowCurrent(flowId) {
+    return authFlowId === flowId;
+  }
 
   const els = {
     loginScreen: document.getElementById('loginScreen'),
@@ -54,14 +63,16 @@
   }
 
   async function enterPreview() {
-    els.loginError.hidden = true;
+    const flowId = beginAuthFlow();
+    clearLoginMessages();
     try {
       await loadContent();
+      if (!isAuthFlowCurrent(flowId)) return;
       setPreviewMode(true);
       showApp();
     } catch (err) {
-      els.loginError.textContent = err.message;
-      els.loginError.hidden = false;
+      if (!isAuthFlowCurrent(flowId)) return;
+      showLoginError(err.message);
     }
   }
 
@@ -139,6 +150,7 @@
     els.loginError.textContent = msg;
     els.loginError.hidden = false;
     els.loginError.removeAttribute('hidden');
+    els.loginError.scrollIntoView({ block: 'nearest' });
   }
 
   function clearLoginMessages() {
@@ -638,7 +650,10 @@
   }
 
   function collectFromForm() {
+    if (!content) return;
+
     if (activeSection === 'site' || document.querySelector('[data-panel="site"] input')) {
+      if (!content.site) content.site = {};
       content.site.siteName = val('siteName');
       content.site.siteUrl = val('siteUrl');
       content.site.tagline = val('tagline');
@@ -655,8 +670,8 @@
       };
     }
 
-    const h = content.pages.home;
-    if (document.getElementById('homeBadge')) {
+    const h = content.pages?.home;
+    if (h && document.getElementById('homeBadge')) {
       h.hero.badge = val('homeBadge');
       h.hero.title = val('homeTitle');
       h.hero.titleEm = val('homeTitleEm');
@@ -682,7 +697,7 @@
       h.cta.button = val('homeCtaBtn');
     }
 
-    if (document.getElementById('aboutLead')) {
+    if (document.getElementById('aboutLead') && content.pages?.about) {
       const a = content.pages.about;
       a.lead = val('aboutLead');
       a.mission = val('aboutMission');
@@ -695,7 +710,7 @@
       a.cta.button = val('aboutCtaBtn');
     }
 
-    content.programs.forEach((p, i) => {
+    (content.programs || []).forEach((p, i) => {
       if (document.getElementById(`progTitle${i}`)) {
         p.title = val(`progTitle${i}`);
         p.link = val(`progLink${i}`);
@@ -709,7 +724,7 @@
       content.featuredEventId = val('featuredEventId');
     }
 
-    content.events.forEach((e, i) => {
+    (content.events || []).forEach((e, i) => {
       if (document.getElementById(`evtTitle${i}`)) {
         e.title = val(`evtTitle${i}`);
         e.datePill = val(`evtPill${i}`);
@@ -727,7 +742,7 @@
       }
     });
 
-    content.leadership.forEach((l, i) => {
+    (content.leadership || []).forEach((l, i) => {
       if (document.getElementById(`ldrName${i}`)) {
         l.name = val(`ldrName${i}`);
         l.role = val(`ldrRole${i}`);
@@ -736,7 +751,7 @@
       }
     });
 
-    content.gallery.forEach((g, i) => {
+    (content.gallery || []).forEach((g, i) => {
       if (document.getElementById(`galImage${i}`)) {
         g.image = val(`galImage${i}`);
         g.alt = val(`galAlt${i}`);
@@ -745,14 +760,14 @@
       }
     });
 
-    if (document.getElementById('contactIntro')) {
+    if (document.getElementById('contactIntro') && content.contact) {
       content.contact.intro = val('contactIntro');
       content.contact.location = val('contactLocation');
       content.contact.officeHours = val('contactHours');
     }
 
     ['programs', 'events', 'leadership', 'gallery', 'contact', 'privacy', 'terms'].forEach(key => {
-      if (document.getElementById(`heroTag_${key}`)) {
+      if (document.getElementById(`heroTag_${key}`) && content.pages?.[key]?.hero) {
         content.pages[key].hero.tag = val(`heroTag_${key}`);
         content.pages[key].hero.title = val(`heroTitle_${key}`);
         content.pages[key].hero.description = val(`heroDesc_${key}`);
@@ -855,22 +870,56 @@
 
   function openSectionFromHash() {
     const section = location.hash.replace('#', '');
-    if (section && SECTION_TITLES[section]) {
+    if (!section || !SECTION_TITLES[section]) return;
+    try {
       collectFromForm();
       renderSection(section);
+    } catch (err) {
+      console.error('openSectionFromHash:', err);
+      renderSection('dashboard');
     }
   }
 
   function showApp() {
-    els.loginScreen.hidden = true;
-    els.app.hidden = false;
+    if (els.loginScreen) {
+      els.loginScreen.hidden = true;
+      els.loginScreen.setAttribute('hidden', '');
+    }
+    if (els.app) {
+      els.app.hidden = false;
+      els.app.removeAttribute('hidden');
+    }
   }
 
-  function showLogin() {
-    els.loginScreen.hidden = false;
-    els.app.hidden = true;
+  function showLogin(message) {
+    if (els.loginScreen) {
+      els.loginScreen.hidden = false;
+      els.loginScreen.removeAttribute('hidden');
+    }
+    if (els.app) {
+      els.app.hidden = true;
+      els.app.setAttribute('hidden', '');
+    }
     setToken(null);
     setPreviewMode(false);
+    if (message) showLoginError(message);
+  }
+
+  async function restoreSession() {
+    const flowId = beginAuthFlow();
+    const tokenAtStart = getToken();
+    if (!tokenAtStart) return;
+
+    try {
+      await loadContent();
+      if (!isAuthFlowCurrent(flowId) || getToken() !== tokenAtStart) return;
+      setPreviewMode(false);
+      showApp();
+      openSectionFromHash();
+    } catch (err) {
+      if (!isAuthFlowCurrent(flowId) || getToken() !== tokenAtStart) return;
+      showLogin(err.message || 'Session expired. Sign in again.');
+    }
   }
 
   if (!els.loginForm) {
@@ -880,6 +929,7 @@
 
   els.loginForm.addEventListener('submit', async e => {
     e.preventDefault();
+    const flowId = beginAuthFlow();
     clearLoginMessages();
     const btn = els.loginSubmitBtn;
     const originalLabel = btn?.textContent || 'Sign In';
@@ -892,13 +942,18 @@
 
     try {
       await login(els.password.value);
+      if (!isAuthFlowCurrent(flowId)) return;
+
       setLoginStatus('Loading dashboard…');
       await loadContent();
+      if (!isAuthFlowCurrent(flowId)) return;
+
       setPreviewMode(false);
       clearLoginMessages();
       showApp();
       openSectionFromHash();
     } catch (err) {
+      if (!isAuthFlowCurrent(flowId)) return;
       showLoginError(err.message || 'Sign in failed');
       setLoginStatus('');
     } finally {
@@ -909,7 +964,7 @@
     }
   });
 
-  els.logoutBtn.addEventListener('click', showLogin);
+  els.logoutBtn.addEventListener('click', () => showLogin());
   els.previewBtn?.addEventListener('click', enterPreview);
   els.publishBtn.addEventListener('click', publish);
   els.exportBtn.addEventListener('click', exportJson);
@@ -957,11 +1012,7 @@
   });
 
   if (getToken()) {
-    loadContent().then(() => {
-      setPreviewMode(false);
-      showApp();
-      openSectionFromHash();
-    }).catch(() => showLogin());
+    restoreSession();
   } else if (sessionStorage.getItem(PREVIEW_KEY) || new URLSearchParams(location.search).get('preview') === '1') {
     enterPreview().then(() => openSectionFromHash());
   }

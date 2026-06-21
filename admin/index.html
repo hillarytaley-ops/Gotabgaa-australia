@@ -18,10 +18,10 @@
       <p class="login-card__sub">Admin Dashboard</p>
       <label for="password">Password</label>
       <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter admin password">
+      <p class="login-card__status" id="loginStatus" hidden aria-live="polite"></p>
+      <p class="login-card__error" id="loginError" hidden role="alert"></p>
       <button type="submit" class="btn btn--primary" id="loginSubmitBtn">Sign In</button>
       <button type="button" class="btn btn--outline" id="previewBtn" style="margin-top:10px;width:100%">Open Preview (no password)</button>
-      <p class="login-card__status" id="loginStatus" hidden></p>
-      <p class="login-card__error" id="loginError" hidden></p>
       <p class="login-card__hint">Use the password from Vercel env var <strong>ADMIN_PASSWORD</strong> (not ADMIN_SECRET).</p>
     </form>
   </div>
