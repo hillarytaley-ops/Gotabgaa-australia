@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { verifyToken, readAuthToken } from './lib/auth.js';
+import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 const CONTENT_PATH = 'data/content.json';
 
@@ -52,10 +53,42 @@ function readLocalContent() {
   return fs.readFileSync(file, 'utf8');
 }
 
+async function readFromSupabase() {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('site_content')
+    .select('data')
+    .eq('id', 'main')
+    .maybeSingle();
+
+  if (error || !data?.data) return null;
+  return JSON.stringify(data.data);
+}
+
+async function saveToSupabase(content) {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+
+  const updatedAt = content.meta?.updatedAt || new Date().toISOString();
+
+  const { error } = await supabase.from('site_content').upsert({
+    id: 'main',
+    data: content,
+    updated_at: updatedAt
+  });
+
+  if (error) throw new Error(`Supabase: ${error.message}`);
+  return true;
+}
+
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const json = readLocalContent();
+      let json = await readFromSupabase();
+      if (!json) json = readLocalContent();
+
       res.setHeader('Cache-Control', 'public, max-age=60');
       res.status(200).send(json);
     } catch (err) {
@@ -76,16 +109,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  const githubToken = process.env.GITHUB_TOKEN;
-  const githubRepo = process.env.GITHUB_REPO;
-
-  if (!githubToken || !githubRepo) {
-    res.status(503).json({
-      error: 'Publishing is not configured. Set GITHUB_TOKEN and GITHUB_REPO in Vercel, or export JSON from the admin and commit manually.'
-    });
-    return;
-  }
-
   try {
     const body = req.body;
     if (!body || typeof body !== 'object') {
@@ -96,19 +119,42 @@ export default async function handler(req, res) {
     body.meta = body.meta || {};
     body.meta.updatedAt = new Date().toISOString();
 
-    const contentStr = JSON.stringify(body, null, 2) + '\n';
-    const existing = await githubGetFile(githubRepo, githubToken, CONTENT_PATH);
+    const githubToken = process.env.GITHUB_TOKEN;
+    const githubRepo = process.env.GITHUB_REPO;
+    let savedToSupabase = false;
+    let savedToGithub = false;
 
-    await githubUpdateFile(
-      githubRepo,
-      githubToken,
-      CONTENT_PATH,
-      contentStr,
-      `Admin: update site content (${body.meta.updatedAt})`,
-      existing?.sha
-    );
+    if (isSupabaseConfigured()) {
+      savedToSupabase = await saveToSupabase(body);
+    }
 
-    res.status(200).json({ ok: true, updatedAt: body.meta.updatedAt });
+    if (githubToken && githubRepo) {
+      const contentStr = JSON.stringify(body, null, 2) + '\n';
+      const existing = await githubGetFile(githubRepo, githubToken, CONTENT_PATH);
+      await githubUpdateFile(
+        githubRepo,
+        githubToken,
+        CONTENT_PATH,
+        contentStr,
+        `Admin: update site content (${body.meta.updatedAt})`,
+        existing?.sha
+      );
+      savedToGithub = true;
+    }
+
+    if (!savedToSupabase && !savedToGithub) {
+      res.status(503).json({
+        error: 'Publishing is not configured. Set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY, or GITHUB_TOKEN + GITHUB_REPO, in Vercel.'
+      });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      updatedAt: body.meta.updatedAt,
+      savedToSupabase,
+      savedToGithub
+    });
   } catch (err) {
     res.status(500).json({ error: 'Publish failed', detail: err.message });
   }

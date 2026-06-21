@@ -334,6 +334,21 @@ body {
   margin-top: 8px;
 }
 
+.inbox-item__date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.inbox-item__message {
+  margin: 12px 0;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+}
+
+.inbox-item--read {
+  opacity: 0.72;
+}
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: sticky; top: 0; z-index: 10; }

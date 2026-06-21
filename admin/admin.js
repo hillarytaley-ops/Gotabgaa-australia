@@ -35,6 +35,7 @@
     leadership: 'Leadership',
     gallery: 'Gallery',
     contact: 'Contact Info',
+    inbox: 'Contact Inbox',
     pages: 'Page Heroes'
   };
 
@@ -359,6 +360,85 @@
     `;
   }
 
+  async function loadSubmissions() {
+    const token = getToken();
+    if (!token) return [];
+
+    const res = await fetch('/api/contact-submissions', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Could not load inbox');
+    }
+
+    const data = await res.json();
+    return data.submissions || [];
+  }
+
+  function renderInboxPanel(submissions, errorMsg) {
+    if (errorMsg) {
+      return `<div class="card"><p>${escapeHtml(errorMsg)}</p><p class="portal__notice-small">Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel, then run <code>supabase/schema.sql</code> in your Supabase project.</p></div>`;
+    }
+
+    if (!submissions.length) {
+      return `<div class="card"><h3>Contact inbox</h3><p>No messages yet. Submissions from the contact form appear here when Supabase is connected.</p></div>`;
+    }
+
+    return `
+      <div class="card">
+        <h3>Contact inbox (${submissions.length})</h3>
+        <div id="inboxList">
+          ${submissions.map(s => `
+            <div class="list-item inbox-item ${s.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(s.id)}">
+              <div class="list-item__header">
+                <h4>${escapeHtml(s.name)} · ${escapeHtml(s.subject || 'general')}</h4>
+                <span class="inbox-item__date">${new Date(s.created_at).toLocaleString()}</span>
+              </div>
+              <p><a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></p>
+              <p class="inbox-item__message">${escapeHtml(s.message)}</p>
+              <button type="button" class="btn btn--outline btn--sm inbox-mark-read" data-id="${escapeHtml(s.id)}" data-read="${s.read ? '0' : '1'}">
+                ${s.read ? 'Mark unread' : 'Mark read'}
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  async function renderInboxSection(panel) {
+    if (isPreviewMode) {
+      panel.innerHTML = renderInboxPanel([], 'Sign in to view the contact inbox.');
+      return;
+    }
+
+    panel.innerHTML = '<div class="card"><p>Loading inbox…</p></div>';
+    try {
+      const submissions = await loadSubmissions();
+      panel.innerHTML = renderInboxPanel(submissions);
+      panel.querySelectorAll('.inbox-mark-read').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const token = getToken();
+          const id = btn.dataset.id;
+          const read = btn.dataset.read === '1';
+          await fetch('/api/contact-submissions', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id, read })
+          });
+          renderInboxSection(panel);
+        });
+      });
+    } catch (err) {
+      panel.innerHTML = renderInboxPanel([], err.message);
+    }
+  }
+
   function renderPagesPanel() {
     const pages = ['programs', 'events', 'leadership', 'gallery', 'contact', 'privacy', 'terms'];
     return pages.map(key => {
@@ -385,6 +465,10 @@
       const isActive = panel.dataset.panel === section;
       panel.hidden = !isActive;
       if (isActive && section !== 'dashboard') {
+        if (section === 'inbox') {
+          renderInboxSection(panel);
+          return;
+        }
         const renderers = {
           site: renderSitePanel,
           home: renderHomePanel,
@@ -655,7 +739,13 @@
 
       content.meta.updatedAt = data.updatedAt || new Date().toISOString();
       updateMeta();
-      showStatus('Published! Vercel will redeploy in 1–2 minutes.', 'success');
+      if (data.savedToSupabase && !data.savedToGithub) {
+        showStatus('Published to Supabase! Changes are live immediately.', 'success');
+      } else if (data.savedToSupabase && data.savedToGithub) {
+        showStatus('Published to Supabase and GitHub. Live now; Vercel may redeploy in 1–2 minutes.', 'success');
+      } else {
+        showStatus('Published to GitHub! Vercel will redeploy in 1–2 minutes.', 'success');
+      }
     } catch (err) {
       showStatus(err.message, 'error');
     } finally {

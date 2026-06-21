@@ -487,7 +487,10 @@
 
   async function load() {
     try {
-      const res = await fetch('/data/content.json', { cache: 'no-cache' });
+      let res = await fetch('/api/content', { cache: 'no-cache' });
+      if (!res.ok) {
+        res = await fetch('/data/content.json', { cache: 'no-cache' });
+      }
       if (!res.ok) throw new Error('Content fetch failed');
       const content = await res.json();
       hydrate(content);

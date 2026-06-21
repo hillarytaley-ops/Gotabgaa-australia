@@ -172,7 +172,7 @@ function initCounters() {
   counters.forEach(counter => observer.observe(counter));
 }
 
-// Contact form — submits via FormSubmit.co; shows success after redirect
+// Contact form — Supabase API when configured, else FormSubmit.co
 function initContactForm() {
   const form = document.getElementById('contactForm');
   if (!form) return;
@@ -188,12 +188,59 @@ function initContactForm() {
     successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  form.addEventListener('submit', () => {
+  let useFormSubmitFallback = false;
+
+  form.addEventListener('submit', async e => {
+    if (useFormSubmitFallback) return;
+
+    e.preventDefault();
+
     const btn = form.querySelector('button[type="submit"]');
-    if (!btn) return;
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    btn.classList.add('btn--loading');
+    if (btn) {
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      btn.classList.add('btn--loading');
+    }
+
+    const payload = {
+      name: form.querySelector('[name="name"]')?.value,
+      email: form.querySelector('[name="email"]')?.value,
+      subject: form.querySelector('[name="subject"]')?.value,
+      message: form.querySelector('[name="message"]')?.value
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.status === 503) {
+        useFormSubmitFallback = true;
+        form.requestSubmit();
+        return;
+      }
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Could not send message');
+      }
+
+      form.reset();
+      if (successEl) {
+        successEl.hidden = false;
+        successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to send. Please email us directly.');
+    } finally {
+      if (btn && !useFormSubmitFallback) {
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+        btn.classList.remove('btn--loading');
+      }
+    }
   });
 }
 

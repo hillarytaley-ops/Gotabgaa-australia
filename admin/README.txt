@@ -14,20 +14,20 @@ HOW CONTENT WORKS
   Public pages load this file via js/content-loader.js
   Admin edits JSON and publishes
 
-PUBLISHING (choose one)
+PUBLISHING (choose one or both)
 
-  A) Cloud publish (recommended)
-     Set these in Vercel → Project → Settings → Environment Variables:
+  A) Supabase Postgres (recommended — instant live updates)
+     SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in Vercel
+     Run supabase/schema.sql in your Supabase SQL Editor
+     See supabase/README.txt
 
-     ADMIN_PASSWORD     Your admin login password
-     ADMIN_SECRET       Random long string (e.g. openssl rand -hex 32)
-     GITHUB_TOKEN       GitHub PAT with repo Contents write access
-     GITHUB_REPO        hillarytaley-ops/Gotabgaa-australia
+  B) GitHub commit (optional backup)
+     GITHUB_TOKEN + GITHUB_REPO in Vercel
 
-     Then: edit in admin → Publish Changes → auto GitHub commit → Vercel redeploy
+  Admin → Publish Changes stores content in Supabase (and GitHub if configured).
 
-  B) Manual export
-     Admin → Export JSON → replace data/content.json → git commit → push
+CONTACT INBOX
+  With Supabase connected, form messages appear in Admin → Inbox.
 
 LOCAL TESTING
   API routes need Vercel CLI or deploy preview for login/publish.
