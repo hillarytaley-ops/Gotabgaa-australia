@@ -790,6 +790,55 @@ a:hover {
   background: linear-gradient(155deg, var(--brown-800) 0%, var(--brown-900) 55%, #1f1610 100%);
   color: var(--cream);
   text-align: center;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.045;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(45deg, var(--cream) 0, var(--cream) 1px, transparent 0, transparent 50%),
+    repeating-linear-gradient(-45deg, var(--cream) 0, var(--cream) 1px, transparent 0, transparent 50%);
+  background-size: 24px 24px;
+}
+
+.page-hero > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.page-hero__logo {
+  position: absolute;
+  top: 54%;
+  z-index: 1;
+  pointer-events: none;
+  transform: translateY(-50%);
+  opacity: 0.92;
+}
+
+.page-hero__logo--left {
+  left: clamp(16px, 5vw, 72px);
+}
+
+.page-hero__logo--right {
+  right: clamp(16px, 5vw, 72px);
+}
+
+.hero__logo-ring--page {
+  width: min(128px, 16vw);
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+}
+
+.page-hero__logo--right .hero__orbit--inner {
+  animation-direction: reverse;
+}
+
+.page-hero__logo--right .hero__orbit--outer {
+  animation-direction: normal;
 }
 
 .page-hero .tribal-border--top {
@@ -2414,6 +2463,10 @@ body.modal-open {
   }
 
   .hero__visual {
+    display: none;
+  }
+
+  .page-hero__logo {
     display: none;
   }
 

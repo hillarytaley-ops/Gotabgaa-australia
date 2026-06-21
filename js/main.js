@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroPhotoFit();
   initHeroParallax();
   initTiltCards();
+  initPageHeroLogos();
 });
 
 function initSiteConfig() {
@@ -258,6 +259,34 @@ function initHeroPhotoFit() {
   });
 
   window.addEventListener('resize', fit, { passive: true });
+}
+
+// Animated logo orbits on sub-page heroes (left & right)
+function initPageHeroLogos() {
+  if (!document.body.classList.contains('page-sub')) return;
+
+  const hero = document.querySelector('.page-hero');
+  const container = hero?.querySelector('.container');
+  if (!hero || !container) return;
+
+  function createSideLogo(side) {
+    const wrap = document.createElement('div');
+    wrap.className = `page-hero__logo page-hero__logo--${side}`;
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.innerHTML = `
+      <div class="hero__logo-ring hero__logo-ring--page">
+        <div class="hero__orbit hero__orbit--outer"></div>
+        <div class="hero__orbit hero__orbit--inner"></div>
+        <div class="logo-spinner">
+          <img src="assets/logo-round.png" alt="" class="logo-spinner__img logo-circle" decoding="async">
+        </div>
+      </div>
+    `;
+    return wrap;
+  }
+
+  hero.insertBefore(createSideLogo('left'), container);
+  container.insertAdjacentElement('afterend', createSideLogo('right'));
 }
 
 // Subtle parallax on hero logo only (slideshow parallax cropped photos)
