@@ -26,8 +26,8 @@
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'Outfit', system-ui, sans-serif;
   --header-height: 96px;
-  --tribal-height: 28px;
-  --tribal-tile: 233px;
+  --tribal-height: 36px;
+  --tribal-tile: 285px;
   --hero-height: min(94svh, 920px);
   --hero-band-top: calc(var(--header-height) + var(--tribal-height) - 6px);
   --hero-band-bottom: calc(var(--tribal-height) + 4px);
@@ -356,6 +356,8 @@ a:hover {
 
 .tribal-border--bottom {
   bottom: 0;
+  transform: scaleY(-1);
+  box-shadow: 0 -2px 10px rgba(42, 31, 23, 0.12);
 }
 
 .tribal-border--edge {
@@ -370,12 +372,12 @@ a:hover {
   height: 100%;
   background: url('../assets/tribal-border.png') repeat-x center;
   background-size: var(--tribal-tile) var(--tribal-height);
-  animation: tribal-scroll 45s linear infinite;
+  animation: tribal-scroll 32s linear infinite;
 }
 
 .tribal-border__track--reverse {
   animation-direction: reverse;
-  animation-duration: 40s;
+  animation-duration: 28s;
 }
 
 .tribal-border::after {
@@ -784,7 +786,7 @@ a:hover {
 /* Sub-page banner */
 .page-hero {
   position: relative;
-  padding: calc(var(--header-height) + var(--tribal-height) + 32px) 0 48px;
+  padding: calc(var(--header-height) + var(--tribal-height) + 32px) 0 calc(48px + var(--tribal-height));
   background: linear-gradient(155deg, var(--brown-800) 0%, var(--brown-900) 55%, #1f1610 100%);
   color: var(--cream);
   text-align: center;
@@ -792,6 +794,10 @@ a:hover {
 
 .page-hero .tribal-border--top {
   top: var(--header-height);
+}
+
+.page-hero .tribal-border--bottom {
+  bottom: 0;
 }
 
 .page-hero__title {
@@ -2306,8 +2312,8 @@ body.modal-open {
 @media (max-width: 768px) {
   :root {
     --header-height: 88px;
-    --tribal-height: 24px;
-    --tribal-tile: 200px;
+    --tribal-height: 30px;
+    --tribal-tile: 240px;
     --hero-height: min(88svh, 760px);
   }
 
