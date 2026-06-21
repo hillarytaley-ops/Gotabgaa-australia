@@ -6,12 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initScrollProgress();
   initCounters();
+  document.addEventListener('cms-ready', initCounters);
   initContactForm();
   initScrollAnimations();
   initHeroPhotoFit();
   initHeroParallax();
   initTiltCards();
   initPageHeroLogos();
+  initAdminLink();
 });
 
 function initSiteConfig() {
@@ -287,6 +289,19 @@ function initPageHeroLogos() {
 
   hero.insertBefore(createSideLogo('left'), container);
   container.insertAdjacentElement('afterend', createSideLogo('right'));
+}
+
+// Footer link to admin dashboard (leadership access)
+function initAdminLink() {
+  document.querySelectorAll('.footer__legal').forEach(legal => {
+    if (legal.querySelector('[data-admin-link]')) return;
+    const link = document.createElement('a');
+    link.href = '/admin/';
+    link.textContent = 'Admin';
+    link.setAttribute('data-admin-link', '');
+    link.setAttribute('aria-label', 'Open site admin dashboard');
+    legal.appendChild(link);
+  });
 }
 
 // Subtle parallax on hero logo only (slideshow parallax cropped photos)

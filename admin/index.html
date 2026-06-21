@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Gotabgaa Australia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo-round.png" type="image/png">
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <form class="login-card" id="loginForm">
+      <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
+      <h1>Gotabgaa Australia</h1>
+      <p class="login-card__sub">Admin Dashboard</p>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter admin password">
+      <button type="submit" class="btn btn--primary">Sign In</button>
+      <button type="button" class="btn btn--outline" id="previewBtn" style="margin-top:10px;width:100%">Open Preview (no password)</button>
+      <p class="login-card__error" id="loginError" hidden></p>
+      <p class="login-card__hint">Configure ADMIN_PASSWORD in Vercel to enable cloud publishing.</p>
+    </form>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <img src="../assets/logo-round.png" alt="" width="40" height="40">
+        <span>Gotabgaa Admin</span>
+      </div>
+      <nav class="sidebar__nav" id="sidebarNav">
+        <button type="button" data-section="dashboard" class="is-active">Dashboard</button>
+        <button type="button" data-section="site">Site Settings</button>
+        <button type="button" data-section="home">Home Page</button>
+        <button type="button" data-section="about">About</button>
+        <button type="button" data-section="programs">Programs</button>
+        <button type="button" data-section="events">Events</button>
+        <button type="button" data-section="leadership">Leadership</button>
+        <button type="button" data-section="gallery">Gallery</button>
+        <button type="button" data-section="contact">Contact</button>
+        <button type="button" data-section="pages">Page Heroes</button>
+      </nav>
+      <div class="sidebar__footer">
+        <a href="../index.html" target="_blank" rel="noopener">View Site ↗</a>
+        <button type="button" id="logoutBtn">Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="sectionTitle">Dashboard</h2>
+          <p id="lastUpdated" class="topbar__meta"></p>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" class="btn btn--outline" id="exportBtn">Export JSON</button>
+          <button type="button" class="btn btn--primary" id="publishBtn">Publish Changes</button>
+        </div>
+      </header>
+
+      <div class="status-bar" id="statusBar" hidden></div>
+
+      <div class="content" id="contentArea">
+        <section class="panel" data-panel="dashboard">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="card">
+            <h3>Quick actions</h3>
+            <div class="quick-actions">
+              <button type="button" class="btn btn--outline" data-goto="events">Manage Events</button>
+              <button type="button" class="btn btn--outline" data-goto="gallery">Update Gallery</button>
+              <button type="button" class="btn btn--outline" data-goto="leadership">Edit Leadership</button>
+              <button type="button" class="btn btn--outline" data-goto="site">Site Settings</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>How publishing works</h3>
+            <ol class="help-list">
+              <li>Edit content in any section below.</li>
+              <li>Click <strong>Publish Changes</strong> to push to GitHub (triggers Vercel redeploy).</li>
+              <li>Or use <strong>Export JSON</strong> to download and commit <code>data/content.json</code> manually.</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="site" hidden></section>
+        <section class="panel" data-panel="home" hidden></section>
+        <section class="panel" data-panel="about" hidden></section>
+        <section class="panel" data-panel="programs" hidden></section>
+        <section class="panel" data-panel="events" hidden></section>
+        <section class="panel" data-panel="leadership" hidden></section>
+        <section class="panel" data-panel="gallery" hidden></section>
+        <section class="panel" data-panel="contact" hidden></section>
+        <section class="panel" data-panel="pages" hidden></section>
+      </div>
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

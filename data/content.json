@@ -1,0 +1,342 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-06-21T00:00:00.000Z"
+  },
+  "site": {
+    "siteUrl": "https://gotabgaa-australia.vercel.app",
+    "siteName": "Gotabgaa Australia Chapter",
+    "tagline": "Unity • Heritage • Excellence",
+    "contactEmail": "info@gotabgaaaustralia.org",
+    "copyrightYear": 2026,
+    "affiliationText": "An independent Australian Kalenjin community association",
+    "affiliationUrl": "https://www.gotabgaainternational.org/",
+    "social": {
+      "facebook": "https://www.facebook.com/gotabgaainternational",
+      "tiktok": "https://www.tiktok.com/@gotabgaainternational",
+      "instagram": "https://www.instagram.com/gotabgaainternational",
+      "whatsapp": "mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry",
+      "youtube": "https://www.youtube.com/@gotabgaainternational"
+    }
+  },
+  "contact": {
+    "intro": "Whether you're interested in membership, our programs, or making a donation — we'd love to hear from you.",
+    "location": "Sydney, NSW, Australia",
+    "officeHours": "Monday – Friday, 9:00 AM – 6:00 PM AEST"
+  },
+  "pages": {
+    "home": {
+      "hero": {
+        "badge": "Australia Chapter",
+        "title": "Connecting Communities,",
+        "titleEm": "Preserving Heritage",
+        "subtitle": "Unity • Heritage • Excellence",
+        "description": "We unite Kalenjin families and friends across Australia — fostering cultural pride, mutual support, and economic empowerment from Sydney to Perth.",
+        "ctaPrimary": "Explore Programs",
+        "ctaPrimaryUrl": "programs.html",
+        "ctaSecondary": "Learn About Us",
+        "ctaSecondaryUrl": "about.html",
+        "slides": [
+          "assets/hero/berur-brisbane.png",
+          "assets/hero/brisbane-team.png",
+          "assets/hero/kokwet-sports-day.png",
+          "assets/hero/kitwek-wa.png",
+          "assets/hero/taunet-cultural-dance.png",
+          "assets/hero/chairman-taunet.png",
+          "assets/hero/charmen-gifting.png",
+          "assets/hero/hosea-sa-team.png",
+          "assets/hero/nick-boit-gifting.png",
+          "assets/hero/hosea-gifting.png"
+        ]
+      },
+      "impact": [
+        { "number": "15+", "label": "Years of Heritage" },
+        { "number": "6", "label": "States Connected" },
+        { "number": "100+", "label": "Families & Members" },
+        { "number": "10+", "label": "Annual Gatherings" }
+      ],
+      "aboutPreview": {
+        "tag": "Who We Are",
+        "title": "A Home Away From Home",
+        "paragraphs": [
+          "Gotabgaa Australia Chapter brings together Kalenjin families and friends across the continent — preserving our rich heritage while building a strong, united community in Australia.",
+          "From cultural celebrations to youth mentorship and economic empowerment, we create spaces where tradition meets opportunity."
+        ],
+        "cta": "Discover Our Story",
+        "ctaUrl": "about.html",
+        "caption": "Taunet Nelel — celebrating Kalenjin heritage across Australia"
+      },
+      "programsPreview": {
+        "tag": "What We Do",
+        "title": "Programs & Initiatives",
+        "description": "Empowering our community through culture, education, and mutual support."
+      },
+      "cta": {
+        "title": "Join Our Growing Community",
+        "description": "Whether you're in Sydney, Melbourne, Brisbane, or Perth — there's a place for you in Gotabgaa Australia.",
+        "button": "Become a Member",
+        "buttonUrl": "contact.html"
+      }
+    },
+    "about": {
+      "hero": { "tag": "Who We Are", "title": "About Gotabgaa Australia", "description": "Connecting Kalenjin families and friends across Australia through unity, heritage, and excellence." },
+      "lead": "We are an independent Australian Kalenjin community association dedicated to connecting, uplifting, and empowering individuals and families across the continent.",
+      "mission": "Inspire, connect, and economically empower our members through education, networking, investment opportunities, and cultural awareness in Australia.",
+      "vision": "Unite members and provide a platform where talent, leadership, culture, and innovation are nurtured — bridging Kenya and Australia.",
+      "cities": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra"],
+      "quote": "From the savannas of Kenya to the shores of Australia — our roots unite us, our dreams propel us forward.",
+      "image": "assets/hero/brisbane-team.png",
+      "cta": { "title": "Ready to connect?", "description": "Join our community and be part of something meaningful.", "button": "Get in Touch", "buttonUrl": "contact.html" }
+    },
+    "programs": {
+      "hero": { "tag": "What We Do", "title": "Our Programs", "description": "Purpose-driven initiatives that strengthen our community across Australia and beyond." }
+    },
+    "events": {
+      "hero": { "tag": "Community Calendar", "title": "Events & Gatherings", "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments." },
+      "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
+      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the chapter calendar for the year ahead." },
+      "impact": [
+        { "number": 24, "label": "Events Hosted", "animate": true },
+        { "number": 1200, "label": "Members Attended", "animate": true },
+        { "number": 6, "label": "Cities Visited", "animate": true },
+        { "number": 5, "label": "Upcoming This Year", "animate": true }
+      ],
+      "cta": { "title": "Want to host an event?", "description": "Chapter members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
+    },
+    "leadership": {
+      "hero": { "tag": "Our Team", "title": "Chapter Leadership", "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity." }
+    },
+    "gallery": {
+      "hero": { "tag": "Moments", "title": "Community Gallery", "description": "Celebrating our gatherings, cultural events, and milestones together." }
+    },
+    "contact": {
+      "hero": { "tag": "Get In Touch", "title": "Contact Us", "description": "For assistance with any of our programs or general inquiries, please reach out. We're here to help." }
+    },
+    "privacy": {
+      "hero": { "tag": "Legal", "title": "Privacy Policy", "description": "How we collect, use, and protect your information." },
+      "lastUpdated": "June 2026"
+    },
+    "terms": {
+      "hero": { "tag": "Legal", "title": "Terms & Conditions", "description": "Terms for using this website and engaging with our community." },
+      "lastUpdated": "June 2026"
+    }
+  },
+  "eventTypes": [
+    { "id": "cultural", "title": "Cultural Fetes", "description": "Music, dance, dress, and cuisine celebrating Kalenjin heritage across Australia.", "icon": "cultural" },
+    { "id": "sports", "title": "Sports Days", "description": "Football, athletics, and family-friendly competitions that build camaraderie.", "icon": "sports" },
+    { "id": "community", "title": "Community Meetups", "description": "City chapter gatherings, BBQs, and welcome events for new members and families.", "icon": "community" },
+    { "id": "agm", "title": "AGM & Workshops", "description": "Annual general meetings, mentorship workshops, and leadership forums.", "icon": "agm" }
+  ],
+  "timeline": [
+    { "month": "May", "title": "WA Community Gathering", "detail": "Perth · 9 May 2026" },
+    { "month": "Jun", "title": "Kokwet Sports Day", "detail": "Sydney · 14 June 2026" },
+    { "month": "Jul", "title": "Brisbane Chapter Meetup", "detail": "Brisbane · 18 July 2026" },
+    { "month": "Aug", "title": "Youth Mentorship Workshop", "detail": "Melbourne · 22 August 2026" },
+    { "month": "Sep", "title": "Annual Cultural Fete", "detail": "Brisbane · 12 September 2026" }
+  ],
+  "featuredEventId": "evt-cultural-fete-2026",
+  "events": [
+    {
+      "id": "evt-cultural-fete-2026",
+      "title": "Annual Cultural Fete 2026",
+      "date": "Saturday, 12 September 2026",
+      "datePill": "12 Sep 2026",
+      "time": "10:00 AM – 6:00 PM AEST",
+      "location": "Riverstage Park, Brisbane, QLD",
+      "meta": "Brisbane, QLD · 10:00 AM",
+      "image": "assets/hero/taunet-cultural-dance.png",
+      "status": "upcoming",
+      "category": "cultural",
+      "summary": "Flagship heritage celebration with music, dance, and cuisine for all ages.",
+      "description": "Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations. Food vendors, children's activities, and live performances throughout the day.",
+      "registerUrl": "contact.html",
+      "registerLabel": "Register"
+    },
+    {
+      "id": "evt-brisbane-meetup",
+      "title": "Brisbane Chapter Meetup",
+      "date": "Saturday, 18 July 2026",
+      "datePill": "18 Jul 2026",
+      "time": "2:00 PM – 5:00 PM AEST",
+      "location": "South Bank Parklands, Brisbane, QLD",
+      "meta": "Brisbane, QLD · 2:00 PM",
+      "image": "assets/hero/brisbane-team.png",
+      "status": "upcoming",
+      "category": "community",
+      "summary": "Connect with Brisbane members and welcome new families to the chapter.",
+      "description": "Monthly chapter meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
+      "registerUrl": "contact.html",
+      "registerLabel": "Register"
+    },
+    {
+      "id": "evt-youth-workshop",
+      "title": "Youth Mentorship Workshop",
+      "date": "Saturday, 22 August 2026",
+      "datePill": "22 Aug 2026",
+      "time": "9:30 AM – 1:00 PM AEST",
+      "location": "Melbourne CBD, VIC",
+      "meta": "Melbourne, VIC · 9:30 AM",
+      "image": "assets/hero/chairman-taunet.png",
+      "status": "upcoming",
+      "category": "community",
+      "summary": "Career guidance and mentorship for students and young professionals.",
+      "description": "Career guidance and mentorship for young members navigating education and employment in Australia. Guest speakers from our professional network share insights on study pathways, CV writing, and workplace culture.",
+      "registerUrl": "contact.html",
+      "registerLabel": "Register"
+    },
+    {
+      "id": "evt-kokwet-sports",
+      "title": "Kokwet Sports Day",
+      "date": "Sunday, 14 June 2026",
+      "datePill": "14 Jun 2026",
+      "time": "8:00 AM – 4:00 PM AEST",
+      "location": "Olympic Park, Sydney, NSW",
+      "meta": "Sydney, NSW · 8:00 AM",
+      "image": "assets/hero/kokwet-sports-day.png",
+      "status": "upcoming",
+      "category": "sports",
+      "summary": "Football, athletics, and family games across chapter teams.",
+      "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate chapters compete. Bring your family — picnic areas and refreshments on site.",
+      "registerUrl": "contact.html",
+      "registerLabel": "Register"
+    },
+    {
+      "id": "evt-wa-gathering",
+      "title": "WA Community Gathering",
+      "date": "Saturday, 9 May 2026",
+      "datePill": "9 May 2026",
+      "time": "11:00 AM – 3:00 PM AWST",
+      "location": "Kings Park, Perth, WA",
+      "meta": "Perth, WA · 11:00 AM",
+      "image": "assets/hero/kitwek-wa.png",
+      "status": "upcoming",
+      "category": "community",
+      "summary": "Western Australia chapter gathering with performances and shared lunch.",
+      "description": "Western Australia chapter gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
+      "registerUrl": "contact.html",
+      "registerLabel": "Register"
+    },
+    {
+      "id": "evt-agm-2026",
+      "title": "Annual General Meeting 2026",
+      "date": "Saturday, 15 March 2026",
+      "datePill": "15 Mar 2026",
+      "time": "2:00 PM – 5:00 PM AEST",
+      "location": "Sydney, NSW",
+      "meta": "Sydney, NSW · 2:00 PM",
+      "image": "assets/hero/berur-brisbane.png",
+      "status": "past",
+      "category": "agm",
+      "summary": "Annual reports, elections, and strategic planning for the chapter.",
+      "description": "Chapter AGM covering annual reports, elections, and strategic priorities for 2026. Members voted on committee positions and approved the benevolence fund budget. Minutes available on request.",
+      "registerUrl": "",
+      "registerLabel": ""
+    },
+    {
+      "id": "evt-heritage-2025",
+      "title": "Heritage Day Celebration 2025",
+      "date": "Saturday, 8 November 2025",
+      "datePill": "8 Nov 2025",
+      "time": "10:00 AM – 5:00 PM AEST",
+      "location": "Melbourne, VIC",
+      "meta": "Melbourne, VIC · 10:00 AM",
+      "image": "assets/hero/taunet-cultural-dance.png",
+      "status": "past",
+      "category": "cultural",
+      "summary": "Traditional dance, dress, and storytelling honouring our roots.",
+      "description": "A vibrant day of traditional dance, dress, and storytelling honouring Kalenjin roots. Over 200 members attended from Victoria and interstate chapters.",
+      "registerUrl": "gallery.html",
+      "registerLabel": "See Photos"
+    },
+    {
+      "id": "evt-bbq-2025",
+      "title": "Community BBQ & Gifting Ceremony",
+      "date": "Sunday, 19 October 2025",
+      "datePill": "19 Oct 2025",
+      "time": "12:00 PM – 4:00 PM AEST",
+      "location": "Adelaide, SA",
+      "meta": "Adelaide, SA · 12:00 PM",
+      "image": "assets/hero/charmen-gifting.png",
+      "status": "past",
+      "category": "community",
+      "summary": "BBQ and ceremony recognising members and contributors.",
+      "description": "Community BBQ followed by a gifting ceremony recognising outstanding members and benevolence fund contributors. Families enjoyed games and shared meals together.",
+      "registerUrl": "gallery.html",
+      "registerLabel": "See Photos"
+    }
+  ],
+  "programs": [
+    {
+      "id": "prog-education",
+      "title": "Education & Mentorship",
+      "description": "Supporting students and newcomers adapting to Australian education and workplace culture through mentoring, scholarships, and career guidance.",
+      "icon": "education",
+      "link": "contact.html",
+      "showOnHome": false
+    },
+    {
+      "id": "prog-benevolence",
+      "title": "Benevolence Fund",
+      "description": "A member-supported fund providing financial assistance to families during times of loss or hardship — harnessing the power of community solidarity.",
+      "icon": "heart",
+      "link": "contact.html",
+      "showOnHome": false
+    },
+    {
+      "id": "prog-outreach",
+      "title": "Community Outreach",
+      "description": "Health awareness campaigns, settlement support for new arrivals, and partnerships with local organisations serving the African-Australian community.",
+      "icon": "building",
+      "link": "contact.html",
+      "showOnHome": false
+    },
+    {
+      "id": "prog-cultural",
+      "title": "Cultural Fete",
+      "description": "Our annual celebration of Kalenjin heritage — featuring traditional music, dance, storytelling, cuisine, and games for all generations.",
+      "icon": "music",
+      "link": "contact.html",
+      "showOnHome": false
+    },
+    {
+      "id": "prog-home-cultural",
+      "title": "Cultural Heritage",
+      "description": "Celebrating Kalenjin traditions, language, and arts through festivals and gatherings.",
+      "icon": "music",
+      "link": "programs.html",
+      "showOnHome": true
+    },
+    {
+      "id": "prog-home-youth",
+      "title": "Youth & Education",
+      "description": "Mentorship, scholarships, and leadership programs for the next generation.",
+      "icon": "education",
+      "link": "programs.html",
+      "showOnHome": true
+    },
+    {
+      "id": "prog-home-support",
+      "title": "Community Support",
+      "description": "Mutual aid, networking, and welfare support for members across Australia.",
+      "icon": "heart",
+      "link": "programs.html",
+      "showOnHome": true
+    }
+  ],
+  "leadership": [
+    { "id": "ldr-president", "name": "Chapter President", "role": "Board President", "initials": "CR", "photo": "" },
+    { "id": "ldr-vp", "name": "Chapter Vice President", "role": "Board Vice President", "initials": "VP", "photo": "" },
+    { "id": "ldr-secretary", "name": "Secretary General", "role": "Administration", "initials": "SG", "photo": "" },
+    { "id": "ldr-coordinator", "name": "National Coordinator", "role": "Programs & Events", "initials": "NC", "photo": "" },
+    { "id": "ldr-treasurer", "name": "Treasurer", "role": "Finance", "initials": "TR", "photo": "" }
+  ],
+  "gallery": [
+    { "id": "gal-1", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Taunet Nelel — Cultural Dance", "wide": true },
+    { "id": "gal-2", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane Team", "wide": false },
+    { "id": "gal-3", "image": "assets/hero/charmen-gifting.png", "alt": "Chairman gifting at community event", "caption": "Community Gifting", "wide": false },
+    { "id": "gal-4", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia chapter team", "caption": "South Australia Team", "wide": false },
+    { "id": "gal-5", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet Sports Day", "wide": false },
+    { "id": "gal-6", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance at Taunet Nelel Victoria", "caption": "Taunet Nelel Victoria — Women's Dance", "wide": true }
+  ],
+  "submissions": []
+}

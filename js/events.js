@@ -2,21 +2,33 @@
  * Events page — filtering, search, and detail modal
  */
 (function () {
-  const FEATURED_EVENT = {
-    title: 'Annual Cultural Fete 2026',
-    date: 'Saturday, 12 September 2026',
-    time: '10:00 AM – 6:00 PM AEST',
-    location: 'Riverstage Park, Brisbane, QLD',
-    image: 'assets/hero/taunet-cultural-dance.png',
-    status: 'upcoming',
-    category: 'cultural',
-    desc: 'Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations. Food vendors, children\'s activities, and live performances throughout the day.'
-  };
+  function getFeaturedEvent() {
+    if (window.CMS_FEATURED_EVENT) return window.CMS_FEATURED_EVENT;
+    return {
+      title: 'Annual Cultural Fete 2026',
+      date: 'Saturday, 12 September 2026',
+      time: '10:00 AM – 6:00 PM AEST',
+      location: 'Riverstage Park, Brisbane, QLD',
+      image: 'assets/hero/taunet-cultural-dance.png',
+      status: 'upcoming',
+      category: 'cultural',
+      description: 'Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations.'
+    };
+  }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function boot() {
     initEventFilters();
     initEventModal();
-  });
+  }
+
+  document.addEventListener('cms-ready', boot);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.CMS_CONTENT) boot();
+    });
+  } else if (window.CMS_CONTENT) {
+    boot();
+  }
 
   function initEventFilters() {
     const grid = document.getElementById('eventsGrid');
@@ -25,7 +37,7 @@
     const filters = document.querySelectorAll('.events__filter');
     if (!grid) return;
 
-    const cards = [...grid.querySelectorAll('.event-card')];
+    const cards = () => [...grid.querySelectorAll('.event-card')];
     let activeFilter = 'all';
     let query = '';
 
@@ -52,17 +64,14 @@
 
     const apply = () => {
       let visible = 0;
-
-      cards.forEach(card => {
+      cards().forEach(card => {
         const show = matches(card);
         card.classList.toggle('is-hidden', !show);
         card.hidden = !show;
         if (show) visible += 1;
       });
 
-      if (empty) {
-        empty.hidden = visible > 0;
-      }
+      if (empty) empty.hidden = visible > 0;
     };
 
     filters.forEach(btn => {
@@ -122,7 +131,7 @@
       img.src = data.image;
       img.alt = data.title;
       title.textContent = data.title;
-      desc.textContent = data.desc;
+      desc.textContent = data.desc || data.description;
 
       tags.innerHTML = `
         <span class="event-card__tag event-card__tag--${data.category}">${categoryLabels[data.category] || data.category}</span>
@@ -154,20 +163,35 @@
       document.body.classList.remove('modal-open');
     };
 
-    document.querySelectorAll('[data-event-open]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const card = e.target.closest('.event-card');
-        if (card) openFromCard(card);
-      });
-    });
-
-    if (featuredBtn) {
-      featuredBtn.addEventListener('click', () => openModal(FEATURED_EVENT));
-    }
-
     modal.querySelectorAll('[data-event-close]').forEach(el => {
       el.addEventListener('click', closeModal);
     });
+
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-event-open]');
+      if (!btn) return;
+      const card = btn.closest('.event-card');
+      if (card) {
+        e.preventDefault();
+        openFromCard(card);
+      }
+    });
+
+    if (featuredBtn) {
+      featuredBtn.addEventListener('click', () => {
+        const featured = getFeaturedEvent();
+        openModal({
+          title: featured.title,
+          date: featured.date,
+          time: featured.time,
+          location: featured.location,
+          image: featured.image,
+          status: featured.status,
+          category: featured.category,
+          desc: featured.description || featured.desc
+        });
+      });
+    }
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();

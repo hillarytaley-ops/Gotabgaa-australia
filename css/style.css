@@ -1239,6 +1239,15 @@ body.page-sub .section {
   margin: 0 auto 16px;
 }
 
+.leader-card__photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: block;
+}
+
 .leader-card h3 {
   font-family: var(--font-display);
   font-size: 1.05rem;
