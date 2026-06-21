@@ -712,6 +712,7 @@
       await loadContent();
       setPreviewMode(false);
       showApp();
+      openSectionFromHash();
     } catch (err) {
       els.loginError.textContent = err.message;
       els.loginError.hidden = false;
@@ -742,8 +743,17 @@
     loadContent().then(() => {
       setPreviewMode(false);
       showApp();
+      openSectionFromHash();
     }).catch(() => showLogin());
-  } else if (sessionStorage.getItem(PREVIEW_KEY)) {
-    enterPreview();
+  } else if (sessionStorage.getItem(PREVIEW_KEY) || new URLSearchParams(location.search).get('preview') === '1') {
+    enterPreview().then(() => openSectionFromHash());
+  }
+
+  function openSectionFromHash() {
+    const section = location.hash.replace('#', '');
+    if (section && SECTION_TITLES[section]) {
+      collectFromForm();
+      renderSection(section);
+    }
   }
 })();

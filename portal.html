@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Gotabgaa Australia leadership portal — manage website content, events, and community programs.">
+  <title>Admin Portal | Gotabgaa Australia Chapter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/logo-round.png" type="image/png">
+  <link rel="canonical" href="https://gotabgaa-australia.vercel.app/portal.html">
+</head>
+<body class="page-sub">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia Chapter" class="nav__logo logo-circle">
+        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="programs.html" class="nav__link">Programs</a></li>
+        <li><a href="events.html" class="nav__link">Events</a></li>
+        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
+        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+        <li><a href="portal.html" class="nav__link nav__link--portal">Portal</a></li>
+        <li><a href="contact.html" class="btn btn--primary nav__cta">Join Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="tribal-border tribal-border--top" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container">
+      <span class="section__tag">Leadership Access</span>
+      <h1 class="page-hero__title">Admin Portal</h1>
+      <p class="page-hero__desc">Manage website content, events, programs, gallery, and chapter information — for authorised leadership volunteers only.</p>
+    </div>
+    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
+      <div class="tribal-border__track tribal-border__track--reverse"></div>
+    </div>
+  </section>
+
+  <section class="portal section">
+    <div class="container">
+      <div class="portal__intro animate-on-scroll" data-animate="fade-up">
+        <div class="portal__badge-wrap">
+          <img src="assets/logo-round.png" alt="" class="portal__logo logo-circle" width="96" height="96">
+        </div>
+        <h2 class="section__title">Chapter website dashboard</h2>
+        <p>Use the dashboard to update the public site without editing code. Changes can be published live after signing in with your leadership credentials.</p>
+      </div>
+
+      <div class="portal__actions animate-on-scroll" data-animate="fade-up">
+        <a href="admin/?preview=1" class="portal__action portal__action--primary">
+          <span class="portal__action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </span>
+          <span class="portal__action-text">
+            <strong>Open dashboard preview</strong>
+            <small>Browse and edit — export JSON without a password</small>
+          </span>
+        </a>
+        <a href="admin/" class="portal__action portal__action--secondary">
+          <span class="portal__action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </span>
+          <span class="portal__action-text">
+            <strong>Sign in to dashboard</strong>
+            <small>Publish changes to the live website</small>
+          </span>
+        </a>
+      </div>
+
+      <div class="section__header animate-on-scroll" data-animate="fade-up">
+        <span class="section__tag">Quick access</span>
+        <h2 class="section__title">What you can manage</h2>
+        <p class="section__desc">Jump straight into a section after opening the dashboard.</p>
+      </div>
+
+      <div class="portal__grid">
+        <a href="admin/#events" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="0">
+          <span class="portal-card__icon portal-card__icon--events" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </span>
+          <h3>Events</h3>
+          <p>Add gatherings, update dates, featured events, and calendar highlights.</p>
+        </a>
+        <a href="admin/#programs" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="1">
+          <span class="portal-card__icon portal-card__icon--programs" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
+          </span>
+          <h3>Programs</h3>
+          <p>Edit benevolence, education, outreach, and cultural program cards.</p>
+        </a>
+        <a href="admin/#gallery" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="2">
+          <span class="portal-card__icon portal-card__icon--gallery" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </span>
+          <h3>Gallery</h3>
+          <p>Update community photos, captions, and gallery layout.</p>
+        </a>
+        <a href="admin/#leadership" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="3">
+          <span class="portal-card__icon portal-card__icon--leadership" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </span>
+          <h3>Leadership</h3>
+          <p>Update chapter officers, roles, and team listings.</p>
+        </a>
+        <a href="admin/#home" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="4">
+          <span class="portal-card__icon portal-card__icon--home" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
+          </span>
+          <h3>Home page</h3>
+          <p>Hero text, impact stats, slideshow images, and home CTAs.</p>
+        </a>
+        <a href="admin/#site" class="portal-card animate-on-scroll" data-animate="fade-up" data-delay="5">
+          <span class="portal-card__icon portal-card__icon--site" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </span>
+          <h3>Site settings</h3>
+          <p>Email, social links, tagline, and global site configuration.</p>
+        </a>
+      </div>
+
+      <div class="portal__notice card animate-on-scroll" data-animate="fade-up">
+        <h3>For chapter leadership only</h3>
+        <p>This portal is intended for Gotabgaa Australia executive volunteers and authorised web administrators. If you need access, contact <a href="mailto:info@gotabgaaaustralia.org">info@gotabgaaaustralia.org</a>.</p>
+        <p class="portal__notice-small">Need help? See setup notes in the repository <code>admin/README.txt</code> or ask your national coordinator.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="tribal-border tribal-border--edge" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia" class="footer__logo logo-circle">
+        <p>Unity • Heritage • Excellence</p>
+        <p class="footer__affiliation">An affiliate chapter of <a href="https://www.gotabgaainternational.org/" target="_blank" rel="noopener">Gotabgaa International</a></p>
+      </div>
+      <div class="footer__nav">
+        <div class="footer__links">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div class="footer__links">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="leadership.html">Leadership</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="portal.html">Admin Portal</a></li>
+          </ul>
+        </div>
+        <div class="footer__links footer__links--connect">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@gotabgaaaustralia.org">Email Us</a></li>
+            <li><a href="https://www.gotabgaainternational.org/" target="_blank" rel="noopener">Gotabgaa International</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom container">
+      <p>&copy; 2026 Gotabgaa Australia Chapter. All Rights Reserved.</p>
+      <div class="footer__legal">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="portal.html">Admin Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/site-config.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="floating-social/floating-social.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

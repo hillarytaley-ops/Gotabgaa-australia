@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroParallax();
   initTiltCards();
   initPageHeroLogos();
-  initAdminLink();
+  initAdminPortalLinks();
 });
 
 function initSiteConfig() {
@@ -291,16 +291,30 @@ function initPageHeroLogos() {
   container.insertAdjacentElement('afterend', createSideLogo('right'));
 }
 
-// Footer link to admin dashboard (leadership access)
-function initAdminLink() {
+// Footer and community links to admin portal
+function initAdminPortalLinks() {
+  document.querySelectorAll('.footer__nav .footer__links').forEach(col => {
+    const h4 = col.querySelector('h4');
+    if (!h4 || h4.textContent.trim() !== 'Community') return;
+    const ul = col.querySelector('ul');
+    if (!ul || ul.querySelector('[data-portal-link]')) return;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = 'portal.html';
+    a.textContent = 'Admin Portal';
+    a.setAttribute('data-portal-link', '');
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+
   document.querySelectorAll('.footer__legal').forEach(legal => {
     if (legal.querySelector('[data-admin-link]')) return;
-    const link = document.createElement('a');
-    link.href = '/admin/';
-    link.textContent = 'Admin';
-    link.setAttribute('data-admin-link', '');
-    link.setAttribute('aria-label', 'Open site admin dashboard');
-    legal.appendChild(link);
+    const a = document.createElement('a');
+    a.href = 'portal.html';
+    a.textContent = 'Admin Portal';
+    a.setAttribute('data-admin-link', '');
+    a.setAttribute('aria-label', 'Open leadership admin portal');
+    legal.appendChild(a);
   });
 }
 
