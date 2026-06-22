@@ -999,9 +999,14 @@
             </summary>
             <div class="membership-reg-item__body">
               <div class="membership-reg-item__grid">${formatAilcdDetails(a.data)}</div>
-              <button type="button" class="btn btn--outline btn--sm ailcd-mark-read" data-id="${escapeHtml(a.id)}" data-read="${a.read ? '0' : '1'}">
-                ${a.read ? 'Mark unread' : 'Mark read'}
-              </button>
+              <div class="inbox-item__actions">
+                <button type="button" class="btn btn--outline btn--sm ailcd-mark-read" data-id="${escapeHtml(a.id)}" data-read="${a.read ? '0' : '1'}">
+                  ${a.read ? 'Mark unread' : 'Mark read'}
+                </button>
+                <button type="button" class="btn btn--danger btn--sm ailcd-delete" data-id="${escapeHtml(a.id)}" data-name="${escapeHtml(a.full_name || 'this applicant')}">
+                  Delete
+                </button>
+              </div>
             </div>
           </details>
         `).join('')}
@@ -1040,6 +1045,28 @@
             },
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
+          loadAilcdApplicationsPanel();
+        });
+      });
+
+      card.querySelectorAll('.ailcd-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const name = btn.dataset.name || 'this applicant';
+          if (!confirm(`Delete the application from ${name}? This cannot be undone.`)) return;
+
+          const token = getToken();
+          const res = await fetch(`/api/ailcd-applications?id=${encodeURIComponent(btn.dataset.id)}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            showStatus(data.error || 'Could not delete application.', 'error');
+            return;
+          }
+
+          showStatus('Application deleted.', 'success');
           loadAilcdApplicationsPanel();
         });
       });

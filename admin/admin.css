@@ -609,6 +609,13 @@ body {
   border-top: 1px solid var(--cream-dark);
 }
 
+.inbox-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .membership-reg-item__grid p {
   margin: 0 0 8px;
   font-size: 0.9rem;
