@@ -1,8 +1,10 @@
 export function isSchemaColumnError(error) {
-  const message = String(error?.message || '');
+  const message = String(error?.message || '').toLowerCase();
   return error?.code === 'PGRST204'
+    || error?.code === '42703'
     || message.includes('schema cache')
-    || /Could not find the '[^']+' column/.test(message);
+    || message.includes('does not exist')
+    || /could not find the '[^']+' column/.test(message);
 }
 
 export function getAppMeta(row) {
