@@ -35,33 +35,63 @@
     let hasStroke = false;
     let lastX = 0;
     let lastY = 0;
+    let displayWidth = 0;
+    let displayHeight = 0;
 
-    function resize() {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = Math.floor(rect.width * ratio);
-      canvas.height = Math.floor(rect.height * ratio);
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    canvas.style.touchAction = 'none';
+
+    function applyBrush() {
       ctx.lineWidth = 2.5;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = '#2a1f17';
     }
 
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width < 20 || rect.height < 20) return false;
+
+      const ratio = window.devicePixelRatio || 1;
+      const backup = hasStroke && canvas.width > 0 ? canvas.toDataURL('image/png') : null;
+
+      displayWidth = rect.width;
+      displayHeight = rect.height;
+      canvas.width = Math.floor(displayWidth * ratio);
+      canvas.height = Math.floor(displayHeight * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      applyBrush();
+
+      if (backup) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
+        img.src = backup;
+      }
+
+      return true;
+    }
+
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
-      const point = e.touches ? e.touches[0] : e;
       return {
-        x: point.clientX - rect.left,
-        y: point.clientY - rect.top
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
       };
     }
 
     function startDraw(e) {
+      if (!resize()) return;
       drawing = true;
       const { x, y } = getPos(e);
       lastX = x;
       lastY = y;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 0.1, y + 0.1);
+      ctx.stroke();
+      hasStroke = true;
+      if (canvas.setPointerCapture && e.pointerId != null) {
+        try { canvas.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+      }
       e.preventDefault();
     }
 
@@ -78,33 +108,51 @@
       e.preventDefault();
     }
 
-    function endDraw() {
+    function endDraw(e) {
       drawing = false;
+      if (canvas.releasePointerCapture && e?.pointerId != null) {
+        try { canvas.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+      }
     }
 
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', endDraw);
-    canvas.addEventListener('mouseleave', endDraw);
-    canvas.addEventListener('touchstart', startDraw, { passive: false });
-    canvas.addEventListener('touchmove', draw, { passive: false });
-    canvas.addEventListener('touchend', endDraw);
+    canvas.addEventListener('pointerdown', startDraw);
+    canvas.addEventListener('pointermove', draw);
+    canvas.addEventListener('pointerup', endDraw);
+    canvas.addEventListener('pointercancel', endDraw);
+    canvas.addEventListener('pointerleave', endDraw);
 
     window.addEventListener('resize', () => {
-      if (hasStroke) return;
-      resize();
+      if (currentStep === 3) resize();
     });
-
-    resize();
 
     return {
       isEmpty: () => !hasStroke,
+      resize,
       clear: () => {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+        const ratio = window.devicePixelRatio || 1;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        applyBrush();
         hasStroke = false;
       },
       toDataURL: () => (hasStroke ? canvas.toDataURL('image/png') : '')
     };
+  }
+
+  function ensureSignaturePad() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+
+    if (!signaturePad) {
+      signaturePad = initSignaturePad(canvas);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => signaturePad?.resize());
+    });
   }
 
   function collectFormData() {
@@ -172,6 +220,7 @@
       if (nameField && fullName && !nameField.value.trim()) {
         nameField.value = fullName;
       }
+      ensureSignaturePad();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -215,10 +264,13 @@
       return false;
     }
 
-    if (currentStep === 3 && signaturePad?.isEmpty()) {
-      alert('Please sign in the signature box before submitting.');
-      document.getElementById('signatureCanvas')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return false;
+    if (currentStep === 3) {
+      ensureSignaturePad();
+      if (!signaturePad || signaturePad.isEmpty()) {
+        alert('Please sign in the signature box before submitting.');
+        document.getElementById('signatureCanvas')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+      }
     }
 
     return true;
@@ -226,10 +278,9 @@
 
   function init() {
     const form = document.getElementById('ailcdForm');
-    const canvas = document.getElementById('signatureCanvas');
-    if (canvas) signaturePad = initSignaturePad(canvas);
 
     document.getElementById('clearSignature')?.addEventListener('click', () => {
+      if (!signaturePad) ensureSignaturePad();
       signaturePad?.clear();
     });
 
