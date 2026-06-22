@@ -34,6 +34,28 @@ body {
   background: linear-gradient(155deg, var(--brown-800), var(--brown-900));
 }
 
+.login-screen__wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-screen__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.login-screen__home:hover {
+  color: var(--white);
+  text-decoration: underline;
+}
+
 .login-card {
   width: 100%;
   max-width: 400px;

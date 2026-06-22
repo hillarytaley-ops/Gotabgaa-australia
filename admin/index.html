@@ -12,7 +12,9 @@
 </head>
 <body>
   <div id="loginScreen" class="login-screen">
-    <form class="login-card" id="loginForm">
+    <div class="login-screen__wrap">
+      <a href="../index.html" class="login-screen__home">← Back to home page</a>
+      <form class="login-card" id="loginForm">
       <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
       <h1>Gotabgaa Australia</h1>
       <p class="login-card__sub">Admin Dashboard</p>
@@ -23,7 +25,8 @@
       <button type="submit" class="btn btn--primary" id="loginSubmitBtn">Sign In</button>
       <button type="button" class="btn btn--outline" id="previewBtn" style="margin-top:10px;width:100%">Open Preview (no password)</button>
       <p class="login-card__hint">Use the password from Vercel env var <strong>ADMIN_PASSWORD</strong> (not ADMIN_SECRET).</p>
-    </form>
+      </form>
+    </div>
   </div>
 
   <div id="app" class="app" hidden>
