@@ -199,11 +199,13 @@
   }
 
   function renderDashboardStats() {
+    const upcoming = content.events?.filter(e => e.status === 'upcoming').length || 0;
+    const past = content.events?.filter(e => e.status === 'past').length || 0;
     els.statsGrid.innerHTML = `
-      <div class="stat-card"><strong>${content.events?.length || 0}</strong><span>Events</span></div>
+      <div class="stat-card"><strong>${upcoming}</strong><span>Upcoming Events</span></div>
+      <div class="stat-card"><strong>${past}</strong><span>Past Events</span></div>
       <div class="stat-card"><strong>${content.programs?.length || 0}</strong><span>Programs</span></div>
       <div class="stat-card"><strong>${content.leadership?.length || 0}</strong><span>Leaders</span></div>
-      <div class="stat-card"><strong>${content.gallery?.length || 0}</strong><span>Gallery Photos</span></div>
     `;
   }
 
@@ -318,25 +320,59 @@
   }
 
   function renderEventsPanel() {
+    const upcoming = content.events.filter(e => e.status === 'upcoming');
+    const past = content.events.filter(e => e.status === 'past');
     const featuredOpts = content.events.map(e => ({ value: e.id, label: e.title }));
+
+    const renderList = (list, label) => {
+      if (!list.length) return `<p class="form-hint">No ${label.toLowerCase()} events yet.</p>`;
+      return list.map(e => {
+        const i = content.events.indexOf(e);
+        return eventItemHtml(e, i);
+      }).join('');
+    };
+
     return `
+      <div class="card card--notice">
+        <p><strong>Public site:</strong> Events appear in <strong>Upcoming</strong> and <strong>Past</strong> groups on <a href="../events.html" target="_blank" rel="noopener">events.html</a>. Upcoming events link to the <a href="../book.html" target="_blank" rel="noopener">booking portal</a> (payments coming later).</p>
+      </div>
+      <div class="card" id="eventBookingsCard">
+        <h3>Recent bookings</h3>
+        <p class="form-hint">Loading booking requests…</p>
+      </div>
       <div class="card"><h3>Featured event</h3>
         ${field('Featured event', 'featuredEventId', content.featuredEventId, 'select', { options: featuredOpts })}
       </div>
       <div class="card">
-        <div class="list-item__header"><h3>All events</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addEvent">+ Add Event</button>
+        <div class="list-item__header"><h3>Upcoming events (${upcoming.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addEvent">+ Add Upcoming Event</button>
         </div>
-        <div id="eventsList">${content.events.map((e, i) => eventItemHtml(e, i)).join('')}</div>
+        <div id="eventsListUpcoming">${renderList(upcoming, 'Upcoming')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Past events (${past.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addPastEvent">+ Add Past Event</button>
+        </div>
+        <div id="eventsListPast">${renderList(past, 'Past')}</div>
       </div>
     `;
   }
 
   function eventItemHtml(e, i) {
+    const bookingFields = e.status === 'upcoming' ? `
+          ${field('Booking enabled', `evtBooking${i}`, e.bookingEnabled !== false, 'checkbox')}
+          ${field('Book button label', `evtBookingLabel${i}`, e.bookingLabel || 'Book Now')}
+          ${field('Ticket / price note', `evtPriceNote${i}`, e.ticketPriceNote || '', 'textarea')}
+          ${field('Booking URL (optional)', `evtBookingUrl${i}`, e.bookingUrl || `book.html?id=${e.id}`)}
+        ` : `
+          ${field('Past action URL', `evtRegUrl${i}`, e.registerUrl)}
+          ${field('Past action label', `evtRegLabel${i}`, e.registerLabel)}
+        `;
+
     return `
       <div class="list-item" data-event-index="${i}">
         <div class="list-item__header">
-          <h4>${escapeHtml(e.title)}</h4>
+          <h4>${escapeHtml(e.title)} <span class="form-hint">(${e.status})</span></h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-event="${i}">Remove</button>
         </div>
         <div class="form-grid">
@@ -359,8 +395,7 @@
           ]})}
           ${field('Summary', `evtSummary${i}`, e.summary, 'textarea')}
           ${field('Full description', `evtDesc${i}`, e.description, 'textarea', { full: true })}
-          ${field('Register URL', `evtRegUrl${i}`, e.registerUrl)}
-          ${field('Register label', `evtRegLabel${i}`, e.registerLabel)}
+          ${bookingFields}
         </div>
       </div>
     `;
@@ -434,6 +469,84 @@
         ${field('Office hours', 'contactHours', c.officeHours)}
       </div></div>
     `;
+  }
+
+  async function loadEventBookings() {
+    const token = getToken();
+    if (!token) return [];
+
+    const res = await fetch('/api/event-bookings', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Could not load bookings');
+    }
+
+    const data = await res.json();
+    return data.bookings || [];
+  }
+
+  function renderEventBookingsPanel(bookings, errorMsg) {
+    if (errorMsg) {
+      return `<h3>Recent bookings</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
+    }
+    if (!bookings.length) {
+      return `<h3>Recent bookings</h3><p class="form-hint">No booking requests yet. Submissions from the booking portal appear here when Supabase is connected.</p>`;
+    }
+
+    return `
+      <h3>Recent bookings (${bookings.length})</h3>
+      <div id="bookingsList">
+        ${bookings.slice(0, 20).map(b => `
+          <div class="list-item inbox-item ${b.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(b.id)}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(b.event_title)}</h4>
+              <span class="inbox-item__date">${new Date(b.created_at).toLocaleString()}</span>
+            </div>
+            <p><strong>${escapeHtml(b.name)}</strong> · ${escapeHtml(b.email)}${b.phone ? ` · ${escapeHtml(b.phone)}` : ''}</p>
+            <p class="form-hint">${b.tickets} place(s)${b.notes ? ` · ${escapeHtml(b.notes)}` : ''}</p>
+            <button type="button" class="btn btn--outline btn--sm booking-mark-read" data-id="${escapeHtml(b.id)}" data-read="${b.read ? '0' : '1'}">
+              ${b.read ? 'Mark unread' : 'Mark read'}
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  async function loadEventBookingsPanel() {
+    const card = document.getElementById('eventBookingsCard');
+    if (!card) return;
+
+    if (isPreviewMode || !getToken()) {
+      card.innerHTML = renderEventBookingsPanel([], 'Sign in to view event bookings.');
+      return;
+    }
+
+    card.innerHTML = '<h3>Recent bookings</h3><p class="form-hint">Loading…</p>';
+
+    try {
+      const bookings = await loadEventBookings();
+      card.innerHTML = renderEventBookingsPanel(bookings);
+      card.querySelectorAll('.booking-mark-read').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const token = getToken();
+          await fetch('/api/event-bookings', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
+          });
+          loadEventBookingsPanel();
+        });
+      });
+    } catch (err) {
+      card.innerHTML = renderEventBookingsPanel([], err.message);
+    }
   }
 
   async function loadSubmissions() {
@@ -584,9 +697,12 @@
     }
 
     if (section === 'events') {
+      loadEventBookingsPanel();
+
       document.getElementById('addEvent')?.addEventListener('click', () => {
+        const id = `evt-${Date.now()}`;
         content.events.unshift({
-          id: `evt-${Date.now()}`,
+          id,
           title: 'New Event',
           date: '',
           datePill: '',
@@ -598,11 +714,37 @@
           category: 'community',
           summary: '',
           description: '',
-          registerUrl: 'contact.html',
-          registerLabel: 'Register'
+          bookingEnabled: true,
+          bookingLabel: 'Book Now',
+          ticketPriceNote: 'Free registration — secure payment coming soon',
+          bookingUrl: `book.html?id=${id}`,
+          registerUrl: `book.html?id=${id}`,
+          registerLabel: 'Book Now'
         });
         renderSection('events');
       });
+
+      document.getElementById('addPastEvent')?.addEventListener('click', () => {
+        content.events.push({
+          id: `evt-${Date.now()}`,
+          title: 'Past Event',
+          date: '',
+          datePill: '',
+          time: '',
+          location: '',
+          meta: '',
+          image: 'assets/hero/taunet-cultural-dance.png',
+          status: 'past',
+          category: 'community',
+          summary: '',
+          description: '',
+          bookingEnabled: false,
+          registerUrl: 'gallery.html',
+          registerLabel: 'See Photos'
+        });
+        renderSection('events');
+      });
+
       document.querySelectorAll('[data-remove-event]').forEach(btn => {
         btn.addEventListener('click', () => {
           content.events.splice(+btn.dataset.removeEvent, 1);
@@ -745,8 +887,18 @@
         e.category = val(`evtCategory${i}`);
         e.summary = val(`evtSummary${i}`);
         e.description = val(`evtDesc${i}`);
-        e.registerUrl = val(`evtRegUrl${i}`);
-        e.registerLabel = val(`evtRegLabel${i}`);
+        if (e.status === 'upcoming') {
+          e.bookingEnabled = val(`evtBooking${i}`);
+          e.bookingLabel = val(`evtBookingLabel${i}`);
+          e.ticketPriceNote = val(`evtPriceNote${i}`);
+          e.bookingUrl = val(`evtBookingUrl${i}`);
+          e.registerUrl = e.bookingUrl || `book.html?id=${e.id}`;
+          e.registerLabel = e.bookingLabel || 'Book Now';
+        } else {
+          e.registerUrl = val(`evtRegUrl${i}`);
+          e.registerLabel = val(`evtRegLabel${i}`);
+          e.bookingEnabled = false;
+        }
       }
     });
 

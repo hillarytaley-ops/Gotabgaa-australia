@@ -3,6 +3,7 @@
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
-    { "source": "/portal", "destination": "/portal.html" }
+    { "source": "/portal", "destination": "/portal.html" },
+    { "source": "/book", "destination": "/book.html" }
   ]
 }

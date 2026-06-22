@@ -95,6 +95,8 @@
       "hero": { "tag": "Community Calendar", "title": "Events & Gatherings", "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments." },
       "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
       "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the chapter calendar for the year ahead." },
+      "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal — online payments will be added in a future update." },
+      "pastHeader": { "tag": "Archive", "title": "Past Events", "description": "Highlights from recent gatherings across our chapters." },
       "impact": [
         { "number": 24, "label": "Events Hosted", "animate": true },
         { "number": 1200, "label": "Members Attended", "animate": true },
@@ -149,8 +151,11 @@
       "category": "cultural",
       "summary": "Flagship heritage celebration with music, dance, and cuisine for all ages.",
       "description": "Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations. Food vendors, children's activities, and live performances throughout the day.",
-      "registerUrl": "contact.html",
-      "registerLabel": "Register"
+      "bookingEnabled": true,
+      "bookingLabel": "Book Now",
+      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "registerUrl": "book.html?id=evt-cultural-fete-2026",
+      "registerLabel": "Book Now"
     },
     {
       "id": "evt-brisbane-meetup",
@@ -165,8 +170,11 @@
       "category": "community",
       "summary": "Connect with Brisbane members and welcome new families to the chapter.",
       "description": "Monthly chapter meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
-      "registerUrl": "contact.html",
-      "registerLabel": "Register"
+      "bookingEnabled": true,
+      "bookingLabel": "Book Now",
+      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "registerUrl": "book.html?id=evt-brisbane-meetup",
+      "registerLabel": "Book Now"
     },
     {
       "id": "evt-youth-workshop",
@@ -181,8 +189,11 @@
       "category": "community",
       "summary": "Career guidance and mentorship for students and young professionals.",
       "description": "Career guidance and mentorship for young members navigating education and employment in Australia. Guest speakers from our professional network share insights on study pathways, CV writing, and workplace culture.",
-      "registerUrl": "contact.html",
-      "registerLabel": "Register"
+      "bookingEnabled": true,
+      "bookingLabel": "Book Now",
+      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "registerUrl": "book.html?id=evt-youth-workshop",
+      "registerLabel": "Book Now"
     },
     {
       "id": "evt-kokwet-sports",
@@ -197,8 +208,11 @@
       "category": "sports",
       "summary": "Football, athletics, and family games across chapter teams.",
       "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate chapters compete. Bring your family — picnic areas and refreshments on site.",
-      "registerUrl": "contact.html",
-      "registerLabel": "Register"
+      "bookingEnabled": true,
+      "bookingLabel": "Book Now",
+      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "registerUrl": "book.html?id=evt-kokwet-sports",
+      "registerLabel": "Book Now"
     },
     {
       "id": "evt-wa-gathering",
@@ -213,8 +227,11 @@
       "category": "community",
       "summary": "Western Australia chapter gathering with performances and shared lunch.",
       "description": "Western Australia chapter gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
-      "registerUrl": "contact.html",
-      "registerLabel": "Register"
+      "bookingEnabled": true,
+      "bookingLabel": "Book Now",
+      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "registerUrl": "book.html?id=evt-wa-gathering",
+      "registerLabel": "Book Now"
     },
     {
       "id": "evt-agm-2026",

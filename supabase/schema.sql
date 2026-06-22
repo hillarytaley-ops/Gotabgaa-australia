@@ -32,6 +32,31 @@ create index if not exists contact_submissions_created_at_idx
 create index if not exists contact_submissions_read_idx
   on public.contact_submissions (read, created_at desc);
 
+-- 3) Event booking portal (payment integration planned for later)
+create table if not exists public.event_bookings (
+  id uuid primary key default gen_random_uuid(),
+  event_id text not null,
+  event_title text not null,
+  name text not null,
+  email text not null,
+  phone text,
+  tickets integer not null default 1,
+  notes text,
+  created_at timestamptz not null default now(),
+  read boolean not null default false
+);
+
+comment on table public.event_bookings is 'Registrations from the event booking portal';
+
+create index if not exists event_bookings_created_at_idx
+  on public.event_bookings (created_at desc);
+
+create index if not exists event_bookings_event_id_idx
+  on public.event_bookings (event_id, created_at desc);
+
+create index if not exists event_bookings_read_idx
+  on public.event_bookings (read, created_at desc);
+
 -- Empty row so Admin → Publish can upsert immediately
 insert into public.site_content (id, data)
 values ('main', '{}'::jsonb)
@@ -40,6 +65,7 @@ on conflict (id) do nothing;
 -- Row Level Security
 alter table public.site_content enable row level security;
 alter table public.contact_submissions enable row level security;
+alter table public.event_bookings enable row level security;
 
 drop policy if exists "Public read site content" on public.site_content;
 create policy "Public read site content"
@@ -57,4 +83,9 @@ union all
 select
   'contact_submissions',
   count(*)
-from public.contact_submissions;
+from public.contact_submissions
+union all
+select
+  'event_bookings',
+  count(*)
+from public.event_bookings;

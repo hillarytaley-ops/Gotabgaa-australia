@@ -97,15 +97,35 @@
     if (desc && hero.description) desc.textContent = hero.description;
   }
 
+  function getEventBookingUrl(event) {
+    if (event.bookingUrl) return event.bookingUrl;
+    if (event.status === 'upcoming' && event.bookingEnabled !== false) {
+      return `book.html?id=${encodeURIComponent(event.id)}`;
+    }
+    return event.registerUrl || '';
+  }
+
+  function getEventActionHtml(event) {
+    if (event.status === 'upcoming' && event.bookingEnabled !== false) {
+      const url = getEventBookingUrl(event);
+      const label = event.bookingLabel || event.registerLabel || 'Book Now';
+      return `<a href="${escapeHtml(url)}" class="event-card__register event-card__book">${escapeHtml(label)}</a>`;
+    }
+    if (event.registerUrl) {
+      return `<a href="${escapeHtml(event.registerUrl)}" class="event-card__register">${escapeHtml(event.registerLabel || 'Register')}</a>`;
+    }
+    return '';
+  }
+
   function renderEventCard(event, delay) {
     const catLabel = CATEGORY_LABELS[event.category] || event.category;
     const statusLabel = event.status === 'upcoming' ? 'Upcoming' : 'Past';
-    const registerHtml = event.registerUrl
-      ? `<a href="${escapeHtml(event.registerUrl)}" class="event-card__register">${escapeHtml(event.registerLabel || 'Register')}</a>`
-      : '';
+    const actionHtml = getEventActionHtml(event);
+    const bookingUrl = getEventBookingUrl(event);
 
     return `
       <article class="event-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}"
+        data-id="${escapeHtml(event.id)}"
         data-status="${escapeHtml(event.status)}"
         data-category="${escapeHtml(event.category)}"
         data-title="${escapeHtml(event.title)}"
@@ -113,7 +133,9 @@
         data-time="${escapeHtml(event.time)}"
         data-location="${escapeHtml(event.location)}"
         data-image="${escapeHtml(event.image)}"
-        data-desc="${escapeHtml(event.description)}">
+        data-desc="${escapeHtml(event.description)}"
+        data-booking-url="${escapeHtml(bookingUrl)}"
+        data-booking-enabled="${event.status === 'upcoming' && event.bookingEnabled !== false ? '1' : '0'}">
         <div class="event-card__media">
           <img src="${escapeHtml(event.image)}" alt="" loading="lazy" decoding="async">
           <span class="event-card__date-pill">${escapeHtml(event.datePill)}</span>
@@ -126,9 +148,10 @@
           <h3>${escapeHtml(event.title)}</h3>
           <p class="event-card__meta">${escapeHtml(event.meta)}</p>
           <p class="event-card__summary">${escapeHtml(event.summary)}</p>
+          ${event.ticketPriceNote && event.status === 'upcoming' ? `<p class="event-card__price-note">${escapeHtml(event.ticketPriceNote)}</p>` : ''}
           <div class="event-card__actions">
             <button type="button" class="event-card__details-btn" data-event-open>View Details</button>
-            ${registerHtml}
+            ${actionHtml}
           </div>
         </div>
       </article>
@@ -144,6 +167,7 @@
     const title = card.querySelector('.events-featured__title');
     const desc = card.querySelector('.events-featured__desc');
     const metaItems = card.querySelectorAll('.events-featured__meta li span');
+    const bookBtn = document.getElementById('featuredBookBtn');
 
     if (img) {
       img.src = event.image;
@@ -151,22 +175,71 @@
     }
     if (status) status.textContent = event.status === 'upcoming' ? 'Upcoming' : 'Past';
     if (title) title.textContent = event.title;
-    if (desc) desc.textContent = event.description;
+    if (desc) desc.textContent = event.summary || event.description;
 
     if (metaItems.length >= 3) {
       metaItems[0].textContent = event.date;
       metaItems[1].textContent = event.time;
       metaItems[2].textContent = event.location;
     }
+
+    if (bookBtn) {
+      if (event.status === 'upcoming' && event.bookingEnabled !== false) {
+        bookBtn.href = getEventBookingUrl(event);
+        bookBtn.textContent = event.bookingLabel || 'Book Now';
+        bookBtn.hidden = false;
+      } else if (event.registerUrl) {
+        bookBtn.href = event.registerUrl;
+        bookBtn.textContent = event.registerLabel || 'Register';
+        bookBtn.hidden = false;
+      } else {
+        bookBtn.hidden = true;
+      }
+    }
   }
 
   function renderEvents(content) {
-    const grid = document.getElementById('eventsGrid');
-    if (!grid || !content.events) return;
+    const upcomingGrid = document.getElementById('eventsGridUpcoming');
+    const pastGrid = document.getElementById('eventsGridPast');
+    if ((!upcomingGrid && !pastGrid) || !content.events) return;
 
-    grid.innerHTML = content.events.map((e, i) => renderEventCard(e, i % 5)).join('');
+    const upcoming = content.events.filter(e => e.status === 'upcoming');
+    const past = content.events.filter(e => e.status === 'past');
 
-    const featured = content.events.find(e => e.id === content.featuredEventId) || content.events[0];
+    if (upcomingGrid) {
+      upcomingGrid.innerHTML = upcoming.length
+        ? upcoming.map((e, i) => renderEventCard(e, i % 5)).join('')
+        : '';
+    }
+    if (pastGrid) {
+      pastGrid.innerHTML = past.length
+        ? past.map((e, i) => renderEventCard(e, i % 5)).join('')
+        : '';
+    }
+
+    const eventsPage = content.pages?.events;
+    if (eventsPage?.upcomingHeader) {
+      const h = eventsPage.upcomingHeader;
+      const tag = document.getElementById('upcomingEventsTag');
+      const title = document.getElementById('upcomingEventsTitle');
+      const desc = document.getElementById('upcomingEventsDesc');
+      if (tag) tag.textContent = h.tag;
+      if (title) title.textContent = h.title;
+      if (desc) desc.textContent = h.description;
+    }
+    if (eventsPage?.pastHeader) {
+      const h = eventsPage.pastHeader;
+      const tag = document.getElementById('pastEventsTag');
+      const title = document.getElementById('pastEventsTitle');
+      const desc = document.getElementById('pastEventsDesc');
+      if (tag) tag.textContent = h.tag;
+      if (title) title.textContent = h.title;
+      if (desc) desc.textContent = h.description;
+    }
+
+    const featured = content.events.find(e => e.id === content.featuredEventId)
+      || upcoming[0]
+      || content.events[0];
     renderFeaturedEvent(featured);
     window.CMS_FEATURED_EVENT = featured;
 
@@ -243,6 +316,8 @@
         </div>
       `).join('');
     }
+
+    document.dispatchEvent(new CustomEvent('events-ready'));
   }
 
   function renderPrograms(content) {

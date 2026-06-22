@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book your place at a Gotabgaa Australia community event.">
+  <title>Event Booking | Gotabgaa Australia Chapter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/logo-round.png" type="image/png">
+</head>
+<body class="page-sub">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia Chapter" class="nav__logo logo-circle">
+        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="programs.html" class="nav__link">Programs</a></li>
+        <li><a href="events.html" class="nav__link">Events</a></li>
+        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
+        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+        <li><a href="contact.html" class="btn btn--primary nav__cta">Join Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="tribal-border tribal-border--top" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container">
+      <span class="section__tag">Booking Portal</span>
+      <h1 class="page-hero__title">Reserve Your Place</h1>
+      <p class="page-hero__desc">Register for upcoming Gotabgaa Australia events. Secure online payments will be added in a future update.</p>
+    </div>
+    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
+      <div class="tribal-border__track tribal-border__track--reverse"></div>
+    </div>
+  </section>
+
+  <section class="booking-portal section" id="bookingPortal">
+    <div class="container">
+      <div class="booking-portal__missing" id="bookingMissing" hidden>
+        <h2 class="section__title">Event not found</h2>
+        <p class="section__desc">This booking link may be invalid or the event is no longer available.</p>
+        <a href="events.html" class="btn btn--primary" style="margin-top:20px">Browse Events</a>
+      </div>
+
+      <div class="booking-portal__grid" id="bookingLayout" hidden>
+        <aside class="booking-portal__summary animate-on-scroll" data-animate="fade-right">
+          <div class="booking-portal__media">
+            <img src="" alt="" id="bookingEventImage">
+          </div>
+          <div class="booking-portal__body">
+            <span class="section__tag">Upcoming Event</span>
+            <h2 id="bookingEventTitle">Event</h2>
+            <ul class="booking-portal__meta">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span id="bookingEventDate"></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span id="bookingEventTime"></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span id="bookingEventLocation"></span>
+              </li>
+            </ul>
+            <p id="bookingEventSummary"></p>
+            <p class="booking-portal__note" id="bookingEventNote">Free registration — secure payment coming soon.</p>
+          </div>
+        </aside>
+
+        <div class="booking-portal__form-wrap animate-on-scroll" data-animate="fade-left">
+          <h3>Booking details</h3>
+          <p class="booking-portal__form-intro">Complete the form below to register. Our events team will confirm your place by email.</p>
+          <form id="bookingForm" class="contact__form" style="padding:0;box-shadow:none;background:transparent">
+            <input type="hidden" id="bookingEventId" name="eventId">
+            <input type="hidden" id="bookingEventTitleField" name="eventTitle">
+            <div class="form__group">
+              <label for="bookingName">Full name *</label>
+              <input type="text" id="bookingName" name="name" required autocomplete="name">
+            </div>
+            <div class="form__group">
+              <label for="bookingEmail">Email *</label>
+              <input type="email" id="bookingEmail" name="email" required autocomplete="email">
+            </div>
+            <div class="form__group">
+              <label for="bookingPhone">Phone</label>
+              <input type="tel" id="bookingPhone" name="phone" autocomplete="tel">
+            </div>
+            <div class="form__group">
+              <label for="bookingTickets">Number of places</label>
+              <select id="bookingTickets" name="tickets">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+            <div class="form__group">
+              <label for="bookingNotes">Notes (dietary, accessibility, etc.)</label>
+              <textarea id="bookingNotes" name="notes" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary btn--shine" id="bookingSubmitBtn">Submit Booking</button>
+            <p class="booking-portal__success" id="bookingSuccess" hidden></p>
+            <p class="booking-portal__error" id="bookingError" hidden></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="tribal-border tribal-border--edge" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia" class="footer__logo logo-circle">
+        <p>Unity • Heritage • Excellence</p>
+      </div>
+    </div>
+    <div class="footer__bottom container">
+      <p>&copy; 2026 Gotabgaa Australia Chapter. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/site-config.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/book-event.js"></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

@@ -238,6 +238,12 @@ body {
   font-weight: 600;
 }
 
+.form-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

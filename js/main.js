@@ -21,6 +21,11 @@ document.addEventListener('cms-ready', () => {
   initTiltCards();
 });
 
+document.addEventListener('events-ready', () => {
+  initScrollAnimations();
+  initTiltCards();
+});
+
 function initSiteConfig() {
   const cfg = window.SITE_CONFIG;
   if (!cfg) return;
