@@ -934,8 +934,10 @@
   function formatAilcdDetails(data) {
     if (!data || typeof data !== 'object') return '<p class="form-hint">No detail data</p>';
     const rows = [];
+    const sig = data.declaration?.signatureImage;
     const walk = (obj, prefix = '') => {
       Object.entries(obj).forEach(([key, val]) => {
+        if (key === 'signatureImage') return;
         const label = prefix ? `${prefix} → ${key}` : key;
         if (val && typeof val === 'object' && !Array.isArray(val)) walk(val, label);
         else if (Array.isArray(val)) rows.push(`<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(JSON.stringify(val))}</p>`);
@@ -943,6 +945,9 @@
       });
     };
     walk(data);
+    if (sig && String(sig).startsWith('data:image')) {
+      rows.push(`<p><strong>Signature:</strong></p><img src="${sig}" alt="Applicant signature" class="admin-signature-preview">`);
+    }
     return rows.join('') || '<p class="form-hint">No detail data</p>';
   }
 

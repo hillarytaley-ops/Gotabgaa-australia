@@ -2177,6 +2177,36 @@ body.page-sub .section {
   font-weight: 500;
 }
 
+.signature-pad {
+  border: 2px dashed var(--cream-dark);
+  border-radius: 12px;
+  background: var(--cream);
+  padding: 12px;
+}
+
+.signature-pad__canvas {
+  display: block;
+  width: 100%;
+  height: 160px;
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.signature-pad__clear {
+  margin-top: 10px;
+}
+
+.admin-signature-preview {
+  max-width: 280px;
+  margin-top: 8px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  background: var(--white);
+}
+
 .ailcd-apply__nav {
   display: flex;
   gap: 12px;

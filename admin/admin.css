@@ -614,6 +614,15 @@ body {
   font-size: 0.9rem;
 }
 
+.admin-signature-preview {
+  display: block;
+  max-width: 280px;
+  margin-top: 8px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  background: var(--white);
+}
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: sticky; top: 0; z-index: 10; }

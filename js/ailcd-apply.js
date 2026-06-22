@@ -10,6 +10,7 @@
   ];
 
   let currentStep = 0;
+  let signaturePad = null;
 
   function val(name) {
     const el = document.querySelector(`[name="${name}"]`);
@@ -26,6 +27,84 @@
 
   function checkedValues(name) {
     return [...document.querySelectorAll(`[name="${name}"]:checked`)].map(el => el.value);
+  }
+
+  function initSignaturePad(canvas) {
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let hasStroke = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * ratio);
+      canvas.height = Math.floor(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#2a1f17';
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const point = e.touches ? e.touches[0] : e;
+      return {
+        x: point.clientX - rect.left,
+        y: point.clientY - rect.top
+      };
+    }
+
+    function startDraw(e) {
+      drawing = true;
+      const { x, y } = getPos(e);
+      lastX = x;
+      lastY = y;
+      e.preventDefault();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      const { x, y } = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      lastX = x;
+      lastY = y;
+      hasStroke = true;
+      e.preventDefault();
+    }
+
+    function endDraw() {
+      drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+
+    window.addEventListener('resize', () => {
+      if (hasStroke) return;
+      resize();
+    });
+
+    resize();
+
+    return {
+      isEmpty: () => !hasStroke,
+      clear: () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        hasStroke = false;
+      },
+      toDataURL: () => (hasStroke ? canvas.toDataURL('image/png') : '')
+    };
   }
 
   function collectFormData() {
@@ -61,6 +140,7 @@
       declaration: {
         agreed: val('agreed'),
         fullName: val('declarationName'),
+        signatureImage: signaturePad?.toDataURL() || '',
         date: val('declarationDate')
       }
     };
@@ -77,15 +157,23 @@
     const label = document.getElementById('ailcdStepLabel');
     if (bar) bar.style.width = `${progress}%`;
     if (label) {
-      const sectionLetter = step < 3 ? String.fromCharCode(65 + step) : 'Declaration';
       label.textContent = step < 3
-        ? `Section ${sectionLetter} of 3 — ${STEPS[step]}`
+        ? `Section ${String.fromCharCode(65 + step)} of 3 — ${STEPS[step]}`
         : 'Declaration — please review and submit';
     }
 
     document.getElementById('ailcdPrev').hidden = step === 0;
     document.getElementById('ailcdNext').hidden = step === STEPS.length - 1;
     document.getElementById('ailcdSubmit').hidden = step !== STEPS.length - 1;
+
+    if (step === 3) {
+      const nameField = document.getElementById('iName');
+      const fullName = val('fullName');
+      if (nameField && fullName && !nameField.value.trim()) {
+        nameField.value = fullName;
+      }
+      signaturePad?.clear();
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -103,13 +191,11 @@
       if (el.type === 'radio') {
         const group = fieldset.querySelectorAll(`[name="${el.name}"]`);
         if (![...group].some(r => r.checked)) {
-          el.focus();
           alert('Please complete all required fields in this section.');
           return false;
         }
       } else if (el.type === 'checkbox') {
         if (!el.checked) {
-          el.focus();
           alert('Please agree to the declaration to continue.');
           return false;
         }
@@ -130,11 +216,24 @@
       return false;
     }
 
+    if (currentStep === 3 && signaturePad?.isEmpty()) {
+      alert('Please sign in the signature box before submitting.');
+      document.getElementById('signatureCanvas')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+
     return true;
   }
 
   function init() {
     const form = document.getElementById('ailcdForm');
+    const canvas = document.getElementById('signatureCanvas');
+    if (canvas) signaturePad = initSignaturePad(canvas);
+
+    document.getElementById('clearSignature')?.addEventListener('click', () => {
+      signaturePad?.clear();
+    });
+
     const dateField = document.getElementById('iDate');
     if (dateField && !dateField.value) {
       dateField.value = new Date().toISOString().slice(0, 10);

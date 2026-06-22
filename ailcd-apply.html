@@ -181,9 +181,17 @@
             <label class="ailcd-check"><input type="checkbox" id="iAgree" name="agreed" required> I agree to the declaration above *</label>
           </div>
           <div class="form__grid">
-            <div class="form__group">
-              <label for="iName">Full name (signature) *</label>
-              <input id="iName" name="declarationName" type="text" required>
+            <div class="form__group form__group--full">
+              <label for="iName">Full name (printed) *</label>
+              <input id="iName" name="declarationName" type="text" required autocomplete="name">
+            </div>
+            <div class="form__group form__group--full">
+              <label for="signatureCanvas">Signature *</label>
+              <p class="form-hint">Sign with your finger or mouse in the box below.</p>
+              <div class="signature-pad">
+                <canvas id="signatureCanvas" class="signature-pad__canvas" aria-label="Draw your signature here"></canvas>
+                <button type="button" class="btn btn--outline btn--sm signature-pad__clear" id="clearSignature">Clear signature</button>
+              </div>
             </div>
             <div class="form__group">
               <label for="iDate">Date *</label>
@@ -209,7 +217,7 @@
     </div>
   </footer>
 
-  <script src="js/ailcd-apply.js?v=2"></script>
+  <script src="js/ailcd-apply.js?v=3"></script>
   <script src="js/main.js" defer></script>
 </body>
 </html>
