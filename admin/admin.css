@@ -238,10 +238,45 @@ body {
   font-weight: 600;
 }
 
+.gallery-admin-album {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--cream-dark);
+}
+
+.gallery-admin-album:last-child {
+  border-bottom: none;
+}
+
+.gallery-admin-album__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gallery-admin-album__preview {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
 .form-hint {
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.5;
+}
+
+.form-hint code {
+  font-size: 0.8rem;
+}
+
+.gallery-admin-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--cream-dark);
 }
 
 .stats-grid {

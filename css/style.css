@@ -1269,8 +1269,60 @@ body.page-sub .section {
 .gallery__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 220px);
+  grid-auto-rows: 220px;
   gap: 16px;
+}
+
+.gallery-group {
+  margin-bottom: 56px;
+}
+
+.gallery-group--past {
+  padding-top: 12px;
+  border-top: 1px solid rgba(61, 43, 31, 0.1);
+}
+
+.gallery-group__header {
+  margin-bottom: 28px;
+  max-width: 720px;
+}
+
+.gallery-group__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  color: var(--brown-900);
+  margin: 8px 0 10px;
+}
+
+.gallery-group__desc {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.gallery-group__empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px 16px;
+}
+
+.gallery-album {
+  margin-bottom: 36px;
+}
+
+.gallery-album__header {
+  margin-bottom: 16px;
+}
+
+.gallery-album__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--brown-900);
+  margin-bottom: 4px;
+}
+
+.gallery-album__meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 .gallery__item {
@@ -1318,10 +1370,49 @@ body.page-sub .section {
   object-fit: cover;
   display: block;
   transition: transform var(--transition);
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
 }
 
 .gallery__item:hover .gallery__photo {
   transform: scale(1.04);
+}
+
+.gallery__download {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(42, 31, 23, 0.82);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--transition), transform var(--transition), background var(--transition);
+}
+
+.gallery__download svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gallery__item:hover .gallery__download,
+.gallery__download:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery__download:hover {
+  background: var(--brown-800);
 }
 
 .gallery__caption {
@@ -2855,7 +2946,10 @@ body.modal-open {
     min-height: 180px;
   }
 
-  .contact__grid {
+  .gallery__download {
+    opacity: 1;
+    transform: none;
+  }
     grid-template-columns: 1fr;
   }
 

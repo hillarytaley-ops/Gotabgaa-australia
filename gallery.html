@@ -53,43 +53,24 @@
 
   <section class="gallery section">
     <div class="container">
-      <div class="gallery__grid">
-        <div class="gallery__item gallery__item--wide animate-on-scroll" data-animate="zoom-in" data-delay="0">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/hero/taunet-cultural-dance.png" alt="Traditional Kalenjin dance at Taunet Nelel" loading="lazy" decoding="async">
-            <span class="gallery__caption">Taunet Nelel — Cultural Dance</span>
-          </div>
+      <div class="gallery-group" id="galleryGroupUpcoming">
+        <div class="gallery-group__header animate-on-scroll" data-animate="fade-up">
+          <span class="section__tag" id="galleryUpcomingTag">Coming Up</span>
+          <h2 class="gallery-group__title" id="galleryUpcomingTitle">Upcoming Event Photos</h2>
+          <p class="gallery-group__desc" id="galleryUpcomingDesc">Preview and download photos from events on the calendar.</p>
         </div>
-        <div class="gallery__item animate-on-scroll" data-animate="zoom-in" data-delay="1">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/hero/brisbane-team.png" alt="Gotabgaa Brisbane community team" loading="lazy" decoding="async">
-            <span class="gallery__caption">Brisbane Team</span>
-          </div>
+        <div id="galleryAlbumsUpcoming"></div>
+        <p class="gallery-group__empty" id="galleryEmptyUpcoming" hidden>No upcoming event photos yet.</p>
+      </div>
+
+      <div class="gallery-group gallery-group--past" id="galleryGroupPast">
+        <div class="gallery-group__header animate-on-scroll" data-animate="fade-up">
+          <span class="section__tag" id="galleryPastTag">Memories</span>
+          <h2 class="gallery-group__title" id="galleryPastTitle">Past Event Photos</h2>
+          <p class="gallery-group__desc" id="galleryPastDesc">Download photos from previous gatherings and celebrations.</p>
         </div>
-        <div class="gallery__item animate-on-scroll" data-animate="zoom-in" data-delay="2">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/hero/charmen-gifting.png" alt="Chairman gifting at community event" loading="lazy" decoding="async">
-            <span class="gallery__caption">Community Gifting</span>
-          </div>
-        </div>
-        <div class="gallery__item animate-on-scroll" data-animate="zoom-in" data-delay="3">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/hero/hosea-sa-team.png" alt="South Australia chapter team" loading="lazy" decoding="async">
-            <span class="gallery__caption">South Australia Team</span>
-          </div>
-        </div>
-        <div class="gallery__item animate-on-scroll" data-animate="zoom-in" data-delay="4">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/hero/kokwet-sports-day.png" alt="Kokwet sports day celebration" loading="lazy" decoding="async">
-            <span class="gallery__caption">Kokwet Sports Day</span>
-          </div>
-        </div>
-        <div class="gallery__item gallery__item--wide animate-on-scroll" data-animate="zoom-in" data-delay="5">
-          <div class="gallery__photo-wrap">
-            <img class="gallery__photo" src="assets/about/taunet-women-dance.png" alt="Women performing cultural dance at Taunet Nelel Victoria" loading="lazy" decoding="async">
-            <span class="gallery__caption">Taunet Nelel Victoria — Women&apos;s Dance</span>
-          </div>
-        </div>
+        <div id="galleryAlbumsPast"></div>
+        <p class="gallery-group__empty" id="galleryEmptyPast" hidden>No past event photos yet.</p>
       </div>
     </div>
   </section>
@@ -152,6 +133,7 @@
 
   <script src="js/site-config.js"></script>
   <script src="js/content-loader.js"></script>
+  <script src="js/gallery.js"></script>
   <script src="floating-social/floating-social.js" defer></script>
   <script src="js/main.js" defer></script>
 </body>

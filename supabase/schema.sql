@@ -89,3 +89,6 @@ select
   'event_bookings',
   count(*)
 from public.event_bookings;
+
+-- Gallery bulk upload: create a PUBLIC Storage bucket named "gallery" in
+-- Supabase Dashboard → Storage → New bucket → name: gallery → Public bucket: ON

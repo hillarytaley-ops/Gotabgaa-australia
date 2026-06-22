@@ -26,6 +26,10 @@ document.addEventListener('events-ready', () => {
   initTiltCards();
 });
 
+document.addEventListener('gallery-ready', () => {
+  initScrollAnimations();
+});
+
 function initSiteConfig() {
   const cfg = window.SITE_CONFIG;
   if (!cfg) return;

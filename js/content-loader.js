@@ -369,18 +369,108 @@
     }).join('');
   }
 
-  function renderGallery(content) {
-    const grid = document.querySelector('.gallery__grid');
-    if (!grid || !content.gallery?.length) return;
-
-    grid.innerHTML = content.gallery.map((item, i) => `
-      <div class="gallery__item${item.wide ? ' gallery__item--wide' : ''} animate-on-scroll is-visible" data-animate="zoom-in" data-delay="${i}">
+  function galleryPhotoHtml(item, delay) {
+    const filename = (item.image || 'photo').split('/').pop() || 'gotabgaa-photo.jpg';
+    return `
+      <div class="gallery__item${item.wide ? ' gallery__item--wide' : ''} animate-on-scroll is-visible" data-animate="zoom-in" data-delay="${delay}">
         <div class="gallery__photo-wrap">
-          <img class="gallery__photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt)}" loading="lazy" decoding="async">
+          <img class="gallery__photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt)}" loading="lazy" decoding="async" draggable="false">
           <span class="gallery__caption">${escapeHtml(item.caption)}</span>
+          <button type="button" class="gallery__download" data-gallery-download data-url="${escapeHtml(item.image)}" data-filename="${escapeHtml(filename)}" aria-label="Download ${escapeHtml(item.caption)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Download
+          </button>
         </div>
       </div>
-    `).join('');
+    `;
+  }
+
+  function renderGalleryAlbum(event, photos, delayStart) {
+    if (!photos.length) return '';
+    return `
+      <div class="gallery-album animate-on-scroll" data-animate="fade-up">
+        <div class="gallery-album__header">
+          <h3 class="gallery-album__title">${escapeHtml(event.title)}</h3>
+          <p class="gallery-album__meta">${escapeHtml(event.datePill || event.date || '')}${event.location ? ` · ${escapeHtml(event.location)}` : ''}</p>
+        </div>
+        <div class="gallery__grid">
+          ${photos.map((item, i) => galleryPhotoHtml(item, (delayStart + i) % 6)).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderGallery(content) {
+    const upcomingRoot = document.getElementById('galleryAlbumsUpcoming');
+    const pastRoot = document.getElementById('galleryAlbumsPast');
+    if (!upcomingRoot && !pastRoot) return;
+
+    const events = content.events || [];
+    const photos = content.gallery || [];
+    const eventMap = Object.fromEntries(events.map(e => [e.id, e]));
+
+    const upcomingEvents = events.filter(e => e.status === 'upcoming');
+    const pastEvents = events.filter(e => e.status === 'past');
+
+    const photosForEvent = eventId => photos.filter(p => p.eventId === eventId);
+
+    let delay = 0;
+    const upcomingHtml = upcomingEvents
+      .map(event => {
+        const album = renderGalleryAlbum(event, photosForEvent(event.id), delay);
+        delay += photosForEvent(event.id).length;
+        return album;
+      })
+      .filter(Boolean)
+      .join('');
+
+    delay = 0;
+    const pastHtml = pastEvents
+      .map(event => {
+        const album = renderGalleryAlbum(event, photosForEvent(event.id), delay);
+        delay += photosForEvent(event.id).length;
+        return album;
+      })
+      .filter(Boolean)
+      .join('');
+
+    if (upcomingRoot) upcomingRoot.innerHTML = upcomingHtml;
+    if (pastRoot) pastRoot.innerHTML = pastHtml;
+
+    const upcomingCount = upcomingEvents.reduce((n, e) => n + photosForEvent(e.id).length, 0);
+    const pastCount = pastEvents.reduce((n, e) => n + photosForEvent(e.id).length, 0);
+
+    const emptyUpcoming = document.getElementById('galleryEmptyUpcoming');
+    const emptyPast = document.getElementById('galleryEmptyPast');
+    const groupUpcoming = document.getElementById('galleryGroupUpcoming');
+    const groupPast = document.getElementById('galleryGroupPast');
+
+    if (emptyUpcoming) emptyUpcoming.hidden = upcomingCount > 0;
+    if (emptyPast) emptyPast.hidden = pastCount > 0;
+    if (groupUpcoming) groupUpcoming.hidden = upcomingCount === 0 && pastCount > 0;
+    if (groupPast) groupPast.hidden = pastCount === 0;
+
+    const galleryPage = content.pages?.gallery;
+    if (galleryPage?.upcomingHeader) {
+      const h = galleryPage.upcomingHeader;
+      const tag = document.getElementById('galleryUpcomingTag');
+      const title = document.getElementById('galleryUpcomingTitle');
+      const desc = document.getElementById('galleryUpcomingDesc');
+      if (tag) tag.textContent = h.tag;
+      if (title) title.textContent = h.title;
+      if (desc) desc.textContent = h.description;
+    }
+    if (galleryPage?.pastHeader) {
+      const h = galleryPage.pastHeader;
+      const tag = document.getElementById('galleryPastTag');
+      const title = document.getElementById('galleryPastTitle');
+      const desc = document.getElementById('galleryPastDesc');
+      if (tag) tag.textContent = h.tag;
+      if (title) title.textContent = h.title;
+      if (desc) desc.textContent = h.description;
+    }
+
+    document.dispatchEvent(new CustomEvent('gallery-ready'));
   }
 
   function applyHome(content) {

@@ -430,34 +430,153 @@
   }
 
   function renderGalleryPanel() {
+    const upcoming = content.events.filter(e => e.status === 'upcoming');
+    const past = content.events.filter(e => e.status === 'past');
+
+    const renderAlbumSection = (events, label) => {
+      if (!events.length) return `<p class="form-hint">No ${label.toLowerCase()} events defined yet — add them in Events.</p>`;
+      return events.map(event => renderGalleryEventAlbum(event)).join('');
+    };
+
     return `
       <div class="card card--notice">
-        <p><strong>Public site:</strong> Gallery photos appear on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a> only after you click <strong>Publish Changes</strong> (sign in required — preview mode does not update the live site).</p>
+        <p><strong>Public site:</strong> Photos are grouped by event on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a> (upcoming vs past). Visitors can download photos from the website. Publish after uploading.</p>
+        <p class="form-hint">Bulk upload requires Supabase Storage bucket <strong>gallery</strong> (public), or GitHub token for auto-commit to <code>assets/gallery/</code>.</p>
       </div>
       <div class="card">
-        <div class="list-item__header"><h3>Gallery photos</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addGallery">+ Add Photo</button>
-        </div>
+        <h3>Upcoming event albums</h3>
+        ${renderAlbumSection(upcoming, 'Upcoming')}
+      </div>
+      <div class="card">
+        <h3>Past event albums</h3>
+        ${renderAlbumSection(past, 'Past')}
+      </div>
+      <div class="card">
+        <h3>All photos (${content.gallery.length})</h3>
         <div id="galleryList">${content.gallery.map((g, i) => galleryItemHtml(g, i)).join('')}</div>
       </div>
     `;
   }
 
+  function renderGalleryEventAlbum(event) {
+    const photos = content.gallery.filter(g => g.eventId === event.id);
+    const preview = photos.slice(0, 4).map(p =>
+      `<img src="../${p.image.replace(/^\//, '')}" alt="" class="gallery-admin-thumb">`
+    ).join('');
+
+    return `
+      <div class="gallery-admin-album" data-event-id="${escapeHtml(event.id)}">
+        <div class="list-item__header">
+          <div>
+            <h4>${escapeHtml(event.title)}</h4>
+            <p class="form-hint">${photos.length} photo(s) · ${event.status}</p>
+          </div>
+          <div class="gallery-admin-album__actions">
+            <label class="btn btn--outline btn--sm">
+              Bulk upload
+              <input type="file" class="gallery-bulk-input" data-event-id="${escapeHtml(event.id)}" accept="image/*" multiple hidden>
+            </label>
+            <button type="button" class="btn btn--outline btn--sm" data-add-gallery-photo="${escapeHtml(event.id)}">+ Add photo</button>
+          </div>
+        </div>
+        ${preview ? `<div class="gallery-admin-album__preview">${preview}${photos.length > 4 ? `<span class="form-hint">+${photos.length - 4} more</span>` : ''}</div>` : '<p class="form-hint">No photos for this event yet.</p>'}
+        <p class="gallery-admin-upload-status form-hint" id="galleryUploadStatus-${escapeHtml(event.id)}" hidden></p>
+      </div>
+    `;
+  }
+
   function galleryItemHtml(g, i) {
+    const eventOpts = [{ value: '', label: '— Select event —' }].concat(
+      content.events.map(e => ({ value: e.id, label: `${e.title} (${e.status})` }))
+    );
+
     return `
       <div class="list-item" data-gallery-index="${i}">
         <div class="list-item__header">
-          <h4>${escapeHtml(g.caption)}</h4>
+          <h4>${escapeHtml(g.caption || 'Photo')}</h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-gallery="${i}">Remove</button>
         </div>
         <div class="form-grid">
-          ${field('Image path', `galImage${i}`, g.image)}
+          ${field('Event', `galEvent${i}`, g.eventId || '', 'select', { options: eventOpts })}
+          ${field('Image path / URL', `galImage${i}`, g.image)}
           ${field('Alt text', `galAlt${i}`, g.alt)}
           ${field('Caption', `galCaption${i}`, g.caption)}
           ${field('Wide layout', `galWide${i}`, g.wide, 'checkbox')}
         </div>
       </div>
     `;
+  }
+
+  async function uploadGalleryFile(eventId, file) {
+    const token = getToken();
+    if (!token) throw new Error('Sign in to upload photos.');
+
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const res = await fetch('/api/upload-gallery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        eventId,
+        filename: file.name,
+        contentType: file.type,
+        data
+      })
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.detail || json.error || 'Upload failed');
+    return json.url;
+  }
+
+  async function handleGalleryBulkUpload(eventId, files, statusEl) {
+    if (isPreviewMode) {
+      showStatus('Sign in to upload gallery photos.', 'error');
+      return;
+    }
+
+    const list = [...files].filter(f => f.type.startsWith('image/'));
+    if (!list.length) return;
+
+    if (statusEl) {
+      statusEl.hidden = false;
+      statusEl.textContent = `Uploading 0/${list.length}…`;
+    }
+
+    let uploaded = 0;
+    for (const file of list) {
+      try {
+        const url = await uploadGalleryFile(eventId, file);
+        const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+        content.gallery.push({
+          id: `gal-${Date.now()}-${uploaded}`,
+          eventId,
+          image: url,
+          alt: baseName,
+          caption: baseName,
+          wide: false
+        });
+        uploaded += 1;
+        if (statusEl) statusEl.textContent = `Uploading ${uploaded}/${list.length}…`;
+      } catch (err) {
+        if (statusEl) statusEl.textContent = err.message;
+        showStatus(err.message, 'error');
+        break;
+      }
+    }
+
+    if (uploaded > 0) {
+      showStatus(`Uploaded ${uploaded} photo(s). Click Publish Changes to update the live site.`, 'success');
+      renderSection('gallery');
+    }
   }
 
   function renderContactPanel() {
@@ -773,16 +892,30 @@
     }
 
     if (section === 'gallery') {
-      document.getElementById('addGallery')?.addEventListener('click', () => {
-        content.gallery.push({
-          id: `gal-${Date.now()}`,
-          image: '',
-          alt: '',
-          caption: 'New photo',
-          wide: false
+      document.querySelectorAll('.gallery-bulk-input').forEach(input => {
+        input.addEventListener('change', () => {
+          const eventId = input.dataset.eventId;
+          const statusEl = document.getElementById(`galleryUploadStatus-${eventId}`);
+          handleGalleryBulkUpload(eventId, input.files, statusEl);
+          input.value = '';
         });
-        renderSection('gallery');
       });
+
+      document.querySelectorAll('[data-add-gallery-photo]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const eventId = btn.dataset.addGalleryPhoto;
+          content.gallery.push({
+            id: `gal-${Date.now()}`,
+            eventId,
+            image: 'assets/hero/taunet-cultural-dance.png',
+            alt: 'New photo',
+            caption: 'New photo',
+            wide: false
+          });
+          renderSection('gallery');
+        });
+      });
+
       document.querySelectorAll('[data-remove-gallery]').forEach(btn => {
         btn.addEventListener('click', () => {
           content.gallery.splice(+btn.dataset.removeGallery, 1);
@@ -913,6 +1046,7 @@
 
     (content.gallery || []).forEach((g, i) => {
       if (document.getElementById(`galImage${i}`)) {
+        g.eventId = val(`galEvent${i}`);
         g.image = val(`galImage${i}`);
         g.alt = val(`galAlt${i}`);
         g.caption = val(`galCaption${i}`);

@@ -109,7 +109,9 @@
       "hero": { "tag": "Our Team", "title": "Gotabgaa Leadership", "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity." }
     },
     "gallery": {
-      "hero": { "tag": "Moments", "title": "Community Gallery", "description": "Celebrating our gatherings, cultural events, and milestones together." }
+      "hero": { "tag": "Moments", "title": "Community Gallery", "description": "Celebrating our gatherings, cultural events, and milestones together." },
+      "upcomingHeader": { "tag": "Coming Up", "title": "Upcoming Event Photos", "description": "Preview and download photos from events on the calendar." },
+      "pastHeader": { "tag": "Memories", "title": "Past Event Photos", "description": "Download photos from previous gatherings and celebrations." }
     },
     "contact": {
       "hero": { "tag": "Get In Touch", "title": "Contact Us", "description": "For assistance with any of our programs or general inquiries, please reach out. We're here to help." }
@@ -348,12 +350,19 @@
     { "id": "ldr-treasurer", "name": "Treasurer", "role": "Finance", "initials": "TR", "photo": "" }
   ],
   "gallery": [
-    { "id": "gal-1", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Taunet Nelel — Cultural Dance", "wide": true },
-    { "id": "gal-2", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane Team", "wide": false },
-    { "id": "gal-3", "image": "assets/hero/charmen-gifting.png", "alt": "Chairman gifting at community event", "caption": "Community Gifting", "wide": false },
-    { "id": "gal-4", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia chapter team", "caption": "South Australia Team", "wide": false },
-    { "id": "gal-5", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet Sports Day", "wide": false },
-    { "id": "gal-6", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance at Taunet Nelel Victoria", "caption": "Taunet Nelel Victoria — Women's Dance", "wide": true }
+    { "id": "gal-u1", "eventId": "evt-cultural-fete-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
+    { "id": "gal-u2", "eventId": "evt-cultural-fete-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
+    { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane chapter team", "wide": false },
+    { "id": "gal-u4", "eventId": "evt-brisbane-meetup", "image": "assets/hero/charmen-gifting.png", "alt": "Community gifting ceremony", "caption": "Community gifting", "wide": false },
+    { "id": "gal-u5", "eventId": "evt-kokwet-sports", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet sports day", "wide": true },
+    { "id": "gal-u6", "eventId": "evt-wa-gathering", "image": "assets/hero/kitwek-wa.png", "alt": "Western Australia community gathering", "caption": "WA community gathering", "wide": false },
+    { "id": "gal-u7", "eventId": "evt-youth-workshop", "image": "assets/hero/chairman-taunet.png", "alt": "Youth mentorship session", "caption": "Youth mentorship workshop", "wide": false },
+    { "id": "gal-p1", "eventId": "evt-heritage-2025", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Heritage Day cultural performance", "caption": "Heritage Day performance", "wide": true },
+    { "id": "gal-p2", "eventId": "evt-heritage-2025", "image": "assets/about/taunet-women-dance.png", "alt": "Heritage Day women's dance", "caption": "Heritage Day — women's dance", "wide": false },
+    { "id": "gal-p3", "eventId": "evt-bbq-2025", "image": "assets/hero/charmen-gifting.png", "alt": "BBQ gifting ceremony", "caption": "BBQ gifting ceremony", "wide": false },
+    { "id": "gal-p4", "eventId": "evt-bbq-2025", "image": "assets/hero/nick-boit-gifting.png", "alt": "Community BBQ celebrations", "caption": "Community BBQ", "wide": false },
+    { "id": "gal-p5", "eventId": "evt-agm-2026", "image": "assets/hero/berur-brisbane.png", "alt": "AGM community photo", "caption": "AGM 2026 group photo", "wide": true },
+    { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia chapter at AGM", "caption": "SA chapter representatives", "wide": false }
   ],
   "submissions": []
 }
