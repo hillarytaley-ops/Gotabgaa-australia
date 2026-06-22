@@ -2457,8 +2457,7 @@ body.modal-open {
   }
 
   .hero__desc {
-    margin-left: 0;
-    margin-right: 0;
+    display: none;
   }
 
   .hero__actions {
@@ -2731,11 +2730,6 @@ body.modal-open {
   .hero__title {
     font-size: clamp(1.45rem, 7vw, 1.85rem);
     margin-bottom: 8px;
-  }
-
-  .hero__desc {
-    font-size: 0.9rem;
-    margin-bottom: 14px;
   }
 
   .hero__actions {
