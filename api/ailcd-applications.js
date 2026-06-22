@@ -3,11 +3,9 @@ import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 function flattenForCsv(data, app) {
   const p = data.personal || {};
-  const emp = data.employment || {};
-  const mot = data.motivation || {};
-  const comm = data.community || {};
+  const pos = data.position || {};
+  const exp = data.experience || {};
   const dec = data.declaration || {};
-  const refs = data.referees || [];
 
   return {
     date: app.created_at,
@@ -15,18 +13,17 @@ function flattenForCsv(data, app) {
     email: app.email,
     phone: app.phone,
     state: app.state,
+    address: p.address,
     suburb: p.suburb,
-    residential_status: p.residentialStatus,
-    employer: emp.employer,
-    position: emp.position,
-    why_participate: mot.whyParticipate,
-    leadership_goals: mot.leadershipGoals,
+    gender: p.gender,
+    date_of_birth: p.dateOfBirth,
+    occupation: p.occupation,
+    positions: (pos.positions || []).join('; '),
+    previous_leadership: exp.previousLeadership,
+    experience: exp.experienceDescription,
+    skills: (exp.skills || []).join('; '),
     declaration_name: dec.fullName,
-    declaration_date: dec.date,
-    referee1_name: refs[0]?.name,
-    referee1_email: refs[0]?.email,
-    referee2_name: refs[1]?.name,
-    referee2_email: refs[1]?.email
+    declaration_date: dec.date
   };
 }
 

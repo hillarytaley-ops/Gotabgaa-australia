@@ -14,9 +14,9 @@ export default async function handler(req, res) {
   const body = req.body || {};
   const personal = body.personal || {};
   const email = personal.email?.trim() || body.email?.trim();
-  const surname = personal.surname?.trim() || body.surname?.trim();
-  const givenNames = personal.givenNames?.trim() || body.givenNames?.trim();
-  const fullName = [givenNames, surname].filter(Boolean).join(' ').trim() || body.fullName?.trim();
+  const fullName = personal.fullName?.trim()
+    || [personal.givenNames, personal.surname].filter(Boolean).join(' ').trim()
+    || body.fullName?.trim();
 
   if (!fullName || !email) {
     res.status(400).json({ error: 'Full name and email are required' });
@@ -28,6 +28,10 @@ export default async function handler(req, res) {
     return;
   }
 
+  const nameParts = fullName.split(/\s+/);
+  const surname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : fullName;
+  const givenNames = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : '';
+
   const supabase = getSupabase();
   const { error } = await supabase.from('ailcd_applications').insert({
     surname: surname || null,
@@ -35,7 +39,7 @@ export default async function handler(req, res) {
     full_name: fullName,
     email,
     phone: (personal.mobile || personal.phone || body.phone || '').trim() || null,
-    state: (personal.state || body.state || '').trim() || null,
+    state: (personal.stateTerritory || personal.state || body.state || '').trim() || null,
     data: body
   });
 
@@ -46,6 +50,6 @@ export default async function handler(req, res) {
 
   res.status(200).json({
     ok: true,
-    message: 'Application received. Thank you — our team will contact you shortly.'
+    message: 'Expression of interest received. Thank you — our team will contact you shortly.'
   });
 }

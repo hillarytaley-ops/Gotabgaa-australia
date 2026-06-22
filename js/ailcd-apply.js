@@ -1,17 +1,12 @@
 /**
- * AILCD program — multi-step online application
+ * Gotabgaa Interim Leadership Expression of Interest — multi-step form
  */
 (function () {
   const STEPS = [
-    'Section A — Personal details',
-    'Section B — Current employment',
-    'Section C — Leadership experience',
-    'Section D — Community involvement',
-    'Section E — Motivation and vision',
-    'Section F — Commitment',
-    'Section G — Community engagement',
-    'Section H — Referees',
-    'Section I — Declaration'
+    'Personal details',
+    'Position of interest',
+    'Leadership experience',
+    'Declaration'
   ];
 
   let currentStep = 0;
@@ -23,98 +18,46 @@
       const checked = document.querySelector(`[name="${name}"]:checked`);
       return checked ? checked.value : '';
     }
-    if (el.type === 'checkbox') return el.checked;
+    if (el.type === 'checkbox' && el.name !== 'positions' && el.name !== 'skills') {
+      return el.checked;
+    }
     return el.value.trim();
   }
 
-  function collectRepeat(prefix, count) {
-    const items = [];
-    for (let i = 0; i < count; i++) {
-      const role = val(`${prefix}Role${i}`);
-      const org = val(`${prefix}Org${i}`);
-      const dates = val(`${prefix}Dates${i}`);
-      const achievements = val(`${prefix}Achieve${i}`);
-      if (role || org || dates || achievements) {
-        items.push({ role, organisation: org, dates, achievements });
-      }
-    }
-    return items;
+  function checkedValues(name) {
+    return [...document.querySelectorAll(`[name="${name}"]:checked`)].map(el => el.value);
   }
 
   function collectFormData() {
+    const positions = checkedValues('positions');
+    const otherText = val('positionOther');
+    if (positions.includes('Other') && otherText) {
+      positions.push(`Other: ${otherText}`);
+    }
+
     return {
+      formType: 'gotabgaa-interim-leadership-eoi',
       personal: {
-        title: val('title'),
-        surname: val('surname'),
-        givenNames: val('givenNames'),
+        fullName: val('fullName'),
         gender: val('gender'),
         dateOfBirth: val('dateOfBirth'),
+        stateTerritory: val('stateTerritory'),
         address: val('address'),
         suburb: val('suburb'),
-        state: val('state'),
-        postcode: val('postcode'),
-        countryOfResidence: val('countryOfResidence'),
-        phone: val('phone'),
         mobile: val('mobile'),
         email: val('email'),
-        languageGroup: val('languageGroup'),
-        citizenship: val('citizenship'),
-        countryOfBirth: val('countryOfBirth'),
-        yearOfArrival: val('yearOfArrival'),
-        residentialStatus: val('residentialStatus')
+        occupation: val('occupation')
       },
-      employment: {
-        employer: val('employer'),
-        position: val('position'),
-        dateCommenced: val('dateCommenced'),
-        responsibilities: val('responsibilities'),
-        workAddress: val('workAddress'),
-        workSuburb: val('workSuburb'),
-        workState: val('workState'),
-        workPostcode: val('workPostcode'),
-        workPhone: val('workPhone'),
-        workEmail: val('workEmail'),
-        highestQualification: val('highestQualification'),
-        fieldOfStudy: val('fieldOfStudy'),
-        institution: val('institution'),
-        yearQualified: val('yearQualified')
+      position: {
+        positions,
+        positionOther: otherText
       },
-      leadership: collectRepeat('leadership', 3),
-      communityInvolvement: collectRepeat('community', 3),
-      motivation: {
-        whyParticipate: val('whyParticipate'),
-        leadershipGoals: val('leadershipGoals')
+      experience: {
+        previousLeadership: val('previousLeadership'),
+        previousDetails: val('previousDetails'),
+        experienceDescription: val('experienceDescription'),
+        skills: checkedValues('skills')
       },
-      commitment: {
-        attendSessions: val('attendSessions'),
-        attendSessionsExplain: val('attendSessionsExplain'),
-        employerSupport: val('employerSupport'),
-        employerSupportExplain: val('employerSupportExplain'),
-        preparedFee: val('preparedFee'),
-        hoursPerWeek: val('hoursPerWeek')
-      },
-      community: {
-        communityBenefit: val('communityBenefit'),
-        communityIssues: val('communityIssues'),
-        orgMemberships: val('orgMemberships'),
-        boardRoles: val('boardRoles')
-      },
-      referees: [
-        {
-          name: val('ref1Name'),
-          position: val('ref1Position'),
-          organisation: val('ref1Org'),
-          phone: val('ref1Phone'),
-          email: val('ref1Email')
-        },
-        {
-          name: val('ref2Name'),
-          position: val('ref2Position'),
-          organisation: val('ref2Org'),
-          phone: val('ref2Phone'),
-          email: val('ref2Email')
-        }
-      ].filter(r => r.name || r.email),
       declaration: {
         agreed: val('agreed'),
         fullName: val('declarationName'),
@@ -133,7 +76,12 @@
     const bar = document.getElementById('ailcdProgressBar');
     const label = document.getElementById('ailcdStepLabel');
     if (bar) bar.style.width = `${progress}%`;
-    if (label) label.textContent = `Section ${String.fromCharCode(65 + step)} of ${STEPS.length} — ${STEPS[step].replace(/^Section [A-I] — /, '')}`;
+    if (label) {
+      const sectionLetter = step < 3 ? String.fromCharCode(65 + step) : 'Declaration';
+      label.textContent = step < 3
+        ? `Section ${sectionLetter} of 3 — ${STEPS[step]}`
+        : 'Declaration — please review and submit';
+    }
 
     document.getElementById('ailcdPrev').hidden = step === 0;
     document.getElementById('ailcdNext').hidden = step === STEPS.length - 1;
@@ -142,20 +90,27 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function validateCheckboxGroup(fieldset, name) {
+    return fieldset.querySelectorAll(`[name="${name}"]:checked`).length > 0;
+  }
+
   function validateCurrentStep() {
     const fieldset = document.querySelector(`.ailcd-step[data-step="${currentStep}"]`);
     if (!fieldset) return true;
+
     const required = fieldset.querySelectorAll('[required]');
     for (const el of required) {
       if (el.type === 'radio') {
         const group = fieldset.querySelectorAll(`[name="${el.name}"]`);
         if (![...group].some(r => r.checked)) {
           el.focus();
+          alert('Please complete all required fields in this section.');
           return false;
         }
       } else if (el.type === 'checkbox') {
         if (!el.checked) {
           el.focus();
+          alert('Please agree to the declaration to continue.');
           return false;
         }
       } else if (!el.value.trim()) {
@@ -164,6 +119,17 @@
         return false;
       }
     }
+
+    if (currentStep === 1 && !validateCheckboxGroup(fieldset, 'positions')) {
+      alert('Please select at least one interim leadership position.');
+      return false;
+    }
+
+    if (currentStep === 2 && !validateCheckboxGroup(fieldset, 'skills')) {
+      alert('Please select at least one skill or strength.');
+      return false;
+    }
+
     return true;
   }
 
@@ -208,7 +174,7 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || data.detail || 'Submission failed');
 
-        success.textContent = data.message || 'Application received. Thank you!';
+        success.textContent = data.message || 'Expression of interest received. Thank you!';
         success.hidden = false;
         form.querySelectorAll('input, textarea, select, button').forEach(el => { el.disabled = true; });
       } catch (err) {
@@ -216,7 +182,7 @@
         error.hidden = false;
         if (btn) {
           btn.disabled = false;
-          btn.textContent = 'Submit application';
+          btn.textContent = 'Submit expression of interest';
         }
       }
     });

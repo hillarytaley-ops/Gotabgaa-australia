@@ -38,7 +38,7 @@
     gallery: 'Gallery',
     contact: 'Contact Info',
     membership: 'Membership',
-    ailcd: 'AILCD Applications',
+    ailcd: 'Leadership EOI',
     inbox: 'Contact Inbox',
     pages: 'Page Heroes'
   };
@@ -703,10 +703,10 @@
   function renderAilcdPanel() {
     return `
       <div class="card card--notice">
-        <p><strong>Public form:</strong> <a href="../ailcd-apply.html" target="_blank" rel="noopener">ailcd-apply.html</a> — share this link with applicants urgently. Run the new <code>ailcd_applications</code> section in <code>supabase/schema.sql</code> if not done yet.</p>
+        <p><strong>Public form:</strong> <a href="../ailcd-apply.html" target="_blank" rel="noopener">ailcd-apply.html</a> — Gotabgaa Interim Leadership Expression of Interest. Share this link with applicants.</p>
       </div>
       <div class="card" id="ailcdApplicationsCard">
-        <h3>AILCD applications</h3>
+        <h3>Leadership EOI submissions</h3>
         <p class="form-hint">Loading…</p>
       </div>
     `;
@@ -947,14 +947,17 @@
   }
 
   function downloadAilcdCsvClient(applications) {
-    const headers = ['Date', 'Full Name', 'Email', 'Phone', 'State', 'Employer', 'Position', 'Why Participate'];
+    const headers = ['Date', 'Full Name', 'Email', 'Phone', 'State', 'Address', 'Suburb', 'Positions', 'Skills'];
     const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const rows = applications.map(a => {
       const d = a.data || {};
+      const p = d.personal || {};
       return [
         a.created_at ? new Date(a.created_at).toISOString() : '',
         a.full_name, a.email, a.phone, a.state,
-        d.employment?.employer, d.employment?.position, d.motivation?.whyParticipate
+        p.address, p.suburb,
+        (d.position?.positions || []).join('; '),
+        (d.experience?.skills || d.leadership?.skills || []).join('; ')
       ].map(escape).join(',');
     });
     const csv = [headers.join(','), ...rows].join('\n');
@@ -968,16 +971,16 @@
 
   function renderAilcdApplicationsPanel(applications, errorMsg) {
     if (errorMsg) {
-      return `<h3>AILCD applications</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
+      return `<h3>Leadership EOI submissions</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
     }
     if (!applications.length) {
-      return `<h3>AILCD applications</h3><p class="form-hint">No applications yet. Share the form link with applicants.</p>`;
+      return `<h3>Leadership EOI submissions</h3><p class="form-hint">No submissions yet. Share the form link with applicants.</p>`;
     }
 
     const unread = applications.filter(a => !a.read).length;
     return `
       <div class="list-item__header">
-        <h3>AILCD applications (${applications.length}${unread ? ` · ${unread} new` : ''})</h3>
+        <h3>Leadership EOI submissions (${applications.length}${unread ? ` · ${unread} new` : ''})</h3>
         <button type="button" class="btn btn--outline btn--sm" id="exportAilcdCsv">Download CSV</button>
       </div>
       <p class="form-hint">Expand an application to view full details. Data is admin-only.</p>
@@ -986,7 +989,7 @@
           <details class="list-item inbox-item membership-reg-item ${a.read ? 'inbox-item--read' : ''}">
             <summary class="membership-reg-item__summary">
               <span class="membership-reg-item__name">${escapeHtml(a.full_name)}</span>
-              <span class="membership-reg-item__meta">${escapeHtml(a.state || '—')} · ${escapeHtml(a.data?.employment?.employer || '—')}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(a.state || '—')} · ${escapeHtml((a.data?.position?.positions || []).slice(0, 2).join(', ') || '—')}</span>
               <span class="inbox-item__date">${new Date(a.created_at).toLocaleString()}</span>
             </summary>
             <div class="membership-reg-item__body">
@@ -1006,11 +1009,11 @@
     if (!card) return;
 
     if (isPreviewMode || !getToken()) {
-      card.innerHTML = renderAilcdApplicationsPanel([], 'Sign in to view AILCD applications.');
+      card.innerHTML = renderAilcdApplicationsPanel([], 'Sign in to view Leadership EOI submissions.');
       return;
     }
 
-    card.innerHTML = '<h3>AILCD applications</h3><p class="form-hint">Loading…</p>';
+    card.innerHTML = '<h3>Leadership EOI submissions</h3><p class="form-hint">Loading…</p>';
 
     try {
       const applications = await loadAilcdApplications();
@@ -1018,7 +1021,7 @@
 
       card.querySelector('#exportAilcdCsv')?.addEventListener('click', () => {
         downloadAilcdCsvClient(applications);
-        showStatus('AILCD applications exported as CSV.', 'success');
+        showStatus('Leadership EOI submissions exported as CSV.', 'success');
       });
 
       card.querySelectorAll('.ailcd-mark-read').forEach(btn => {
