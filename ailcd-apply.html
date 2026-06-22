@@ -137,24 +137,24 @@
         <!-- Section B -->
         <fieldset class="ailcd-step" data-step="1" hidden>
           <legend>Section B — Position of interest</legend>
-          <p class="form-hint">10. Which interim leadership position are you applying for? * (Select all that apply)</p>
-          <div class="ailcd-checkgrid ailcd-checkgrid--stack" data-required-group="positions">
-            <label><input type="checkbox" name="positions" value="Interim Chairperson/President"> Interim Chairperson / President</label>
-            <label><input type="checkbox" name="positions" value="Interim Vice Chairperson/Vice President"> Interim Vice Chairperson / Vice President</label>
-            <label><input type="checkbox" name="positions" value="Interim Secretary General"> Interim Secretary General</label>
-            <label><input type="checkbox" name="positions" value="Assistant Secretary"> Assistant Secretary</label>
-            <label><input type="checkbox" name="positions" value="Treasurer"> Treasurer</label>
-            <label><input type="checkbox" name="positions" value="Assistant Treasurer"> Assistant Treasurer</label>
-            <label><input type="checkbox" name="positions" value="Organizing Secretary"> Organizing Secretary</label>
-            <label><input type="checkbox" name="positions" value="Communications & Media Officer"> Communications &amp; Media Officer</label>
-            <label><input type="checkbox" name="positions" value="Public Relations Officer"> Public Relations Officer</label>
-            <label><input type="checkbox" name="positions" value="Youth Representative"> Youth Representative</label>
-            <label><input type="checkbox" name="positions" value="Women's Representative"> Women's Representative</label>
-            <label><input type="checkbox" name="positions" value="Elder's Representative"> Elder's Representative</label>
-            <label><input type="checkbox" name="positions" value="Cultural Affairs Coordinator"> Cultural Affairs Coordinator</label>
-            <label><input type="checkbox" name="positions" value="Welfare Coordinator"> Welfare Coordinator</label>
-            <label><input type="checkbox" name="positions" value="Project Coordinator"> Project Coordinator</label>
-            <label><input type="checkbox" name="positions" value="Other" id="positionOther"> Other (specify)</label>
+          <p class="form-hint">10. Which interim leadership position are you applying for? * (Select one position only)</p>
+          <div class="ailcd-checkgrid ailcd-checkgrid--stack" data-required-group="position">
+            <label><input type="radio" name="position" value="Interim Chairperson/President" required> Interim Chairperson / President</label>
+            <label><input type="radio" name="position" value="Interim Vice Chairperson/Vice President"> Interim Vice Chairperson / Vice President</label>
+            <label><input type="radio" name="position" value="Interim Secretary General"> Interim Secretary General</label>
+            <label><input type="radio" name="position" value="Assistant Secretary"> Assistant Secretary</label>
+            <label><input type="radio" name="position" value="Treasurer"> Treasurer</label>
+            <label><input type="radio" name="position" value="Assistant Treasurer"> Assistant Treasurer</label>
+            <label><input type="radio" name="position" value="Organizing Secretary"> Organizing Secretary</label>
+            <label><input type="radio" name="position" value="Communications & Media Officer"> Communications &amp; Media Officer</label>
+            <label><input type="radio" name="position" value="Public Relations Officer"> Public Relations Officer</label>
+            <label><input type="radio" name="position" value="Youth Representative"> Youth Representative</label>
+            <label><input type="radio" name="position" value="Women's Representative"> Women's Representative</label>
+            <label><input type="radio" name="position" value="Elder's Representative"> Elder's Representative</label>
+            <label><input type="radio" name="position" value="Cultural Affairs Coordinator"> Cultural Affairs Coordinator</label>
+            <label><input type="radio" name="position" value="Welfare Coordinator"> Welfare Coordinator</label>
+            <label><input type="radio" name="position" value="Project Coordinator"> Project Coordinator</label>
+            <label><input type="radio" name="position" value="Other" id="positionOtherRadio"> Other (specify)</label>
           </div>
           <div class="form__group form__group--full">
             <label for="positionOtherText">Other (specify)</label>
@@ -239,6 +239,6 @@
     </div>
   </footer>
 
-  <script src="js/ailcd-apply.js?v=6"></script>
+  <script src="js/ailcd-apply.js?v=7"></script>
 </body>
 </html>

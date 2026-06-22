@@ -139,7 +139,7 @@
       const checked = document.querySelector(`[name="${name}"]:checked`);
       return checked ? checked.value : '';
     }
-    if (el.type === 'checkbox' && el.name !== 'positions' && el.name !== 'skills') {
+    if (el.type === 'checkbox' && el.name !== 'skills') {
       return el.checked;
     }
     return el.value.trim();
@@ -276,11 +276,11 @@
   }
 
   function collectFormData() {
-    const positions = checkedValues('positions');
+    const position = val('position');
     const otherText = val('positionOther');
-    if (positions.includes('Other') && otherText) {
-      positions.push(`Other: ${otherText}`);
-    }
+    const positions = position === 'Other'
+      ? (otherText ? [`Other: ${otherText}`] : ['Other'])
+      : (position ? [position] : []);
 
     return {
       formType: 'gotabgaa-interim-leadership-eoi',
@@ -374,9 +374,17 @@
       }
     }
 
-    if (currentStep === 1 && !validateCheckboxGroup(fieldset, 'positions')) {
-      alert('Please select at least one interim leadership position.');
-      return false;
+    if (currentStep === 1) {
+      const position = val('position');
+      if (!position) {
+        alert('Please select one interim leadership position.');
+        return false;
+      }
+      if (position === 'Other' && !val('positionOther').trim()) {
+        alert('Please specify the position under Other.');
+        document.getElementById('positionOtherText')?.focus();
+        return false;
+      }
     }
 
     if (currentStep === 2 && !validateCheckboxGroup(fieldset, 'skills')) {
@@ -515,6 +523,19 @@
           body: JSON.stringify(collectFormData())
         });
         const data = await res.json().catch(() => ({}));
+        if (res.status === 409) {
+          const email = val('email');
+          if (data.referenceCode && email) {
+            saveStatusSession(email, data.referenceCode);
+            try {
+              await displayApplicationStatus(email, data.referenceCode);
+            } catch {
+              showApplicationSection(false);
+              showStatusPortal(false);
+            }
+          }
+          throw new Error(data.error || 'You have already submitted an application.');
+        }
         if (!res.ok) throw new Error(data.error || data.detail || 'Submission failed');
 
         const email = val('email');

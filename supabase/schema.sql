@@ -119,6 +119,9 @@ create unique index if not exists ailcd_applications_reference_code_idx
 create index if not exists ailcd_applications_status_idx
   on public.ailcd_applications (status, created_at desc);
 
+create unique index if not exists ailcd_applications_email_unique_idx
+  on public.ailcd_applications (lower(email));
+
 -- Empty row so Admin → Publish can upsert immediately
 insert into public.site_content (id, data)
 values ('main', '{}'::jsonb)
@@ -176,3 +179,5 @@ from public.ailcd_applications;
 --   on public.ailcd_applications (reference_code) where reference_code is not null;
 -- create index if not exists ailcd_applications_status_idx
 --   on public.ailcd_applications (status, created_at desc);
+-- create unique index if not exists ailcd_applications_email_unique_idx
+--   on public.ailcd_applications (lower(email));
