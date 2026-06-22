@@ -79,7 +79,9 @@
       'contact.html': 'contact',
       'privacy.html': 'privacy',
       'terms.html': 'terms',
-      'portal.html': 'portal'
+      'portal.html': 'portal',
+      'join.html': 'join',
+      'book.html': 'book'
     };
     return map[file] || null;
   }

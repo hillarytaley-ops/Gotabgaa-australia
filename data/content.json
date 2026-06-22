@@ -24,6 +24,28 @@
     "location": "Sydney, NSW, Australia",
     "officeHours": "Monday – Friday, 9:00 AM – 6:00 PM AEST"
   },
+  "membership": {
+    "enabled": true,
+    "feeAmount": 50,
+    "feeCurrency": "AUD",
+    "feePeriod": "year",
+    "feeDisplay": "$50 AUD / year",
+    "feeNote": "Annual membership fee — secure online payment will be integrated in a future update. Our team will confirm your registration by email.",
+    "paymentPlaceholder": "Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.",
+    "intro": "Join our growing community across Australia — access events, programs, and cultural initiatives.",
+    "image": "assets/hero/brisbane-team.png",
+    "benefits": [
+      "Chapter events and gatherings across Australia",
+      "Cultural and youth mentorship programs",
+      "Community support network in your state"
+    ],
+    "types": [
+      { "id": "full", "label": "Full Member", "description": "Adult member (18+)" },
+      { "id": "associate", "label": "Associate Member", "description": "Supporting member" },
+      { "id": "youth", "label": "Youth Member", "description": "Ages 12–17" },
+      { "id": "family", "label": "Family Membership", "description": "Household membership" }
+    ]
+  },
   "pages": {
     "home": {
       "hero": {
@@ -75,7 +97,7 @@
         "title": "Join Our Growing Community",
         "description": "Whether you're in Sydney, Melbourne, Brisbane, or Perth — there's a place for you in Gotabgaa Australia.",
         "button": "Become a Member",
-        "buttonUrl": "contact.html"
+        "buttonUrl": "join.html"
       }
     },
     "about": {
@@ -115,6 +137,9 @@
     },
     "contact": {
       "hero": { "tag": "Get In Touch", "title": "Contact Us", "description": "For assistance with any of our programs or general inquiries, please reach out. We're here to help." }
+    },
+    "join": {
+      "hero": { "tag": "Membership", "title": "Join Gotabgaa Australia", "description": "Register as a member and connect with Kalenjin families and friends across Australia." }
     },
     "privacy": {
       "hero": { "tag": "Legal", "title": "Privacy Policy", "description": "How we collect, use, and protect your information." },

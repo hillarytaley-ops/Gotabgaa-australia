@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register as a member of Gotabgaa Australia Chapter.">
+  <title>Membership Registration | Gotabgaa Australia Chapter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/logo-round.png" type="image/png">
+</head>
+<body class="page-sub">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia Chapter" class="nav__logo logo-circle">
+        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="programs.html" class="nav__link">Programs</a></li>
+        <li><a href="events.html" class="nav__link">Events</a></li>
+        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
+        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+        <li><a href="join.html" class="btn btn--primary nav__cta">Join Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="tribal-border tribal-border--top" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container">
+      <span class="section__tag">Membership</span>
+      <h1 class="page-hero__title">Join Gotabgaa Australia</h1>
+      <p class="page-hero__desc">Register as a member and connect with Kalenjin families and friends across Australia.</p>
+    </div>
+    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
+      <div class="tribal-border__track tribal-border__track--reverse"></div>
+    </div>
+  </section>
+
+  <section class="booking-portal section" id="membershipPortal">
+    <div class="container">
+      <div class="booking-portal__missing" id="membershipDisabled" hidden>
+        <h2 class="section__title">Registration paused</h2>
+        <p class="section__desc">Membership registration is temporarily unavailable. Please <a href="contact.html">contact us</a> for assistance.</p>
+      </div>
+
+      <div class="booking-portal__grid" id="membershipLayout" hidden>
+        <aside class="booking-portal__summary animate-on-scroll" data-animate="fade-right">
+          <div class="booking-portal__media">
+            <img src="assets/hero/brisbane-team.png" alt="Gotabgaa Australia community" id="membershipImage">
+          </div>
+          <div class="booking-portal__body">
+            <span class="section__tag">Member Benefits</span>
+            <h2>Become a Member</h2>
+            <p id="membershipIntro">Join our growing community across Australia — access events, programs, and cultural initiatives.</p>
+            <ul class="booking-portal__meta" id="membershipBenefits">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                <span>Chapter events and gatherings</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                <span>Cultural and youth programs</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+                <span>Community support network</span>
+              </li>
+            </ul>
+            <p class="booking-portal__fee" id="membershipFee">$50 AUD / year</p>
+            <p class="booking-portal__note" id="membershipFeeNote">Annual membership fee — secure online payment will be integrated in a future update.</p>
+            <div class="booking-portal__payment-placeholder" id="membershipPaymentPlaceholder">
+              <p class="form-hint"><strong>Payment:</strong> Online payment (card / bank transfer) coming soon. Submit this form to register — our team will follow up by email.</p>
+            </div>
+          </div>
+        </aside>
+
+        <div class="booking-portal__form-wrap animate-on-scroll" data-animate="fade-left">
+          <h3>Registration details</h3>
+          <p class="booking-portal__form-intro" id="membershipFormIntro">Complete the form below. All fields marked * are required.</p>
+          <form id="membershipForm" class="contact__form" style="padding:0;box-shadow:none;background:transparent">
+            <div class="form__group">
+              <label for="memberName">Full name *</label>
+              <input type="text" id="memberName" name="name" required autocomplete="name">
+            </div>
+            <div class="form__group">
+              <label for="memberEmail">Email *</label>
+              <input type="email" id="memberEmail" name="email" required autocomplete="email">
+            </div>
+            <div class="form__group">
+              <label for="memberPhone">Phone *</label>
+              <input type="tel" id="memberPhone" name="phone" required autocomplete="tel">
+            </div>
+            <div class="form__group">
+              <label for="memberState">State / chapter *</label>
+              <select id="memberState" name="stateChapter" required>
+                <option value="">— Select —</option>
+                <option value="NSW">New South Wales (Sydney)</option>
+                <option value="VIC">Victoria (Melbourne)</option>
+                <option value="QLD">Queensland (Brisbane)</option>
+                <option value="WA">Western Australia (Perth)</option>
+                <option value="SA">South Australia (Adelaide)</option>
+                <option value="ACT">Australian Capital Territory (Canberra)</option>
+                <option value="Other">Other / Overseas</option>
+              </select>
+            </div>
+            <div class="form__group">
+              <label for="memberType">Membership type *</label>
+              <select id="memberType" name="membershipType" required></select>
+            </div>
+            <div class="form__group">
+              <label for="memberAddress">Address (optional)</label>
+              <input type="text" id="memberAddress" name="address" autocomplete="street-address">
+            </div>
+            <div class="form__group">
+              <label for="memberDob">Date of birth (optional)</label>
+              <input type="date" id="memberDob" name="dateOfBirth">
+            </div>
+            <div class="form__group">
+              <label for="memberReferral">How did you hear about us?</label>
+              <select id="memberReferral" name="referralSource">
+                <option value="">— Select —</option>
+                <option value="Friend or family">Friend or family</option>
+                <option value="Social media">Social media</option>
+                <option value="Event">Community event</option>
+                <option value="Gotabgaa International">Gotabgaa International</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form__group">
+              <label for="memberNotes">Additional notes</label>
+              <textarea id="memberNotes" name="notes" rows="4" placeholder="Family members, accessibility needs, etc."></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary btn--shine" id="membershipSubmitBtn">Submit Registration</button>
+            <button type="button" class="btn btn--outline membership-pay-placeholder" id="membershipPayBtn" disabled aria-disabled="true" title="Online payment coming soon">Pay membership fee (coming soon)</button>
+            <p class="booking-portal__success" id="membershipSuccess" hidden></p>
+            <p class="booking-portal__error" id="membershipError" hidden></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="tribal-border tribal-border--edge" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia" class="footer__logo logo-circle">
+        <p>Unity • Heritage • Excellence</p>
+      </div>
+    </div>
+    <div class="footer__bottom container">
+      <p>&copy; 2026 Gotabgaa Australia Chapter. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/site-config.js"></script>
+  <script src="js/content-loader.js"></script>
+  <script src="js/join-membership.js"></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

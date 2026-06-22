@@ -551,6 +551,47 @@ body {
   opacity: 0.72;
 }
 
+.membership-reg-item__summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 16px;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+  padding: 4px 0;
+}
+
+.membership-reg-item__summary::-webkit-details-marker {
+  display: none;
+}
+
+.membership-reg-item__name {
+  font-weight: 600;
+  color: var(--brown-900);
+}
+
+.membership-reg-item__meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  grid-column: 1;
+}
+
+.membership-reg-item__summary .inbox-item__date {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.membership-reg-item__body {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cream-dark);
+}
+
+.membership-reg-item__grid p {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: sticky; top: 0; z-index: 10; }

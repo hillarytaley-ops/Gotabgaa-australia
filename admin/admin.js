@@ -37,6 +37,7 @@
     leadership: 'Leadership',
     gallery: 'Gallery',
     contact: 'Contact Info',
+    membership: 'Membership',
     inbox: 'Contact Inbox',
     pages: 'Page Heroes'
   };
@@ -264,6 +265,7 @@
         ${field('Home CTA title', 'homeCtaTitle', h.cta.title)}
         ${field('Home CTA text', 'homeCtaDesc', h.cta.description, 'textarea')}
         ${field('Home CTA button', 'homeCtaBtn', h.cta.button)}
+        ${field('Home CTA button URL', 'homeCtaBtnUrl', h.cta.buttonUrl || 'join.html')}
       </div></div>
     `;
   }
@@ -639,6 +641,64 @@
     `;
   }
 
+  function defaultMembership() {
+    return {
+      enabled: true,
+      feeAmount: 50,
+      feeCurrency: 'AUD',
+      feePeriod: 'year',
+      feeDisplay: '$50 AUD / year',
+      feeNote: 'Annual membership fee — secure online payment will be integrated in a future update.',
+      paymentPlaceholder: 'Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.',
+      intro: 'Join our growing community across Australia.',
+      image: 'assets/hero/brisbane-team.png',
+      benefits: ['Chapter events and gatherings', 'Cultural and youth programs', 'Community support network'],
+      types: [
+        { id: 'full', label: 'Full Member' },
+        { id: 'associate', label: 'Associate Member' },
+        { id: 'youth', label: 'Youth Member' },
+        { id: 'family', label: 'Family Membership' }
+      ]
+    };
+  }
+
+  function renderMembershipPanel() {
+    if (!content.membership) content.membership = defaultMembership();
+    const m = content.membership;
+    const typeLines = (m.types || []).map(t => t.label).join('\n');
+    const benefitLines = (m.benefits || []).join('\n');
+
+    return `
+      <div class="card card--notice">
+        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Adjust the fee below anytime — the live fee shown on the form updates after you publish. Online payment integration is planned for a future release.</p>
+      </div>
+      <div class="card" id="membershipRegistrationsCard">
+        <h3>Member registrations</h3>
+        <p class="form-hint">Loading registration data…</p>
+      </div>
+      <div class="card"><h3>Registration fee</h3><div class="form-grid">
+        ${field('Registration open', 'memEnabled', m.enabled !== false, 'checkbox')}
+        ${field('Fee amount', 'memFeeAmount', m.feeAmount, 'number')}
+        ${field('Currency', 'memFeeCurrency', m.feeCurrency || 'AUD')}
+        ${field('Billing period', 'memFeePeriod', m.feePeriod || 'year')}
+        ${field('Fee display (public)', 'memFeeDisplay', m.feeDisplay)}
+        ${field('Fee note (public)', 'memFeeNote', m.feeNote, 'textarea', { full: true })}
+        ${field('Payment placeholder text', 'memPaymentPlaceholder', m.paymentPlaceholder, 'textarea', { full: true })}
+      </div></div>
+      <div class="card"><h3>Portal content</h3><div class="form-grid">
+        ${field('Intro paragraph', 'memIntro', m.intro, 'textarea', { full: true })}
+        ${field('Sidebar image path', 'memImage', m.image || '')}
+        ${field('Benefits (one per line)', 'memBenefits', benefitLines, 'textarea', { full: true })}
+        ${field('Membership types (one label per line)', 'memTypes', typeLines, 'textarea', { full: true })}
+      </div></div>
+      <div class="card"><h3>Join page hero</h3><div class="form-grid">
+        ${field('Tag', 'heroTag_join', content.pages?.join?.hero?.tag || 'Membership')}
+        ${field('Title', 'heroTitle_join', content.pages?.join?.hero?.title || 'Join Gotabgaa Australia')}
+        ${field('Description', 'heroDesc_join', content.pages?.join?.hero?.description || '', 'textarea', { full: true })}
+      </div></div>
+    `;
+  }
+
   async function loadEventBookings() {
     const token = getToken();
     if (!token) return [];
@@ -714,6 +774,130 @@
       });
     } catch (err) {
       card.innerHTML = renderEventBookingsPanel([], err.message);
+    }
+  }
+
+  async function loadMembershipRegistrations() {
+    const token = getToken();
+    if (!token) return [];
+
+    const res = await fetch('/api/membership-registrations', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Could not load registrations');
+    }
+
+    const data = await res.json();
+    return data.registrations || [];
+  }
+
+  function downloadMembershipCsvClient(registrations) {
+    const headers = [
+      'Date', 'Name', 'Email', 'Phone', 'State/Chapter', 'Membership Type',
+      'Address', 'Date of Birth', 'Referral', 'Notes', 'Fee Display', 'Payment Status'
+    ];
+    const escape = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const rows = registrations.map(r => [
+      r.created_at ? new Date(r.created_at).toISOString() : '',
+      r.name, r.email, r.phone, r.state_chapter, r.membership_type,
+      r.address, r.date_of_birth, r.referral_source, r.notes,
+      r.fee_display, r.payment_status
+    ].map(escape).join(','));
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `membership-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function renderMembershipRegistrationsPanel(registrations, errorMsg) {
+    if (errorMsg) {
+      return `<h3>Member registrations</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
+    }
+    if (!registrations.length) {
+      return `<h3>Member registrations</h3><p class="form-hint">No registrations yet. Submissions from the join portal appear here when Supabase is connected.</p>`;
+    }
+
+    const unread = registrations.filter(r => !r.read).length;
+
+    return `
+      <div class="list-item__header">
+        <h3>Member registrations (${registrations.length}${unread ? ` · ${unread} new` : ''})</h3>
+        <button type="button" class="btn btn--outline btn--sm" id="exportMembershipCsv">Download CSV</button>
+      </div>
+      <p class="form-hint">View full registration details below. Data is only visible to signed-in admins — use Download CSV to export.</p>
+      <div id="membershipRegistrationsList">
+        ${registrations.map(r => `
+          <details class="list-item inbox-item membership-reg-item ${r.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(r.id)}">
+            <summary class="membership-reg-item__summary">
+              <span class="membership-reg-item__name">${escapeHtml(r.name)}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(r.membership_type || 'Member')} · ${escapeHtml(r.state_chapter || '—')}</span>
+              <span class="inbox-item__date">${new Date(r.created_at).toLocaleString()}</span>
+            </summary>
+            <div class="membership-reg-item__body">
+              <div class="form-grid membership-reg-item__grid">
+                <p><strong>Email:</strong> ${escapeHtml(r.email)}</p>
+                <p><strong>Phone:</strong> ${escapeHtml(r.phone || '—')}</p>
+                <p><strong>State / chapter:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
+                <p><strong>Membership type:</strong> ${escapeHtml(r.membership_type || '—')}</p>
+                <p><strong>Address:</strong> ${escapeHtml(r.address || '—')}</p>
+                <p><strong>Date of birth:</strong> ${escapeHtml(r.date_of_birth || '—')}</p>
+                <p><strong>Referral:</strong> ${escapeHtml(r.referral_source || '—')}</p>
+                <p><strong>Fee at registration:</strong> ${escapeHtml(r.fee_display || '—')}</p>
+                <p><strong>Payment status:</strong> ${escapeHtml(r.payment_status || 'pending')}${r.payment_method ? ` (${escapeHtml(r.payment_method)})` : ''}</p>
+                ${r.notes ? `<p class="form-field--full"><strong>Notes:</strong> ${escapeHtml(r.notes)}</p>` : ''}
+              </div>
+              <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
+                ${r.read ? 'Mark unread' : 'Mark read'}
+              </button>
+            </div>
+          </details>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  async function loadMembershipRegistrationsPanel() {
+    const card = document.getElementById('membershipRegistrationsCard');
+    if (!card) return;
+
+    if (isPreviewMode || !getToken()) {
+      card.innerHTML = renderMembershipRegistrationsPanel([], 'Sign in to view member registrations.');
+      return;
+    }
+
+    card.innerHTML = '<h3>Member registrations</h3><p class="form-hint">Loading…</p>';
+
+    try {
+      const registrations = await loadMembershipRegistrations();
+      card.innerHTML = renderMembershipRegistrationsPanel(registrations);
+
+      card.querySelector('#exportMembershipCsv')?.addEventListener('click', () => {
+        downloadMembershipCsvClient(registrations);
+        showStatus('Membership registrations exported as CSV.', 'success');
+      });
+
+      card.querySelectorAll('.membership-mark-read').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const token = getToken();
+          await fetch('/api/membership-registrations', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
+          });
+          loadMembershipRegistrationsPanel();
+        });
+      });
+    } catch (err) {
+      card.innerHTML = renderMembershipRegistrationsPanel([], err.message);
     }
   }
 
@@ -797,7 +981,7 @@
   }
 
   function renderPagesPanel() {
-    const pages = ['programs', 'events', 'leadership', 'gallery', 'contact', 'privacy', 'terms'];
+    const pages = ['programs', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'];
     return pages.map(key => {
       const h = content.pages[key]?.hero || {};
       return `
@@ -835,10 +1019,12 @@
           leadership: renderLeadershipPanel,
           gallery: renderGalleryPanel,
           contact: renderContactPanel,
+          membership: renderMembershipPanel,
           pages: renderPagesPanel
         };
         panel.innerHTML = renderers[section]?.() || '';
         bindListActions(section);
+        if (section === 'membership') loadMembershipRegistrationsPanel();
       }
     });
   }
@@ -1038,6 +1224,7 @@
       h.cta.title = val('homeCtaTitle');
       h.cta.description = val('homeCtaDesc');
       h.cta.button = val('homeCtaBtn');
+      h.cta.buttonUrl = val('homeCtaBtnUrl');
     }
 
     if (document.getElementById('aboutLead') && content.pages?.about) {
@@ -1120,7 +1307,33 @@
       content.contact.officeHours = val('contactHours');
     }
 
-    ['programs', 'events', 'leadership', 'gallery', 'contact', 'privacy', 'terms'].forEach(key => {
+    if (document.getElementById('memFeeAmount')) {
+      if (!content.membership) content.membership = defaultMembership();
+      const m = content.membership;
+      m.enabled = val('memEnabled');
+      m.feeAmount = parseFloat(val('memFeeAmount')) || 0;
+      m.feeCurrency = val('memFeeCurrency') || 'AUD';
+      m.feePeriod = val('memFeePeriod') || 'year';
+      m.feeDisplay = val('memFeeDisplay');
+      m.feeNote = val('memFeeNote');
+      m.paymentPlaceholder = val('memPaymentPlaceholder');
+      m.intro = val('memIntro');
+      m.image = val('memImage');
+      m.benefits = val('memBenefits').split('\n').map(s => s.trim()).filter(Boolean);
+      m.types = val('memTypes').split('\n').map(s => s.trim()).filter(Boolean).map((label, i) => ({
+        id: label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `type-${i}`,
+        label
+      }));
+      if (!content.pages) content.pages = {};
+      if (!content.pages.join) content.pages.join = { hero: {} };
+      content.pages.join.hero = {
+        tag: val('heroTag_join'),
+        title: val('heroTitle_join'),
+        description: val('heroDesc_join')
+      };
+    }
+
+    ['programs', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'].forEach(key => {
       if (document.getElementById(`heroTag_${key}`) && content.pages?.[key]?.hero) {
         content.pages[key].hero.tag = val(`heroTag_${key}`);
         content.pages[key].hero.title = val(`heroTitle_${key}`);
