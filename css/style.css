@@ -2440,20 +2440,49 @@ body.modal-open {
   }
 
   .hero {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    justify-items: stretch;
-    gap: 14px;
+    display: block;
+    position: relative;
     padding-left: 18px;
     padding-right: 18px;
+    padding-top: 0;
+    padding-bottom: var(--hero-band-bottom);
+  }
+
+  .hero__overlay {
+    background:
+      linear-gradient(to bottom, rgba(42, 31, 23, 0.72) 0%, rgba(42, 31, 23, 0.42) 14%, rgba(42, 31, 23, 0.1) 24%, transparent 34%),
+      linear-gradient(to top, rgba(42, 31, 23, 0.18) 0%, transparent 12%);
   }
 
   .hero__content {
-    grid-column: 1;
-    grid-row: 2;
-    max-width: 100%;
+    position: absolute;
+    top: var(--hero-band-top);
+    left: 18px;
+    right: 18px;
+    z-index: 3;
+    grid-column: unset;
+    grid-row: unset;
+    max-width: none;
+    width: auto;
+    padding: 10px 0 0;
     text-align: left;
-    padding: 8px 0 4px;
+  }
+
+  .hero__badge {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    margin-bottom: 8px;
+  }
+
+  .hero__title {
+    font-size: clamp(1.25rem, 5.5vw, 1.65rem);
+    margin-bottom: 4px;
+    line-height: 1.1;
+  }
+
+  .hero__subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
   }
 
   .hero__desc {
@@ -2461,12 +2490,17 @@ body.modal-open {
   }
 
   .hero__actions {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: nowrap;
   }
 
   .hero__actions .btn {
-    width: 100%;
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 0.82rem;
     box-sizing: border-box;
   }
 
@@ -2489,10 +2523,6 @@ body.modal-open {
   /* All 10 slides cycle — fade only on mobile */
   .hero__slide {
     animation-duration: 56s;
-  }
-
-  .hero__title {
-    font-size: clamp(1.55rem, 6.2vw, 2rem);
   }
 
   .logo-spinner__img {
@@ -2723,22 +2753,19 @@ body.modal-open {
     font-size: 1rem;
   }
 
-  .hero__content {
-    padding: 6px 0 4px;
+  .hero__title {
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
+    margin-bottom: 4px;
   }
 
-  .hero__title {
-    font-size: clamp(1.45rem, 7vw, 1.85rem);
+  .hero__subtitle {
+    font-size: 0.75rem;
     margin-bottom: 8px;
   }
 
-  .hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .hero__actions .btn {
-    width: 100%;
+    padding: 9px 10px;
+    font-size: 0.78rem;
   }
 
   .hero__logo-ring {
