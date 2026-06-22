@@ -36,6 +36,35 @@
 
   <section class="section ailcd-apply">
     <div class="container container--narrow">
+      <div class="ailcd-status-check card" id="ailcdStatusCheck">
+        <h2 class="ailcd-status-check__title">Check your application status</h2>
+        <p class="form-hint">Already submitted? Enter the email and reference number from your confirmation to see if your application has been approved or rejected.</p>
+        <form id="ailcdCheckForm" class="ailcd-status-check__form" novalidate>
+          <div class="form__grid">
+            <div class="form__group">
+              <label for="checkEmail">Email address</label>
+              <input id="checkEmail" name="checkEmail" type="email" required autocomplete="email">
+            </div>
+            <div class="form__group">
+              <label for="checkReference">Reference number</label>
+              <input id="checkReference" name="checkReference" type="text" required placeholder="GA-XXXXXXXX" autocapitalize="characters">
+            </div>
+          </div>
+          <button type="submit" class="btn btn--outline" id="ailcdCheckBtn">Check status</button>
+        </form>
+        <p class="booking-portal__error" id="ailcdCheckError" hidden></p>
+      </div>
+
+      <div class="ailcd-status-portal card" id="ailcdStatusPortal" hidden>
+        <h2 class="ailcd-status-portal__title">Your application status</h2>
+        <div id="ailcdStatusDisplay"></div>
+        <div class="ailcd-status-portal__actions">
+          <button type="button" class="btn btn--outline btn--sm" id="ailcdRefreshStatus">Refresh status</button>
+          <button type="button" class="btn btn--outline btn--sm" id="ailcdShowCheckForm">Look up another application</button>
+        </div>
+      </div>
+
+      <div id="ailcdApplicationSection">
       <div class="ailcd-apply__intro card">
         <p class="ailcd-apply__form-title">GOTABGAA INTERIM LEADERSHIP EXPRESSION OF INTEREST (EOI) FORM</p>
         <p><strong>GOTABGAA AUSTRALIA</strong></p>
@@ -200,6 +229,7 @@
         <p class="booking-portal__success" id="ailcdSuccess" hidden></p>
         <p class="booking-portal__error" id="ailcdError" hidden></p>
       </form>
+      </div>
     </div>
   </section>
 
@@ -209,6 +239,6 @@
     </div>
   </footer>
 
-  <script src="js/ailcd-apply.js?v=5"></script>
+  <script src="js/ailcd-apply.js?v=6"></script>
 </body>
 </html>

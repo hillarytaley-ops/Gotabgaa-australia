@@ -9,8 +9,128 @@
     'Declaration'
   ];
 
+  const STATUS_STORAGE_KEY = 'gotabgaaEoiStatus';
+
   let currentStep = 0;
   let signaturePad = null;
+  let activeStatusSession = null;
+
+  function getStatusSession() {
+    try {
+      const raw = localStorage.getItem(STATUS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveStatusSession(email, reference) {
+    const session = {
+      email: String(email || '').trim().toLowerCase(),
+      reference: String(reference || '').trim().toUpperCase()
+    };
+    localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(session));
+    activeStatusSession = session;
+    return session;
+  }
+
+  function statusLabel(status) {
+    const labels = {
+      pending: 'Under review',
+      approved: 'Approved',
+      rejected: 'Not successful'
+    };
+    return labels[status] || 'Under review';
+  }
+
+  function statusDescription(status) {
+    if (status === 'approved') {
+      return 'Your expression of interest has been approved. Our team may contact you with next steps.';
+    }
+    if (status === 'rejected') {
+      return 'Your expression of interest was not successful at this time.';
+    }
+    return 'Your application is under review. Return to this page anytime to check for updates.';
+  }
+
+  function renderStatusDisplay(application) {
+    const status = application.status || 'pending';
+    const updated = application.updatedAt
+      ? new Date(application.updatedAt).toLocaleString()
+      : '—';
+
+    return `
+      <div class="eoi-status-result">
+        <p class="eoi-status-result__name"><strong>${escapeHtml(application.fullName || 'Applicant')}</strong></p>
+        <p class="eoi-status-result__ref">Reference: <strong>${escapeHtml(application.referenceCode || '—')}</strong></p>
+        <p class="eoi-status-result__badge-wrap">
+          <span class="eoi-status-badge eoi-status-badge--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
+        </p>
+        <p class="eoi-status-result__message">${escapeHtml(statusDescription(status))}</p>
+        ${application.statusMessage ? `<p class="eoi-status-result__note"><strong>Note from the team:</strong> ${escapeHtml(application.statusMessage)}</p>` : ''}
+        <p class="form-hint eoi-status-result__updated">Last updated: ${escapeHtml(updated)}</p>
+      </div>
+    `;
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showApplicationSection(show) {
+    const section = document.getElementById('ailcdApplicationSection');
+    if (section) section.hidden = !show;
+  }
+
+  function showStatusPortal(show) {
+    const portal = document.getElementById('ailcdStatusPortal');
+    const check = document.getElementById('ailcdStatusCheck');
+    if (portal) portal.hidden = !show;
+    if (check) check.hidden = show;
+  }
+
+  async function fetchApplicationStatus(email, reference) {
+    const params = new URLSearchParams({
+      email: String(email || '').trim().toLowerCase(),
+      ref: String(reference || '').trim().toUpperCase()
+    });
+
+    const res = await fetch(`/api/ailcd-status?${params.toString()}`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Could not load application status');
+    return data.application;
+  }
+
+  async function displayApplicationStatus(email, reference) {
+    const display = document.getElementById('ailcdStatusDisplay');
+    const checkError = document.getElementById('ailcdCheckError');
+    if (checkError) checkError.hidden = true;
+
+    if (display) {
+      display.innerHTML = '<p class="form-hint">Loading status…</p>';
+    }
+
+    const application = await fetchApplicationStatus(email, reference);
+    saveStatusSession(email, reference);
+
+    if (display) {
+      display.innerHTML = renderStatusDisplay(application);
+    }
+
+    showApplicationSection(false);
+    showStatusPortal(true);
+    return application;
+  }
+
+  async function refreshSavedStatus() {
+    const session = activeStatusSession || getStatusSession();
+    if (!session?.email || !session?.reference) return null;
+    return displayApplicationStatus(session.email, session.reference);
+  }
 
   function val(name) {
     const el = document.querySelector(`[name="${name}"]`);
@@ -278,6 +398,7 @@
 
   function init() {
     const form = document.getElementById('ailcdForm');
+    const checkForm = document.getElementById('ailcdCheckForm');
 
     document.getElementById('clearSignature')?.addEventListener('click', () => {
       if (!signaturePad) ensureSignaturePad();
@@ -296,6 +417,79 @@
 
     document.getElementById('ailcdPrev')?.addEventListener('click', () => {
       if (currentStep > 0) showStep(currentStep - 1);
+    });
+
+    checkForm?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const error = document.getElementById('ailcdCheckError');
+      const btn = document.getElementById('ailcdCheckBtn');
+      if (error) error.hidden = true;
+
+      const email = document.getElementById('checkEmail')?.value?.trim();
+      const reference = document.getElementById('checkReference')?.value?.trim();
+      if (!email || !reference) {
+        if (error) {
+          error.textContent = 'Please enter your email and reference number.';
+          error.hidden = false;
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Checking…';
+      }
+
+      try {
+        await displayApplicationStatus(email, reference);
+      } catch (err) {
+        if (error) {
+          error.textContent = err.message || 'Could not find that application.';
+          error.hidden = false;
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Check status';
+        }
+      }
+    });
+
+    document.getElementById('ailcdRefreshStatus')?.addEventListener('click', async () => {
+      const btn = document.getElementById('ailcdRefreshStatus');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Refreshing…';
+      }
+
+      try {
+        await refreshSavedStatus();
+      } catch (err) {
+        const error = document.getElementById('ailcdCheckError');
+        if (error) {
+          error.textContent = err.message || 'Could not refresh status.';
+          error.hidden = false;
+        }
+        showStatusPortal(false);
+        showApplicationSection(true);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Refresh status';
+        }
+      }
+    });
+
+    document.getElementById('ailcdShowCheckForm')?.addEventListener('click', () => {
+      showStatusPortal(false);
+      showApplicationSection(true);
+      const session = getStatusSession();
+      if (session) {
+        const emailField = document.getElementById('checkEmail');
+        const refField = document.getElementById('checkReference');
+        if (emailField) emailField.value = session.email;
+        if (refField) refField.value = session.reference;
+      }
     });
 
     form?.addEventListener('submit', async e => {
@@ -323,9 +517,26 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || data.detail || 'Submission failed');
 
-        success.textContent = data.message || 'Expression of interest received. Thank you!';
-        success.hidden = false;
-        form.querySelectorAll('input, textarea, select, button').forEach(el => { el.disabled = true; });
+        const email = val('email');
+        const reference = data.referenceCode;
+
+        if (reference && email) {
+          saveStatusSession(email, reference);
+          success.innerHTML = `${escapeHtml(data.message || 'Expression of interest received. Thank you!')}<br><br><strong>Your reference number:</strong> ${escapeHtml(reference)}<br>Save this number — you will need it with your email to check your application status on this page.`;
+          success.hidden = false;
+          form.querySelectorAll('input, textarea, select, button').forEach(el => { el.disabled = true; });
+
+          try {
+            await displayApplicationStatus(email, reference);
+          } catch {
+            showApplicationSection(false);
+            showStatusPortal(false);
+          }
+        } else {
+          success.textContent = data.message || 'Expression of interest received. Thank you!';
+          success.hidden = false;
+          form.querySelectorAll('input, textarea, select, button').forEach(el => { el.disabled = true; });
+        }
       } catch (err) {
         error.textContent = err.message || 'Could not submit. Please try again or contact us.';
         error.hidden = false;
@@ -335,6 +546,18 @@
         }
       }
     });
+
+    const savedSession = getStatusSession();
+    if (savedSession?.email && savedSession?.reference) {
+      activeStatusSession = savedSession;
+      refreshSavedStatus().catch(() => {
+        showStatusPortal(false);
+        showApplicationSection(true);
+      });
+    } else {
+      showStatusPortal(false);
+      showApplicationSection(true);
+    }
 
     showStep(0);
   }

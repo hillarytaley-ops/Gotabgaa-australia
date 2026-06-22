@@ -97,7 +97,11 @@ create table if not exists public.ailcd_applications (
   state text,
   data jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
-  read boolean not null default false
+  read boolean not null default false,
+  reference_code text,
+  status text not null default 'pending',
+  status_message text,
+  status_updated_at timestamptz
 );
 
 comment on table public.ailcd_applications is 'AILCD leadership program application forms';
@@ -107,6 +111,13 @@ create index if not exists ailcd_applications_created_at_idx
 
 create index if not exists ailcd_applications_read_idx
   on public.ailcd_applications (read, created_at desc);
+
+create unique index if not exists ailcd_applications_reference_code_idx
+  on public.ailcd_applications (reference_code)
+  where reference_code is not null;
+
+create index if not exists ailcd_applications_status_idx
+  on public.ailcd_applications (status, created_at desc);
 
 -- Empty row so Admin → Publish can upsert immediately
 insert into public.site_content (id, data)
@@ -155,3 +166,13 @@ from public.ailcd_applications;
 
 -- Gallery bulk upload: create a PUBLIC Storage bucket named "gallery" in
 -- Supabase Dashboard → Storage → New bucket → name: gallery → Public bucket: ON
+
+-- If tables already exist, run this migration for application status tracking:
+-- alter table public.ailcd_applications add column if not exists reference_code text;
+-- alter table public.ailcd_applications add column if not exists status text not null default 'pending';
+-- alter table public.ailcd_applications add column if not exists status_message text;
+-- alter table public.ailcd_applications add column if not exists status_updated_at timestamptz;
+-- create unique index if not exists ailcd_applications_reference_code_idx
+--   on public.ailcd_applications (reference_code) where reference_code is not null;
+-- create index if not exists ailcd_applications_status_idx
+--   on public.ailcd_applications (status, created_at desc);

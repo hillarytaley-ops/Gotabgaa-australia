@@ -9,6 +9,8 @@ function flattenForCsv(data, app) {
 
   return {
     date: app.created_at,
+    reference_code: app.reference_code,
+    status: app.status,
     full_name: app.full_name,
     email: app.email,
     phone: app.phone,
@@ -52,7 +54,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { data, error } = await supabase
       .from('ailcd_applications')
-      .select('id, surname, given_names, full_name, email, phone, state, data, created_at, read')
+      .select('id, surname, given_names, full_name, email, phone, state, data, created_at, read, reference_code, status, status_message, status_updated_at')
       .order('created_at', { ascending: false })
       .limit(500);
 
@@ -75,15 +77,35 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH') {
-    const { id, read } = req.body || {};
+    const { id, read, status, statusMessage } = req.body || {};
     if (!id) {
       res.status(400).json({ error: 'Missing application id' });
       return;
     }
 
+    const updates = {};
+    if (read !== undefined) updates.read = Boolean(read);
+    if (status !== undefined) {
+      const allowed = ['pending', 'approved', 'rejected'];
+      if (!allowed.includes(status)) {
+        res.status(400).json({ error: 'Invalid status' });
+        return;
+      }
+      updates.status = status;
+      updates.status_updated_at = new Date().toISOString();
+    }
+    if (statusMessage !== undefined) {
+      updates.status_message = String(statusMessage).trim() || null;
+    }
+
+    if (!Object.keys(updates).length) {
+      res.status(400).json({ error: 'No updates provided' });
+      return;
+    }
+
     const { error } = await supabase
       .from('ailcd_applications')
-      .update({ read: Boolean(read) })
+      .update(updates)
       .eq('id', id);
 
     if (error) {

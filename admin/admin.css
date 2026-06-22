@@ -630,6 +630,54 @@ body {
   background: var(--white);
 }
 
+.ailcd-admin-status {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--cream-dark);
+}
+
+.ailcd-admin-status p {
+  margin: 0 0 8px;
+}
+
+.ailcd-status-message {
+  width: 100%;
+  min-height: 64px;
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
+}
+
+.eoi-status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.eoi-status-badge--pending {
+  background: #fff4e5;
+  color: #9a6700;
+}
+
+.eoi-status-badge--approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.eoi-status-badge--rejected {
+  background: #fdecea;
+  color: #c62828;
+}
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: sticky; top: 0; z-index: 10; }

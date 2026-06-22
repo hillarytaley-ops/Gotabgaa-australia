@@ -931,6 +931,20 @@
     return data.applications || [];
   }
 
+  function formatAilcdStatusLabel(status) {
+    const labels = {
+      pending: 'Under review',
+      approved: 'Approved',
+      rejected: 'Rejected'
+    };
+    return labels[status] || 'Under review';
+  }
+
+  function formatAilcdStatusBadge(status) {
+    const value = status || 'pending';
+    return `<span class="eoi-status-badge eoi-status-badge--${escapeHtml(value)}">${escapeHtml(formatAilcdStatusLabel(value))}</span>`;
+  }
+
   function formatAilcdDetails(data) {
     if (!data || typeof data !== 'object') return '<p class="form-hint">No detail data</p>';
     const rows = [];
@@ -952,13 +966,15 @@
   }
 
   function downloadAilcdCsvClient(applications) {
-    const headers = ['Date', 'Full Name', 'Email', 'Phone', 'State', 'Address', 'Suburb', 'Positions', 'Skills'];
+    const headers = ['Date', 'Reference', 'Status', 'Full Name', 'Email', 'Phone', 'State', 'Address', 'Suburb', 'Positions', 'Skills'];
     const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const rows = applications.map(a => {
       const d = a.data || {};
       const p = d.personal || {};
       return [
         a.created_at ? new Date(a.created_at).toISOString() : '',
+        a.reference_code || '',
+        formatAilcdStatusLabel(a.status),
         a.full_name, a.email, a.phone, a.state,
         p.address, p.suburb,
         (d.position?.positions || []).join('; '),
@@ -993,11 +1009,22 @@
         ${applications.map(a => `
           <details class="list-item inbox-item membership-reg-item ${a.read ? 'inbox-item--read' : ''}">
             <summary class="membership-reg-item__summary">
-              <span class="membership-reg-item__name">${escapeHtml(a.full_name)}</span>
-              <span class="membership-reg-item__meta">${escapeHtml(a.state || '—')} · ${escapeHtml((a.data?.position?.positions || []).slice(0, 2).join(', ') || '—')}</span>
+              <span class="membership-reg-item__name">${escapeHtml(a.full_name)} ${formatAilcdStatusBadge(a.status)}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(a.state || '—')} · ${escapeHtml((a.data?.position?.positions || []).slice(0, 2).join(', ') || '—')}${a.reference_code ? ` · ${escapeHtml(a.reference_code)}` : ''}</span>
               <span class="inbox-item__date">${new Date(a.created_at).toLocaleString()}</span>
             </summary>
             <div class="membership-reg-item__body">
+              <div class="ailcd-admin-status">
+                <p><strong>Application status:</strong> ${formatAilcdStatusBadge(a.status)}</p>
+                ${a.reference_code ? `<p><strong>Reference:</strong> ${escapeHtml(a.reference_code)}</p>` : '<p class="form-hint">No reference number (submitted before status tracking was enabled).</p>'}
+                <label class="form-label" for="ailcdStatusMessage-${escapeHtml(a.id)}">Message to applicant (optional)</label>
+                <textarea id="ailcdStatusMessage-${escapeHtml(a.id)}" class="ailcd-status-message" data-id="${escapeHtml(a.id)}" rows="2" placeholder="Optional note shown to the applicant when approved or rejected">${escapeHtml(a.status_message || '')}</textarea>
+                <div class="inbox-item__actions">
+                  <button type="button" class="btn btn--primary btn--sm ailcd-set-status" data-id="${escapeHtml(a.id)}" data-status="approved">Approve</button>
+                  <button type="button" class="btn btn--danger btn--sm ailcd-set-status" data-id="${escapeHtml(a.id)}" data-status="rejected">Reject</button>
+                  <button type="button" class="btn btn--outline btn--sm ailcd-set-status" data-id="${escapeHtml(a.id)}" data-status="pending">Mark under review</button>
+                </div>
+              </div>
               <div class="membership-reg-item__grid">${formatAilcdDetails(a.data)}</div>
               <div class="inbox-item__actions">
                 <button type="button" class="btn btn--outline btn--sm ailcd-mark-read" data-id="${escapeHtml(a.id)}" data-read="${a.read ? '0' : '1'}">
@@ -1045,6 +1072,38 @@
             },
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
+          loadAilcdApplicationsPanel();
+        });
+      });
+
+      card.querySelectorAll('.ailcd-set-status').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const status = btn.dataset.status;
+          const id = btn.dataset.id;
+          const messageEl = card.querySelector(`.ailcd-status-message[data-id="${id}"]`);
+          const statusMessage = messageEl?.value?.trim() || '';
+
+          if (status === 'rejected' && !statusMessage && !confirm('Reject without a message to the applicant?')) {
+            return;
+          }
+
+          const token = getToken();
+          const res = await fetch('/api/ailcd-applications', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id, status, statusMessage, read: true })
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            showStatus(data.error || 'Could not update application status.', 'error');
+            return;
+          }
+
+          showStatus(`Application marked as ${formatAilcdStatusLabel(status).toLowerCase()}.`, 'success');
           loadAilcdApplicationsPanel();
         });
       });

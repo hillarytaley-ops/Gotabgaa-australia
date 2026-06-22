@@ -2256,10 +2256,82 @@ body.page-sub .section {
   justify-content: flex-end;
 }
 
+.ailcd-status-check,
+.ailcd-status-portal {
+  margin-bottom: 24px;
+}
+
+.ailcd-status-check__title,
+.ailcd-status-portal__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin: 0 0 8px;
+  color: var(--brown-900);
+}
+
+.ailcd-status-check__form {
+  margin-top: 16px;
+}
+
+.ailcd-status-check__form .form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ailcd-status-portal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.eoi-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.eoi-status-badge--pending {
+  background: #fff4e5;
+  color: #9a6700;
+}
+
+.eoi-status-badge--approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.eoi-status-badge--rejected {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.eoi-status-result__name,
+.eoi-status-result__ref,
+.eoi-status-result__badge-wrap,
+.eoi-status-result__message,
+.eoi-status-result__note {
+  margin: 0 0 12px;
+}
+
+.eoi-status-result__note {
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--text);
+}
+
 @media (max-width: 768px) {
   .ailcd-apply__form { padding: 20px 16px; }
   .ailcd-apply__nav { justify-content: stretch; }
   .ailcd-apply__nav .btn { flex: 1; }
+  .ailcd-status-check__form .form__grid { grid-template-columns: 1fr; }
 }
 
 .booking-portal__form-wrap {

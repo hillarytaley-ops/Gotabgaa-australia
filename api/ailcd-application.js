@@ -1,4 +1,5 @@
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
+import { generateReferenceCode } from './lib/reference-code.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -33,15 +34,29 @@ export default async function handler(req, res) {
   const givenNames = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : '';
 
   const supabase = getSupabase();
-  const { error } = await supabase.from('ailcd_applications').insert({
-    surname: surname || null,
-    given_names: givenNames || null,
-    full_name: fullName,
-    email,
-    phone: (personal.mobile || personal.phone || body.phone || '').trim() || null,
-    state: (personal.stateTerritory || personal.state || body.state || '').trim() || null,
-    data: body
-  });
+  const normalizedEmail = email.trim().toLowerCase();
+
+  let referenceCode = null;
+  let error = null;
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    referenceCode = generateReferenceCode();
+    const result = await supabase.from('ailcd_applications').insert({
+      surname: surname || null,
+      given_names: givenNames || null,
+      full_name: fullName,
+      email: normalizedEmail,
+      phone: (personal.mobile || personal.phone || body.phone || '').trim() || null,
+      state: (personal.stateTerritory || personal.state || body.state || '').trim() || null,
+      reference_code: referenceCode,
+      status: 'pending',
+      data: body
+    });
+
+    error = result.error;
+    if (!error) break;
+    if (error.code !== '23505') break;
+  }
 
   if (error) {
     res.status(500).json({ error: 'Failed to save application', detail: error.message });
@@ -50,6 +65,7 @@ export default async function handler(req, res) {
 
   res.status(200).json({
     ok: true,
-    message: 'Expression of interest received. Thank you — our team will contact you shortly.'
+    referenceCode,
+    message: 'Expression of interest received. Save your reference number to check your application status on this page.'
   });
 }
