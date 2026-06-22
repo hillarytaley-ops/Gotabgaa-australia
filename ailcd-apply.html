@@ -11,24 +11,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
-<body class="page-sub">
+<body class="page-sub page-form-only">
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-  <header class="header" id="header">
+  <header class="header header--form-only" id="header">
     <nav class="nav container">
-      <a href="index.html" class="nav__brand">
+      <div class="nav__brand nav__brand--static" aria-label="Gotabgaa Australia">
         <img src="assets/logo-round.png" alt="" class="nav__logo logo-circle">
         <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
-      </a>
-      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav__menu" id="navMenu">
-        <li><a href="index.html" class="nav__link">Home</a></li>
-        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
-        <li><a href="contact.html" class="nav__link">Contact</a></li>
-        <li><a href="join.html" class="btn btn--primary nav__cta">Join Us</a></li>
-      </ul>
+      </div>
+      <p class="nav__form-notice">Application portal — complete this form only</p>
     </nav>
   </header>
 
@@ -218,6 +210,5 @@
   </footer>
 
   <script src="js/ailcd-apply.js?v=5"></script>
-  <script src="js/main.js" defer></script>
 </body>
 </html>

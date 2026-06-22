@@ -2202,6 +2202,44 @@ body.page-sub .section {
   margin-top: 10px;
 }
 
+/* Standalone form pages — no site navigation */
+.page-form-only .header--form-only .nav {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.page-form-only .nav__brand--static {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: default;
+  text-decoration: none;
+  color: inherit;
+}
+
+.page-form-only .nav__form-notice {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 769px) {
+  .page-form-only .header--form-only .nav {
+    justify-content: space-between;
+  }
+
+  .page-form-only .nav__form-notice {
+    width: auto;
+    flex: 1;
+    text-align: right;
+    font-size: 0.88rem;
+  }
+}
+
 .admin-signature-preview {
   max-width: 280px;
   margin-top: 8px;
