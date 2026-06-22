@@ -31,8 +31,8 @@ export async function findApplicationByEmail(supabase, email) {
   if (!normalizedEmail) return null;
 
   const attempts = [
-    'id, email, reference_code, data, created_at',
-    'id, email, data, created_at'
+    'full_name, email, reference_code, status, status_message, status_updated_at, created_at, data',
+    'full_name, email, created_at, data'
   ];
 
   for (const fields of attempts) {

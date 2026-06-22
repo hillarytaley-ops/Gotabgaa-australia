@@ -95,14 +95,22 @@
 
   async function fetchApplicationStatus(email, reference) {
     const params = new URLSearchParams({
-      email: String(email || '').trim().toLowerCase(),
-      ref: String(reference || '').trim().toUpperCase()
+      email: String(email || '').trim().toLowerCase()
     });
+    const ref = String(reference || '').trim().toUpperCase();
+    if (ref) params.set('ref', ref);
 
     const res = await fetch(`/api/ailcd-status?${params.toString()}`);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'Could not load application status');
     return data.application;
+  }
+
+  async function tryShowExistingApplication(email, reference) {
+    const application = await fetchApplicationStatus(email, reference);
+    const ref = application.referenceCode || reference;
+    await displayApplicationStatus(email, ref);
+    return true;
   }
 
   async function displayApplicationStatus(email, reference) {
@@ -115,7 +123,7 @@
     }
 
     const application = await fetchApplicationStatus(email, reference);
-    saveStatusSession(email, reference);
+    saveStatusSession(email, application.referenceCode || reference);
 
     if (display) {
       display.innerHTML = renderStatusDisplay(application);
@@ -435,9 +443,9 @@
 
       const email = document.getElementById('checkEmail')?.value?.trim();
       const reference = document.getElementById('checkReference')?.value?.trim();
-      if (!email || !reference) {
+      if (!email) {
         if (error) {
-          error.textContent = 'Please enter your email and reference number.';
+          error.textContent = 'Please enter the email address you used when applying.';
           error.hidden = false;
         }
         return;
@@ -445,21 +453,39 @@
 
       if (btn) {
         btn.disabled = true;
-        btn.textContent = 'Checking…';
+        btn.textContent = 'Looking up…';
       }
 
       try {
-        await displayApplicationStatus(email, reference);
+        await tryShowExistingApplication(email, reference);
       } catch (err) {
         if (error) {
           error.textContent = err.message || 'Could not find that application.';
           error.hidden = false;
         }
+        showStatusPortal(false);
+        showApplicationSection(true);
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.textContent = 'Check status';
+          btn.textContent = 'View my application';
         }
+      }
+    });
+
+    document.getElementById('aEmail')?.addEventListener('blur', async e => {
+      const email = e.target.value?.trim();
+      if (!email || getStatusSession()?.email === email.toLowerCase()) return;
+
+      const formError = document.getElementById('ailcdError');
+      try {
+        const found = await tryShowExistingApplication(email);
+        if (found && formError) {
+          formError.textContent = 'You have already applied with this email. The application form is closed for you — use the status section above to track your progress.';
+          formError.hidden = false;
+        }
+      } catch {
+        /* No existing application — allow new submission */
       }
     });
 
@@ -479,24 +505,12 @@
           error.hidden = false;
         }
         showStatusPortal(false);
-        showApplicationSection(true);
+        showApplicationSection(!getStatusSession());
       } finally {
         if (btn) {
           btn.disabled = false;
           btn.textContent = 'Refresh status';
         }
-      }
-    });
-
-    document.getElementById('ailcdShowCheckForm')?.addEventListener('click', () => {
-      showStatusPortal(false);
-      showApplicationSection(true);
-      const session = getStatusSession();
-      if (session) {
-        const emailField = document.getElementById('checkEmail');
-        const refField = document.getElementById('checkReference');
-        if (emailField) emailField.value = session.email;
-        if (refField) refField.value = session.reference;
       }
     });
 

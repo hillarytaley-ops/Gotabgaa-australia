@@ -2303,9 +2303,15 @@ body.page-form-only {
   justify-content: flex-end;
 }
 
-.ailcd-status-check,
-.ailcd-status-portal {
-  margin-bottom: 24px;
+.ailcd-status-check__hint {
+  margin-top: -4px;
+}
+
+.ailcd-apply__new-applicant-note {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(139, 94, 60, 0.08);
+  color: var(--brown-800);
 }
 
 .ailcd-status-check__title,

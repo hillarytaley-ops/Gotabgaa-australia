@@ -55,20 +55,21 @@
   <section class="section ailcd-apply">
     <div class="container container--narrow">
       <div class="ailcd-status-check card" id="ailcdStatusCheck">
-        <h2 class="ailcd-status-check__title">Check your application status</h2>
-        <p class="form-hint">Already submitted? Enter the email and reference number from your confirmation to see if your application has been approved or rejected.</p>
+        <h2 class="ailcd-status-check__title">Already applied?</h2>
+        <p class="form-hint">Enter the <strong>email address you used when applying</strong>. If we find your application, your reference number and current status will appear here. Each person may apply only once, so the application form will be hidden for you.</p>
+        <p class="form-hint ailcd-status-check__hint">Your reference number is also shown <strong>immediately after you submit</strong> a new application for the first time.</p>
         <form id="ailcdCheckForm" class="ailcd-status-check__form" novalidate>
           <div class="form__grid">
             <div class="form__group">
-              <label for="checkEmail">Email address</label>
+              <label for="checkEmail">Email address *</label>
               <input id="checkEmail" name="checkEmail" type="email" required autocomplete="email">
             </div>
             <div class="form__group">
-              <label for="checkReference">Reference number</label>
-              <input id="checkReference" name="checkReference" type="text" required placeholder="GA-XXXXXXXX" autocapitalize="characters">
+              <label for="checkReference">Reference number <span class="form-hint">(optional)</span></label>
+              <input id="checkReference" name="checkReference" type="text" placeholder="GA-XXXXXXXX" autocapitalize="characters">
             </div>
           </div>
-          <button type="submit" class="btn btn--outline" id="ailcdCheckBtn">Check status</button>
+          <button type="submit" class="btn btn--outline" id="ailcdCheckBtn">View my application</button>
         </form>
         <p class="booking-portal__error" id="ailcdCheckError" hidden></p>
       </div>
@@ -78,7 +79,6 @@
         <div id="ailcdStatusDisplay"></div>
         <div class="ailcd-status-portal__actions">
           <button type="button" class="btn btn--outline btn--sm" id="ailcdRefreshStatus">Refresh status</button>
-          <button type="button" class="btn btn--outline btn--sm" id="ailcdShowCheckForm">Look up another application</button>
         </div>
       </div>
 
@@ -87,6 +87,7 @@
         <p class="ailcd-apply__form-title">GOTABGAA INTERIM LEADERSHIP EXPRESSION OF INTEREST (EOI) FORM</p>
         <p><strong>GOTABGAA AUSTRALIA</strong></p>
         <p><em>Expression of Interest (EOI) for Interim Leadership Positions</em></p>
+        <p class="ailcd-apply__new-applicant-note"><strong>New applicants only.</strong> Complete this form if you have not applied before. After you submit, you will receive a reference number on this page to check your progress later.</p>
         <p>Thank you for your interest in serving the GOTABGAA Australia. The Interim Leadership Team will play a critical role in establishing a strong foundation for the organisation, promoting unity, transparency, accountability, and community engagement across Australia. Please complete this form honestly and comprehensively.</p>
       </div>
 
@@ -257,6 +258,6 @@
     </div>
   </footer>
 
-  <script src="js/ailcd-apply.js?v=7"></script>
+  <script src="js/ailcd-apply.js?v=8"></script>
 </body>
 </html>
