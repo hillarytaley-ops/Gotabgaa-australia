@@ -2936,6 +2936,13 @@ body.modal-open {
     gap: 32px;
   }
 
+  .about-preview__content .btn {
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .about-preview__visual {
     order: -1;
   }
