@@ -3562,8 +3562,9 @@ body.modal-open {
 }
 
 .portal__actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 56px;
 }
@@ -3572,11 +3573,13 @@ body.modal-open {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 24px;
+  padding: 20px 28px;
   border-radius: var(--radius-lg);
   text-decoration: none;
   transition: transform var(--transition), box-shadow var(--transition);
   border: 2px solid transparent;
+  max-width: 380px;
+  width: 100%;
 }
 
 .portal__action:hover {
@@ -3721,7 +3724,11 @@ body.modal-open {
 
 @media (max-width: 768px) {
   .portal__actions {
-    grid-template-columns: 1fr;
+    padding: 0 8px;
+  }
+
+  .portal__action {
+    max-width: 340px;
   }
 }
 
