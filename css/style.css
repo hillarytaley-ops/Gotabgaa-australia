@@ -2450,8 +2450,8 @@ body.modal-open {
 
   .hero__overlay {
     background:
-      linear-gradient(to bottom, rgba(26, 18, 12, 0.84) 0%, rgba(42, 31, 23, 0.58) 11%, rgba(42, 31, 23, 0.18) 20%, transparent 30%),
-      linear-gradient(to top, rgba(26, 18, 12, 0.88) 0%, rgba(42, 31, 23, 0.58) 13%, rgba(42, 31, 23, 0.18) 22%, transparent 32%);
+      linear-gradient(to bottom, rgba(42, 31, 23, 0.45) 0%, rgba(42, 31, 23, 0.12) 8%, transparent 14%),
+      linear-gradient(to top, rgba(42, 31, 23, 0.5) 0%, rgba(42, 31, 23, 0.14) 8%, transparent 14%);
   }
 
   .hero__content {
@@ -2475,22 +2475,21 @@ body.modal-open {
 
   .hero__text {
     flex: 0 0 auto;
-    padding: 14px 16px 16px;
-    border-radius: 12px;
-    background: linear-gradient(to bottom, rgba(26, 18, 12, 0.78), rgba(26, 18, 12, 0.48));
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
   }
 
   .hero__badge {
     font-size: 0.65rem;
     padding: 4px 10px;
     margin-bottom: 8px;
-    background: rgba(26, 18, 12, 0.72);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.45);
     color: var(--white);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75);
   }
 
   .hero__title {
@@ -2499,22 +2498,24 @@ body.modal-open {
     line-height: 1.1;
     color: var(--white);
     text-shadow:
-      0 2px 10px rgba(0, 0, 0, 0.85),
-      0 0 28px rgba(0, 0, 0, 0.45);
+      0 2px 12px rgba(0, 0, 0, 0.9),
+      0 1px 3px rgba(0, 0, 0, 0.8);
   }
 
   .hero__title em {
     color: #f2d4a8;
     text-shadow:
-      0 2px 10px rgba(0, 0, 0, 0.9),
-      0 0 24px rgba(0, 0, 0, 0.55);
+      0 2px 12px rgba(0, 0, 0, 0.95),
+      0 1px 3px rgba(0, 0, 0, 0.85);
   }
 
   .hero__subtitle {
     font-size: 0.8rem;
     margin-bottom: 0;
     color: rgba(255, 255, 255, 0.96);
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+    text-shadow:
+      0 1px 10px rgba(0, 0, 0, 0.9),
+      0 1px 3px rgba(0, 0, 0, 0.75);
   }
 
   .hero__desc {
@@ -2529,12 +2530,11 @@ body.modal-open {
     gap: 8px;
     flex-wrap: nowrap;
     width: 100%;
-    padding: 12px 10px 6px;
-    border-radius: 12px;
-    background: linear-gradient(to top, rgba(26, 18, 12, 0.82), rgba(26, 18, 12, 0.5));
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.22);
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
   }
 
   .hero__actions .btn {
@@ -2549,8 +2549,8 @@ body.modal-open {
   }
 
   .hero .btn--outline {
-    background: rgba(26, 18, 12, 0.55);
-    border-color: rgba(255, 255, 255, 0.88);
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.85);
     color: var(--white);
   }
 
