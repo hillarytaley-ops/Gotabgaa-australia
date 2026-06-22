@@ -1,4 +1,5 @@
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
+import { findApplicationByEmailAndReference, getAppMeta } from './lib/ailcd-app.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -22,32 +23,29 @@ export default async function handler(req, res) {
   }
 
   const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('ailcd_applications')
-    .select('full_name, email, status, status_message, status_updated_at, created_at, reference_code')
-    .ilike('email', email)
-    .eq('reference_code', reference)
-    .maybeSingle();
 
-  if (error) {
-    res.status(500).json({ error: error.message });
-    return;
-  }
+  try {
+    const row = await findApplicationByEmailAndReference(supabase, email, reference);
 
-  if (!data) {
-    res.status(404).json({ error: 'No application found with that email and reference number' });
-    return;
-  }
-
-  res.status(200).json({
-    application: {
-      fullName: data.full_name,
-      email: data.email,
-      referenceCode: data.reference_code,
-      status: data.status || 'pending',
-      statusMessage: data.status_message || '',
-      submittedAt: data.created_at,
-      updatedAt: data.status_updated_at || data.created_at
+    if (!row) {
+      res.status(404).json({ error: 'No application found with that email and reference number' });
+      return;
     }
-  });
+
+    const meta = getAppMeta(row);
+
+    res.status(200).json({
+      application: {
+        fullName: row.full_name,
+        email: row.email,
+        referenceCode: meta.referenceCode,
+        status: meta.status,
+        statusMessage: meta.statusMessage,
+        submittedAt: row.created_at,
+        updatedAt: meta.statusUpdatedAt || row.created_at
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Could not load application status' });
+  }
 }

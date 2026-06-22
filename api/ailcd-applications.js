@@ -1,20 +1,34 @@
 import { verifyToken, readAuthToken } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
+import { getAppMeta, isSchemaColumnError, withAppMeta } from './lib/ailcd-app.js';
+
+function normalizeApplication(row) {
+  if (!row) return row;
+  const meta = getAppMeta(row);
+  return {
+    ...row,
+    reference_code: meta.referenceCode,
+    status: meta.status,
+    status_message: meta.statusMessage,
+    status_updated_at: meta.statusUpdatedAt
+  };
+}
 
 function flattenForCsv(data, app) {
+  const normalized = normalizeApplication(app);
   const p = data.personal || {};
   const pos = data.position || {};
   const exp = data.experience || {};
   const dec = data.declaration || {};
 
   return {
-    date: app.created_at,
-    reference_code: app.reference_code,
-    status: app.status,
-    full_name: app.full_name,
-    email: app.email,
-    phone: app.phone,
-    state: app.state,
+    date: normalized.created_at,
+    reference_code: normalized.reference_code,
+    status: normalized.status,
+    full_name: normalized.full_name,
+    email: normalized.email,
+    phone: normalized.phone,
+    state: normalized.state,
     address: p.address,
     suburb: p.suburb,
     gender: p.gender,
@@ -36,6 +50,28 @@ function toCsv(rows) {
   return [headers.join(','), ...rows.map(r => headers.map(h => escape(r[h])).join(','))].join('\n');
 }
 
+async function loadApplications(supabase) {
+  const fullSelect = 'id, surname, given_names, full_name, email, phone, state, data, created_at, read, reference_code, status, status_message, status_updated_at';
+  const legacySelect = 'id, surname, given_names, full_name, email, phone, state, data, created_at, read';
+
+  let result = await supabase
+    .from('ailcd_applications')
+    .select(fullSelect)
+    .order('created_at', { ascending: false })
+    .limit(500);
+
+  if (result.error && isSchemaColumnError(result.error)) {
+    result = await supabase
+      .from('ailcd_applications')
+      .select(legacySelect)
+      .order('created_at', { ascending: false })
+      .limit(500);
+  }
+
+  if (result.error) throw result.error;
+  return (result.data || []).map(normalizeApplication);
+}
+
 export default async function handler(req, res) {
   const secret = process.env.ADMIN_SECRET;
   const token = readAuthToken(req);
@@ -52,27 +88,22 @@ export default async function handler(req, res) {
   const supabase = getSupabase();
 
   if (req.method === 'GET') {
-    const { data, error } = await supabase
-      .from('ailcd_applications')
-      .select('id, surname, given_names, full_name, email, phone, state, data, created_at, read, reference_code, status, status_message, status_updated_at')
-      .order('created_at', { ascending: false })
-      .limit(500);
+    try {
+      const applications = await loadApplications(supabase);
 
-    if (error) {
+      if (req.query?.format === 'csv') {
+        const flat = applications.map(a => flattenForCsv(a.data || {}, a));
+        const csv = toCsv(flat);
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', 'attachment; filename="ailcd-applications.csv"');
+        res.status(200).send(csv);
+        return;
+      }
+
+      res.status(200).json({ applications });
+    } catch (error) {
       res.status(500).json({ error: error.message });
-      return;
     }
-
-    if (req.query?.format === 'csv') {
-      const flat = (data || []).map(a => flattenForCsv(a.data || {}, a));
-      const csv = toCsv(flat);
-      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', 'attachment; filename="ailcd-applications.csv"');
-      res.status(200).send(csv);
-      return;
-    }
-
-    res.status(200).json({ applications: data });
     return;
   }
 
@@ -103,10 +134,41 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { error } = await supabase
+    let { error } = await supabase
       .from('ailcd_applications')
       .update(updates)
       .eq('id', id);
+
+    if (error && isSchemaColumnError(error)) {
+      const { data: row, error: rowError } = await supabase
+        .from('ailcd_applications')
+        .select('data')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (rowError || !row) {
+        res.status(500).json({ error: rowError?.message || 'Application not found' });
+        return;
+      }
+
+      const meta = {
+        referenceCode: row.data?._referenceCode,
+        status: status ?? row.data?._status ?? 'pending',
+        statusMessage: statusMessage !== undefined
+          ? (String(statusMessage).trim() || null)
+          : (row.data?._statusMessage || null),
+        statusUpdatedAt: new Date().toISOString()
+      };
+
+      const dataUpdate = withAppMeta(row.data || {}, meta);
+      const legacyUpdates = { data: dataUpdate };
+      if (read !== undefined) legacyUpdates.read = Boolean(read);
+
+      ({ error } = await supabase
+        .from('ailcd_applications')
+        .update(legacyUpdates)
+        .eq('id', id));
+    }
 
     if (error) {
       res.status(500).json({ error: error.message });

@@ -1,5 +1,11 @@
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { generateReferenceCode } from './lib/reference-code.js';
+import {
+  findApplicationByEmail,
+  getAppMeta,
+  isSchemaColumnError,
+  withAppMeta
+} from './lib/ailcd-app.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -42,36 +48,54 @@ export default async function handler(req, res) {
   const supabase = getSupabase();
   const normalizedEmail = email.trim().toLowerCase();
 
-  const { data: existing } = await supabase
-    .from('ailcd_applications')
-    .select('reference_code')
-    .ilike('email', normalizedEmail)
-    .maybeSingle();
-
-  if (existing) {
-    res.status(409).json({
-      error: 'You have already submitted an application. Each person may apply only once. Use your email and reference number on this page to check your application status.',
-      referenceCode: existing.reference_code || null
+  try {
+    const existing = await findApplicationByEmail(supabase, normalizedEmail);
+    if (existing) {
+      const meta = getAppMeta(existing);
+      res.status(409).json({
+        error: 'You have already submitted an application. Each person may apply only once. Use your email and reference number on this page to check your application status.',
+        referenceCode: meta.referenceCode || null
+      });
+      return;
+    }
+  } catch (lookupError) {
+    res.status(500).json({
+      error: 'Failed to check existing applications',
+      detail: lookupError.message
     });
     return;
   }
+
+  const baseRow = {
+    surname: surname || null,
+    given_names: givenNames || null,
+    full_name: fullName,
+    email: normalizedEmail,
+    phone: (personal.mobile || personal.phone || body.phone || '').trim() || null,
+    state: (personal.stateTerritory || personal.state || body.state || '').trim() || null
+  };
 
   let referenceCode = null;
   let error = null;
 
   for (let attempt = 0; attempt < 5; attempt += 1) {
     referenceCode = generateReferenceCode();
-    const result = await supabase.from('ailcd_applications').insert({
-      surname: surname || null,
-      given_names: givenNames || null,
-      full_name: fullName,
-      email: normalizedEmail,
-      phone: (personal.mobile || personal.phone || body.phone || '').trim() || null,
-      state: (personal.stateTerritory || personal.state || body.state || '').trim() || null,
+
+    const fullRow = {
+      ...baseRow,
       reference_code: referenceCode,
       status: 'pending',
       data: body
-    });
+    };
+
+    let result = await supabase.from('ailcd_applications').insert(fullRow);
+
+    if (result.error && isSchemaColumnError(result.error)) {
+      result = await supabase.from('ailcd_applications').insert({
+        ...baseRow,
+        data: withAppMeta(body, { referenceCode, status: 'pending' })
+      });
+    }
 
     error = result.error;
     if (!error) break;
@@ -80,17 +104,20 @@ export default async function handler(req, res) {
 
   if (error) {
     if (error.code === '23505') {
-      const { data: duplicate } = await supabase
-        .from('ailcd_applications')
-        .select('reference_code')
-        .ilike('email', normalizedEmail)
-        .maybeSingle();
-
-      res.status(409).json({
-        error: 'You have already submitted an application. Each person may apply only once. Use your email and reference number on this page to check your application status.',
-        referenceCode: duplicate?.reference_code || null
-      });
-      return;
+      try {
+        const duplicate = await findApplicationByEmail(supabase, normalizedEmail);
+        const meta = getAppMeta(duplicate || {});
+        res.status(409).json({
+          error: 'You have already submitted an application. Each person may apply only once. Use your email and reference number on this page to check your application status.',
+          referenceCode: meta.referenceCode || null
+        });
+        return;
+      } catch {
+        res.status(409).json({
+          error: 'You have already submitted an application. Each person may apply only once.'
+        });
+        return;
+      }
     }
 
     res.status(500).json({ error: 'Failed to save application', detail: error.message });
