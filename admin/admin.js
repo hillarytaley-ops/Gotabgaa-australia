@@ -429,48 +429,71 @@
     `;
   }
 
+  let openGalleryAlbums = new Set();
+
   function renderGalleryPanel() {
     const upcoming = content.events.filter(e => e.status === 'upcoming');
     const past = content.events.filter(e => e.status === 'past');
+    const eventIds = new Set(content.events.map(e => e.id));
+    const uncategorized = content.gallery
+      .map((g, i) => ({ g, i }))
+      .filter(({ g }) => !g.eventId || !eventIds.has(g.eventId));
 
-    const renderAlbumSection = (events, label) => {
-      if (!events.length) return `<p class="form-hint">No ${label.toLowerCase()} events defined yet — add them in Events.</p>`;
+    const renderAlbumSection = events => {
+      if (!events.length) return '<p class="form-hint">No events in this group yet — add them in Events.</p>';
       return events.map(event => renderGalleryEventAlbum(event)).join('');
     };
 
+    const uncategorizedHtml = uncategorized.length ? `
+      <details class="gallery-section">
+        <summary class="gallery-section__summary">
+          <span>Uncategorized photos</span>
+          <span class="gallery-section__count">${uncategorized.length}</span>
+        </summary>
+        <div class="gallery-section__body">
+          ${uncategorized.map(({ g, i }) => galleryItemHtml(g, i, true)).join('')}
+        </div>
+      </details>
+    ` : '';
+
     return `
       <div class="card card--notice">
-        <p><strong>Public site:</strong> Photos are grouped by event on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a> (upcoming vs past). Visitors can download photos from the website. Publish after uploading.</p>
-        <p class="form-hint">Bulk upload requires Supabase Storage bucket <strong>gallery</strong> (public), or GitHub token for auto-commit to <code>assets/gallery/</code>.</p>
+        <p><strong>Public site:</strong> Photos are grouped by event on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a>. Expand an event album to upload or edit photos, then publish.</p>
+        <p class="form-hint">Bulk upload: Supabase Storage bucket <strong>gallery</strong> (public), or GitHub token.</p>
       </div>
       <div class="card">
-        <h3>Upcoming event albums</h3>
-        ${renderAlbumSection(upcoming, 'Upcoming')}
-      </div>
-      <div class="card">
-        <h3>Past event albums</h3>
-        ${renderAlbumSection(past, 'Past')}
-      </div>
-      <div class="card">
-        <h3>All photos (${content.gallery.length})</h3>
-        <div id="galleryList">${content.gallery.map((g, i) => galleryItemHtml(g, i)).join('')}</div>
+        <details class="gallery-section" open>
+          <summary class="gallery-section__summary">
+            <span>Upcoming event albums</span>
+            <span class="gallery-section__count">${upcoming.length}</span>
+          </summary>
+          <div class="gallery-section__body">${renderAlbumSection(upcoming)}</div>
+        </details>
+        <details class="gallery-section">
+          <summary class="gallery-section__summary">
+            <span>Past event albums</span>
+            <span class="gallery-section__count">${past.length}</span>
+          </summary>
+          <div class="gallery-section__body">${renderAlbumSection(past)}</div>
+        </details>
+        ${uncategorizedHtml}
       </div>
     `;
   }
 
   function renderGalleryEventAlbum(event) {
-    const photos = content.gallery.filter(g => g.eventId === event.id);
-    const preview = photos.slice(0, 4).map(p =>
-      `<img src="../${p.image.replace(/^\//, '')}" alt="" class="gallery-admin-thumb">`
-    ).join('');
+    const photos = content.gallery
+      .map((g, i) => ({ g, i }))
+      .filter(({ g }) => g.eventId === event.id);
+    const isOpen = openGalleryAlbums.has(event.id);
 
     return `
-      <div class="gallery-admin-album" data-event-id="${escapeHtml(event.id)}">
-        <div class="list-item__header">
-          <div>
-            <h4>${escapeHtml(event.title)}</h4>
-            <p class="form-hint">${photos.length} photo(s) · ${event.status}</p>
-          </div>
+      <details class="gallery-admin-album" data-event-id="${escapeHtml(event.id)}"${isOpen ? ' open' : ''}>
+        <summary class="gallery-admin-album__summary">
+          <span class="gallery-admin-album__title">${escapeHtml(event.title)}</span>
+          <span class="gallery-admin-album__meta">${photos.length} photo${photos.length === 1 ? '' : 's'}</span>
+        </summary>
+        <div class="gallery-admin-album__body">
           <div class="gallery-admin-album__actions">
             <label class="btn btn--outline btn--sm">
               Bulk upload
@@ -478,14 +501,39 @@
             </label>
             <button type="button" class="btn btn--outline btn--sm" data-add-gallery-photo="${escapeHtml(event.id)}">+ Add photo</button>
           </div>
+          <p class="gallery-admin-upload-status form-hint" id="galleryUploadStatus-${escapeHtml(event.id)}" hidden></p>
+          ${photos.length
+            ? `<div class="gallery-photo-list">${photos.map(({ g, i }) => galleryItemHtml(g, i, true)).join('')}</div>`
+            : '<p class="form-hint">No photos yet — use bulk upload above.</p>'}
         </div>
-        ${preview ? `<div class="gallery-admin-album__preview">${preview}${photos.length > 4 ? `<span class="form-hint">+${photos.length - 4} more</span>` : ''}</div>` : '<p class="form-hint">No photos for this event yet.</p>'}
-        <p class="gallery-admin-upload-status form-hint" id="galleryUploadStatus-${escapeHtml(event.id)}" hidden></p>
-      </div>
+      </details>
     `;
   }
 
-  function galleryItemHtml(g, i) {
+  function galleryItemHtml(g, i, compact = false) {
+    const imgSrc = g.image?.startsWith('http') ? g.image : `../${String(g.image || '').replace(/^\//, '')}`;
+
+    if (compact) {
+      return `
+        <div class="gallery-photo-row" data-gallery-index="${i}">
+          <img src="${escapeHtml(imgSrc)}" alt="" class="gallery-admin-thumb" loading="lazy">
+          <div class="gallery-photo-row__fields">
+            ${field('Caption', `galCaption${i}`, g.caption)}
+            ${field('Alt text', `galAlt${i}`, g.alt)}
+            <div class="gallery-photo-row__inline">
+              ${field('Wide', `galWide${i}`, g.wide, 'checkbox')}
+            </div>
+            <details class="gallery-photo-row__advanced">
+              <summary>Image path</summary>
+              ${field('Path / URL', `galImage${i}`, g.image)}
+              <input type="hidden" id="galEvent${i}" name="galEvent${i}" value="${escapeHtml(g.eventId || '')}">
+            </details>
+          </div>
+          <button type="button" class="btn btn--danger btn--sm gallery-photo-row__remove" data-remove-gallery="${i}" aria-label="Remove photo">×</button>
+        </div>
+      `;
+    }
+
     const eventOpts = [{ value: '', label: '— Select event —' }].concat(
       content.events.map(e => ({ value: e.id, label: `${e.title} (${e.status})` }))
     );
@@ -574,6 +622,7 @@
     }
 
     if (uploaded > 0) {
+      openGalleryAlbums.add(eventId);
       showStatus(`Uploaded ${uploaded} photo(s). Click Publish Changes to update the live site.`, 'success');
       renderSection('gallery');
     }
@@ -892,9 +941,19 @@
     }
 
     if (section === 'gallery') {
+      document.querySelectorAll('.gallery-admin-album').forEach(details => {
+        details.addEventListener('toggle', () => {
+          const id = details.dataset.eventId;
+          if (!id) return;
+          if (details.open) openGalleryAlbums.add(id);
+          else openGalleryAlbums.delete(id);
+        });
+      });
+
       document.querySelectorAll('.gallery-bulk-input').forEach(input => {
         input.addEventListener('change', () => {
           const eventId = input.dataset.eventId;
+          openGalleryAlbums.add(eventId);
           const statusEl = document.getElementById(`galleryUploadStatus-${eventId}`);
           handleGalleryBulkUpload(eventId, input.files, statusEl);
           input.value = '';
@@ -904,6 +963,7 @@
       document.querySelectorAll('[data-add-gallery-photo]').forEach(btn => {
         btn.addEventListener('click', () => {
           const eventId = btn.dataset.addGalleryPhoto;
+          openGalleryAlbums.add(eventId);
           content.gallery.push({
             id: `gal-${Date.now()}`,
             eventId,

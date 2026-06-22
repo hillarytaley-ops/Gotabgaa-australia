@@ -239,18 +239,140 @@ body {
 }
 
 .gallery-admin-album {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--cream-dark);
+  border: 1px solid var(--cream-dark);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background: var(--cream);
+  overflow: hidden;
 }
 
 .gallery-admin-album:last-child {
+  margin-bottom: 0;
+}
+
+.gallery-section {
+  border-bottom: 1px solid var(--cream-dark);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.gallery-section:last-child {
   border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gallery-section__summary,
+.gallery-admin-album__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  color: var(--brown-900);
+}
+
+.gallery-section__summary::-webkit-details-marker,
+.gallery-admin-album__summary::-webkit-details-marker {
+  display: none;
+}
+
+.gallery-section__summary::after,
+.gallery-admin-album__summary::after {
+  content: '▾';
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.gallery-section:not([open]) .gallery-section__summary::after,
+.gallery-admin-album:not([open]) .gallery-admin-album__summary::after {
+  transform: rotate(-90deg);
+}
+
+.gallery-section__count,
+.gallery-admin-album__meta {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.gallery-section__body,
+.gallery-admin-album__body {
+  padding: 0 14px 14px;
+}
+
+.gallery-admin-album__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
 }
 
 .gallery-admin-album__actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.gallery-photo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gallery-photo-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 10px;
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 10px;
+}
+
+.gallery-photo-row__fields .form-field {
+  margin-bottom: 8px;
+}
+
+.gallery-photo-row__fields .form-field:last-child {
+  margin-bottom: 0;
+}
+
+.gallery-photo-row__fields label {
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+}
+
+.gallery-photo-row__fields input,
+.gallery-photo-row__fields textarea {
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+
+.gallery-photo-row__inline {
+  margin-top: 4px;
+}
+
+.gallery-photo-row__advanced {
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+.gallery-photo-row__advanced summary {
+  cursor: pointer;
+  color: var(--brown-700);
+  margin-bottom: 6px;
+}
+
+.gallery-photo-row__remove {
+  min-width: 36px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .gallery-admin-album__preview {
