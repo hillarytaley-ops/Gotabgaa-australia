@@ -2203,6 +2203,10 @@ body.page-sub .section {
 }
 
 /* Standalone form pages — no site navigation */
+body.page-form-only {
+  --header-height: 132px;
+}
+
 .page-form-only .header--form-only {
   height: auto;
   min-height: var(--header-height);
@@ -2212,29 +2216,39 @@ body.page-sub .section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  width: 100%;
   min-height: var(--header-height);
-  padding: 8px 16px;
+  padding: 10px 16px 8px;
 }
 
 .page-form-only .nav__brand--static {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
   cursor: default;
   text-decoration: none;
   color: var(--cream);
   max-width: none;
+  text-align: center;
 }
 
 .page-form-only .nav__brand--static .nav__logo {
-  width: 72px;
-  height: 72px;
+  display: block;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto;
 }
 
 .page-form-only .nav__brand--static .nav__title {
+  display: block;
   color: var(--cream);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  white-space: normal;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
@@ -2252,13 +2266,17 @@ body.page-sub .section {
 }
 
 @media (min-width: 769px) {
+  body.page-form-only {
+    --header-height: 144px;
+  }
+
   .page-form-only .nav__brand--static .nav__logo {
-    width: 80px;
-    height: 80px;
+    width: 84px;
+    height: 84px;
   }
 
   .page-form-only .nav__brand--static .nav__title {
-    font-size: 1.5rem;
+    font-size: 1.55rem;
   }
 
   .page-form-only .nav__form-notice {
