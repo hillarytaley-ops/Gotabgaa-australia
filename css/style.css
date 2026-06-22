@@ -2450,8 +2450,8 @@ body.modal-open {
 
   .hero__overlay {
     background:
-      linear-gradient(to bottom, rgba(42, 31, 23, 0.72) 0%, rgba(42, 31, 23, 0.42) 14%, rgba(42, 31, 23, 0.1) 24%, transparent 34%),
-      linear-gradient(to top, rgba(42, 31, 23, 0.18) 0%, transparent 12%);
+      linear-gradient(to bottom, rgba(42, 31, 23, 0.72) 0%, rgba(42, 31, 23, 0.38) 12%, transparent 22%),
+      linear-gradient(to top, rgba(42, 31, 23, 0.68) 0%, rgba(42, 31, 23, 0.32) 14%, transparent 24%);
   }
 
   .hero__content {
@@ -2459,13 +2459,22 @@ body.modal-open {
     top: var(--hero-band-top);
     left: 18px;
     right: 18px;
+    bottom: var(--hero-band-bottom);
     z-index: 3;
     grid-column: unset;
     grid-row: unset;
     max-width: none;
     width: auto;
-    padding: 10px 0 0;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0 14px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .hero__text {
+    flex: 0 0 auto;
   }
 
   .hero__badge {
@@ -2482,7 +2491,7 @@ body.modal-open {
 
   .hero__subtitle {
     font-size: 0.8rem;
-    margin-bottom: 10px;
+    margin-bottom: 0;
   }
 
   .hero__desc {
@@ -2490,14 +2499,19 @@ body.modal-open {
   }
 
   .hero__actions {
+    flex: 0 0 auto;
+    margin-top: auto;
     flex-direction: row;
+    justify-content: center;
     gap: 8px;
     flex-wrap: nowrap;
+    width: 100%;
   }
 
   .hero__actions .btn {
     width: auto;
     flex: 1;
+    max-width: 168px;
     min-width: 0;
     padding: 10px 12px;
     font-size: 0.82rem;
