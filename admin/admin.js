@@ -38,6 +38,7 @@
     gallery: 'Gallery',
     contact: 'Contact Info',
     membership: 'Membership',
+    ailcd: 'AILCD Applications',
     inbox: 'Contact Inbox',
     pages: 'Page Heroes'
   };
@@ -699,6 +700,18 @@
     `;
   }
 
+  function renderAilcdPanel() {
+    return `
+      <div class="card card--notice">
+        <p><strong>Public form:</strong> <a href="../ailcd-apply.html" target="_blank" rel="noopener">ailcd-apply.html</a> — share this link with applicants urgently. Run the new <code>ailcd_applications</code> section in <code>supabase/schema.sql</code> if not done yet.</p>
+      </div>
+      <div class="card" id="ailcdApplicationsCard">
+        <h3>AILCD applications</h3>
+        <p class="form-hint">Loading…</p>
+      </div>
+    `;
+  }
+
   async function loadEventBookings() {
     const token = getToken();
     if (!token) return [];
@@ -901,6 +914,132 @@
     }
   }
 
+  async function loadAilcdApplications() {
+    const token = getToken();
+    if (!token) return [];
+
+    const res = await fetch('/api/ailcd-applications', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Could not load applications');
+    }
+
+    const data = await res.json();
+    return data.applications || [];
+  }
+
+  function formatAilcdDetails(data) {
+    if (!data || typeof data !== 'object') return '<p class="form-hint">No detail data</p>';
+    const rows = [];
+    const walk = (obj, prefix = '') => {
+      Object.entries(obj).forEach(([key, val]) => {
+        const label = prefix ? `${prefix} → ${key}` : key;
+        if (val && typeof val === 'object' && !Array.isArray(val)) walk(val, label);
+        else if (Array.isArray(val)) rows.push(`<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(JSON.stringify(val))}</p>`);
+        else if (val) rows.push(`<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(String(val))}</p>`);
+      });
+    };
+    walk(data);
+    return rows.join('') || '<p class="form-hint">No detail data</p>';
+  }
+
+  function downloadAilcdCsvClient(applications) {
+    const headers = ['Date', 'Full Name', 'Email', 'Phone', 'State', 'Employer', 'Position', 'Why Participate'];
+    const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = applications.map(a => {
+      const d = a.data || {};
+      return [
+        a.created_at ? new Date(a.created_at).toISOString() : '',
+        a.full_name, a.email, a.phone, a.state,
+        d.employment?.employer, d.employment?.position, d.motivation?.whyParticipate
+      ].map(escape).join(',');
+    });
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `ailcd-applications-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  function renderAilcdApplicationsPanel(applications, errorMsg) {
+    if (errorMsg) {
+      return `<h3>AILCD applications</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
+    }
+    if (!applications.length) {
+      return `<h3>AILCD applications</h3><p class="form-hint">No applications yet. Share the form link with applicants.</p>`;
+    }
+
+    const unread = applications.filter(a => !a.read).length;
+    return `
+      <div class="list-item__header">
+        <h3>AILCD applications (${applications.length}${unread ? ` · ${unread} new` : ''})</h3>
+        <button type="button" class="btn btn--outline btn--sm" id="exportAilcdCsv">Download CSV</button>
+      </div>
+      <p class="form-hint">Expand an application to view full details. Data is admin-only.</p>
+      <div id="ailcdApplicationsList">
+        ${applications.map(a => `
+          <details class="list-item inbox-item membership-reg-item ${a.read ? 'inbox-item--read' : ''}">
+            <summary class="membership-reg-item__summary">
+              <span class="membership-reg-item__name">${escapeHtml(a.full_name)}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(a.state || '—')} · ${escapeHtml(a.data?.employment?.employer || '—')}</span>
+              <span class="inbox-item__date">${new Date(a.created_at).toLocaleString()}</span>
+            </summary>
+            <div class="membership-reg-item__body">
+              <div class="membership-reg-item__grid">${formatAilcdDetails(a.data)}</div>
+              <button type="button" class="btn btn--outline btn--sm ailcd-mark-read" data-id="${escapeHtml(a.id)}" data-read="${a.read ? '0' : '1'}">
+                ${a.read ? 'Mark unread' : 'Mark read'}
+              </button>
+            </div>
+          </details>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  async function loadAilcdApplicationsPanel() {
+    const card = document.getElementById('ailcdApplicationsCard');
+    if (!card) return;
+
+    if (isPreviewMode || !getToken()) {
+      card.innerHTML = renderAilcdApplicationsPanel([], 'Sign in to view AILCD applications.');
+      return;
+    }
+
+    card.innerHTML = '<h3>AILCD applications</h3><p class="form-hint">Loading…</p>';
+
+    try {
+      const applications = await loadAilcdApplications();
+      card.innerHTML = renderAilcdApplicationsPanel(applications);
+
+      card.querySelector('#exportAilcdCsv')?.addEventListener('click', () => {
+        downloadAilcdCsvClient(applications);
+        showStatus('AILCD applications exported as CSV.', 'success');
+      });
+
+      card.querySelectorAll('.ailcd-mark-read').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const token = getToken();
+          await fetch('/api/ailcd-applications', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
+          });
+          loadAilcdApplicationsPanel();
+        });
+      });
+    } catch (err) {
+      card.innerHTML = renderAilcdApplicationsPanel([], err.message);
+    }
+  }
+
   async function loadSubmissions() {
     const token = getToken();
     if (!token) return [];
@@ -1020,11 +1159,13 @@
           gallery: renderGalleryPanel,
           contact: renderContactPanel,
           membership: renderMembershipPanel,
+          ailcd: renderAilcdPanel,
           pages: renderPagesPanel
         };
         panel.innerHTML = renderers[section]?.() || '';
         bindListActions(section);
         if (section === 'membership') loadMembershipRegistrationsPanel();
+        if (section === 'ailcd') loadAilcdApplicationsPanel();
       }
     });
   }

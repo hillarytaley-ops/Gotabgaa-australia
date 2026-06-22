@@ -86,6 +86,28 @@ create index if not exists membership_registrations_created_at_idx
 create index if not exists membership_registrations_read_idx
   on public.membership_registrations (read, created_at desc);
 
+-- 5) AILCD program applications
+create table if not exists public.ailcd_applications (
+  id uuid primary key default gen_random_uuid(),
+  surname text,
+  given_names text,
+  full_name text not null,
+  email text not null,
+  phone text,
+  state text,
+  data jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  read boolean not null default false
+);
+
+comment on table public.ailcd_applications is 'AILCD leadership program application forms';
+
+create index if not exists ailcd_applications_created_at_idx
+  on public.ailcd_applications (created_at desc);
+
+create index if not exists ailcd_applications_read_idx
+  on public.ailcd_applications (read, created_at desc);
+
 -- Empty row so Admin → Publish can upsert immediately
 insert into public.site_content (id, data)
 values ('main', '{}'::jsonb)
@@ -96,6 +118,7 @@ alter table public.site_content enable row level security;
 alter table public.contact_submissions enable row level security;
 alter table public.event_bookings enable row level security;
 alter table public.membership_registrations enable row level security;
+alter table public.ailcd_applications enable row level security;
 
 drop policy if exists "Public read site content" on public.site_content;
 create policy "Public read site content"
@@ -123,7 +146,12 @@ union all
 select
   'membership_registrations',
   count(*)
-from public.membership_registrations;
+from public.membership_registrations
+union all
+select
+  'ailcd_applications',
+  count(*)
+from public.ailcd_applications;
 
 -- Gallery bulk upload: create a PUBLIC Storage bucket named "gallery" in
 -- Supabase Dashboard → Storage → New bucket → name: gallery → Public bucket: ON
