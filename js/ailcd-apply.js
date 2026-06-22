@@ -172,7 +172,6 @@
       if (nameField && fullName && !nameField.value.trim()) {
         nameField.value = fullName;
       }
-      signaturePad?.clear();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
