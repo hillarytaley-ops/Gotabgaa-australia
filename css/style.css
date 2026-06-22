@@ -2243,12 +2243,15 @@ body.page-form-only {
   margin: 0 auto;
 }
 
-.page-form-only .nav__brand--static .nav__title {
+.page-form-only .nav__brand--static .nav__title,
+.page-form-only .nav__brand--stacked .nav__title {
   display: block;
+  width: 100%;
   color: var(--cream);
   font-size: 1.35rem;
   line-height: 1.2;
   white-space: normal;
+  text-align: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
