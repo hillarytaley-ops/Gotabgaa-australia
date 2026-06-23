@@ -781,6 +781,73 @@
       });
   }
 
+  function defaultGovernancePositions() {
+    return [
+      { id: 'pos-president', title: 'Chapter President', description: 'Board President' },
+      { id: 'pos-vp', title: 'Chapter Vice President', description: 'Board Vice President' },
+      { id: 'pos-secretary', title: 'Secretary General', description: 'Administration and records' },
+      { id: 'pos-coordinator', title: 'National Coordinator', description: 'Programs and events' },
+      { id: 'pos-treasurer', title: 'Treasurer', description: 'Finance' }
+    ];
+  }
+
+  function collectGovernancePositions(idPrefix, existing) {
+    const positions = [];
+    for (let i = 0; document.getElementById(`mp${idPrefix}PosTitle_${i}`); i += 1) {
+      const title = val(`mp${idPrefix}PosTitle_${i}`).trim();
+      if (!title) continue;
+      positions.push({
+        id: existing?.[i]?.id || `pos-${Date.now()}-${i}`,
+        title,
+        description: val(`mp${idPrefix}PosDesc_${i}`).trim()
+      });
+    }
+    return positions;
+  }
+
+  function renderGovernancePositionsList(idPrefix, positions, removeDataAttr, addButtonId, applyBulkId) {
+    return `
+      <div class="governance-positions-admin">
+        <div class="governance-positions-admin__header">
+          <h4>Positions (${positions.length})</h4>
+          <button type="button" class="btn btn--outline btn--sm" id="${addButtonId}">Add position</button>
+        </div>
+        ${positions.length ? `
+          <ul class="governance-positions-summary">
+            ${positions.map((p, i) => `
+              <li><span class="governance-positions-summary__num">${i + 1}.</span> <strong>${escapeHtml(p.title)}</strong>${p.description ? `<span class="governance-positions-summary__desc"> — ${escapeHtml(p.description)}</span>` : ''}</li>
+            `).join('')}
+          </ul>
+        ` : '<p class="form-hint">No positions listed yet. Add one below or paste a bulk list.</p>'}
+        <div class="governance-positions-admin__list">
+          ${positions.map((p, i) => `
+            <details class="mp-admin-accordion">
+              <summary>
+                <span class="mp-admin-accordion__title">${escapeHtml(p.title || `Position ${i + 1}`)}</span>
+                <span class="mp-admin-accordion__meta">${p.description ? escapeHtml(p.description) : 'Edit'}</span>
+              </summary>
+              <div class="mp-admin-accordion__body">
+                <div class="form-grid">
+                  ${field('Position title', `mp${idPrefix}PosTitle_${i}`, p.title)}
+                  ${field('Description (optional)', `mp${idPrefix}PosDesc_${i}`, p.description || '', 'textarea', { full: true })}
+                </div>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-${removeDataAttr}="${i}">Remove position</button>
+              </div>
+            </details>
+          `).join('')}
+        </div>
+        <details class="mp-admin-accordion governance-admin-positions-bulk">
+          <summary><span class="mp-admin-accordion__title">Bulk paste positions</span></summary>
+          <div class="mp-admin-accordion__body">
+            <p class="form-hint">One position per line. Optional description after <code>|</code>, e.g. <code>Treasurer | Finance</code>. Applying replaces the list above.</p>
+            ${field('Paste positions', `mp${idPrefix}PositionsBulk`, positionsToLines(positions), 'textarea', { full: true })}
+            <button type="button" class="btn btn--outline btn--sm" id="${applyBulkId}">Apply bulk list</button>
+          </div>
+        </details>
+      </div>
+    `;
+  }
+
   function defaultExploreLinks() {
     return [
       { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
@@ -811,7 +878,7 @@
         nominationClosedMessage: 'Nominations are currently closed. You will be notified when the next nomination period opens.',
         nominationUrl: '',
         nominationButtonLabel: 'Open nomination portal',
-        nominationPositions: [],
+        nominationPositions: defaultGovernancePositions(),
         electionOpen: false,
         electionTitle: 'Election Portal',
         electionPeriod: '',
@@ -819,7 +886,7 @@
         electionClosedMessage: 'Elections are currently closed. Check back during the election period.',
         electionUrl: '',
         electionButtonLabel: 'Open election portal',
-        electionPositions: []
+        electionPositions: defaultGovernancePositions()
       }
     };
   }
@@ -827,7 +894,9 @@
   function renderGovernanceAdminCard(title, idPrefix, dataPrefix, data) {
     const isOpen = Boolean(data[`${dataPrefix}Open`]);
     const positions = data[`${dataPrefix}Positions`] || [];
-    const positionLines = positionsToLines(positions);
+    const addId = dataPrefix === 'nomination' ? 'addNomPosition' : 'addElePosition';
+    const applyBulkId = dataPrefix === 'nomination' ? 'mpNomApplyBulk' : 'mpEleApplyBulk';
+    const removeAttr = dataPrefix === 'nomination' ? 'nom-pos' : 'ele-pos';
     return `
       <div class="card governance-admin-card">
         <div class="governance-admin-card__header">
@@ -844,16 +913,7 @@
           ${field('Portal URL', `mp${idPrefix}Url`, data[`${dataPrefix}Url`] || '', 'url')}
           ${field('Button label', `mp${idPrefix}ButtonLabel`, data[`${dataPrefix}ButtonLabel`] || '')}
         </div>
-        <details class="mp-admin-accordion governance-admin-positions">
-          <summary>
-            <span class="mp-admin-accordion__title">Positions list</span>
-            <span class="mp-admin-accordion__meta">${positions.length} position(s)</span>
-          </summary>
-          <div class="mp-admin-accordion__body">
-            <p class="form-hint">Enter one position per line. Optional description after a pipe, e.g. <code>Secretary General | Administration and records</code></p>
-            ${field('Bulk positions', `mp${idPrefix}Positions`, positionLines, 'textarea', { full: true })}
-          </div>
-        </details>
+        ${renderGovernancePositionsList(idPrefix, positions, removeAttr, addId, applyBulkId)}
       </div>
     `;
   }
@@ -1717,6 +1777,68 @@
           renderSection('memberPortal');
         });
       });
+
+      function addGovernancePosition(key) {
+        collectFromForm();
+        if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
+        if (!content.memberPortal.elections) content.memberPortal.elections = defaultMemberPortal().elections;
+        const list = content.memberPortal.elections[key];
+        list.push({
+          id: `pos-${Date.now()}`,
+          title: 'New position',
+          description: ''
+        });
+        memberPortalActiveTab = 'governance';
+        renderSection('memberPortal');
+      }
+
+      function removeGovernancePosition(key, index) {
+        collectFromForm();
+        content.memberPortal.elections[key].splice(index, 1);
+        memberPortalActiveTab = 'governance';
+        renderSection('memberPortal');
+      }
+
+      function applyGovernanceBulk(key, idPrefix) {
+        collectFromForm();
+        const bulk = parsePositionLines(val(`mp${idPrefix}PositionsBulk`));
+        if (!bulk.length) {
+          showStatus('Add at least one position line before applying bulk list.', 'error');
+          return;
+        }
+        content.memberPortal.elections[key] = bulk;
+        memberPortalActiveTab = 'governance';
+        renderSection('memberPortal');
+        showStatus(`Applied ${bulk.length} position(s).`, 'success');
+      }
+
+      document.getElementById('addNomPosition')?.addEventListener('click', () => {
+        addGovernancePosition('nominationPositions');
+      });
+
+      document.getElementById('addElePosition')?.addEventListener('click', () => {
+        addGovernancePosition('electionPositions');
+      });
+
+      document.querySelectorAll('[data-remove-nom-pos]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          removeGovernancePosition('nominationPositions', +btn.dataset.removeNomPos);
+        });
+      });
+
+      document.querySelectorAll('[data-remove-ele-pos]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          removeGovernancePosition('electionPositions', +btn.dataset.removeElePos);
+        });
+      });
+
+      document.getElementById('mpNomApplyBulk')?.addEventListener('click', () => {
+        applyGovernanceBulk('nominationPositions', 'Nom');
+      });
+
+      document.getElementById('mpEleApplyBulk')?.addEventListener('click', () => {
+        applyGovernanceBulk('electionPositions', 'Ele');
+      });
     }
 
     if (section === 'events') {
@@ -2035,6 +2157,7 @@
       mp.exploreLinks = exploreLinks;
 
       mp.elections = {
+        ...mp.elections,
         nominationOpen: val('mpNomOpen'),
         nominationTitle: val('mpNomTitle'),
         nominationPeriod: val('mpNomPeriod'),
@@ -2042,7 +2165,7 @@
         nominationClosedMessage: val('mpNomClosedMessage'),
         nominationUrl: val('mpNomUrl'),
         nominationButtonLabel: val('mpNomButtonLabel'),
-        nominationPositions: parsePositionLines(val('mpNomPositions')),
+        nominationPositions: collectGovernancePositions('Nom', mp.elections?.nominationPositions),
         electionOpen: val('mpEleOpen'),
         electionTitle: val('mpEleTitle'),
         electionPeriod: val('mpElePeriod'),
@@ -2050,7 +2173,7 @@
         electionClosedMessage: val('mpEleClosedMessage'),
         electionUrl: val('mpEleUrl'),
         electionButtonLabel: val('mpEleButtonLabel'),
-        electionPositions: parsePositionLines(val('mpElePositions'))
+        electionPositions: collectGovernancePositions('Ele', mp.elections?.electionPositions)
       };
     }
 

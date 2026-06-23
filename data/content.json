@@ -424,7 +424,13 @@
       "nominationClosedMessage": "Nominations are currently closed. You will be notified when the next nomination period opens.",
       "nominationUrl": "",
       "nominationButtonLabel": "Open nomination portal",
-      "nominationPositions": [],
+      "nominationPositions": [
+        { "id": "pos-president", "title": "Chapter President", "description": "Board President" },
+        { "id": "pos-vp", "title": "Chapter Vice President", "description": "Board Vice President" },
+        { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
+        { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
+        { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }
+      ],
       "electionOpen": false,
       "electionTitle": "Election Portal",
       "electionPeriod": "",
@@ -432,7 +438,13 @@
       "electionClosedMessage": "Elections are currently closed. Check back during the election period.",
       "electionUrl": "",
       "electionButtonLabel": "Open election portal",
-      "electionPositions": []
+      "electionPositions": [
+        { "id": "pos-president", "title": "Chapter President", "description": "Board President" },
+        { "id": "pos-vp", "title": "Chapter Vice President", "description": "Board Vice President" },
+        { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
+        { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
+        { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }
+      ]
     }
   }
 }
