@@ -1,6 +1,7 @@
 import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { getAppMeta, isSchemaColumnError, withAppMeta } from './lib/ailcd-app.js';
+import { buildAilcdApplicationsPdf } from './lib/ailcd-pdf.js';
 
 function normalizeApplication(row) {
   if (!row) return row;
@@ -96,6 +97,15 @@ export default async function handler(req, res) {
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename="ailcd-applications.csv"');
         res.status(200).send(csv);
+        return;
+      }
+
+      if (req.query?.format === 'pdf') {
+        const pdf = buildAilcdApplicationsPdf(applications);
+        const filename = `ailcd-applications-${new Date().toISOString().slice(0, 10)}.pdf`;
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.status(200).send(pdf);
         return;
       }
 
