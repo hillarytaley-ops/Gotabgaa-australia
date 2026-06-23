@@ -3,15 +3,19 @@
  */
 (function () {
   const SESSION_KEY = 'gaa_member_session';
+  const ADMIN_TOKEN_KEY = 'gaa_admin_token';
   const FEED_LABELS = { news: 'News', sports: 'Sports', business: 'Business', social: 'Social' };
 
   let siteContent = null;
   let activeFeed = 'all';
   let memberSession = null;
+  let isPreviewMode = false;
 
   const els = {
     gate: document.getElementById('memberGate'),
     dashboard: document.getElementById('memberDashboard'),
+    previewBanner: document.getElementById('memberPreviewBanner'),
+    previewBtn: document.getElementById('memberPreviewBtn'),
     loginForm: document.getElementById('memberLoginForm'),
     loginError: document.getElementById('memberLoginError'),
     loginBtn: document.getElementById('memberLoginBtn'),
@@ -56,12 +60,55 @@
 
   function saveSession(session) {
     memberSession = session;
+    if (isPreviewMode) return;
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   }
 
   function clearSession() {
     memberSession = null;
+    isPreviewMode = false;
     localStorage.removeItem(SESSION_KEY);
+  }
+
+  function getAdminToken() {
+    try {
+      return localStorage.getItem(ADMIN_TOKEN_KEY) || sessionStorage.getItem(ADMIN_TOKEN_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function isPreviewRequested() {
+    return new URLSearchParams(window.location.search).get('preview') === '1';
+  }
+
+  function setPreviewBanner(visible) {
+    if (els.previewBanner) els.previewBanner.hidden = !visible;
+  }
+
+  async function enterDeveloperPreview() {
+    const token = getAdminToken();
+    if (!token) {
+      showError('Sign in to the admin panel first, then open preview again.');
+      return false;
+    }
+
+    const res = await fetch('/api/member-preview', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      showError(data.error || 'Could not start developer preview.');
+      return false;
+    }
+
+    isPreviewMode = true;
+    memberSession = data.member;
+    showError('');
+    setPreviewBanner(true);
+    showDashboard();
+    return true;
   }
 
   function showError(msg) {
@@ -73,6 +120,7 @@
   function showGate() {
     if (els.gate) els.gate.hidden = false;
     if (els.dashboard) els.dashboard.hidden = true;
+    setPreviewBanner(false);
   }
 
   function showDashboard() {
@@ -192,6 +240,12 @@
 
   async function renderBookings() {
     if (!memberSession) return;
+
+    if (isPreviewMode) {
+      els.bookingsList.innerHTML = '<p class="members-empty">No sample bookings in preview mode. Real members see their event bookings here.</p>';
+      return;
+    }
+
     els.bookingsList.innerHTML = '<p class="members-empty">Loading bookings…</p>';
 
     const bookings = await fetchBookings(memberSession.email, memberSession.membershipId);
@@ -396,9 +450,25 @@
     els.loginForm?.addEventListener('submit', handleLogin);
 
     els.signOut?.addEventListener('click', () => {
+      const hadPreviewUrl = isPreviewRequested();
       clearSession();
+      setPreviewBanner(false);
+      if (hadPreviewUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('preview');
+        window.history.replaceState(null, '', url.pathname + url.search);
+      }
       showGate();
       showError('');
+    });
+
+    els.previewBtn?.addEventListener('click', async () => {
+      els.previewBtn.disabled = true;
+      try {
+        await enterDeveloperPreview();
+      } finally {
+        els.previewBtn.disabled = false;
+      }
     });
 
     els.tabs?.addEventListener('click', e => {
@@ -416,6 +486,19 @@
       });
       fetchContent().then(content => renderFeeds(content.memberPortal));
     });
+
+    if (isPreviewRequested()) {
+      const ok = await enterDeveloperPreview();
+      if (ok) return;
+    }
+
+    if (getAdminToken()) {
+      fetch('/api/member-preview', {
+        headers: { Authorization: `Bearer ${getAdminToken()}` }
+      }).then(res => {
+        if (res.ok && els.previewBtn) els.previewBtn.hidden = false;
+      }).catch(() => {});
+    }
 
     if (memberSession?.email && memberSession?.membershipId) {
       try {

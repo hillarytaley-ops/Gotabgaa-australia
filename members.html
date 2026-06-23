@@ -68,12 +68,17 @@
             </div>
             <p class="form__error" id="memberLoginError" hidden></p>
             <button type="submit" class="btn btn--primary btn--block" id="memberLoginBtn">Access Dashboard</button>
+            <button type="button" class="btn btn--outline btn--block" id="memberPreviewBtn" hidden>Developer preview</button>
           </form>
           <p class="members-gate__footer">Not a member yet? <a href="join.html">Register here</a>. Need help? <a href="contact.html">Contact us</a>.</p>
         </div>
       </div>
 
       <div class="members-dashboard" id="memberDashboard" hidden>
+        <div class="members-preview-banner" id="memberPreviewBanner" hidden>
+          <strong>Developer preview</strong> — sample member view for admins. Bookings and membership data are placeholders.
+          <a href="admin/">Return to admin</a>
+        </div>
         <div class="members-dashboard__top">
           <div class="members-dashboard__welcome">
             <h2 id="memberWelcomeTitle">Welcome back</h2>

@@ -4815,3 +4815,23 @@ body.modal-open {
   .members-dashboard__top { flex-direction: column; }
 }
 
+.members-preview-banner {
+  margin-bottom: 1.25rem;
+  padding: .85rem 1rem;
+  border: 1px solid rgba(180, 83, 9, .35);
+  border-radius: var(--radius-md, 10px);
+  background: rgba(180, 83, 9, .08);
+  color: var(--text);
+  font-size: .92rem;
+  line-height: 1.5;
+}
+
+.members-preview-banner a {
+  margin-left: .35rem;
+  font-weight: 600;
+}
+
+.members-gate__form .btn--outline {
+  margin-top: .65rem;
+}
+

@@ -726,7 +726,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../members.html" target="_blank" rel="noopener">members.html</a> with their membership ID.</p>
+        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../members.html" target="_blank" rel="noopener">members.html</a> with their membership ID. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
       </div>
       <div class="card" id="membershipRegistrationsCard">
         <h3>Member registrations</h3>
@@ -781,7 +781,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — registered members sign in with email + membership ID. Approve registrations under Membership to issue IDs.</p>
+        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — registered members sign in with email + membership ID. Approve registrations under Membership to issue IDs. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
       </div>
       <div class="card"><h3>Dashboard welcome</h3><div class="form-grid">
         ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
@@ -990,6 +990,9 @@
                 <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
                   ${r.read ? 'Mark unread' : 'Mark read'}
                 </button>
+                <button type="button" class="btn btn--danger btn--sm membership-delete" data-id="${escapeHtml(r.id)}" data-name="${escapeHtml(r.name || 'this applicant')}">
+                  Delete
+                </button>
               </div>
             </div>
           </details>
@@ -1067,6 +1070,26 @@
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Could not deactivate');
             showStatus('Member deactivated.', 'success');
+            loadMembershipRegistrationsPanel();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+          }
+        });
+      });
+
+      card.querySelectorAll('.membership-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const name = btn.dataset.name || 'this applicant';
+          if (!confirm(`Delete the registration from ${name}? This cannot be undone.`)) return;
+
+          try {
+            const res = await authFetch(`/api/membership-registrations?id=${encodeURIComponent(btn.dataset.id)}`, {
+              method: 'DELETE'
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not delete registration');
+            showStatus('Registration deleted.', 'success');
             loadMembershipRegistrationsPanel();
           } catch (err) {
             if (isAuthError(err)) return;
