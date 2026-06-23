@@ -74,6 +74,9 @@ create table if not exists public.membership_registrations (
   fee_display text,
   payment_status text not null default 'pending',
   payment_method text,
+  membership_id text,
+  member_status text not null default 'pending',
+  data jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   read boolean not null default false
 );
@@ -85,6 +88,13 @@ create index if not exists membership_registrations_created_at_idx
 
 create index if not exists membership_registrations_read_idx
   on public.membership_registrations (read, created_at desc);
+
+create unique index if not exists membership_registrations_membership_id_idx
+  on public.membership_registrations (membership_id)
+  where membership_id is not null;
+
+create index if not exists membership_registrations_member_status_idx
+  on public.membership_registrations (member_status, created_at desc);
 
 -- 5) AILCD program applications
 create table if not exists public.ailcd_applications (

@@ -38,6 +38,7 @@
     gallery: 'Gallery',
     contact: 'Contact Info',
     membership: 'Membership',
+    memberPortal: 'Member Portal',
     ailcd: 'Leadership EOI',
     inbox: 'Contact Inbox',
     pages: 'Page Heroes'
@@ -709,6 +710,14 @@
     };
   }
 
+  function getMemberMeta(row) {
+    const data = row?.data || {};
+    return {
+      membershipId: row?.membership_id || data._membershipId || null,
+      memberStatus: row?.member_status || data._memberStatus || 'pending'
+    };
+  }
+
   function renderMembershipPanel() {
     if (!content.membership) content.membership = defaultMembership();
     const m = content.membership;
@@ -717,7 +726,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Adjust the fee below anytime — the live fee shown on the form updates after you publish. Online payment integration is planned for a future release.</p>
+        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../members.html" target="_blank" rel="noopener">members.html</a> with their membership ID.</p>
       </div>
       <div class="card" id="membershipRegistrationsCard">
         <h3>Member registrations</h3>
@@ -742,6 +751,69 @@
         ${field('Tag', 'heroTag_join', content.pages?.join?.hero?.tag || 'Membership')}
         ${field('Title', 'heroTitle_join', content.pages?.join?.hero?.title || 'Join Gotabgaa Australia')}
         ${field('Description', 'heroDesc_join', content.pages?.join?.hero?.description || '', 'textarea', { full: true })}
+      </div></div>
+    `;
+  }
+
+  function defaultMemberPortal() {
+    return {
+      welcomeTitle: 'Welcome to the Members Dashboard',
+      welcomeMessage: 'Access chapter news, event updates, photo albums, and governance portals.',
+      feeds: [],
+      elections: {
+        nominationOpen: false,
+        nominationTitle: 'Nomination Portal',
+        nominationMessage: 'Submit your nomination for chapter leadership positions.',
+        nominationUrl: '',
+        electionOpen: false,
+        electionTitle: 'Election Portal',
+        electionMessage: 'Cast your vote for chapter leadership.',
+        electionUrl: ''
+      }
+    };
+  }
+
+  function renderMemberPortalPanel() {
+    if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
+    const mp = content.memberPortal;
+    const feeds = mp.feeds || [];
+    const el = mp.elections || defaultMemberPortal().elections;
+
+    return `
+      <div class="card card--notice">
+        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — registered members sign in with email + membership ID. Approve registrations under Membership to issue IDs.</p>
+      </div>
+      <div class="card"><h3>Dashboard welcome</h3><div class="form-grid">
+        ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
+        ${field('Welcome message', 'mpWelcomeMessage', mp.welcomeMessage, 'textarea', { full: true })}
+      </div></div>
+      <div class="card"><h3>Member news feeds</h3>
+        <p class="form-hint">Posts appear in the members dashboard by category (news, sports, business, social).</p>
+        <div id="memberFeedsList">
+          ${feeds.map((feed, i) => `
+            <div class="list-item" data-feed-index="${i}">
+              <div class="form-grid">
+                ${field('Category', `mpFeedCat_${i}`, feed.category || 'news')}
+                ${field('Title', `mpFeedTitle_${i}`, feed.title)}
+                ${field('Published date', `mpFeedDate_${i}`, feed.publishedAt || '', 'date')}
+                ${field('Link (optional)', `mpFeedLink_${i}`, feed.link || '')}
+                ${field('Body', `mpFeedBody_${i}`, feed.body || '', 'textarea', { full: true })}
+              </div>
+              <button type="button" class="btn btn--outline btn--sm" data-remove-feed="${i}">Remove feed</button>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="btn btn--outline" id="addMemberFeed">Add feed post</button>
+      </div>
+      <div class="card"><h3>Governance portals</h3><div class="form-grid">
+        ${field('Nomination portal open', 'mpNomOpen', el.nominationOpen, 'checkbox')}
+        ${field('Nomination title', 'mpNomTitle', el.nominationTitle)}
+        ${field('Nomination message', 'mpNomMessage', el.nominationMessage, 'textarea', { full: true })}
+        ${field('Nomination URL', 'mpNomUrl', el.nominationUrl)}
+        ${field('Election portal open', 'mpEleOpen', el.electionOpen, 'checkbox')}
+        ${field('Election title', 'mpEleTitle', el.electionTitle)}
+        ${field('Election message', 'mpEleMessage', el.electionMessage, 'textarea', { full: true })}
+        ${field('Election URL', 'mpEleUrl', el.electionUrl)}
       </div></div>
     `;
   }
@@ -888,17 +960,21 @@
       </div>
       <p class="form-hint">View full registration details below. Data is only visible to signed-in admins — use Download CSV to export.</p>
       <div id="membershipRegistrationsList">
-        ${registrations.map(r => `
+        ${registrations.map(r => {
+          const meta = getMemberMeta(r);
+          return `
           <details class="list-item inbox-item membership-reg-item ${r.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(r.id)}">
             <summary class="membership-reg-item__summary">
               <span class="membership-reg-item__name">${escapeHtml(r.name)}</span>
-              <span class="membership-reg-item__meta">${escapeHtml(r.membership_type || 'Member')} · ${escapeHtml(r.state_chapter || '—')}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(r.membership_type || 'Member')} · ${escapeHtml(r.state_chapter || '—')}${meta.membershipId ? ` · ${escapeHtml(meta.membershipId)}` : ''}</span>
               <span class="inbox-item__date">${new Date(r.created_at).toLocaleString()}</span>
             </summary>
             <div class="membership-reg-item__body">
               <div class="form-grid membership-reg-item__grid">
                 <p><strong>Email:</strong> ${escapeHtml(r.email)}</p>
                 <p><strong>Phone:</strong> ${escapeHtml(r.phone || '—')}</p>
+                <p><strong>Membership ID:</strong> ${meta.membershipId ? `<code>${escapeHtml(meta.membershipId)}</code>` : '— (not issued)'}</p>
+                <p><strong>Member status:</strong> ${escapeHtml(meta.memberStatus)}</p>
                 <p><strong>State / chapter:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
                 <p><strong>Membership type:</strong> ${escapeHtml(r.membership_type || '—')}</p>
                 <p><strong>Address:</strong> ${escapeHtml(r.address || '—')}</p>
@@ -908,12 +984,16 @@
                 <p><strong>Payment status:</strong> ${escapeHtml(r.payment_status || 'pending')}${r.payment_method ? ` (${escapeHtml(r.payment_method)})` : ''}</p>
                 ${r.notes ? `<p class="form-field--full"><strong>Notes:</strong> ${escapeHtml(r.notes)}</p>` : ''}
               </div>
-              <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
-                ${r.read ? 'Mark unread' : 'Mark read'}
-              </button>
+              <div class="inbox-item__actions">
+                ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
+                ${meta.memberStatus === 'active' ? `<button type="button" class="btn btn--outline btn--sm membership-revoke" data-id="${escapeHtml(r.id)}">Deactivate member</button>` : ''}
+                <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
+                  ${r.read ? 'Mark unread' : 'Mark read'}
+                </button>
+              </div>
             </div>
           </details>
-        `).join('')}
+        `}).join('')}
       </div>
     `;
   }
@@ -950,6 +1030,48 @@
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
           loadMembershipRegistrationsPanel();
+        });
+      });
+
+      card.querySelectorAll('.membership-approve').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Approve this member and issue a membership ID?')) return;
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/membership-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'approve' })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Approval failed');
+            showStatus(`Member approved. ID: ${data.membershipId}`, 'success');
+            loadMembershipRegistrationsPanel();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
+          }
+        });
+      });
+
+      card.querySelectorAll('.membership-revoke').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Deactivate this member? They will no longer access the dashboard.')) return;
+          try {
+            const res = await authFetch('/api/membership-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'revoke' })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not deactivate');
+            showStatus('Member deactivated.', 'success');
+            loadMembershipRegistrationsPanel();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+          }
         });
       });
     } catch (err) {
@@ -1311,6 +1433,7 @@
           gallery: renderGalleryPanel,
           contact: renderContactPanel,
           membership: renderMembershipPanel,
+          memberPortal: renderMemberPortalPanel,
           ailcd: renderAilcdPanel,
           pages: renderPagesPanel
         };
@@ -1339,6 +1462,29 @@
         btn.addEventListener('click', () => {
           content.programs.splice(+btn.dataset.removeProgram, 1);
           renderSection('programs');
+        });
+      });
+    }
+
+    if (section === 'memberPortal') {
+      document.getElementById('addMemberFeed')?.addEventListener('click', () => {
+        collectFromForm();
+        if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
+        content.memberPortal.feeds.push({
+          id: `feed-${Date.now()}`,
+          category: 'news',
+          title: 'New post',
+          body: '',
+          publishedAt: new Date().toISOString().slice(0, 10),
+          link: ''
+        });
+        renderSection('memberPortal');
+      });
+      document.querySelectorAll('[data-remove-feed]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.memberPortal.feeds.splice(+btn.dataset.removeFeed, 1);
+          renderSection('memberPortal');
         });
       });
     }
@@ -1623,6 +1769,37 @@
         tag: val('heroTag_join'),
         title: val('heroTitle_join'),
         description: val('heroDesc_join')
+      };
+    }
+
+    if (document.getElementById('mpWelcomeTitle')) {
+      if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
+      const mp = content.memberPortal;
+      mp.welcomeTitle = val('mpWelcomeTitle');
+      mp.welcomeMessage = val('mpWelcomeMessage');
+
+      const feeds = [];
+      for (let i = 0; document.getElementById(`mpFeedTitle_${i}`); i += 1) {
+        feeds.push({
+          id: mp.feeds?.[i]?.id || `feed-${i}`,
+          category: val(`mpFeedCat_${i}`) || 'news',
+          title: val(`mpFeedTitle_${i}`),
+          publishedAt: val(`mpFeedDate_${i}`),
+          link: val(`mpFeedLink_${i}`),
+          body: val(`mpFeedBody_${i}`)
+        });
+      }
+      mp.feeds = feeds;
+
+      mp.elections = {
+        nominationOpen: val('mpNomOpen'),
+        nominationTitle: val('mpNomTitle'),
+        nominationMessage: val('mpNomMessage'),
+        nominationUrl: val('mpNomUrl'),
+        electionOpen: val('mpEleOpen'),
+        electionTitle: val('mpEleTitle'),
+        electionMessage: val('mpEleMessage'),
+        electionUrl: val('mpEleUrl')
       };
     }
 

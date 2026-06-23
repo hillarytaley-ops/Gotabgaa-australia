@@ -389,5 +389,29 @@
     { "id": "gal-p5", "eventId": "evt-agm-2026", "image": "assets/hero/berur-brisbane.png", "alt": "AGM community photo", "caption": "AGM 2026 group photo", "wide": true },
     { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia chapter at AGM", "caption": "SA chapter representatives", "wide": false }
   ],
-  "submissions": []
+  "submissions": [],
+  "memberPortal": {
+    "welcomeTitle": "Welcome to the Members Dashboard",
+    "welcomeMessage": "Access chapter news, event updates, photo albums, and governance portals — exclusively for registered members.",
+    "feeds": [
+      {
+        "id": "feed-welcome",
+        "category": "news",
+        "title": "Members dashboard is live",
+        "body": "Registered members can now sign in with their membership ID and email to access news feeds, event bookings, photo downloads, and election portals when active.",
+        "publishedAt": "2026-06-21",
+        "link": ""
+      }
+    ],
+    "elections": {
+      "nominationOpen": false,
+      "nominationTitle": "Nomination Portal",
+      "nominationMessage": "Submit your nomination for chapter leadership positions during the nomination period.",
+      "nominationUrl": "",
+      "electionOpen": false,
+      "electionTitle": "Election Portal",
+      "electionMessage": "Cast your vote for chapter leadership during the election period.",
+      "electionUrl": ""
+    }
+  }
 }

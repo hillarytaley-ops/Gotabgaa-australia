@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Registered members dashboard — news, events, photos, and governance for Gotabgaa Australia Chapter.">
+  <title>Members Dashboard | Gotabgaa Australia Chapter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/logo-round.png" type="image/png">
+</head>
+<body class="page-sub page-members">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia Chapter" class="nav__logo logo-circle">
+        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="programs.html" class="nav__link">Programs</a></li>
+        <li><a href="events.html" class="nav__link">Events</a></li>
+        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
+        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+        <li><a href="contact.html" class="nav__link">Contact</a></li>
+        <li><a href="members.html" class="btn btn--primary nav__cta is-active">Members</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-hero page-hero--compact">
+    <div class="tribal-border tribal-border--top" aria-hidden="true">
+      <div class="tribal-border__track"></div>
+    </div>
+    <div class="container">
+      <span class="section__tag">Members Only</span>
+      <h1 class="page-hero__title">Members Dashboard</h1>
+      <p class="page-hero__desc">News, events, photos, and chapter updates for registered Gotabgaa Australia members.</p>
+    </div>
+    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
+      <div class="tribal-border__track tribal-border__track--reverse"></div>
+    </div>
+  </section>
+
+  <section class="members-portal section">
+    <div class="container">
+
+      <div class="members-gate" id="memberGate">
+        <div class="members-gate__card">
+          <h2>Sign in to your dashboard</h2>
+          <p class="members-gate__hint">Enter the email you registered with and your membership ID (issued after admin approval).</p>
+          <form id="memberLoginForm" class="members-gate__form" novalidate>
+            <div class="form__group">
+              <label for="memberEmail">Email address</label>
+              <input type="email" id="memberEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+            </div>
+            <div class="form__group">
+              <label for="memberId">Membership ID</label>
+              <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="GAA-MEM-XXXXXXXX" spellcheck="false">
+            </div>
+            <p class="form__error" id="memberLoginError" hidden></p>
+            <button type="submit" class="btn btn--primary btn--block" id="memberLoginBtn">Access Dashboard</button>
+          </form>
+          <p class="members-gate__footer">Not a member yet? <a href="join.html">Register here</a>. Need help? <a href="contact.html">Contact us</a>.</p>
+        </div>
+      </div>
+
+      <div class="members-dashboard" id="memberDashboard" hidden>
+        <div class="members-dashboard__top">
+          <div class="members-dashboard__welcome">
+            <h2 id="memberWelcomeTitle">Welcome back</h2>
+            <p id="memberWelcomeMessage"></p>
+          </div>
+          <div class="members-dashboard__actions">
+            <span class="members-badge" id="memberBadge"></span>
+            <button type="button" class="btn btn--outline btn--sm" id="memberSignOut">Sign out</button>
+          </div>
+        </div>
+
+        <nav class="members-tabs" id="memberTabs" aria-label="Dashboard sections">
+          <button type="button" class="members-tabs__btn is-active" data-tab="feeds">News &amp; Feeds</button>
+          <button type="button" class="members-tabs__btn" data-tab="membership">My Membership</button>
+          <button type="button" class="members-tabs__btn" data-tab="events">Events &amp; Bookings</button>
+          <button type="button" class="members-tabs__btn" data-tab="photos">Event Photos</button>
+          <button type="button" class="members-tabs__btn" data-tab="governance">Governance</button>
+          <button type="button" class="members-tabs__btn" data-tab="explore">Explore Site</button>
+        </nav>
+
+        <div class="members-panel is-active" data-panel="feeds" id="panelFeeds">
+          <div class="members-feed-filters" id="feedFilters">
+            <button type="button" class="members-feed-filters__btn is-active" data-feed="all">All</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="news">News</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="sports">Sports</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="business">Business</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="social">Social</button>
+          </div>
+          <div class="members-feed-list" id="feedList"></div>
+        </div>
+
+        <div class="members-panel" data-panel="membership" id="panelMembership" hidden>
+          <div class="members-card" id="membershipCard"></div>
+        </div>
+
+        <div class="members-panel" data-panel="events" id="panelEvents" hidden>
+          <div class="members-grid members-grid--2">
+            <div class="members-card">
+              <h3>Upcoming events</h3>
+              <div id="eventsList"></div>
+            </div>
+            <div class="members-card">
+              <h3>Your bookings</h3>
+              <div id="bookingsList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="members-panel" data-panel="photos" id="panelPhotos" hidden>
+          <p class="members-panel__intro">Download photos from chapter events. Albums match events on the public gallery.</p>
+          <div id="photoAlbums"></div>
+        </div>
+
+        <div class="members-panel" data-panel="governance" id="panelGovernance" hidden>
+          <div class="members-grid members-grid--2" id="governanceCards"></div>
+        </div>
+
+        <div class="members-panel" data-panel="explore" id="panelExplore" hidden>
+          <p class="members-panel__intro">Quick links to public chapter pages and resources.</p>
+          <div class="members-quicklinks" id="exploreLinks"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="assets/logo-round.png" alt="" class="footer__logo logo-circle">
+        <p>Gotabgaa Australia Chapter</p>
+        <p class="footer__tagline">Unity • Heritage • Excellence</p>
+      </div>
+      <div class="footer__links">
+        <h4>Members</h4>
+        <ul>
+          <li><a href="members.html">Dashboard</a></li>
+          <li><a href="join.html">Join</a></li>
+          <li><a href="book.html">Book events</a></li>
+        </ul>
+      </div>
+      <div class="footer__links">
+        <h4>Chapter</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="programs.html">Programs</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom container">
+      <p>&copy; <span data-copyright-year>2026</span> Gotabgaa Australia Chapter. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/content-loader.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/members-dashboard.js"></script>
+</body>
+</html>
