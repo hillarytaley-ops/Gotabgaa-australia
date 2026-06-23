@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTiltCards();
   initPageHeroLogos();
   initAdminPortalLinks();
+  initMemberPortalLinks();
 });
 
 document.addEventListener('cms-ready', () => {
@@ -107,6 +108,15 @@ function initNavigation() {
         document.body.classList.remove('nav-menu-open');
       });
     });
+
+    menu.querySelectorAll('.nav__cta').forEach(link => {
+      link.addEventListener('click', () => {
+        closeFloatingSocial();
+        menu.classList.remove('open');
+        toggle.classList.remove('active');
+        document.body.classList.remove('nav-menu-open');
+      });
+    });
   }
 
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -120,6 +130,11 @@ function initNavigation() {
     const isActive = target === currentPage || (isHome && target === 'index.html');
     link.classList.toggle('active', isActive);
   });
+
+  const memberLink = document.querySelector('[data-member-link]');
+  if (memberLink && (currentPage === 'members.html' || currentPage === 'members')) {
+    memberLink.classList.add('is-active');
+  }
 
   const hashSections = document.querySelectorAll('section[id]');
   const hasHashNav = [...links].some(link => link.getAttribute('href')?.startsWith('#'));
@@ -387,6 +402,50 @@ function initAdminPortalLinks() {
     a.setAttribute('data-admin-link', '');
     a.setAttribute('aria-label', 'Open leadership admin portal');
     legal.appendChild(a);
+  });
+}
+
+function initMemberPortalLinks() {
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const onMembersPage = currentPage === 'members.html' || currentPage === 'members';
+
+  const menu = document.getElementById('navMenu');
+  if (menu && !menu.querySelector('[data-member-link]') && !onMembersPage) {
+    const joinItem = menu.querySelector('a.nav__cta[href*="join"]')?.closest('li');
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = 'members.html';
+    a.className = 'btn btn--outline nav__cta nav__cta--member';
+    a.textContent = 'Member Sign In';
+    a.setAttribute('data-member-link', '');
+    li.appendChild(a);
+    if (joinItem) joinItem.before(li);
+    else menu.appendChild(li);
+  }
+
+  document.querySelectorAll('.footer__nav .footer__links').forEach(col => {
+    const h4 = col.querySelector('h4');
+    if (!h4 || h4.textContent.trim() !== 'Community') return;
+    const ul = col.querySelector('ul');
+    if (!ul || ul.querySelector('[data-member-footer-link]')) return;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = 'members.html';
+    a.textContent = 'Member Sign In';
+    a.setAttribute('data-member-footer-link', '');
+    li.appendChild(a);
+    const joinLink = ul.querySelector('a[href*="join"]');
+    if (joinLink?.parentElement) joinLink.parentElement.before(li);
+    else ul.appendChild(li);
+  });
+
+  document.querySelectorAll('.footer__legal').forEach(legal => {
+    if (legal.querySelector('[data-member-legal-link]')) return;
+    const a = document.createElement('a');
+    a.href = 'members.html';
+    a.textContent = 'Member Sign In';
+    a.setAttribute('data-member-legal-link', '');
+    legal.insertBefore(a, legal.firstChild);
   });
 }
 

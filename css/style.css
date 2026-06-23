@@ -324,6 +324,19 @@ a:hover {
   color: var(--brown-900);
 }
 
+.header .nav__cta.nav__cta--member {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: var(--cream);
+  background: transparent;
+}
+
+.header .nav__cta.nav__cta--member:hover,
+.header .nav__cta.nav__cta--member.is-active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--tan-light);
+  color: var(--white);
+}
+
 .nav__toggle {
   display: none;
   flex-direction: column;
