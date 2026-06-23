@@ -4521,6 +4521,54 @@ body.modal-open {
 
 .members-gate__footer { margin-top: 1.25rem; margin-bottom: 0; }
 
+/* Members page footer — center brand + link columns */
+.page-members .footer__grid {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.page-members .footer__brand {
+  flex: none;
+  max-width: none;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page-members .footer__nav--members {
+  flex: none;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px 72px;
+  grid-template-columns: unset;
+}
+
+.page-members .footer__links {
+  text-align: center;
+}
+
+.page-members .footer__links h4 {
+  text-align: center;
+}
+
+.page-members .footer__links ul {
+  padding-left: 0;
+  display: inline-block;
+  text-align: center;
+}
+
+.page-members .footer__bottom {
+  justify-content: center;
+  text-align: center;
+}
+
 .members-dashboard__top {
   display: flex;
   flex-wrap: wrap;
