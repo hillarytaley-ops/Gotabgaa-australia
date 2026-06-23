@@ -6,6 +6,7 @@
   const PREVIEW_KEY = 'gaa_admin_preview';
   let content = null;
   let activeSection = 'dashboard';
+  let memberPortalActiveTab = 'welcome';
   let isPreviewMode = false;
 
   const els = {
@@ -831,82 +832,134 @@
       { value: 'social', label: 'Social' }
     ];
 
+    const tabs = [
+      { id: 'welcome', label: 'Welcome' },
+      { id: 'feeds', label: 'News & Feeds' },
+      { id: 'events', label: 'Events' },
+      { id: 'photos', label: 'Photos' },
+      { id: 'governance', label: 'Governance' },
+      { id: 'explore', label: 'Explore' }
+    ];
+
     return `
       <div class="card card--notice">
-        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — all content below appears on the signed-in members dashboard. Approve members under <button type="button" class="btn btn--outline btn--sm" data-goto="membership">Membership</button>. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
-        <p class="form-hint" style="margin-top:8px">Edit each section, then click <strong>Publish Changes</strong> for updates to go live.</p>
+        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — edit one tab at a time below. Approve members under <button type="button" class="btn btn--outline btn--sm" data-goto="membership">Membership</button>. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
+        <p class="form-hint" style="margin-top:8px">Switch tabs to edit each section, then click <strong>Publish Changes</strong>.</p>
       </div>
 
-      <div class="card"><h3>Welcome screen</h3>
-        <p class="form-hint">Shown at the top of the members dashboard after sign-in.</p>
-        <div class="form-grid">
-          ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
-          ${field('Welcome message', 'mpWelcomeMessage', mp.welcomeMessage, 'textarea', { full: true })}
-        </div>
-      </div>
+      <nav class="mp-admin-tabs" id="mpAdminTabs" aria-label="Member portal sections">
+        ${tabs.map(tab => `
+          <button type="button" class="mp-admin-tabs__btn ${memberPortalActiveTab === tab.id ? 'is-active' : ''}" data-mp-tab="${tab.id}">${tab.label}</button>
+        `).join('')}
+      </nav>
 
-      <div class="card"><h3>News &amp; feeds</h3>
-        <p class="form-hint">Posts appear under the <strong>News &amp; Feeds</strong> tab, filterable by category.</p>
-        <div id="memberFeedsList">
-          ${feeds.length ? feeds.map((feed, i) => `
-            <div class="list-item governance-admin-feed" data-feed-index="${i}">
-              <div class="list-item__header">
-                <h4>Feed post ${i + 1}</h4>
-                <button type="button" class="btn btn--danger btn--sm" data-remove-feed="${i}">Remove</button>
-              </div>
-              <div class="form-grid">
-                ${field('Category', `mpFeedCat_${i}`, feed.category || 'news', 'select', { options: feedCategories })}
-                ${field('Title', `mpFeedTitle_${i}`, feed.title)}
-                ${field('Published date', `mpFeedDate_${i}`, feed.publishedAt || '', 'date')}
-                ${field('Link (optional)', `mpFeedLink_${i}`, feed.link || '')}
-                ${field('Body', `mpFeedBody_${i}`, feed.body || '', 'textarea', { full: true })}
-              </div>
-            </div>
-          `).join('') : '<p class="form-hint">No feed posts yet.</p>'}
-        </div>
-        <button type="button" class="btn btn--outline" id="addMemberFeed">Add feed post</button>
-      </div>
-
-      <div class="card"><h3>Events &amp; bookings tab</h3>
-        <p class="form-hint">Events are pulled from <button type="button" class="btn btn--outline btn--sm" data-goto="events">Events</button>. Bookings come from Supabase when members register via the booking portal.</p>
-        <div class="form-grid">
-          ${field('Intro text', 'mpEventsIntro', mp.eventsIntro || defaultMemberPortal().eventsIntro, 'textarea', { full: true })}
+      <div class="mp-admin-panel" data-mp-panel="welcome" ${memberPortalActiveTab !== 'welcome' ? 'hidden' : ''}>
+        <div class="card"><h3>Welcome screen</h3>
+          <p class="form-hint">Shown at the top of the members dashboard after sign-in.</p>
+          <div class="form-grid">
+            ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
+            ${field('Welcome message', 'mpWelcomeMessage', mp.welcomeMessage, 'textarea', { full: true })}
+          </div>
         </div>
       </div>
 
-      <div class="card"><h3>Event photos tab</h3>
-        <p class="form-hint">Photo albums are built from <button type="button" class="btn btn--outline btn--sm" data-goto="gallery">Gallery</button> images grouped by event.</p>
-        <div class="form-grid">
-          ${field('Intro text', 'mpPhotosIntro', mp.photosIntro || defaultMemberPortal().photosIntro, 'textarea', { full: true })}
+      <div class="mp-admin-panel" data-mp-panel="feeds" ${memberPortalActiveTab !== 'feeds' ? 'hidden' : ''}>
+        <div class="card"><h3>News &amp; feeds</h3>
+          <p class="form-hint">Posts appear under the <strong>News &amp; Feeds</strong> tab on the members site. Expand a post to edit.</p>
+          <div id="memberFeedsList">
+            ${feeds.length ? feeds.map((feed, i) => `
+              <details class="mp-admin-accordion">
+                <summary>
+                  <span class="mp-admin-accordion__title">${escapeHtml(feed.title || `Feed post ${i + 1}`)}</span>
+                  <span class="mp-admin-accordion__meta">${escapeHtml((feed.category || 'news').toUpperCase())}${feed.publishedAt ? ` · ${escapeHtml(feed.publishedAt)}` : ''}</span>
+                </summary>
+                <div class="mp-admin-accordion__body">
+                  <div class="form-grid">
+                    ${field('Category', `mpFeedCat_${i}`, feed.category || 'news', 'select', { options: feedCategories })}
+                    ${field('Title', `mpFeedTitle_${i}`, feed.title)}
+                    ${field('Published date', `mpFeedDate_${i}`, feed.publishedAt || '', 'date')}
+                    ${field('Link (optional)', `mpFeedLink_${i}`, feed.link || '')}
+                    ${field('Body', `mpFeedBody_${i}`, feed.body || '', 'textarea', { full: true })}
+                  </div>
+                  <button type="button" class="btn btn--danger btn--sm" data-remove-feed="${i}">Remove post</button>
+                </div>
+              </details>
+            `).join('') : '<p class="form-hint">No feed posts yet.</p>'}
+          </div>
+          <button type="button" class="btn btn--outline" id="addMemberFeed">Add feed post</button>
         </div>
       </div>
 
-      ${renderGovernanceAdminCard('Nomination portal', 'Nom', 'nomination', el)}
-      ${renderGovernanceAdminCard('Election portal', 'Ele', 'election', el)}
+      <div class="mp-admin-panel" data-mp-panel="events" ${memberPortalActiveTab !== 'events' ? 'hidden' : ''}>
+        <div class="card"><h3>Events &amp; bookings tab</h3>
+          <p class="form-hint">Events are pulled from <button type="button" class="btn btn--outline btn--sm" data-goto="events">Events</button>. Bookings come from Supabase when members register via the booking portal.</p>
+          <div class="form-grid">
+            ${field('Intro text', 'mpEventsIntro', mp.eventsIntro || defaultMemberPortal().eventsIntro, 'textarea', { full: true })}
+          </div>
+        </div>
+      </div>
 
-      <div class="card"><h3>Explore site tab</h3>
-        <p class="form-hint">Quick links shown on the members dashboard.</p>
-        <div class="form-grid">
-          ${field('Intro text', 'mpExploreIntro', mp.exploreIntro || defaultMemberPortal().exploreIntro, 'textarea', { full: true })}
+      <div class="mp-admin-panel" data-mp-panel="photos" ${memberPortalActiveTab !== 'photos' ? 'hidden' : ''}>
+        <div class="card"><h3>Event photos tab</h3>
+          <p class="form-hint">Photo albums are built from <button type="button" class="btn btn--outline btn--sm" data-goto="gallery">Gallery</button> images grouped by event.</p>
+          <div class="form-grid">
+            ${field('Intro text', 'mpPhotosIntro', mp.photosIntro || defaultMemberPortal().photosIntro, 'textarea', { full: true })}
+          </div>
         </div>
-        <div id="memberExploreList">
-          ${exploreLinks.map((link, i) => `
-            <div class="list-item governance-admin-feed">
-              <div class="list-item__header">
-                <h4>Link ${i + 1}</h4>
-                <button type="button" class="btn btn--danger btn--sm" data-remove-explore="${i}">Remove</button>
-              </div>
-              <div class="form-grid">
-                ${field('Label', `mpExploreLabel_${i}`, link.label)}
-                ${field('Description', `mpExploreDesc_${i}`, link.desc)}
-                ${field('URL path', `mpExploreHref_${i}`, link.href)}
-              </div>
-            </div>
-          `).join('')}
+      </div>
+
+      <div class="mp-admin-panel" data-mp-panel="governance" ${memberPortalActiveTab !== 'governance' ? 'hidden' : ''}>
+        ${renderGovernanceAdminCard('Nomination portal', 'Nom', 'nomination', el)}
+        ${renderGovernanceAdminCard('Election portal', 'Ele', 'election', el)}
+      </div>
+
+      <div class="mp-admin-panel" data-mp-panel="explore" ${memberPortalActiveTab !== 'explore' ? 'hidden' : ''}>
+        <div class="card"><h3>Explore site tab</h3>
+          <p class="form-hint">Quick links shown on the members dashboard. Expand a link to edit.</p>
+          <div class="form-grid">
+            ${field('Intro text', 'mpExploreIntro', mp.exploreIntro || defaultMemberPortal().exploreIntro, 'textarea', { full: true })}
+          </div>
+          <div id="memberExploreList">
+            ${exploreLinks.map((link, i) => `
+              <details class="mp-admin-accordion">
+                <summary>
+                  <span class="mp-admin-accordion__title">${escapeHtml(link.label || `Link ${i + 1}`)}</span>
+                  <span class="mp-admin-accordion__meta">${escapeHtml(link.href || '')}</span>
+                </summary>
+                <div class="mp-admin-accordion__body">
+                  <div class="form-grid">
+                    ${field('Label', `mpExploreLabel_${i}`, link.label)}
+                    ${field('Description', `mpExploreDesc_${i}`, link.desc)}
+                    ${field('URL path', `mpExploreHref_${i}`, link.href)}
+                  </div>
+                  <button type="button" class="btn btn--danger btn--sm" data-remove-explore="${i}">Remove link</button>
+                </div>
+              </details>
+            `).join('')}
+          </div>
+          <button type="button" class="btn btn--outline" id="addMemberExplore">Add quick link</button>
         </div>
-        <button type="button" class="btn btn--outline" id="addMemberExplore">Add quick link</button>
       </div>
     `;
+  }
+
+  function switchMemberPortalTab(tab) {
+    memberPortalActiveTab = tab;
+    document.querySelectorAll('[data-mp-tab]').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.mpTab === tab);
+    });
+    document.querySelectorAll('[data-mp-panel]').forEach(panel => {
+      panel.hidden = panel.dataset.mpPanel !== tab;
+    });
+  }
+
+  function bindMemberPortalTabs() {
+    document.querySelectorAll('[data-mp-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        collectFromForm();
+        switchMemberPortalTab(btn.dataset.mpTab);
+      });
+    });
   }
 
   function renderAilcdPanel() {
@@ -1581,6 +1634,8 @@
     }
 
     if (section === 'memberPortal') {
+      bindMemberPortalTabs();
+
       document.getElementById('addMemberFeed')?.addEventListener('click', () => {
         collectFromForm();
         if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
@@ -1592,6 +1647,7 @@
           publishedAt: new Date().toISOString().slice(0, 10),
           link: ''
         });
+        memberPortalActiveTab = 'feeds';
         renderSection('memberPortal');
       });
       document.querySelectorAll('[data-remove-feed]').forEach(btn => {
@@ -1611,6 +1667,7 @@
           label: 'New link',
           desc: 'Description'
         });
+        memberPortalActiveTab = 'explore';
         renderSection('memberPortal');
       });
 

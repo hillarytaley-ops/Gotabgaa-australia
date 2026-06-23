@@ -778,8 +778,120 @@ body {
   padding-bottom: 0;
 }
 
+.mp-admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.mp-admin-tabs__btn {
+  padding: 8px 14px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.mp-admin-tabs__btn:hover {
+  border-color: var(--brown-700);
+  color: var(--brown-900);
+}
+
+.mp-admin-tabs__btn.is-active {
+  background: var(--brown-900);
+  border-color: var(--brown-900);
+  color: var(--white);
+}
+
+.mp-admin-panel[hidden] {
+  display: none !important;
+}
+
+.mp-admin-accordion {
+  margin-bottom: 10px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 10px;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.mp-admin-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+}
+
+.mp-admin-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.mp-admin-accordion__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mp-admin-accordion__meta {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mp-admin-accordion__body {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--cream-dark);
+}
+
+.mp-admin-accordion[open] summary {
+  background: var(--cream);
+}
+
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
+
+  .mp-admin-tabs {
+    position: static;
+    padding: 10px;
+  }
+
+  .mp-admin-tabs__btn {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    font-size: 0.82rem;
+    padding-inline: 10px;
+  }
+
+  .mp-admin-accordion summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mp-admin-accordion__meta {
+    text-transform: none;
+    letter-spacing: 0;
+  }
 
   .sidebar {
     position: sticky;
