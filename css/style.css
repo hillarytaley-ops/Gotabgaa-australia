@@ -2069,16 +2069,24 @@ body.page-sub .section {
 
 .ailcd-checkgrid label {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   font-weight: 500;
   font-size: 0.9rem;
+  line-height: 1.35;
   cursor: pointer;
+  text-align: left;
 }
 
-.ailcd-checkgrid input {
-  margin-top: 3px;
+.ailcd-checkgrid input[type="radio"],
+.ailcd-checkgrid input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
+  accent-color: var(--brown-700);
 }
 
 .ailcd-apply__progress {
@@ -2126,14 +2134,31 @@ body.page-sub .section {
 
 .ailcd-apply__form .form__group--full { grid-column: 1 / -1; }
 
-.ailcd-apply__form .form__group label {
+.ailcd-apply__form .form__group > label {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-.ailcd-apply__form input,
+.ailcd-apply__form .ailcd-checkgrid label,
+.ailcd-apply__form .ailcd-yn label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+  font-weight: 500;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.ailcd-apply__form .ailcd-checkgrid--stack label {
+  width: 100%;
+  padding: 4px 0;
+}
+
+.ailcd-apply__form input:not([type="radio"]):not([type="checkbox"]),
 .ailcd-apply__form select,
 .ailcd-apply__form textarea {
   width: 100%;
@@ -2141,6 +2166,17 @@ body.page-sub .section {
   border: 1px solid var(--cream-dark);
   border-radius: 8px;
   font: inherit;
+}
+
+.ailcd-apply__form input[type="radio"],
+.ailcd-apply__form input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--brown-700);
 }
 
 .ailcd-repeat__item {
@@ -2166,15 +2202,37 @@ body.page-sub .section {
 .ailcd-yn label {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   font-weight: 500;
+  cursor: pointer;
+}
+
+.ailcd-yn input[type="radio"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--brown-700);
 }
 
 .ailcd-check {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   font-weight: 500;
+  cursor: pointer;
+}
+
+.ailcd-check input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--brown-700);
 }
 
 .signature-pad {
@@ -2385,6 +2443,9 @@ body.page-form-only {
   .ailcd-apply__nav { justify-content: stretch; }
   .ailcd-apply__nav .btn { flex: 1; }
   .ailcd-status-check__form .form__grid { grid-template-columns: 1fr; }
+  .ailcd-checkgrid:not(.ailcd-checkgrid--stack) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .booking-portal__form-wrap {
@@ -2671,7 +2732,7 @@ body.modal-open {
   margin-bottom: 20px;
 }
 
-.form__group label {
+.form__group > label {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
@@ -2679,7 +2740,18 @@ body.modal-open {
   margin-bottom: 8px;
 }
 
-.form__group input,
+.form__group label:has(> input[type="radio"]),
+.form__group label:has(> input[type="checkbox"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  margin-bottom: 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.form__group input:not([type="radio"]):not([type="checkbox"]),
 .form__group select,
 .form__group textarea {
   width: 100%;
@@ -2691,6 +2763,18 @@ body.modal-open {
   background: var(--cream);
   color: var(--text);
   transition: all var(--transition);
+}
+
+.form__group input[type="radio"],
+.form__group input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--brown-700);
+  background: transparent;
 }
 
 .form__group input:focus,
