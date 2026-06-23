@@ -755,22 +755,67 @@
     `;
   }
 
+  function defaultExploreLinks() {
+    return [
+      { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
+      { href: 'about.html', label: 'About', desc: 'Our story and mission' },
+      { href: 'programs.html', label: 'Programs', desc: 'Education, culture, and outreach' },
+      { href: 'events.html', label: 'Events', desc: 'Public events calendar' },
+      { href: 'leadership.html', label: 'Leadership', desc: 'Chapter board and team' },
+      { href: 'gallery.html', label: 'Gallery', desc: 'Public photo gallery' },
+      { href: 'contact.html', label: 'Contact', desc: 'Get in touch with the chapter' },
+      { href: 'book.html', label: 'Book events', desc: 'Reserve places at gatherings' }
+    ];
+  }
+
   function defaultMemberPortal() {
     return {
       welcomeTitle: 'Welcome to the Members Dashboard',
       welcomeMessage: 'Access chapter news, event updates, photo albums, and governance portals.',
       feeds: [],
+      eventsIntro: 'View upcoming chapter events and manage your bookings.',
+      photosIntro: 'Download photos from chapter events. Albums match events on the public gallery.',
+      exploreIntro: 'Quick links to public chapter pages and resources.',
+      exploreLinks: defaultExploreLinks(),
       elections: {
         nominationOpen: false,
         nominationTitle: 'Nomination Portal',
-        nominationMessage: 'Submit your nomination for chapter leadership positions.',
+        nominationPeriod: '',
+        nominationMessage: 'Submit your nomination for chapter leadership positions during the nomination period.',
+        nominationClosedMessage: 'Nominations are currently closed. You will be notified when the next nomination period opens.',
         nominationUrl: '',
+        nominationButtonLabel: 'Open nomination portal',
         electionOpen: false,
         electionTitle: 'Election Portal',
-        electionMessage: 'Cast your vote for chapter leadership.',
-        electionUrl: ''
+        electionPeriod: '',
+        electionMessage: 'Cast your vote for chapter leadership during the election period.',
+        electionClosedMessage: 'Elections are currently closed. Check back during the election period.',
+        electionUrl: '',
+        electionButtonLabel: 'Open election portal'
       }
     };
+  }
+
+  function renderGovernanceAdminCard(title, idPrefix, dataPrefix, data) {
+    const isOpen = Boolean(data[`${dataPrefix}Open`]);
+    return `
+      <div class="card governance-admin-card">
+        <div class="governance-admin-card__header">
+          <h3>${title}</h3>
+          <span class="governance-admin-card__status ${isOpen ? 'is-open' : 'is-closed'}">${isOpen ? 'Open on members site' : 'Closed on members site'}</span>
+        </div>
+        <p class="form-hint">Members see this card under <strong>Governance</strong> on the dashboard. Toggle open when the portal is live, add the external form URL, then publish.</p>
+        <div class="form-grid">
+          ${field('Portal open', `mp${idPrefix}Open`, isOpen, 'checkbox')}
+          ${field('Card title', `mp${idPrefix}Title`, data[`${dataPrefix}Title`] || title)}
+          ${field('Period label (optional)', `mp${idPrefix}Period`, data[`${dataPrefix}Period`] || '')}
+          ${field('Message when open', `mp${idPrefix}Message`, data[`${dataPrefix}Message`] || '', 'textarea', { full: true })}
+          ${field('Message when closed', `mp${idPrefix}ClosedMessage`, data[`${dataPrefix}ClosedMessage`] || '', 'textarea', { full: true })}
+          ${field('Portal URL', `mp${idPrefix}Url`, data[`${dataPrefix}Url`] || '', 'url')}
+          ${field('Button label', `mp${idPrefix}ButtonLabel`, data[`${dataPrefix}ButtonLabel`] || '')}
+        </div>
+      </div>
+    `;
   }
 
   function renderMemberPortalPanel() {
@@ -778,43 +823,89 @@
     const mp = content.memberPortal;
     const feeds = mp.feeds || [];
     const el = mp.elections || defaultMemberPortal().elections;
+    const exploreLinks = mp.exploreLinks || defaultExploreLinks();
+    const feedCategories = [
+      { value: 'news', label: 'News' },
+      { value: 'sports', label: 'Sports' },
+      { value: 'business', label: 'Business' },
+      { value: 'social', label: 'Social' }
+    ];
 
     return `
       <div class="card card--notice">
-        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — registered members sign in with email + membership ID. Approve registrations under Membership to issue IDs. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
+        <p><strong>Members dashboard:</strong> <a href="../members.html" target="_blank" rel="noopener">members.html</a> — all content below appears on the signed-in members dashboard. Approve members under <button type="button" class="btn btn--outline btn--sm" data-goto="membership">Membership</button>. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
+        <p class="form-hint" style="margin-top:8px">Edit each section, then click <strong>Publish Changes</strong> for updates to go live.</p>
       </div>
-      <div class="card"><h3>Dashboard welcome</h3><div class="form-grid">
-        ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
-        ${field('Welcome message', 'mpWelcomeMessage', mp.welcomeMessage, 'textarea', { full: true })}
-      </div></div>
-      <div class="card"><h3>Member news feeds</h3>
-        <p class="form-hint">Posts appear in the members dashboard by category (news, sports, business, social).</p>
+
+      <div class="card"><h3>Welcome screen</h3>
+        <p class="form-hint">Shown at the top of the members dashboard after sign-in.</p>
+        <div class="form-grid">
+          ${field('Welcome title', 'mpWelcomeTitle', mp.welcomeTitle)}
+          ${field('Welcome message', 'mpWelcomeMessage', mp.welcomeMessage, 'textarea', { full: true })}
+        </div>
+      </div>
+
+      <div class="card"><h3>News &amp; feeds</h3>
+        <p class="form-hint">Posts appear under the <strong>News &amp; Feeds</strong> tab, filterable by category.</p>
         <div id="memberFeedsList">
-          ${feeds.map((feed, i) => `
-            <div class="list-item" data-feed-index="${i}">
+          ${feeds.length ? feeds.map((feed, i) => `
+            <div class="list-item governance-admin-feed" data-feed-index="${i}">
+              <div class="list-item__header">
+                <h4>Feed post ${i + 1}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-feed="${i}">Remove</button>
+              </div>
               <div class="form-grid">
-                ${field('Category', `mpFeedCat_${i}`, feed.category || 'news')}
+                ${field('Category', `mpFeedCat_${i}`, feed.category || 'news', 'select', { options: feedCategories })}
                 ${field('Title', `mpFeedTitle_${i}`, feed.title)}
                 ${field('Published date', `mpFeedDate_${i}`, feed.publishedAt || '', 'date')}
                 ${field('Link (optional)', `mpFeedLink_${i}`, feed.link || '')}
                 ${field('Body', `mpFeedBody_${i}`, feed.body || '', 'textarea', { full: true })}
               </div>
-              <button type="button" class="btn btn--outline btn--sm" data-remove-feed="${i}">Remove feed</button>
             </div>
-          `).join('')}
+          `).join('') : '<p class="form-hint">No feed posts yet.</p>'}
         </div>
         <button type="button" class="btn btn--outline" id="addMemberFeed">Add feed post</button>
       </div>
-      <div class="card"><h3>Governance portals</h3><div class="form-grid">
-        ${field('Nomination portal open', 'mpNomOpen', el.nominationOpen, 'checkbox')}
-        ${field('Nomination title', 'mpNomTitle', el.nominationTitle)}
-        ${field('Nomination message', 'mpNomMessage', el.nominationMessage, 'textarea', { full: true })}
-        ${field('Nomination URL', 'mpNomUrl', el.nominationUrl)}
-        ${field('Election portal open', 'mpEleOpen', el.electionOpen, 'checkbox')}
-        ${field('Election title', 'mpEleTitle', el.electionTitle)}
-        ${field('Election message', 'mpEleMessage', el.electionMessage, 'textarea', { full: true })}
-        ${field('Election URL', 'mpEleUrl', el.electionUrl)}
-      </div></div>
+
+      <div class="card"><h3>Events &amp; bookings tab</h3>
+        <p class="form-hint">Events are pulled from <button type="button" class="btn btn--outline btn--sm" data-goto="events">Events</button>. Bookings come from Supabase when members register via the booking portal.</p>
+        <div class="form-grid">
+          ${field('Intro text', 'mpEventsIntro', mp.eventsIntro || defaultMemberPortal().eventsIntro, 'textarea', { full: true })}
+        </div>
+      </div>
+
+      <div class="card"><h3>Event photos tab</h3>
+        <p class="form-hint">Photo albums are built from <button type="button" class="btn btn--outline btn--sm" data-goto="gallery">Gallery</button> images grouped by event.</p>
+        <div class="form-grid">
+          ${field('Intro text', 'mpPhotosIntro', mp.photosIntro || defaultMemberPortal().photosIntro, 'textarea', { full: true })}
+        </div>
+      </div>
+
+      ${renderGovernanceAdminCard('Nomination portal', 'Nom', 'nomination', el)}
+      ${renderGovernanceAdminCard('Election portal', 'Ele', 'election', el)}
+
+      <div class="card"><h3>Explore site tab</h3>
+        <p class="form-hint">Quick links shown on the members dashboard.</p>
+        <div class="form-grid">
+          ${field('Intro text', 'mpExploreIntro', mp.exploreIntro || defaultMemberPortal().exploreIntro, 'textarea', { full: true })}
+        </div>
+        <div id="memberExploreList">
+          ${exploreLinks.map((link, i) => `
+            <div class="list-item governance-admin-feed">
+              <div class="list-item__header">
+                <h4>Link ${i + 1}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-explore="${i}">Remove</button>
+              </div>
+              <div class="form-grid">
+                ${field('Label', `mpExploreLabel_${i}`, link.label)}
+                ${field('Description', `mpExploreDesc_${i}`, link.desc)}
+                ${field('URL path', `mpExploreHref_${i}`, link.href)}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="btn btn--outline" id="addMemberExplore">Add quick link</button>
+      </div>
     `;
   }
 
@@ -1510,6 +1601,26 @@
           renderSection('memberPortal');
         });
       });
+
+      document.getElementById('addMemberExplore')?.addEventListener('click', () => {
+        collectFromForm();
+        if (!content.memberPortal) content.memberPortal = defaultMemberPortal();
+        if (!content.memberPortal.exploreLinks) content.memberPortal.exploreLinks = defaultExploreLinks();
+        content.memberPortal.exploreLinks.push({
+          href: 'contact.html',
+          label: 'New link',
+          desc: 'Description'
+        });
+        renderSection('memberPortal');
+      });
+
+      document.querySelectorAll('[data-remove-explore]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.memberPortal.exploreLinks.splice(+btn.dataset.removeExplore, 1);
+          renderSection('memberPortal');
+        });
+      });
     }
 
     if (section === 'events') {
@@ -1800,6 +1911,9 @@
       const mp = content.memberPortal;
       mp.welcomeTitle = val('mpWelcomeTitle');
       mp.welcomeMessage = val('mpWelcomeMessage');
+      mp.eventsIntro = val('mpEventsIntro');
+      mp.photosIntro = val('mpPhotosIntro');
+      mp.exploreIntro = val('mpExploreIntro');
 
       const feeds = [];
       for (let i = 0; document.getElementById(`mpFeedTitle_${i}`); i += 1) {
@@ -1814,15 +1928,31 @@
       }
       mp.feeds = feeds;
 
+      const exploreLinks = [];
+      for (let i = 0; document.getElementById(`mpExploreLabel_${i}`); i += 1) {
+        exploreLinks.push({
+          href: val(`mpExploreHref_${i}`),
+          label: val(`mpExploreLabel_${i}`),
+          desc: val(`mpExploreDesc_${i}`)
+        });
+      }
+      mp.exploreLinks = exploreLinks;
+
       mp.elections = {
         nominationOpen: val('mpNomOpen'),
         nominationTitle: val('mpNomTitle'),
+        nominationPeriod: val('mpNomPeriod'),
         nominationMessage: val('mpNomMessage'),
+        nominationClosedMessage: val('mpNomClosedMessage'),
         nominationUrl: val('mpNomUrl'),
+        nominationButtonLabel: val('mpNomButtonLabel'),
         electionOpen: val('mpEleOpen'),
         electionTitle: val('mpEleTitle'),
+        electionPeriod: val('mpElePeriod'),
         electionMessage: val('mpEleMessage'),
-        electionUrl: val('mpEleUrl')
+        electionClosedMessage: val('mpEleClosedMessage'),
+        electionUrl: val('mpEleUrl'),
+        electionButtonLabel: val('mpEleButtonLabel')
       };
     }
 

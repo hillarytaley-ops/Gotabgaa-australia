@@ -403,15 +403,34 @@
         "link": ""
       }
     ],
+    "eventsIntro": "View upcoming chapter events and manage your bookings.",
+    "photosIntro": "Download photos from chapter events. Albums match events on the public gallery.",
+    "exploreIntro": "Quick links to public chapter pages and resources.",
+    "exploreLinks": [
+      { "href": "index.html", "label": "Home", "desc": "Chapter homepage" },
+      { "href": "about.html", "label": "About", "desc": "Our story and mission" },
+      { "href": "programs.html", "label": "Programs", "desc": "Education, culture, and outreach" },
+      { "href": "events.html", "label": "Events", "desc": "Public events calendar" },
+      { "href": "leadership.html", "label": "Leadership", "desc": "Chapter board and team" },
+      { "href": "gallery.html", "label": "Gallery", "desc": "Public photo gallery" },
+      { "href": "contact.html", "label": "Contact", "desc": "Get in touch with the chapter" },
+      { "href": "book.html", "label": "Book events", "desc": "Reserve places at gatherings" }
+    ],
     "elections": {
       "nominationOpen": false,
       "nominationTitle": "Nomination Portal",
+      "nominationPeriod": "",
       "nominationMessage": "Submit your nomination for chapter leadership positions during the nomination period.",
+      "nominationClosedMessage": "Nominations are currently closed. You will be notified when the next nomination period opens.",
       "nominationUrl": "",
+      "nominationButtonLabel": "Open nomination portal",
       "electionOpen": false,
       "electionTitle": "Election Portal",
+      "electionPeriod": "",
       "electionMessage": "Cast your vote for chapter leadership during the election period.",
-      "electionUrl": ""
+      "electionClosedMessage": "Elections are currently closed. Check back during the election period.",
+      "electionUrl": "",
+      "electionButtonLabel": "Open election portal"
     }
   }
 }

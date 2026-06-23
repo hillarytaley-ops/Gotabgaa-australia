@@ -31,6 +31,9 @@
     photoAlbums: document.getElementById('photoAlbums'),
     governanceCards: document.getElementById('governanceCards'),
     exploreLinks: document.getElementById('exploreLinks'),
+    eventsIntro: document.getElementById('eventsIntro'),
+    photosIntro: document.getElementById('photosIntro'),
+    exploreIntro: document.getElementById('exploreIntro'),
     tabs: document.getElementById('memberTabs')
   };
 
@@ -318,53 +321,53 @@
 
   function renderGovernance(portal) {
     const elections = portal?.elections || {};
-    const cards = [];
 
-    if (elections.nominationOpen) {
-      cards.push(`
-        <div class="members-card members-card--highlight">
-          <span class="members-card__badge">Open</span>
-          <h3>${escapeHtml(elections.nominationTitle || 'Nomination Portal')}</h3>
-          <p>${escapeHtml(elections.nominationMessage || 'Submit your nomination for chapter leadership.')}</p>
-          ${elections.nominationUrl
-            ? `<a href="${escapeHtml(elections.nominationUrl)}" class="btn btn--primary" target="_blank" rel="noopener">Open nomination portal</a>`
-            : '<p class="members-empty">Portal link will be posted here when available.</p>'}
-        </div>
-      `);
-    } else {
-      cards.push(`
+    function renderPortalCard(type) {
+      const isNom = type === 'nomination';
+      const open = isNom ? elections.nominationOpen : elections.electionOpen;
+      const title = isNom ? elections.nominationTitle : elections.electionTitle;
+      const period = isNom ? elections.nominationPeriod : elections.electionPeriod;
+      const message = isNom ? elections.nominationMessage : elections.electionMessage;
+      const closedMessage = isNom ? elections.nominationClosedMessage : elections.electionClosedMessage;
+      const url = isNom ? elections.nominationUrl : elections.electionUrl;
+      const buttonLabel = isNom ? elections.nominationButtonLabel : elections.electionButtonLabel;
+      const defaultTitle = isNom ? 'Nomination Portal' : 'Election Portal';
+      const defaultClosed = isNom
+        ? 'Nominations are currently closed. You will be notified when the next nomination period opens.'
+        : 'Elections are currently closed. Check back during the election period.';
+      const defaultButton = isNom ? 'Open nomination portal' : 'Open election portal';
+
+      if (open) {
+        return `
+          <div class="members-card members-card--highlight">
+            <span class="members-card__badge">Open</span>
+            <h3>${escapeHtml(title || defaultTitle)}</h3>
+            ${period ? `<p class="members-governance-period">${escapeHtml(period)}</p>` : ''}
+            <p>${escapeHtml(message || '')}</p>
+            ${url
+              ? `<a href="${escapeHtml(url)}" class="btn btn--primary" target="_blank" rel="noopener">${escapeHtml(buttonLabel || defaultButton)}</a>`
+              : '<p class="members-empty">Portal link will be posted here when available.</p>'}
+          </div>
+        `;
+      }
+
+      return `
         <div class="members-card members-card--muted">
-          <h3>${escapeHtml(elections.nominationTitle || 'Nomination Portal')}</h3>
-          <p>Nominations are currently closed. You will be notified when the next nomination period opens.</p>
+          <h3>${escapeHtml(title || defaultTitle)}</h3>
+          ${period ? `<p class="members-governance-period">${escapeHtml(period)}</p>` : ''}
+          <p>${escapeHtml(closedMessage || defaultClosed)}</p>
         </div>
-      `);
+      `;
     }
 
-    if (elections.electionOpen) {
-      cards.push(`
-        <div class="members-card members-card--highlight">
-          <span class="members-card__badge">Open</span>
-          <h3>${escapeHtml(elections.electionTitle || 'Election Portal')}</h3>
-          <p>${escapeHtml(elections.electionMessage || 'Cast your vote for chapter leadership.')}</p>
-          ${elections.electionUrl
-            ? `<a href="${escapeHtml(elections.electionUrl)}" class="btn btn--primary" target="_blank" rel="noopener">Open election portal</a>`
-            : '<p class="members-empty">Portal link will be posted here when available.</p>'}
-        </div>
-      `);
-    } else {
-      cards.push(`
-        <div class="members-card members-card--muted">
-          <h3>${escapeHtml(elections.electionTitle || 'Election Portal')}</h3>
-          <p>Elections are currently closed. Check back during the election period.</p>
-        </div>
-      `);
-    }
-
-    els.governanceCards.innerHTML = cards.join('');
+    els.governanceCards.innerHTML = [
+      renderPortalCard('nomination'),
+      renderPortalCard('election')
+    ].join('');
   }
 
-  function renderExploreLinks() {
-    const links = [
+  function renderExploreLinks(portal) {
+    const links = portal?.exploreLinks?.length ? portal.exploreLinks : [
       { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
       { href: 'about.html', label: 'About', desc: 'Our story and mission' },
       { href: 'programs.html', label: 'Programs', desc: 'Education, culture, and outreach' },
@@ -393,12 +396,22 @@
     els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates and chapter resources.';
     els.memberBadge.textContent = memberSession.membershipId;
 
+    if (els.eventsIntro) {
+      els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming chapter events and manage your bookings.';
+    }
+    if (els.photosIntro) {
+      els.photosIntro.textContent = portal.photosIntro || 'Download photos from chapter events. Albums match events on the public gallery.';
+    }
+    if (els.exploreIntro) {
+      els.exploreIntro.textContent = portal.exploreIntro || 'Quick links to public chapter pages and resources.';
+    }
+
     renderFeeds(portal);
     renderMembershipCard(memberSession);
     renderEvents(content);
     renderPhotos(content);
     renderGovernance(portal);
-    renderExploreLinks();
+    renderExploreLinks(portal);
     await renderBookings();
   }
 

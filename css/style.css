@@ -4815,6 +4815,13 @@ body.modal-open {
   .members-dashboard__top { flex-direction: column; }
 }
 
+.members-governance-period {
+  margin: 0 0 .5rem;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--primary, #b45309);
+}
+
 .members-preview-banner {
   margin-bottom: 1.25rem;
   padding: .85rem 1rem;
