@@ -713,10 +713,38 @@
 
   function getMemberMeta(row) {
     const data = row?.data || {};
+    let notesMeta = null;
+    const notesMatch = String(row?.notes || '').match(/\[gaa-member-meta\](\{.*\})\s*$/);
+    if (notesMatch) {
+      try {
+        notesMeta = JSON.parse(notesMatch[1]);
+      } catch {
+        notesMeta = null;
+      }
+    }
     return {
-      membershipId: row?.membership_id || data._membershipId || null,
-      memberStatus: row?.member_status || data._memberStatus || 'pending'
+      membershipId: row?.membership_id || data._membershipId || notesMeta?.membershipId || null,
+      memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending'
     };
+  }
+
+  function displayMemberNotes(notes) {
+    return String(notes || '')
+      .replace(/\n?\[gaa-member-meta\]\{[\s\S]*?\}\s*$/, '')
+      .trim();
+  }
+
+  function renderMembershipIdField(membershipId) {
+    if (!membershipId) {
+      return '<p><strong>Membership ID:</strong> — (not issued)</p>';
+    }
+    return `
+      <p class="membership-reg-item__id">
+        <strong>Membership ID:</strong>
+        <code class="membership-id-code">${escapeHtml(membershipId)}</code>
+        <button type="button" class="btn btn--outline btn--sm membership-copy-id" data-copy-id="${escapeHtml(membershipId)}">Copy ID</button>
+      </p>
+    `;
   }
 
   function renderMembershipPanel() {
@@ -1216,8 +1244,8 @@
               <div class="form-grid membership-reg-item__grid">
                 <p><strong>Email:</strong> ${escapeHtml(r.email)}</p>
                 <p><strong>Phone:</strong> ${escapeHtml(r.phone || '—')}</p>
-                <p><strong>Membership ID:</strong> ${meta.membershipId ? `<code>${escapeHtml(meta.membershipId)}</code>` : '— (not issued)'}</p>
-                <p><strong>Member status:</strong> ${escapeHtml(meta.memberStatus)}</p>
+                ${renderMembershipIdField(meta.membershipId)}
+                <p><strong>Member status:</strong> <span class="membership-reg-status membership-reg-status--${escapeHtml(meta.memberStatus)}">${escapeHtml(meta.memberStatus)}</span></p>
                 <p><strong>State / chapter:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
                 <p><strong>Membership type:</strong> ${escapeHtml(r.membership_type || '—')}</p>
                 <p><strong>Address:</strong> ${escapeHtml(r.address || '—')}</p>
@@ -1225,7 +1253,7 @@
                 <p><strong>Referral:</strong> ${escapeHtml(r.referral_source || '—')}</p>
                 <p><strong>Fee at registration:</strong> ${escapeHtml(r.fee_display || '—')}</p>
                 <p><strong>Payment status:</strong> ${escapeHtml(r.payment_status || 'pending')}${r.payment_method ? ` (${escapeHtml(r.payment_method)})` : ''}</p>
-                ${r.notes ? `<p class="form-field--full"><strong>Notes:</strong> ${escapeHtml(r.notes)}</p>` : ''}
+                ${displayMemberNotes(r.notes) ? `<p class="form-field--full"><strong>Notes:</strong> ${escapeHtml(displayMemberNotes(r.notes))}</p>` : ''}
               </div>
               <div class="inbox-item__actions">
                 ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
@@ -1292,6 +1320,16 @@
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Approval failed');
             showStatus(`Member approved. ID: ${data.membershipId}`, 'success');
+
+            const item = card.querySelector(`.membership-reg-item[data-id="${CSS.escape(btn.dataset.id)}"]`);
+            if (item && data.membershipId) {
+              item.open = true;
+              const summaryMeta = item.querySelector('.membership-reg-item__meta');
+              if (summaryMeta && !summaryMeta.textContent.includes(data.membershipId)) {
+                summaryMeta.textContent += ` · ${data.membershipId}`;
+              }
+            }
+
             loadMembershipRegistrationsPanel();
           } catch (err) {
             if (isAuthError(err)) return;
@@ -1317,6 +1355,18 @@
           } catch (err) {
             if (isAuthError(err)) return;
             showStatus(err.message, 'error');
+          }
+        });
+      });
+
+      card.querySelectorAll('.membership-copy-id').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.copyId;
+          try {
+            await navigator.clipboard.writeText(id);
+            showStatus(`Copied ${id}`, 'success');
+          } catch {
+            showStatus('Could not copy — select the ID and copy manually.', 'error');
           }
         });
       });

@@ -676,6 +676,48 @@ body {
   font-size: 0.9rem;
 }
 
+.membership-reg-item__id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+
+.membership-id-code {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #fff8e7;
+  border: 1px solid #e6c875;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.membership-reg-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  text-transform: capitalize;
+}
+
+.membership-reg-status--active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.membership-reg-status--pending {
+  background: #fff8e1;
+  color: #a16207;
+}
+
+.membership-reg-status--inactive {
+  background: #f5f5f5;
+  color: #666;
+}
+
 .admin-signature-preview {
   display: block;
   max-width: 280px;

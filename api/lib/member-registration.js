@@ -7,11 +7,42 @@ export function isSchemaColumnError(error) {
     || /could not find the '[^']+' column/.test(message);
 }
 
+const MEMBER_META_TAG = '[gaa-member-meta]';
+
+export function parseMemberMetaFromNotes(notes) {
+  const match = String(notes || '').match(/\[gaa-member-meta\](\{.*\})\s*$/);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[1]);
+  } catch {
+    return null;
+  }
+}
+
+export function appendMemberMetaToNotes(notes, meta) {
+  const clean = String(notes || '')
+    .replace(/\n?\[gaa-member-meta\]\{[\s\S]*?\}\s*$/, '')
+    .trim();
+  const payload = JSON.stringify({
+    membershipId: meta.membershipId ?? null,
+    memberStatus: meta.memberStatus ?? null
+  });
+  const tag = `${MEMBER_META_TAG}${payload}`;
+  return clean ? `${clean}\n${tag}` : tag;
+}
+
+export function displayNotesWithoutMeta(notes) {
+  return String(notes || '')
+    .replace(/\n?\[gaa-member-meta\]\{[\s\S]*?\}\s*$/, '')
+    .trim();
+}
+
 export function getMemberMeta(row) {
   const data = row?.data || {};
+  const notesMeta = parseMemberMetaFromNotes(row?.notes);
   return {
-    membershipId: row?.membership_id || data._membershipId || null,
-    memberStatus: row?.member_status || data._memberStatus || 'pending',
+    membershipId: row?.membership_id || data._membershipId || notesMeta?.membershipId || null,
+    memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending',
     paymentStatus: row?.payment_status || 'pending'
   };
 }

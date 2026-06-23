@@ -1,10 +1,11 @@
 import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { generateMembershipId } from './lib/member-id.js';
-import { getMemberMeta, isSchemaColumnError } from './lib/member-registration.js';
+import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes } from './lib/member-registration.js';
 
 const SELECT_FIELDS = [
   'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, membership_id, member_status, created_at, read, data',
+  'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, created_at, read, data',
   'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, created_at, read'
 ];
 
@@ -92,6 +93,29 @@ async function updateRegistration(supabase, id, payload) {
     .maybeSingle();
 
   if (fetchError && isSchemaColumnError(fetchError)) {
+    const { data: notesRow, error: notesFetchError } = await supabase
+      .from('membership_registrations')
+      .select('id, notes')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (!notesFetchError && notesRow && (payload.membership_id != null || payload.member_status != null)) {
+      const notes = appendMemberMetaToNotes(notesRow.notes, {
+        membershipId: payload.membership_id,
+        memberStatus: payload.member_status
+      });
+      const notesUpdate = {
+        notes,
+        read: payload.read,
+        payment_status: payload.payment_status
+      };
+      const { error: notesUpdateError } = await supabase
+        .from('membership_registrations')
+        .update(notesUpdate)
+        .eq('id', id);
+      if (!notesUpdateError) return { ok: true, fallback: 'notes' };
+    }
+
     const minimal = { ...payload };
     delete minimal.membership_id;
     delete minimal.member_status;
@@ -188,7 +212,7 @@ export default async function handler(req, res) {
         await updateRegistration(supabase, id, {
           membership_id: membershipId,
           member_status: 'active',
-          payment_status: paymentStatus || 'approved',
+          payment_status: paymentStatus || row.payment_status || 'approved',
           read: true
         });
 
