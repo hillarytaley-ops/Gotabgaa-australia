@@ -99,6 +99,52 @@
     }
   }
 
+  async function verifyAdminSession() {
+    const token = getToken();
+    if (!token) return false;
+
+    try {
+      const res = await fetch('/api/contact-submissions', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.status === 401) {
+        setToken(null);
+        return false;
+      }
+      return true;
+    } catch {
+      return true;
+    }
+  }
+
+  async function authFetch(url, options = {}) {
+    const token = getToken();
+    if (!token) {
+      showLogin('Please sign in to continue.');
+      throw new Error('Not authenticated');
+    }
+
+    const headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`
+    };
+
+    const res = await fetch(url, { ...options, headers });
+
+    if (res.status === 401) {
+      setToken(null);
+      showLogin('Your admin session expired or is invalid. Please sign in again.');
+      throw new Error('Unauthorized');
+    }
+
+    return res;
+  }
+
+  function isAuthError(err) {
+    const msg = err?.message || '';
+    return msg === 'Unauthorized' || msg === 'Not authenticated';
+  }
+
   function isContentEmpty(data) {
     if (!data || typeof data !== 'object') return true;
     return !data.site && !data.pages;
@@ -716,9 +762,7 @@
     const token = getToken();
     if (!token) return [];
 
-    const res = await fetch('/api/event-bookings', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await authFetch('/api/event-bookings');
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -786,6 +830,7 @@
         });
       });
     } catch (err) {
+      if (isAuthError(err)) return;
       card.innerHTML = renderEventBookingsPanel([], err.message);
     }
   }
@@ -794,9 +839,7 @@
     const token = getToken();
     if (!token) return [];
 
-    const res = await fetch('/api/membership-registrations', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await authFetch('/api/membership-registrations');
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -910,24 +953,17 @@
         });
       });
     } catch (err) {
+      if (isAuthError(err)) return;
       card.innerHTML = renderMembershipRegistrationsPanel([], err.message);
     }
   }
 
   async function loadAilcdApplications() {
-    const token = getToken();
-    if (!token) return [];
-
-    const res = await fetch('/api/ailcd-applications', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
+    const res = await authFetch('/api/ailcd-applications');
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Could not load applications');
+      throw new Error(data.detail || data.error || 'Could not load applications');
     }
-
-    const data = await res.json();
     return data.applications || [];
   }
 
@@ -1206,13 +1242,9 @@
 
       card.querySelectorAll('.ailcd-mark-read').forEach(btn => {
         btn.addEventListener('click', async () => {
-          const token = getToken();
-          await fetch('/api/ailcd-applications', {
+          await authFetch('/api/ailcd-applications', {
             method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
           loadAilcdApplicationsPanel();
@@ -1230,13 +1262,9 @@
             return;
           }
 
-          const token = getToken();
-          const res = await fetch('/api/ailcd-applications', {
+          const res = await authFetch('/api/ailcd-applications', {
             method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id, status, statusMessage, read: true })
           });
 
@@ -1256,10 +1284,8 @@
           const name = btn.dataset.name || 'this applicant';
           if (!confirm(`Delete the application from ${name}? This cannot be undone.`)) return;
 
-          const token = getToken();
-          const res = await fetch(`/api/ailcd-applications?id=${encodeURIComponent(btn.dataset.id)}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` }
+          const res = await authFetch(`/api/ailcd-applications?id=${encodeURIComponent(btn.dataset.id)}`, {
+            method: 'DELETE'
           });
 
           if (!res.ok) {
@@ -1273,6 +1299,7 @@
         });
       });
     } catch (err) {
+      if (isAuthError(err)) return;
       card.innerHTML = renderAilcdApplicationsPanel([], err.message);
     }
   }
@@ -1281,9 +1308,7 @@
     const token = getToken();
     if (!token) return [];
 
-    const res = await fetch('/api/contact-submissions', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await authFetch('/api/contact-submissions');
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -1352,6 +1377,7 @@
         });
       });
     } catch (err) {
+      if (isAuthError(err)) return;
       panel.innerHTML = renderInboxPanel([], err.message);
     }
   }
@@ -1738,12 +1764,9 @@
     els.publishBtn.textContent = 'Publishing…';
 
     try {
-      const res = await fetch('/api/content', {
+      const res = await authFetch('/api/content', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(content)
       });
 
@@ -1862,6 +1885,12 @@
 
     setLoginStatus('Loading dashboard…');
     try {
+      const valid = await verifyAdminSession();
+      if (!valid) {
+        showLogin('Your admin session expired. Please sign in again.');
+        return;
+      }
+
       await loadContent();
       setPreviewMode(false);
       clearLoginMessages();

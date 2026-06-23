@@ -1,4 +1,4 @@
-import { verifyToken, readAuthToken } from './lib/auth.js';
+import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 function toCsv(rows) {
@@ -47,9 +47,8 @@ function toCsv(rows) {
 }
 
 export default async function handler(req, res) {
-  const secret = process.env.ADMIN_SECRET;
   const token = readAuthToken(req);
-  if (!verifyToken(token, secret)) {
+  if (!verifyToken(token, getAdminSecret())) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }

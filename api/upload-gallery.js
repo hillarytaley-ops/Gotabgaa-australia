@@ -1,4 +1,4 @@
-import { verifyToken, readAuthToken } from './lib/auth.js';
+import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 async function githubUploadFile(repo, token, filePath, buffer, message) {
@@ -52,9 +52,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  const secret = process.env.ADMIN_SECRET;
   const token = readAuthToken(req);
-  if (!verifyToken(token, secret)) {
+  if (!verifyToken(token, getAdminSecret())) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }

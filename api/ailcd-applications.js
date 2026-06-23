@@ -1,4 +1,4 @@
-import { verifyToken, readAuthToken } from './lib/auth.js';
+import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { getAppMeta, isSchemaColumnError, withAppMeta } from './lib/ailcd-app.js';
 
@@ -73,10 +73,9 @@ async function loadApplications(supabase) {
 }
 
 export default async function handler(req, res) {
-  const secret = process.env.ADMIN_SECRET;
   const token = readAuthToken(req);
-  if (!verifyToken(token, secret)) {
-    res.status(401).json({ error: 'Unauthorized' });
+  if (!verifyToken(token, getAdminSecret())) {
+    res.status(401).json({ error: 'Unauthorized', detail: 'Admin session invalid or expired. Sign in again.' });
     return;
   }
 

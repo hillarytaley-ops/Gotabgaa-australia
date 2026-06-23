@@ -1,4 +1,4 @@
-import { createToken } from './lib/auth.js';
+import { createToken, getAdminSecret } from './lib/auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -6,8 +6,8 @@ export default async function handler(req, res) {
     return;
   }
 
-  const password = process.env.ADMIN_PASSWORD;
-  const secret = process.env.ADMIN_SECRET;
+  const password = (process.env.ADMIN_PASSWORD || '').trim();
+  const secret = getAdminSecret();
 
   if (!password || !secret) {
     res.status(503).json({
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
   const { password: attempt } = req.body || {};
   const normalizedAttempt = typeof attempt === 'string' ? attempt.trim() : '';
-  const normalizedPassword = password.trim();
+  const normalizedPassword = password;
 
   if (!normalizedAttempt || normalizedAttempt !== normalizedPassword) {
     res.status(401).json({ error: 'Invalid password' });
