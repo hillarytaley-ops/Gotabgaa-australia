@@ -54,6 +54,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 img:not(.hero__slide__photo) {
   max-width: 100%;
   height: auto;
@@ -2361,6 +2365,169 @@ body.page-form-only {
   justify-content: flex-end;
 }
 
+.ailcd-apply__nav .btn {
+  min-height: 44px;
+}
+
+.ailcd-apply__nav .btn[hidden] {
+  display: none !important;
+}
+
+.ailcd-apply .section__tag {
+  display: inline-block;
+}
+
+.ailcd-apply .card {
+  padding: 20px;
+}
+
+.ailcd-apply__form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.ailcd-apply__form .form-hint {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.ailcd-checkgrid label,
+.ailcd-yn label,
+.ailcd-check {
+  min-height: 44px;
+}
+
+.ailcd-checkgrid--stack label {
+  padding: 8px 0;
+}
+
+@media (max-width: 768px) {
+  body.page-form-only .page-hero {
+    padding-top: calc(var(--header-height) + var(--tribal-height) + 16px);
+    padding-bottom: calc(32px + var(--tribal-height));
+  }
+
+  body.page-form-only .page-hero__title {
+    font-size: clamp(1.65rem, 7vw, 2.25rem);
+    padding: 0 8px;
+  }
+
+  body.page-form-only .page-hero__desc {
+    font-size: 0.95rem;
+    padding: 0 12px;
+  }
+
+  body.page-sub.page-form-only .section.ailcd-apply {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+
+  .ailcd-apply .container--narrow {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .ailcd-apply .card,
+  .ailcd-apply__intro {
+    padding: 16px;
+  }
+
+  .ailcd-apply__form {
+    padding: 16px 14px;
+  }
+
+  .ailcd-apply__form legend {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+  }
+
+  .ailcd-apply__form .form__grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .ailcd-apply__step-label {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+
+  .ailcd-apply__form input:not([type="radio"]):not([type="checkbox"]),
+  .ailcd-apply__form select,
+  .ailcd-apply__form textarea {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .ailcd-checkgrid:not(.ailcd-checkgrid--stack) {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .ailcd-yn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .ailcd-apply__nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ailcd-apply__nav .btn {
+    width: 100%;
+    flex: none;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .ailcd-status-check__form .form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ailcd-status-check__title,
+  .ailcd-status-portal__title {
+    font-size: 1.2rem;
+  }
+
+  .ailcd-status-portal__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ailcd-status-portal__actions .btn {
+    width: 100%;
+  }
+
+  .signature-pad__canvas {
+    height: 160px;
+    min-height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.page-form-only {
+    --header-height: 120px;
+  }
+
+  .page-form-only .nav__brand--static .nav__logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .page-form-only .nav__brand--static .nav__title,
+  .page-form-only .nav__brand--stacked .nav__title {
+    font-size: 1.15rem;
+  }
+
+  .page-form-only .nav__form-notice {
+    font-size: 0.75rem;
+    padding: 0 8px;
+  }
+}
+
 .ailcd-status-check__hint {
   margin-top: -4px;
 }
@@ -2439,13 +2606,7 @@ body.page-form-only {
 }
 
 @media (max-width: 768px) {
-  .ailcd-apply__form { padding: 20px 16px; }
-  .ailcd-apply__nav { justify-content: stretch; }
-  .ailcd-apply__nav .btn { flex: 1; }
-  .ailcd-status-check__form .form__grid { grid-template-columns: 1fr; }
-  .ailcd-checkgrid:not(.ailcd-checkgrid--stack) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .booking-portal__form-wrap { padding: 20px 16px; }
 }
 
 .booking-portal__form-wrap {
