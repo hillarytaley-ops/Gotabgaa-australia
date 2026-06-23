@@ -577,7 +577,7 @@
         error.hidden = false;
         if (btn) {
           btn.disabled = false;
-          btn.textContent = 'Submit expression of interest';
+          btn.textContent = 'Submit Expression';
         }
       }
     });
