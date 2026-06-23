@@ -1257,6 +1257,7 @@
               </div>
               <div class="inbox-item__actions">
                 ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
+                ${meta.membershipId ? `<button type="button" class="btn btn--outline btn--sm membership-resync" data-id="${escapeHtml(r.id)}">Sync member login</button>` : ''}
                 ${meta.memberStatus === 'active' ? `<button type="button" class="btn btn--outline btn--sm membership-revoke" data-id="${escapeHtml(r.id)}">Deactivate member</button>` : ''}
                 <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
                   ${r.read ? 'Mark unread' : 'Mark read'}
@@ -1355,6 +1356,27 @@
           } catch (err) {
             if (isAuthError(err)) return;
             showStatus(err.message, 'error');
+          }
+        });
+      });
+
+      card.querySelectorAll('.membership-resync').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/membership-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'resync' })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not sync member login');
+            showStatus(`Member login synced. ID: ${data.membershipId}`, 'success');
+            loadMembershipRegistrationsPanel();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
           }
         });
       });

@@ -4506,6 +4506,19 @@ body.modal-open {
 
 .members-gate__form { margin-top: 1.25rem; }
 
+.members-login-error,
+.members-gate__form .form__error {
+  margin: 0.75rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: #fdecea;
+  border: 1px solid #f5c2c0;
+  color: #b42318;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
 .members-gate__footer { margin-top: 1.25rem; margin-bottom: 0; }
 
 .members-dashboard__top {

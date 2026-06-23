@@ -36,7 +36,19 @@ export default async function handler(req, res) {
 
     if (!meta.membershipId) {
       res.status(403).json({
-        error: 'This registration does not have an active membership ID yet. Our team will email you when approved.'
+        error: 'This registration does not have a membership ID yet. Our team will email you when approved.'
+      });
+      return;
+    }
+
+    if (String(meta.membershipId).toUpperCase() !== membershipId) {
+      res.status(404).json({ error: 'No member found with that email and membership ID' });
+      return;
+    }
+
+    if (meta.memberStatus === 'inactive') {
+      res.status(403).json({
+        error: 'This membership is inactive. Contact the chapter for assistance.'
       });
       return;
     }
@@ -49,7 +61,7 @@ export default async function handler(req, res) {
         stateChapter: row.state_chapter,
         membershipType: row.membership_type,
         membershipId: meta.membershipId,
-        memberStatus: meta.memberStatus,
+        memberStatus: meta.memberStatus || 'active',
         paymentStatus: meta.paymentStatus,
         feeDisplay: row.fee_display,
         joinedAt: row.created_at

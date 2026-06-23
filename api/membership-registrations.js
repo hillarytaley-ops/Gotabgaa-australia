@@ -1,7 +1,7 @@
 import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { generateMembershipId } from './lib/member-id.js';
-import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes } from './lib/member-registration.js';
+import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes, syncMemberMetaEverywhere } from './lib/member-registration.js';
 
 const SELECT_FIELDS = [
   'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, membership_id, member_status, created_at, read, data',
@@ -216,6 +216,11 @@ export default async function handler(req, res) {
           read: true
         });
 
+        await syncMemberMetaEverywhere(supabase, id, {
+          membershipId,
+          memberStatus: 'active'
+        });
+
         res.status(200).json({ ok: true, membershipId, memberStatus: 'active' });
         return;
       }
@@ -226,6 +231,33 @@ export default async function handler(req, res) {
           read: true
         });
         res.status(200).json({ ok: true, memberStatus: 'inactive' });
+        return;
+      }
+
+      if (action === 'resync') {
+        const rows = await selectRegistrations(supabase);
+        const row = rows.find(r => r.id === id);
+        if (!row) {
+          res.status(404).json({ error: 'Registration not found' });
+          return;
+        }
+
+        const meta = getMemberMeta(row);
+        const membershipId = meta.membershipId || generateMembershipId();
+        const memberStatus = meta.memberStatus === 'inactive' ? 'inactive' : 'active';
+
+        await updateRegistration(supabase, id, {
+          membership_id: membershipId,
+          member_status: memberStatus,
+          read: true
+        });
+
+        await syncMemberMetaEverywhere(supabase, id, {
+          membershipId,
+          memberStatus
+        });
+
+        res.status(200).json({ ok: true, membershipId, memberStatus });
         return;
       }
 

@@ -118,6 +118,17 @@
     if (!els.loginError) return;
     els.loginError.textContent = msg;
     els.loginError.hidden = !msg;
+    if (msg) {
+      els.loginError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function isPlaceholderMembershipId(id) {
+    const value = String(id || '').trim().toUpperCase();
+    return !value
+      || value === 'GAA-MEM-XXXXXXXX'
+      || /X{4,}/.test(value)
+      || value.length < 12;
   }
 
   function showGate() {
@@ -456,13 +467,18 @@
       return;
     }
 
+    if (isPlaceholderMembershipId(membershipId)) {
+      showError('Enter your real membership ID (e.g. GAA-MEM-ABC12345) from admin approval — not the placeholder text.');
+      return;
+    }
+
     els.loginBtn.disabled = true;
     els.loginBtn.textContent = 'Verifying…';
 
     try {
       const member = await verifyMember(email, membershipId);
-      if (member.memberStatus && member.memberStatus !== 'active') {
-        showError('Your membership is not active yet. Contact the chapter if you believe this is an error.');
+      if (member.memberStatus === 'inactive') {
+        showError('Your membership is inactive. Contact the chapter if you believe this is an error.');
         return;
       }
       saveSession(member);

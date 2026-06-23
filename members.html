@@ -65,9 +65,9 @@
             </div>
             <div class="form__group">
               <label for="memberId">Membership ID</label>
-              <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="GAA-MEM-XXXXXXXX" spellcheck="false">
+              <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="e.g. GAA-MEM-ABC12345" spellcheck="false" autocapitalize="characters">
             </div>
-            <p class="form__error" id="memberLoginError" hidden></p>
+            <p class="form__error members-login-error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
             <button type="submit" class="btn btn--primary btn--block" id="memberLoginBtn">Access Dashboard</button>
             <button type="button" class="btn btn--outline btn--block" id="memberPreviewBtn" hidden>Developer preview</button>
           </form>
