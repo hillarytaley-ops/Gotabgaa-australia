@@ -778,6 +778,14 @@ body {
   padding-bottom: 0;
 }
 
+.governance-admin-positions {
+  margin-top: 16px;
+}
+
+.governance-admin-card .form-hint code {
+  font-size: 0.85em;
+}
+
 .mp-admin-tabs {
   display: flex;
   flex-wrap: wrap;

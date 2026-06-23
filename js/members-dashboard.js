@@ -331,11 +331,28 @@
       const closedMessage = isNom ? elections.nominationClosedMessage : elections.electionClosedMessage;
       const url = isNom ? elections.nominationUrl : elections.electionUrl;
       const buttonLabel = isNom ? elections.nominationButtonLabel : elections.electionButtonLabel;
+      const positions = isNom ? elections.nominationPositions : elections.electionPositions;
       const defaultTitle = isNom ? 'Nomination Portal' : 'Election Portal';
       const defaultClosed = isNom
         ? 'Nominations are currently closed. You will be notified when the next nomination period opens.'
         : 'Elections are currently closed. Check back during the election period.';
       const defaultButton = isNom ? 'Open nomination portal' : 'Open election portal';
+      const positionsHeading = isNom ? 'Positions open for nomination' : 'Positions open for election';
+      const positionsHtml = (positions || []).length
+        ? `
+          <div class="members-governance-positions">
+            <h4>${positionsHeading}</h4>
+            <ul class="members-governance-positions__list">
+              ${(positions || []).map(p => `
+                <li>
+                  <strong>${escapeHtml(p.title)}</strong>
+                  ${p.description ? `<span>${escapeHtml(p.description)}</span>` : ''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `
+        : '';
 
       if (open) {
         return `
@@ -344,6 +361,7 @@
             <h3>${escapeHtml(title || defaultTitle)}</h3>
             ${period ? `<p class="members-governance-period">${escapeHtml(period)}</p>` : ''}
             <p>${escapeHtml(message || '')}</p>
+            ${positionsHtml}
             ${url
               ? `<a href="${escapeHtml(url)}" class="btn btn--primary" target="_blank" rel="noopener">${escapeHtml(buttonLabel || defaultButton)}</a>`
               : '<p class="members-empty">Portal link will be posted here when available.</p>'}

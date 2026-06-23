@@ -756,6 +756,31 @@
     `;
   }
 
+  function positionsToLines(positions) {
+    return (positions || []).map(p => {
+      if (p.description) return `${p.title} | ${p.description}`;
+      return p.title;
+    }).join('\n');
+  }
+
+  function parsePositionLines(text) {
+    return String(text || '')
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean)
+      .map((line, i) => {
+        const parts = line.split('|').map(s => s.trim());
+        const title = parts[0] || line;
+        const description = parts.slice(1).join(' | ');
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `item-${i}`;
+        return {
+          id: `pos-${slug}-${i}`,
+          title,
+          description
+        };
+      });
+  }
+
   function defaultExploreLinks() {
     return [
       { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
@@ -786,26 +811,30 @@
         nominationClosedMessage: 'Nominations are currently closed. You will be notified when the next nomination period opens.',
         nominationUrl: '',
         nominationButtonLabel: 'Open nomination portal',
+        nominationPositions: [],
         electionOpen: false,
         electionTitle: 'Election Portal',
         electionPeriod: '',
         electionMessage: 'Cast your vote for chapter leadership during the election period.',
         electionClosedMessage: 'Elections are currently closed. Check back during the election period.',
         electionUrl: '',
-        electionButtonLabel: 'Open election portal'
+        electionButtonLabel: 'Open election portal',
+        electionPositions: []
       }
     };
   }
 
   function renderGovernanceAdminCard(title, idPrefix, dataPrefix, data) {
     const isOpen = Boolean(data[`${dataPrefix}Open`]);
+    const positions = data[`${dataPrefix}Positions`] || [];
+    const positionLines = positionsToLines(positions);
     return `
       <div class="card governance-admin-card">
         <div class="governance-admin-card__header">
           <h3>${title}</h3>
           <span class="governance-admin-card__status ${isOpen ? 'is-open' : 'is-closed'}">${isOpen ? 'Open on members site' : 'Closed on members site'}</span>
         </div>
-        <p class="form-hint">Members see this card under <strong>Governance</strong> on the dashboard. Toggle open when the portal is live, add the external form URL, then publish.</p>
+        <p class="form-hint">Members see this card under <strong>Governance</strong> on the dashboard. Toggle open when the portal is live, add positions and the external form URL, then publish.</p>
         <div class="form-grid">
           ${field('Portal open', `mp${idPrefix}Open`, isOpen, 'checkbox')}
           ${field('Card title', `mp${idPrefix}Title`, data[`${dataPrefix}Title`] || title)}
@@ -815,6 +844,16 @@
           ${field('Portal URL', `mp${idPrefix}Url`, data[`${dataPrefix}Url`] || '', 'url')}
           ${field('Button label', `mp${idPrefix}ButtonLabel`, data[`${dataPrefix}ButtonLabel`] || '')}
         </div>
+        <details class="mp-admin-accordion governance-admin-positions">
+          <summary>
+            <span class="mp-admin-accordion__title">Positions list</span>
+            <span class="mp-admin-accordion__meta">${positions.length} position(s)</span>
+          </summary>
+          <div class="mp-admin-accordion__body">
+            <p class="form-hint">Enter one position per line. Optional description after a pipe, e.g. <code>Secretary General | Administration and records</code></p>
+            ${field('Bulk positions', `mp${idPrefix}Positions`, positionLines, 'textarea', { full: true })}
+          </div>
+        </details>
       </div>
     `;
   }
@@ -2003,13 +2042,15 @@
         nominationClosedMessage: val('mpNomClosedMessage'),
         nominationUrl: val('mpNomUrl'),
         nominationButtonLabel: val('mpNomButtonLabel'),
+        nominationPositions: parsePositionLines(val('mpNomPositions')),
         electionOpen: val('mpEleOpen'),
         electionTitle: val('mpEleTitle'),
         electionPeriod: val('mpElePeriod'),
         electionMessage: val('mpEleMessage'),
         electionClosedMessage: val('mpEleClosedMessage'),
         electionUrl: val('mpEleUrl'),
-        electionButtonLabel: val('mpEleButtonLabel')
+        electionButtonLabel: val('mpEleButtonLabel'),
+        electionPositions: parsePositionLines(val('mpElePositions'))
       };
     }
 

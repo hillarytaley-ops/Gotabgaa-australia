@@ -424,13 +424,15 @@
       "nominationClosedMessage": "Nominations are currently closed. You will be notified when the next nomination period opens.",
       "nominationUrl": "",
       "nominationButtonLabel": "Open nomination portal",
+      "nominationPositions": [],
       "electionOpen": false,
       "electionTitle": "Election Portal",
       "electionPeriod": "",
       "electionMessage": "Cast your vote for chapter leadership during the election period.",
       "electionClosedMessage": "Elections are currently closed. Check back during the election period.",
       "electionUrl": "",
-      "electionButtonLabel": "Open election portal"
+      "electionButtonLabel": "Open election portal",
+      "electionPositions": []
     }
   }
 }

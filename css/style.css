@@ -4822,6 +4822,41 @@ body.modal-open {
   color: var(--primary, #b45309);
 }
 
+.members-governance-positions {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: var(--radius-sm, 8px);
+  background: rgba(180, 83, 9, 0.06);
+  border: 1px solid rgba(180, 83, 9, 0.12);
+}
+
+.members-governance-positions h4 {
+  margin: 0 0 .65rem;
+  font-size: .95rem;
+}
+
+.members-governance-positions__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: .5rem;
+}
+
+.members-governance-positions__list li {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  padding: .5rem .65rem;
+  border-radius: 6px;
+  background: var(--surface-elevated, #fff);
+}
+
+.members-governance-positions__list li span {
+  font-size: .88rem;
+  color: var(--text-muted);
+}
+
 .members-preview-banner {
   margin-bottom: 1.25rem;
   padding: .85rem 1rem;
