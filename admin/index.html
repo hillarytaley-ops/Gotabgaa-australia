@@ -30,30 +30,38 @@
   </div>
 
   <div id="app" class="app" hidden>
-    <aside class="sidebar">
-      <div class="sidebar__brand">
-        <img src="../assets/logo-round.png" alt="" width="40" height="40">
-        <span>Gotabgaa Admin</span>
+    <aside class="sidebar" id="adminSidebar">
+      <div class="sidebar__header">
+        <div class="sidebar__brand">
+          <img src="../assets/logo-round.png" alt="" width="40" height="40">
+          <span>Gotabgaa Admin</span>
+        </div>
+        <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarDrawer">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <nav class="sidebar__nav" id="sidebarNav">
-        <button type="button" data-section="dashboard" class="is-active">Dashboard</button>
-        <button type="button" data-section="site">Site Settings</button>
-        <button type="button" data-section="home">Home Page</button>
-        <button type="button" data-section="about">About</button>
-        <button type="button" data-section="programs">Programs</button>
-        <button type="button" data-section="events">Events</button>
-        <button type="button" data-section="leadership">Leadership</button>
-        <button type="button" data-section="gallery">Gallery</button>
-        <button type="button" data-section="contact">Contact</button>
-        <button type="button" data-section="membership">Membership</button>
-        <button type="button" data-section="memberPortal">Member Portal</button>
-        <button type="button" data-section="ailcd">Leadership EOI</button>
-        <button type="button" data-section="inbox">Inbox</button>
-        <button type="button" data-section="pages">Page Heroes</button>
-      </nav>
-      <div class="sidebar__footer">
-        <a href="../index.html" target="_blank" rel="noopener">View Site ↗</a>
-        <button type="button" id="logoutBtn">Sign Out</button>
+      <div class="sidebar__overlay" id="sidebarOverlay" hidden aria-hidden="true"></div>
+      <div class="sidebar__drawer" id="sidebarDrawer">
+        <nav class="sidebar__nav" id="sidebarNav">
+          <button type="button" data-section="dashboard" class="is-active">Dashboard</button>
+          <button type="button" data-section="site">Site Settings</button>
+          <button type="button" data-section="home">Home Page</button>
+          <button type="button" data-section="about">About</button>
+          <button type="button" data-section="programs">Programs</button>
+          <button type="button" data-section="events">Events</button>
+          <button type="button" data-section="leadership">Leadership</button>
+          <button type="button" data-section="gallery">Gallery</button>
+          <button type="button" data-section="contact">Contact</button>
+          <button type="button" data-section="membership">Membership</button>
+          <button type="button" data-section="memberPortal">Member Portal</button>
+          <button type="button" data-section="ailcd">Leadership EOI</button>
+          <button type="button" data-section="inbox">Inbox</button>
+          <button type="button" data-section="pages">Page Heroes</button>
+        </nav>
+        <div class="sidebar__footer">
+          <a href="../index.html" target="_blank" rel="noopener">View Site ↗</a>
+          <button type="button" id="logoutBtn">Sign Out</button>
+        </div>
       </div>
     </aside>
 
@@ -112,6 +120,6 @@
     </main>
   </div>
 
-  <script src="admin.js?v=9"></script>
+  <script src="admin.js?v=10"></script>
 </body>
 </html>

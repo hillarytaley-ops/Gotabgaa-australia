@@ -2059,6 +2059,7 @@
     if (!btn) return;
     collectFromForm();
     renderSection(btn.dataset.section);
+    closeAdminSidebar();
   });
 
   document.getElementById('contentArea')?.addEventListener('click', e => {
@@ -2066,7 +2067,50 @@
     if (goto) {
       collectFromForm();
       renderSection(goto.dataset.goto);
+      closeAdminSidebar();
     }
+  });
+
+  function closeAdminSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar?.classList.remove('is-open');
+    toggle?.setAttribute('aria-expanded', 'false');
+    toggle?.setAttribute('aria-label', 'Open menu');
+    if (overlay) {
+      overlay.hidden = true;
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function openAdminSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar?.classList.add('is-open');
+    toggle?.setAttribute('aria-expanded', 'true');
+    toggle?.setAttribute('aria-label', 'Close menu');
+    if (overlay) {
+      overlay.hidden = false;
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    const sidebar = document.getElementById('adminSidebar');
+    if (sidebar?.classList.contains('is-open')) closeAdminSidebar();
+    else openAdminSidebar();
+  });
+
+  document.getElementById('sidebarOverlay')?.addEventListener('click', closeAdminSidebar);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAdminSidebar();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) closeAdminSidebar();
   });
 
   if (getToken()) {
