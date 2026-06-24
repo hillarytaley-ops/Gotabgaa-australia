@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 
     if (meta.memberStatus === 'inactive') {
       res.status(403).json({
-        error: 'This membership is inactive. Contact the chapter for assistance.'
+        error: 'This membership is inactive. Contact Gotabgaa Australia for assistance.'
       });
       return;
     }

@@ -5,12 +5,11 @@
   },
   "site": {
     "siteUrl": "https://gotabgaa-australia.vercel.app",
-    "siteName": "Gotabgaa Australia Chapter",
+    "siteName": "Gotabgaa Australia",
     "tagline": "Unity • Heritage • Excellence",
     "contactEmail": "info@gotabgaaaustralia.org",
     "copyrightYear": 2026,
-    "affiliationText": "An independent Australian Kalenjin community association",
-    "affiliationUrl": "https://www.gotabgaainternational.org/",
+    "affiliationText": "Connecting Kalenjin communities across Australia",
     "social": {
       "facebook": "https://www.facebook.com/gotabgaainternational",
       "tiktok": "https://www.tiktok.com/@gotabgaainternational",
@@ -35,7 +34,7 @@
     "intro": "Join our growing community across Australia — access events, programs, and cultural initiatives.",
     "image": "assets/hero/brisbane-team.png",
     "benefits": [
-      "Chapter events and gatherings across Australia",
+      "Community events and gatherings across Australia",
       "Cultural and youth mentorship programs",
       "Community support network in your state"
     ],
@@ -49,7 +48,7 @@
   "pages": {
     "home": {
       "hero": {
-        "badge": "Australia Chapter",
+        "badge": "Gotabgaa Australia",
         "title": "Connecting Communities,",
         "titleEm": "Preserving Heritage",
         "subtitle": "Unity • Heritage • Excellence",
@@ -81,7 +80,7 @@
         "tag": "Who We Are",
         "title": "A Home Away From Home",
         "paragraphs": [
-          "Gotabgaa Australia Chapter brings together Kalenjin families and friends across the continent — preserving our rich heritage while building a strong, united community in Australia.",
+          "Gotabgaa Australia brings together Kalenjin families and friends across the continent — preserving our rich heritage while building a strong, united community in Australia.",
           "From cultural celebrations to youth mentorship and economic empowerment, we create spaces where tradition meets opportunity."
         ],
         "cta": "Discover Our Story",
@@ -116,16 +115,16 @@
     "events": {
       "hero": { "tag": "Community Calendar", "title": "Events & Gatherings", "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments." },
       "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
-      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the chapter calendar for the year ahead." },
+      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the Gotabgaa Australia calendar for the year ahead." },
       "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal — online payments will be added in a future update." },
-      "pastHeader": { "tag": "Archive", "title": "Past Events", "description": "Highlights from recent gatherings across our chapters." },
+      "pastHeader": { "tag": "Archive", "title": "Past Events", "description": "Highlights from recent gatherings across Australia." },
       "impact": [
         { "number": 24, "label": "Events Hosted", "animate": true },
         { "number": 1200, "label": "Members Attended", "animate": true },
         { "number": 6, "label": "Cities Visited", "animate": true },
         { "number": 5, "label": "Upcoming This Year", "animate": true }
       ],
-      "cta": { "title": "Want to host an event?", "description": "Chapter members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
+      "cta": { "title": "Want to host an event?", "description": "Gotabgaa Australia members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
     },
     "leadership": {
       "hero": { "tag": "Our Team", "title": "Gotabgaa Leadership", "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity." }
@@ -153,13 +152,13 @@
   "eventTypes": [
     { "id": "cultural", "title": "Cultural Fetes", "description": "Music, dance, dress, and cuisine celebrating Kalenjin heritage across Australia.", "icon": "cultural" },
     { "id": "sports", "title": "Sports Days", "description": "Football, athletics, and family-friendly competitions that build camaraderie.", "icon": "sports" },
-    { "id": "community", "title": "Community Meetups", "description": "City chapter gatherings, BBQs, and welcome events for new members and families.", "icon": "community" },
+    { "id": "community", "title": "Community Meetups", "description": "City gatherings, BBQs, and welcome events for new members and families.", "icon": "community" },
     { "id": "agm", "title": "AGM & Workshops", "description": "Annual general meetings, mentorship workshops, and leadership forums.", "icon": "agm" }
   ],
   "timeline": [
     { "month": "May", "title": "WA Community Gathering", "detail": "Perth · 9 May 2026" },
     { "month": "Jun", "title": "Kokwet Sports Day", "detail": "Sydney · 14 June 2026" },
-    { "month": "Jul", "title": "Brisbane Chapter Meetup", "detail": "Brisbane · 18 July 2026" },
+    { "month": "Jul", "title": "Brisbane Community Meetup", "detail": "Brisbane · 18 July 2026" },
     { "month": "Aug", "title": "Youth Mentorship Workshop", "detail": "Melbourne · 22 August 2026" },
     { "month": "Sep", "title": "Annual Cultural Fete", "detail": "Brisbane · 12 September 2026" }
   ],
@@ -186,7 +185,7 @@
     },
     {
       "id": "evt-brisbane-meetup",
-      "title": "Brisbane Chapter Meetup",
+      "title": "Brisbane Community Meetup",
       "date": "Saturday, 18 July 2026",
       "datePill": "18 Jul 2026",
       "time": "2:00 PM – 5:00 PM AEST",
@@ -195,8 +194,8 @@
       "image": "assets/hero/brisbane-team.png",
       "status": "upcoming",
       "category": "community",
-      "summary": "Connect with Brisbane members and welcome new families to the chapter.",
-      "description": "Monthly chapter meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
+      "summary": "Connect with Brisbane members and welcome new families to Gotabgaa Australia.",
+      "description": "Monthly community meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
       "ticketPriceNote": "Free registration — secure payment coming soon",
@@ -233,8 +232,8 @@
       "image": "assets/hero/kokwet-sports-day.png",
       "status": "upcoming",
       "category": "sports",
-      "summary": "Football, athletics, and family games across chapter teams.",
-      "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate chapters compete. Bring your family — picnic areas and refreshments on site.",
+      "summary": "Football, athletics, and family games across community teams.",
+      "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate members compete. Bring your family — picnic areas and refreshments on site.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
       "ticketPriceNote": "Free registration — secure payment coming soon",
@@ -252,8 +251,8 @@
       "image": "assets/hero/kitwek-wa.png",
       "status": "upcoming",
       "category": "community",
-      "summary": "Western Australia chapter gathering with performances and shared lunch.",
-      "description": "Western Australia chapter gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
+      "summary": "Western Australia community gathering with performances and shared lunch.",
+      "description": "Western Australia community gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
       "ticketPriceNote": "Free registration — secure payment coming soon",
@@ -271,8 +270,8 @@
       "image": "assets/hero/berur-brisbane.png",
       "status": "past",
       "category": "agm",
-      "summary": "Annual reports, elections, and strategic planning for the chapter.",
-      "description": "Chapter AGM covering annual reports, elections, and strategic priorities for 2026. Members voted on committee positions and approved the benevolence fund budget. Minutes available on request.",
+      "summary": "Annual reports, elections, and strategic planning for Gotabgaa Australia.",
+      "description": "Annual general meeting covering annual reports, elections, and strategic priorities for 2026. Members voted on committee positions and approved the benevolence fund budget. Minutes available on request.",
       "registerUrl": "",
       "registerLabel": ""
     },
@@ -288,7 +287,7 @@
       "status": "past",
       "category": "cultural",
       "summary": "Traditional dance, dress, and storytelling honouring our roots.",
-      "description": "A vibrant day of traditional dance, dress, and storytelling honouring Kalenjin roots. Over 200 members attended from Victoria and interstate chapters.",
+      "description": "A vibrant day of traditional dance, dress, and storytelling honouring Kalenjin roots. Over 200 members attended from Victoria and interstate.",
       "registerUrl": "gallery.html",
       "registerLabel": "See Photos"
     },
@@ -368,8 +367,8 @@
     }
   ],
   "leadership": [
-    { "id": "ldr-president", "name": "Chapter President", "role": "Board President", "initials": "CR", "photo": "" },
-    { "id": "ldr-vp", "name": "Chapter Vice President", "role": "Board Vice President", "initials": "VP", "photo": "" },
+    { "id": "ldr-president", "name": "President", "role": "Board President", "initials": "CR", "photo": "" },
+    { "id": "ldr-vp", "name": "Vice President", "role": "Board Vice President", "initials": "VP", "photo": "" },
     { "id": "ldr-secretary", "name": "Secretary General", "role": "Administration", "initials": "SG", "photo": "" },
     { "id": "ldr-coordinator", "name": "National Coordinator", "role": "Programs & Events", "initials": "NC", "photo": "" },
     { "id": "ldr-treasurer", "name": "Treasurer", "role": "Finance", "initials": "TR", "photo": "" }
@@ -377,7 +376,7 @@
   "gallery": [
     { "id": "gal-u1", "eventId": "evt-cultural-fete-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
     { "id": "gal-u2", "eventId": "evt-cultural-fete-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
-    { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane chapter team", "wide": false },
+    { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane community team", "wide": false },
     { "id": "gal-u4", "eventId": "evt-brisbane-meetup", "image": "assets/hero/charmen-gifting.png", "alt": "Community gifting ceremony", "caption": "Community gifting", "wide": false },
     { "id": "gal-u5", "eventId": "evt-kokwet-sports", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet sports day", "wide": true },
     { "id": "gal-u6", "eventId": "evt-wa-gathering", "image": "assets/hero/kitwek-wa.png", "alt": "Western Australia community gathering", "caption": "WA community gathering", "wide": false },
@@ -387,12 +386,12 @@
     { "id": "gal-p3", "eventId": "evt-bbq-2025", "image": "assets/hero/charmen-gifting.png", "alt": "BBQ gifting ceremony", "caption": "BBQ gifting ceremony", "wide": false },
     { "id": "gal-p4", "eventId": "evt-bbq-2025", "image": "assets/hero/nick-boit-gifting.png", "alt": "Community BBQ celebrations", "caption": "Community BBQ", "wide": false },
     { "id": "gal-p5", "eventId": "evt-agm-2026", "image": "assets/hero/berur-brisbane.png", "alt": "AGM community photo", "caption": "AGM 2026 group photo", "wide": true },
-    { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia chapter at AGM", "caption": "SA chapter representatives", "wide": false }
+    { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia members at AGM", "caption": "SA representatives", "wide": false }
   ],
   "submissions": [],
   "memberPortal": {
     "welcomeTitle": "Welcome to the Members Dashboard",
-    "welcomeMessage": "Access chapter news, event updates, photo albums, and governance portals — exclusively for registered members.",
+    "welcomeMessage": "Access Gotabgaa Australia news, event updates, photo albums, and governance portals — exclusively for registered members.",
     "feeds": [
       {
         "id": "feed-welcome",
@@ -403,30 +402,30 @@
         "link": ""
       }
     ],
-    "eventsIntro": "View upcoming chapter events and manage your bookings.",
-    "photosIntro": "Download photos from chapter events. Albums match events on the public gallery.",
-    "exploreIntro": "Quick links to public chapter pages and resources.",
+    "eventsIntro": "View upcoming Gotabgaa Australia events and manage your bookings.",
+    "photosIntro": "Download photos from community events. Albums match events on the public gallery.",
+    "exploreIntro": "Quick links to public Gotabgaa Australia pages and resources.",
     "exploreLinks": [
-      { "href": "index.html", "label": "Home", "desc": "Chapter homepage" },
+      { "href": "index.html", "label": "Home", "desc": "Gotabgaa Australia homepage" },
       { "href": "about.html", "label": "About", "desc": "Our story and mission" },
       { "href": "programs.html", "label": "Programs", "desc": "Education, culture, and outreach" },
       { "href": "events.html", "label": "Events", "desc": "Public events calendar" },
-      { "href": "leadership.html", "label": "Leadership", "desc": "Chapter board and team" },
+      { "href": "leadership.html", "label": "Leadership", "desc": "Board and leadership team" },
       { "href": "gallery.html", "label": "Gallery", "desc": "Public photo gallery" },
-      { "href": "contact.html", "label": "Contact", "desc": "Get in touch with the chapter" },
+      { "href": "contact.html", "label": "Contact", "desc": "Get in touch with us" },
       { "href": "book.html", "label": "Book events", "desc": "Reserve places at gatherings" }
     ],
     "elections": {
       "nominationOpen": false,
       "nominationTitle": "Nomination Portal",
       "nominationPeriod": "",
-      "nominationMessage": "Submit your nomination for chapter leadership positions during the nomination period.",
+      "nominationMessage": "Submit your nomination for Gotabgaa Australia leadership positions during the nomination period.",
       "nominationClosedMessage": "Nominations are currently closed. You will be notified when the next nomination period opens.",
       "nominationUrl": "",
       "nominationButtonLabel": "Open nomination portal",
       "nominationPositions": [
-        { "id": "pos-president", "title": "Chapter President", "description": "Board President" },
-        { "id": "pos-vp", "title": "Chapter Vice President", "description": "Board Vice President" },
+        { "id": "pos-president", "title": "President", "description": "Board President" },
+        { "id": "pos-vp", "title": "Vice President", "description": "Board Vice President" },
         { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
         { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
         { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }
@@ -434,13 +433,13 @@
       "electionOpen": false,
       "electionTitle": "Election Portal",
       "electionPeriod": "",
-      "electionMessage": "Cast your vote for chapter leadership during the election period.",
+      "electionMessage": "Cast your vote for Gotabgaa Australia leadership during the election period.",
       "electionClosedMessage": "Elections are currently closed. Check back during the election period.",
       "electionUrl": "",
       "electionButtonLabel": "Open election portal",
       "electionPositions": [
-        { "id": "pos-president", "title": "Chapter President", "description": "Board President" },
-        { "id": "pos-vp", "title": "Chapter Vice President", "description": "Board Vice President" },
+        { "id": "pos-president", "title": "President", "description": "Board President" },
+        { "id": "pos-vp", "title": "Vice President", "description": "Board Vice President" },
         { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
         { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
         { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }

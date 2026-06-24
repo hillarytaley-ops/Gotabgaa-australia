@@ -4,7 +4,7 @@
  */
 window.SITE_CONFIG = {
   siteUrl: 'https://gotabgaa-australia.vercel.app',
-  siteName: 'Gotabgaa Australia Chapter',
+  siteName: 'Gotabgaa Australia',
   contactEmail: 'info@gotabgaaaustralia.org',
   social: {
     facebook: 'https://www.facebook.com/gotabgaainternational',

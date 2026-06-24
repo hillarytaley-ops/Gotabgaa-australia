@@ -32,7 +32,7 @@ function toCsv(rows) {
     'Phone',
     'Membership ID',
     'Member Status',
-    'State/Chapter',
+    'State/Territory',
     'Membership Type',
     'Address',
     'Date of Birth',

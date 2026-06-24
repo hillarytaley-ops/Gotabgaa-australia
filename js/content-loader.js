@@ -52,10 +52,10 @@
     });
 
     document.querySelectorAll('.footer__affiliation').forEach(el => {
-      const link = el.querySelector('a');
-      if (link && site.affiliationUrl) link.href = site.affiliationUrl;
       if (site.affiliationText) {
-        if (link) el.innerHTML = `${escapeHtml(site.affiliationText)} <a href="${escapeHtml(site.affiliationUrl)}" target="_blank" rel="noopener">Gotabgaa International</a>`;
+        el.textContent = site.affiliationText;
+      } else {
+        el.hidden = true;
       }
     });
 

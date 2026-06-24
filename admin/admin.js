@@ -701,7 +701,7 @@
       paymentPlaceholder: 'Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.',
       intro: 'Join our growing community across Australia.',
       image: 'assets/hero/brisbane-team.png',
-      benefits: ['Chapter events and gatherings', 'Cultural and youth programs', 'Community support network'],
+      benefits: ['Community events and gatherings', 'Cultural and youth programs', 'Community support network'],
       types: [
         { id: 'full', label: 'Full Member' },
         { id: 'associate', label: 'Associate Member' },
@@ -811,8 +811,8 @@
 
   function defaultGovernancePositions() {
     return [
-      { id: 'pos-president', title: 'Chapter President', description: 'Board President' },
-      { id: 'pos-vp', title: 'Chapter Vice President', description: 'Board Vice President' },
+      { id: 'pos-president', title: 'President', description: 'Board President' },
+      { id: 'pos-vp', title: 'Vice President', description: 'Board Vice President' },
       { id: 'pos-secretary', title: 'Secretary General', description: 'Administration and records' },
       { id: 'pos-coordinator', title: 'National Coordinator', description: 'Programs and events' },
       { id: 'pos-treasurer', title: 'Treasurer', description: 'Finance' }
@@ -878,13 +878,13 @@
 
   function defaultExploreLinks() {
     return [
-      { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
+      { href: 'index.html', label: 'Home', desc: 'Gotabgaa Australia homepage' },
       { href: 'about.html', label: 'About', desc: 'Our story and mission' },
       { href: 'programs.html', label: 'Programs', desc: 'Education, culture, and outreach' },
       { href: 'events.html', label: 'Events', desc: 'Public events calendar' },
-      { href: 'leadership.html', label: 'Leadership', desc: 'Chapter board and team' },
+      { href: 'leadership.html', label: 'Leadership', desc: 'Board and leadership team' },
       { href: 'gallery.html', label: 'Gallery', desc: 'Public photo gallery' },
-      { href: 'contact.html', label: 'Contact', desc: 'Get in touch with the chapter' },
+      { href: 'contact.html', label: 'Contact', desc: 'Get in touch with us' },
       { href: 'book.html', label: 'Book events', desc: 'Reserve places at gatherings' }
     ];
   }
@@ -892,17 +892,17 @@
   function defaultMemberPortal() {
     return {
       welcomeTitle: 'Welcome to the Members Dashboard',
-      welcomeMessage: 'Access chapter news, event updates, photo albums, and governance portals.',
+      welcomeMessage: 'Access Gotabgaa Australia news, event updates, photo albums, and governance portals.',
       feeds: [],
-      eventsIntro: 'View upcoming chapter events and manage your bookings.',
-      photosIntro: 'Download photos from chapter events. Albums match events on the public gallery.',
-      exploreIntro: 'Quick links to public chapter pages and resources.',
+      eventsIntro: 'View upcoming Gotabgaa Australia events and manage your bookings.',
+      photosIntro: 'Download photos from community events. Albums match events on the public gallery.',
+      exploreIntro: 'Quick links to public Gotabgaa Australia pages and resources.',
       exploreLinks: defaultExploreLinks(),
       elections: {
         nominationOpen: false,
         nominationTitle: 'Nomination Portal',
         nominationPeriod: '',
-        nominationMessage: 'Submit your nomination for chapter leadership positions during the nomination period.',
+        nominationMessage: 'Submit your nomination for Gotabgaa Australia leadership positions during the nomination period.',
         nominationClosedMessage: 'Nominations are currently closed. You will be notified when the next nomination period opens.',
         nominationUrl: '',
         nominationButtonLabel: 'Open nomination portal',
@@ -910,7 +910,7 @@
         electionOpen: false,
         electionTitle: 'Election Portal',
         electionPeriod: '',
-        electionMessage: 'Cast your vote for chapter leadership during the election period.',
+        electionMessage: 'Cast your vote for Gotabgaa Australia leadership during the election period.',
         electionClosedMessage: 'Elections are currently closed. Check back during the election period.',
         electionUrl: '',
         electionButtonLabel: 'Open election portal',
@@ -1195,7 +1195,7 @@
 
   function downloadMembershipCsvClient(registrations) {
     const headers = [
-      'Date', 'Name', 'Email', 'Phone', 'State/Chapter', 'Membership Type',
+      'Date', 'Name', 'Email', 'Phone', 'State/Territory', 'Membership Type',
       'Address', 'Date of Birth', 'Referral', 'Notes', 'Fee Display', 'Payment Status'
     ];
     const escape = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
@@ -1246,7 +1246,7 @@
                 <p><strong>Phone:</strong> ${escapeHtml(r.phone || '—')}</p>
                 ${renderMembershipIdField(meta.membershipId)}
                 <p><strong>Member status:</strong> <span class="membership-reg-status membership-reg-status--${escapeHtml(meta.memberStatus)}">${escapeHtml(meta.memberStatus)}</span></p>
-                <p><strong>State / chapter:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
+                <p><strong>State / territory:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
                 <p><strong>Membership type:</strong> ${escapeHtml(r.membership_type || '—')}</p>
                 <p><strong>Address:</strong> ${escapeHtml(r.address || '—')}</p>
                 <p><strong>Date of birth:</strong> ${escapeHtml(r.date_of_birth || '—')}</p>

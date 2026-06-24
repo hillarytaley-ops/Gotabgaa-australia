@@ -226,7 +226,7 @@
         <div><dt>Status</dt><dd><span class="members-status ${statusClass}">${escapeHtml(member.memberStatus || 'pending')}</span></dd></div>
         <div><dt>Email</dt><dd>${escapeHtml(member.email)}</dd></div>
         <div><dt>Phone</dt><dd>${escapeHtml(member.phone || '—')}</dd></div>
-        <div><dt>Chapter</dt><dd>${escapeHtml(member.stateChapter || '—')}</dd></div>
+        <div><dt>State</dt><dd>${escapeHtml(member.stateChapter || '—')}</dd></div>
         <div><dt>Membership type</dt><dd>${escapeHtml(member.membershipType || '—')}</dd></div>
         <div><dt>Payment</dt><dd>${escapeHtml(member.paymentStatus || 'pending')}</dd></div>
         <div><dt>Fee</dt><dd>${escapeHtml(member.feeDisplay || '—')}</dd></div>
@@ -397,13 +397,13 @@
 
   function renderExploreLinks(portal) {
     const links = portal?.exploreLinks?.length ? portal.exploreLinks : [
-      { href: 'index.html', label: 'Home', desc: 'Chapter homepage' },
+      { href: 'index.html', label: 'Home', desc: 'Gotabgaa Australia homepage' },
       { href: 'about.html', label: 'About', desc: 'Our story and mission' },
       { href: 'programs.html', label: 'Programs', desc: 'Education, culture, and outreach' },
       { href: 'events.html', label: 'Events', desc: 'Public events calendar' },
-      { href: 'leadership.html', label: 'Leadership', desc: 'Chapter board and team' },
+      { href: 'leadership.html', label: 'Leadership', desc: 'Board and leadership team' },
       { href: 'gallery.html', label: 'Gallery', desc: 'Public photo gallery' },
-      { href: 'contact.html', label: 'Contact', desc: 'Get in touch with the chapter' },
+      { href: 'contact.html', label: 'Contact', desc: 'Get in touch with us' },
       { href: 'book.html', label: 'Book events', desc: 'Reserve places at gatherings' }
     ];
 
@@ -422,17 +422,17 @@
     const portal = content.memberPortal || {};
 
     els.welcomeTitle.textContent = portal.welcomeTitle || `Welcome, ${memberSession.name.split(' ')[0]}`;
-    els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates and chapter resources.';
+    els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates and Gotabgaa Australia resources.';
     els.memberBadge.textContent = memberSession.membershipId;
 
     if (els.eventsIntro) {
-      els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming chapter events and manage your bookings.';
+      els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming Gotabgaa Australia events and manage your bookings.';
     }
     if (els.photosIntro) {
-      els.photosIntro.textContent = portal.photosIntro || 'Download photos from chapter events. Albums match events on the public gallery.';
+      els.photosIntro.textContent = portal.photosIntro || 'Download photos from community events. Albums match events on the public gallery.';
     }
     if (els.exploreIntro) {
-      els.exploreIntro.textContent = portal.exploreIntro || 'Quick links to public chapter pages and resources.';
+      els.exploreIntro.textContent = portal.exploreIntro || 'Quick links to public Gotabgaa Australia pages and resources.';
     }
 
     renderFeeds(portal);
@@ -478,7 +478,7 @@
     try {
       const member = await verifyMember(email, membershipId);
       if (member.memberStatus === 'inactive') {
-        showError('Your membership is inactive. Contact the chapter if you believe this is an error.');
+        showError('Your membership is inactive. Contact Gotabgaa Australia if you believe this is an error.');
         return;
       }
       saveSession(member);
