@@ -58,16 +58,16 @@
         "ctaSecondary": "Learn About Us",
         "ctaSecondaryUrl": "about.html",
         "slides": [
-          "assets/hero/berur-brisbane.png",
-          "assets/hero/brisbane-team.png",
-          "assets/hero/kokwet-sports-day.png",
-          "assets/hero/kitwek-wa.png",
-          "assets/hero/taunet-cultural-dance.png",
-          "assets/hero/chairman-taunet.png",
-          "assets/hero/charmen-gifting.png",
-          "assets/hero/hosea-sa-team.png",
-          "assets/hero/nick-boit-gifting.png",
-          "assets/hero/hosea-gifting.png"
+          "assets/hero/page/kokwet-sports-day.png",
+          "assets/hero/page/stage-address.png",
+          "assets/hero/page/cultural-procession.png",
+          "assets/hero/page/women-traditional.png",
+          "assets/hero/page/gala-celebration.png",
+          "assets/hero/page/community-gathering.png",
+          "assets/hero/page/taunet-nelel.png",
+          "assets/hero/page/kitwek-wa.png",
+          "assets/hero/page/charmen-gifting.png",
+          "assets/hero/page/nick-boit-gifting.png"
         ]
       },
       "impact": [
