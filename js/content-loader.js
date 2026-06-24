@@ -81,7 +81,9 @@
       'terms.html': 'terms',
       'portal.html': 'portal',
       'join.html': 'join',
-      'book.html': 'book'
+      'book.html': 'book',
+      'members.html': 'members',
+      'ailcd-apply.html': 'ailcd-apply'
     };
     return map[file] || null;
   }
@@ -97,6 +99,9 @@
     if (tag && hero.tag) tag.textContent = hero.tag;
     if (title && hero.title) title.textContent = hero.title;
     if (desc && hero.description) desc.textContent = hero.description;
+    if (hero.backgroundImage && window.mountPageHeroBackground) {
+      window.mountPageHeroBackground(section, hero.backgroundImage);
+    }
   }
 
   function getEventBookingUrl(event) {

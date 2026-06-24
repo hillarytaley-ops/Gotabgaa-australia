@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroPhotoFit();
   initHeroParallax();
   initTiltCards();
+  initPageHeroBackground();
   initPageHeroLogos();
   initAdminPortalLinks();
   initMemberPortalLinks();
@@ -351,6 +352,64 @@ function initHeroPhotoFit() {
 }
 
 // Animated logo orbits on sub-page heroes (left & right)
+const PAGE_HERO_BACKGROUNDS = {
+  'about.html': 'assets/hero/page/taunet-nelel.png',
+  'programs.html': 'assets/hero/page/cultural-procession.png',
+  'events.html': 'assets/hero/page/kokwet-sports-day.png',
+  'leadership.html': 'assets/hero/page/stage-address.png',
+  'gallery.html': 'assets/hero/page/women-traditional.png',
+  'contact.html': 'assets/hero/page/community-gathering.png',
+  'join.html': 'assets/hero/page/gala-celebration.png',
+  'book.html': 'assets/hero/page/kokwet-sports-day.png',
+  'members.html': 'assets/hero/page/community-gathering.png',
+  'portal.html': 'assets/hero/page/stage-address.png',
+  'privacy.html': 'assets/hero/page/women-traditional.png',
+  'terms.html': 'assets/hero/page/women-traditional.png',
+  'ailcd-apply.html': 'assets/hero/page/taunet-nelel.png'
+};
+
+function mountPageHeroBackground(section, src) {
+  if (!section || !src) return;
+
+  let wrap = section.querySelector('.page-hero__photo-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'page-hero__photo-wrap';
+    wrap.setAttribute('aria-hidden', 'true');
+
+    const img = document.createElement('img');
+    img.className = 'page-hero__photo';
+    img.alt = '';
+    img.decoding = 'async';
+    wrap.appendChild(img);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'page-hero__overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+
+    section.insertBefore(wrap, section.firstChild);
+    section.insertBefore(overlay, wrap.nextSibling);
+  }
+
+  const img = wrap.querySelector('.page-hero__photo');
+  if (img && img.getAttribute('src') !== src) {
+    img.src = src;
+  }
+}
+
+function initPageHeroBackground() {
+  if (!document.body.classList.contains('page-sub')) return;
+
+  const section = document.querySelector('.page-hero');
+  if (!section) return;
+
+  const page = window.location.pathname.split('/').pop() || '';
+  const src = section.dataset.heroBg || PAGE_HERO_BACKGROUNDS[page];
+  if (src) mountPageHeroBackground(section, src);
+}
+
+window.mountPageHeroBackground = mountPageHeroBackground;
+
 function initPageHeroLogos() {
   if (!document.body.classList.contains('page-sub')) return;
 

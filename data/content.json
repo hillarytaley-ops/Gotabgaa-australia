@@ -100,7 +100,12 @@
       }
     },
     "about": {
-      "hero": { "tag": "Who We Are", "title": "About Gotabgaa Australia", "description": "Connecting Kalenjin families and friends across Australia through unity, heritage, and excellence." },
+      "hero": {
+        "tag": "Who We Are",
+        "title": "About Gotabgaa Australia",
+        "description": "Connecting Kalenjin families and friends across Australia through unity, heritage, and excellence.",
+        "backgroundImage": "assets/hero/page/taunet-nelel.png"
+      },
       "lead": "We are an independent Australian Kalenjin community association dedicated to connecting, uplifting, and empowering individuals and families across the continent.",
       "mission": "Inspire, connect, and economically empower our members through education, networking, investment opportunities, and cultural awareness in Australia.",
       "vision": "Unite members and provide a platform where talent, leadership, culture, and innovation are nurtured — bridging Kenya and Australia.",
@@ -110,10 +115,20 @@
       "cta": { "title": "Ready to connect?", "description": "Join our community and be part of something meaningful.", "button": "Get in Touch", "buttonUrl": "contact.html" }
     },
     "programs": {
-      "hero": { "tag": "What We Do", "title": "Our Programs", "description": "Purpose-driven initiatives that strengthen our community across Australia and beyond." }
+      "hero": {
+        "tag": "What We Do",
+        "title": "Our Programs",
+        "description": "Purpose-driven initiatives that strengthen our community across Australia and beyond.",
+        "backgroundImage": "assets/hero/page/cultural-procession.png"
+      }
     },
     "events": {
-      "hero": { "tag": "Community Calendar", "title": "Events & Gatherings", "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments." },
+      "hero": {
+        "tag": "Community Calendar",
+        "title": "Events & Gatherings",
+        "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments.",
+        "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
+      },
       "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
       "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the Gotabgaa Australia calendar for the year ahead." },
       "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal — online payments will be added in a future update." },
@@ -127,25 +142,87 @@
       "cta": { "title": "Want to host an event?", "description": "Gotabgaa Australia members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
     },
     "leadership": {
-      "hero": { "tag": "Our Team", "title": "Gotabgaa Leadership", "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity." }
+      "hero": {
+        "tag": "Our Team",
+        "title": "Gotabgaa Leadership",
+        "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity.",
+        "backgroundImage": "assets/hero/page/stage-address.png"
+      }
     },
     "gallery": {
-      "hero": { "tag": "Moments", "title": "Community Gallery", "description": "Celebrating our gatherings, cultural events, and milestones together." },
+      "hero": {
+        "tag": "Moments",
+        "title": "Community Gallery",
+        "description": "Celebrating our gatherings, cultural events, and milestones together.",
+        "backgroundImage": "assets/hero/page/women-traditional.png"
+      },
       "upcomingHeader": { "tag": "Coming Up", "title": "Upcoming Event Photos", "description": "Preview and download photos from events on the calendar." },
       "pastHeader": { "tag": "Memories", "title": "Past Event Photos", "description": "Download photos from previous gatherings and celebrations." }
     },
     "contact": {
-      "hero": { "tag": "Get In Touch", "title": "Contact Us", "description": "For assistance with any of our programs or general inquiries, please reach out. We're here to help." }
+      "hero": {
+        "tag": "Get In Touch",
+        "title": "Contact Us",
+        "description": "For assistance with any of our programs or general inquiries, please reach out. We're here to help.",
+        "backgroundImage": "assets/hero/page/community-gathering.png"
+      }
     },
     "join": {
-      "hero": { "tag": "Membership", "title": "Join Gotabgaa Australia", "description": "Register as a member and connect with Kalenjin families and friends across Australia." }
+      "hero": {
+        "tag": "Membership",
+        "title": "Join Gotabgaa Australia",
+        "description": "Register as a member and connect with Kalenjin families and friends across Australia.",
+        "backgroundImage": "assets/hero/page/gala-celebration.png"
+      }
+    },
+    "book": {
+      "hero": {
+        "tag": "Event Booking",
+        "title": "Reserve Your Place",
+        "description": "Register for upcoming Gotabgaa Australia events. Secure online payments will be added in a future update.",
+        "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
+      }
+    },
+    "members": {
+      "hero": {
+        "tag": "Members Only",
+        "title": "Members Dashboard",
+        "description": "News, events, photos, and community updates for registered Gotabgaa Australia members.",
+        "backgroundImage": "assets/hero/page/community-gathering.png"
+      }
+    },
+    "portal": {
+      "hero": {
+        "tag": "Leadership",
+        "title": "Admin Portal",
+        "description": "Manage website content, events, programs, gallery, and Gotabgaa Australia information — for authorised leadership volunteers only.",
+        "backgroundImage": "assets/hero/page/stage-address.png"
+      }
+    },
+    "ailcd-apply": {
+      "hero": {
+        "tag": "Leadership EOI",
+        "title": "Interim Leadership Expression of Interest",
+        "description": "Complete all sections. Fields marked * are required.",
+        "backgroundImage": "assets/hero/page/taunet-nelel.png"
+      }
     },
     "privacy": {
-      "hero": { "tag": "Legal", "title": "Privacy Policy", "description": "How we collect, use, and protect your information." },
+      "hero": {
+        "tag": "Legal",
+        "title": "Privacy Policy",
+        "description": "How we collect, use, and protect your information.",
+        "backgroundImage": "assets/hero/page/women-traditional.png"
+      },
       "lastUpdated": "June 2026"
     },
     "terms": {
-      "hero": { "tag": "Legal", "title": "Terms & Conditions", "description": "Terms for using this website and engaging with our community." },
+      "hero": {
+        "tag": "Legal",
+        "title": "Terms & Conditions",
+        "description": "Terms for using this website and engaging with our community.",
+        "backgroundImage": "assets/hero/page/women-traditional.png"
+      },
       "lastUpdated": "June 2026"
     }
   },
