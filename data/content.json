@@ -49,12 +49,12 @@
     "home": {
       "hero": {
         "badge": "Gotabgaa Australia",
-        "title": "Connecting Communities,",
-        "titleEm": "Preserving Heritage",
+        "title": "Discover Community,",
+        "titleEm": "Create Change",
         "subtitle": "Unity • Heritage • Excellence",
-        "description": "We unite Kalenjin families and friends across Australia — fostering cultural pride, mutual support, and economic empowerment from Sydney to Perth.",
-        "ctaPrimary": "Explore Programs",
-        "ctaPrimaryUrl": "programs.html",
+        "description": "Join Gotabgaa Australia — your Kalenjin community hub across Australia. We unite families and friends, fostering cultural pride, mutual support, and economic empowerment.",
+        "ctaPrimary": "Join Us",
+        "ctaPrimaryUrl": "join.html",
         "ctaSecondary": "Learn About Us",
         "ctaSecondaryUrl": "about.html",
         "slides": [
@@ -77,13 +77,13 @@
         { "number": "10+", "label": "Annual Gatherings" }
       ],
       "aboutPreview": {
-        "tag": "Who We Are",
-        "title": "A Home Away From Home",
+        "tag": "About",
+        "title": "Gotabgaa Australia",
         "paragraphs": [
-          "Gotabgaa Australia brings together Kalenjin families and friends across the continent — preserving our rich heritage while building a strong, united community in Australia.",
-          "From cultural celebrations to youth mentorship and economic empowerment, we create spaces where tradition meets opportunity."
+          "Gotabgaa Australia is your Kalenjin community hub across Australia. We bring families and friends together, offering support, resources, and opportunities for growth and connection.",
+          "Join us in building a thriving Kalenjin community — preserving heritage while creating spaces where tradition meets opportunity."
         ],
-        "cta": "Discover Our Story",
+        "cta": "Read More",
         "ctaUrl": "about.html",
         "caption": "Taunet Nelel — celebrating Kalenjin heritage across Australia"
       },

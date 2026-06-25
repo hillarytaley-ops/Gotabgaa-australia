@@ -165,6 +165,41 @@
     `;
   }
 
+  function renderHomeEventCard(event) {
+    const isUpcoming = event.status === 'upcoming' && event.bookingEnabled !== false;
+    const actionUrl = isUpcoming
+      ? getEventBookingUrl(event)
+      : (event.registerUrl || 'events.html');
+    const actionLabel = isUpcoming
+      ? (event.bookingLabel || 'RSVP')
+      : (event.registerLabel || 'Learn More');
+
+    return `
+      <article class="home-event-card animate-on-scroll" data-animate="fade-up">
+        <div class="home-event-card__media">
+          <img src="${escapeHtml(event.image)}" alt="${escapeHtml(event.title)}" loading="lazy" decoding="async">
+        </div>
+        <div class="home-event-card__body">
+          <time class="home-event-card__date">${escapeHtml(event.datePill || event.date)}</time>
+          <h3>${escapeHtml(event.title)}</h3>
+          <p class="home-event-card__location">${escapeHtml(event.location)}</p>
+          <p class="home-event-card__summary">${escapeHtml(event.summary || event.description)}</p>
+          <a href="${escapeHtml(actionUrl)}" class="btn btn--primary btn--sm">${escapeHtml(actionLabel)}</a>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderHomeEvents(content) {
+    const grid = document.getElementById('homeEventsGrid');
+    if (!grid || !content.events) return;
+
+    const upcoming = content.events.filter(e => e.status === 'upcoming').slice(0, 2);
+    grid.innerHTML = upcoming.length
+      ? upcoming.map(e => renderHomeEventCard(e)).join('')
+      : '<p class="home-events__empty">No upcoming events at the moment. Check back soon!</p>';
+  }
+
   function renderFeaturedEvent(event) {
     const card = document.querySelector('.events-featured__card');
     if (!card || !event) return;
@@ -529,10 +564,10 @@
     const aboutPreview = document.querySelector('.about-preview');
     if (aboutPreview && home.aboutPreview) {
       const ap = home.aboutPreview;
-      const tag = aboutPreview.querySelector('.section__tag');
-      const h2 = aboutPreview.querySelector('.section__title');
-      const paragraphs = aboutPreview.querySelectorAll('.about-preview__content p');
-      const cta = aboutPreview.querySelector('.about-preview__content .btn');
+      const tag = aboutPreview.querySelector('.home-about__heading') || aboutPreview.querySelector('.section__tag');
+      const h2 = aboutPreview.querySelector('.home-about__org') || aboutPreview.querySelector('.section__title');
+      const paragraphs = aboutPreview.querySelectorAll('.about-preview__content p, .home-about__content p');
+      const cta = aboutPreview.querySelector('.about-preview__content .btn, .home-about__content .btn');
       const caption = aboutPreview.querySelector('.about-preview__caption');
       if (tag) tag.textContent = ap.tag;
       if (h2) h2.textContent = ap.title;
@@ -579,12 +614,18 @@
     const about = content.pages?.about;
     if (!about) return;
 
-    const lead = document.querySelector('.about__lead');
-    if (lead) lead.textContent = about.lead;
-
     const cards = document.querySelectorAll('.about__card');
-    if (cards[0]) cards[0].querySelector('p').textContent = about.mission;
-    if (cards[1]) cards[1].querySelector('p').textContent = about.vision;
+    if (cards[0]) {
+      const missionP = cards[0].querySelector('p');
+      if (missionP) missionP.textContent = about.mission;
+    }
+    if (cards[1]) {
+      const visionP = cards[1].querySelector('p');
+      if (visionP) visionP.textContent = about.vision;
+    }
+
+    const storyLead = document.querySelector('.story-section__prose .about__lead');
+    if (storyLead && about.lead) storyLead.textContent = about.lead;
 
     const tags = document.querySelector('.about__tags');
     if (tags && about.cities) {
@@ -643,6 +684,7 @@
     if (page === 'home') {
       applyHome(content);
       renderPrograms(content);
+      renderHomeEvents(content);
     } else if (page && content.pages?.[page]?.hero) {
       applyPageHero(page, content.pages);
     }
