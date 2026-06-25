@@ -351,9 +351,9 @@
 
     const impactSection = document.querySelector('.events-impact .impact__grid');
     if (impactSection && eventsPage?.impact) {
-      impactSection.innerHTML = eventsPage.impact.map((stat, i) => `
-        <div class="impact__card animate-on-scroll" data-animate="scale-up" data-delay="${i}">
-          <span class="impact__number" ${stat.animate ? `data-count="${stat.number}"` : ''}>${stat.animate ? '0' : stat.number}</span>
+      impactSection.innerHTML = eventsPage.impact.map((stat) => `
+        <div class="impact__card">
+          <span class="impact__number">${escapeHtml(stat.number)}</span>
           <span class="impact__label">${escapeHtml(stat.label)}</span>
         </div>
       `).join('');
@@ -553,8 +553,8 @@
 
     const impactGrid = document.querySelector('.impact .impact__grid');
     if (impactGrid && home.impact) {
-      impactGrid.innerHTML = home.impact.map((stat, i) => `
-        <div class="impact__card animate-on-scroll" data-animate="scale-up" data-delay="${i * 100}">
+      impactGrid.innerHTML = home.impact.map((stat) => `
+        <div class="impact__card">
           <span class="impact__number">${escapeHtml(stat.number)}</span>
           <span class="impact__label">${escapeHtml(stat.label)}</span>
         </div>
