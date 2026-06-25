@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=11">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-sub page-form-only">
@@ -54,6 +54,17 @@
 
   <section class="section ailcd-apply">
     <div class="container container--narrow">
+      <div class="ailcd-deadline-banner card" id="ailcdDeadlineBanner" role="status" aria-live="polite">
+        <p><strong>Deadline:</strong> Expressions of interest close at <strong>midnight on 27 June 2026 (AEST)</strong>.</p>
+        <p class="ailcd-deadline-banner__countdown" id="ailcdDeadlineCountdown"></p>
+      </div>
+
+      <div class="ailcd-closed-notice card" id="ailcdClosedNotice" hidden role="alert">
+        <h2 class="ailcd-closed-notice__title">Expressions of interest are now closed</h2>
+        <p>Thank you for your interest. The deadline was midnight on 27 June 2026 (AEST).</p>
+        <p class="form-hint">If you already submitted an application, use the <strong>Already applied?</strong> section below to check your status.</p>
+      </div>
+
       <div class="ailcd-status-check card" id="ailcdStatusCheck">
         <h2 class="ailcd-status-check__title">Already applied?</h2>
         <p class="form-hint">Enter the <strong>email address you used when applying</strong>. If we find your application, your reference number and current status will appear here. Each person may apply only once, so the application form will be hidden for you.</p>
@@ -258,6 +269,6 @@
     </div>
   </footer>
 
-  <script src="js/ailcd-apply.js?v=9"></script>
+  <script src="js/ailcd-apply.js?v=10"></script>
 </body>
 </html>

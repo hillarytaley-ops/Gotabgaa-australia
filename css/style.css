@@ -2571,6 +2571,45 @@ body.page-form-only {
   margin-top: -4px;
 }
 
+.ailcd-deadline-banner {
+  margin-bottom: 1.25rem;
+  border-left: 4px solid var(--tan);
+}
+
+.ailcd-deadline-banner p {
+  margin: 0 0 0.35rem;
+}
+
+.ailcd-deadline-banner p:last-child {
+  margin-bottom: 0;
+}
+
+.ailcd-deadline-banner__countdown {
+  font-weight: 600;
+  color: var(--brown-800);
+}
+
+.ailcd-closed-notice {
+  margin-bottom: 1.25rem;
+  border-left: 4px solid #c0392b;
+  background: #fdf5f4;
+}
+
+.ailcd-closed-notice__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  color: var(--brown-900);
+}
+
+.ailcd-closed-notice p {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+}
+
+.ailcd-closed-notice p:last-child {
+  margin-bottom: 0;
+}
+
 .ailcd-apply__new-applicant-note {
   padding: 12px 14px;
   border-radius: 8px;

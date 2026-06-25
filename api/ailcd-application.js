@@ -4,12 +4,20 @@ import {
   findApplicationByEmail,
   getAppMeta,
   isSchemaColumnError,
+  isAilcdApplicationsOpen,
   withAppMeta
 } from './lib/ailcd-app.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  if (!isAilcdApplicationsOpen()) {
+    res.status(403).json({
+      error: 'Expressions of interest closed at midnight on 27 June 2026 (AEST). You can still check an existing application using your email above.'
+    });
     return;
   }
 

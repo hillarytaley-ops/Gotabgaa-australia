@@ -10,10 +10,14 @@
   ];
 
   const STATUS_STORAGE_KEY = 'gotabgaaEoiStatus';
+  const EOI_DEADLINE_ISO = '2026-06-28T00:00:00+10:00';
+  const EOI_CLOSED_MESSAGE = 'Expressions of interest closed at midnight on 27 June 2026 (AEST). You can still check an existing application using your email above.';
 
   let currentStep = 0;
   let signaturePad = null;
   let activeStatusSession = null;
+  let eoiDeadlineMs = new Date(EOI_DEADLINE_ISO).getTime();
+  let eoiCountdownTimer = null;
 
   function getStatusSession() {
     try {
@@ -83,7 +87,87 @@
 
   function showApplicationSection(show) {
     const section = document.getElementById('ailcdApplicationSection');
-    if (section) section.hidden = !show;
+    if (section) section.hidden = !show || !isEoiOpen();
+  }
+
+  function isEoiOpen() {
+    return Date.now() < eoiDeadlineMs;
+  }
+
+  function formatEoiCountdown() {
+    const ms = eoiDeadlineMs - Date.now();
+    if (ms <= 0) return null;
+
+    const days = Math.floor(ms / 86400000);
+    const hours = Math.floor((ms % 86400000) / 3600000);
+    const mins = Math.floor((ms % 3600000) / 60000);
+    const secs = Math.floor((ms % 60000) / 1000);
+
+    if (days > 0) {
+      return `${days} day${days !== 1 ? 's' : ''}, ${hours} hour${hours !== 1 ? 's' : ''}`;
+    }
+    if (hours > 0) {
+      return `${hours} hour${hours !== 1 ? 's' : ''}, ${mins} minute${mins !== 1 ? 's' : ''}`;
+    }
+    return `${mins} minute${mins !== 1 ? 's' : ''}, ${secs} second${secs !== 1 ? 's' : ''}`;
+  }
+
+  function applyEoiClosedState() {
+    const closedCard = document.getElementById('ailcdClosedNotice');
+    const deadlineBanner = document.getElementById('ailcdDeadlineBanner');
+    const heroDesc = document.querySelector('.page-hero__desc');
+    const open = isEoiOpen();
+
+    if (deadlineBanner) deadlineBanner.hidden = !open;
+    if (closedCard) closedCard.hidden = open;
+
+    if (!open) {
+      showApplicationSection(false);
+      if (heroDesc) {
+        heroDesc.textContent = `${EOI_CLOSED_MESSAGE.replace(' You can still check an existing application using your email above.', '')}. Existing applicants can check their status below.`;
+      }
+      if (eoiCountdownTimer) {
+        clearInterval(eoiCountdownTimer);
+        eoiCountdownTimer = null;
+      }
+      return;
+    }
+
+    if (heroDesc && !document.getElementById('ailcdStatusPortal')?.hidden) {
+      heroDesc.textContent = 'Complete all sections. Fields marked * are required.';
+    } else if (heroDesc) {
+      heroDesc.textContent = 'Complete all sections. Fields marked * are required.';
+    }
+  }
+
+  function updateEoiCountdownDisplay() {
+    const countdownEl = document.getElementById('ailcdDeadlineCountdown');
+    if (!countdownEl) return;
+
+    if (!isEoiOpen()) {
+      countdownEl.textContent = '';
+      applyEoiClosedState();
+      return;
+    }
+
+    const countdown = formatEoiCountdown();
+    countdownEl.textContent = countdown ? `Closes in ${countdown}` : '';
+  }
+
+  async function initEoiDeadline() {
+    try {
+      const res = await fetch('/api/ailcd-deadline');
+      const data = await res.json().catch(() => ({}));
+      if (data.deadlineMs) eoiDeadlineMs = data.deadlineMs;
+    } catch {
+      /* Use client default deadline */
+    }
+
+    applyEoiClosedState();
+    updateEoiCountdownDisplay();
+
+    if (eoiCountdownTimer) clearInterval(eoiCountdownTimer);
+    eoiCountdownTimer = setInterval(updateEoiCountdownDisplay, 1000);
   }
 
   function showStatusPortal(show) {
@@ -412,9 +496,11 @@
     return true;
   }
 
-  function init() {
+  async function init() {
     const form = document.getElementById('ailcdForm');
     const checkForm = document.getElementById('ailcdCheckForm');
+
+    await initEoiDeadline();
 
     document.getElementById('clearSignature')?.addEventListener('click', () => {
       if (!signaturePad) ensureSignaturePad();
@@ -464,7 +550,7 @@
           error.hidden = false;
         }
         showStatusPortal(false);
-        showApplicationSection(true);
+        showApplicationSection(isEoiOpen());
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -505,7 +591,7 @@
           error.hidden = false;
         }
         showStatusPortal(false);
-        showApplicationSection(!getStatusSession());
+        showApplicationSection(isEoiOpen() && !getStatusSession());
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -522,6 +608,13 @@
 
       success.hidden = true;
       error.hidden = true;
+
+      if (!isEoiOpen()) {
+        error.textContent = EOI_CLOSED_MESSAGE;
+        error.hidden = false;
+        applyEoiClosedState();
+        return;
+      }
 
       if (!validateCurrentStep()) return;
 
@@ -587,11 +680,11 @@
       activeStatusSession = savedSession;
       refreshSavedStatus().catch(() => {
         showStatusPortal(false);
-        showApplicationSection(true);
+        showApplicationSection(isEoiOpen());
       });
     } else {
       showStatusPortal(false);
-      showApplicationSection(true);
+      showApplicationSection(isEoiOpen());
     }
 
     showStep(0);

@@ -2,7 +2,8 @@ import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import {
   findApplicationByEmail,
   findApplicationByEmailAndReference,
-  getAppMeta
+  getAppMeta,
+  isAilcdApplicationsOpen
 } from './lib/ailcd-app.js';
 
 function toStatusResponse(row) {
@@ -54,7 +55,9 @@ export default async function handler(req, res) {
       row = await findApplicationByEmail(supabase, email);
       if (!row) {
         res.status(404).json({
-          error: 'No application found for this email. If you have not applied yet, complete the form below.'
+          error: isAilcdApplicationsOpen()
+            ? 'No application found for this email. If you have not applied yet, complete the form below.'
+            : 'No application found for this email. Expressions of interest closed at midnight on 27 June 2026 (AEST).'
         });
         return;
       }
