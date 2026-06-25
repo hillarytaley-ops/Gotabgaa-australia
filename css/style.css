@@ -1198,11 +1198,24 @@ body.page-sub .section {
   object-fit: cover;
 }
 
-.about__quote {
+.about__visual .about__quote {
   position: absolute;
   bottom: -30px;
   left: -20px;
   right: 20px;
+  background: var(--white);
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.about__content .about__quote,
+.about--split .about__quote {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  margin-top: 0;
   background: var(--white);
   padding: 24px 28px;
   border-radius: var(--radius);
