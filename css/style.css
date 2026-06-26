@@ -42,6 +42,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--header-height);
+  overflow-x: clip;
 }
 
 body {
@@ -50,7 +51,9 @@ body {
   line-height: 1.6;
   color: var(--text);
   background: var(--cream);
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
+  min-width: 0;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -79,6 +82,8 @@ a:hover {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .section {
@@ -3123,16 +3128,17 @@ body.modal-open {
 .footer__social-list {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
   gap: 8px;
   list-style: none;
   margin: 0;
-  padding: 4px 12px 8px 4px;
-  width: max-content;
-  max-width: none;
-  box-sizing: content-box;
-  overflow: visible;
+  padding: 4px 0 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .footer__social-list li {
@@ -3366,10 +3372,14 @@ body.modal-open {
 
   .nav__title {
     font-size: 1.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 120px);
   }
 
   .nav__brand {
-    max-width: none;
+    max-width: calc(100% - 56px);
+    min-width: 0;
   }
 
   .nav__toggle {
@@ -3555,20 +3565,29 @@ body.modal-open {
     animation-duration: 14s;
   }
 
-  .animate-on-scroll[data-animate="fade-up"] {
-    transform: translateY(24px);
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
-  .animate-on-scroll[data-animate="fade-left"] {
-    transform: translateX(28px);
+  .hero__slide__photo {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
   }
 
-  .animate-on-scroll[data-animate="fade-right"] {
-    transform: translateX(-28px);
-  }
-
-  .animate-on-scroll[data-animate="flip-up"] {
-    transform: perspective(600px) rotateX(12deg) translateY(20px);
+  .hero__slideshow,
+  .hero__slide,
+  .hero__slide__media {
+    overflow: hidden;
+    max-width: 100%;
   }
 
   .hero__slide,
@@ -3673,6 +3692,8 @@ body.modal-open {
     opacity: 1;
     transform: none;
   }
+
+  .contact__grid {
     grid-template-columns: 1fr;
   }
 
@@ -3792,6 +3813,9 @@ body.modal-open {
 
   .nav__title {
     font-size: 1rem;
+    max-width: calc(100vw - 110px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hero__title {
@@ -5378,5 +5402,141 @@ body.modal-open {
     width: 60px;
     height: 60px;
     font-size: 0.95rem;
+  }
+}
+
+/* Mobile: no horizontal scroll, tighter layout, instant content */
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .header,
+  .hero,
+  .impact,
+  .section,
+  .footer,
+  .page-hero,
+  .cta-banner,
+  .story-section,
+  .mv-panels,
+  .home-about,
+  .home-events,
+  .programs-preview {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .header {
+    width: 100%;
+  }
+
+  .nav {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .nav__brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .home-about__layout,
+  .home-about__content,
+  .about-preview__visual,
+  .about-preview__slideshow,
+  .home-events__grid,
+  .programs-preview__grid,
+  .story-section__prose,
+  .mv-panels__grid,
+  .about__grid,
+  .about__image-frame,
+  .footer__grid,
+  .footer__nav,
+  .cta-banner__inner,
+  .impact__grid {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .about-preview__photo,
+  .about__community-photo,
+  .home-event-card__media img {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .about-preview__slideshow {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .footer {
+    overflow-x: clip;
+  }
+
+  .footer__grid {
+    overflow-x: clip;
+  }
+
+  .footer__legal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 14px;
+  }
+
+  .footer__bottom {
+    padding-left: 18px;
+    padding-right: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer__legal a {
+    white-space: nowrap;
+  }
+
+  .cta-banner__actions {
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .section,
+  .story-section.section,
+  .home-about.section,
+  .home-events.section,
+  .mv-panels.section,
+  .programs-preview.section {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .home-about__layout {
+    gap: 28px;
+  }
+
+  .home-events__grid {
+    gap: 20px;
+  }
+
+  .program-card,
+  .home-event-card,
+  .event-card,
+  .mv-panel,
+  .story-section__prose p {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .btn,
+  .nav__cta {
+    max-width: 100%;
+  }
+
+  .floating-social {
+    max-width: calc(100vw - 24px);
   }
 }

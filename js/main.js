@@ -274,7 +274,7 @@ function initScrollAnimations() {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const elements = document.querySelectorAll('.animate-on-scroll');
 
-  if (reducedMotion) {
+  if (reducedMotion || window.matchMedia('(max-width: 768px)').matches) {
     elements.forEach(el => el.classList.add('is-visible'));
     return;
   }
@@ -313,13 +313,32 @@ function initScrollAnimations() {
   });
 }
 
-// Size each hero slide to show the complete photo (no CSS crop)
+// Size each hero slide to show the complete photo (no CSS crop) — desktop only
 function initHeroPhotoFit() {
   const photos = document.querySelectorAll('.hero__slide__photo');
   if (!photos.length) return;
 
+  const resetMobileStyles = img => {
+    img.style.width = '';
+    img.style.height = '';
+    img.style.left = '';
+    img.style.top = '';
+    img.style.right = '';
+    img.style.bottom = '';
+    img.style.maxWidth = '';
+    img.style.maxHeight = '';
+    img.style.objectFit = '';
+  };
+
   const fit = () => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
     photos.forEach(img => {
+      if (isMobile) {
+        resetMobileStyles(img);
+        return;
+      }
+
       const box = img.closest('.hero__slide__media');
       if (!box || !img.naturalWidth || !img.naturalHeight) return;
 
