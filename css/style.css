@@ -1520,6 +1520,11 @@ body.page-sub .section {
   gap: 28px;
 }
 
+.programs-preview .program-card {
+  opacity: 1;
+  transform: none;
+}
+
 .about__community-photo {
   width: 100%;
   aspect-ratio: 4 / 5;

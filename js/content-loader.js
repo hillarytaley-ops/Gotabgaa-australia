@@ -367,11 +367,14 @@
     const pageGrid = document.querySelector('.programs .programs__grid');
     const homeGrid = document.querySelector('.programs-preview__grid');
 
-    const renderCard = (prog, delay, flip) => {
+    const renderCard = (prog, delay, flip, animate = true) => {
       const iconPath = PROGRAM_ICONS[prog.icon] || PROGRAM_ICONS.education;
       const anim = flip ? 'flip-up' : 'fade-up';
+      const animAttrs = animate
+        ? ` class="program-card animate-on-scroll" data-animate="${anim}" data-delay="${delay}"`
+        : ' class="program-card"';
       return `
-        <article class="program-card animate-on-scroll" data-animate="${anim}" data-delay="${delay}">
+        <article${animAttrs}>
           <div class="program-card__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${iconPath}</svg>
           </div>
@@ -389,7 +392,7 @@
 
     if (homeGrid) {
       const homePrograms = programs.filter(p => p.showOnHome);
-      homeGrid.innerHTML = homePrograms.map((p, i) => renderCard(p, i * 100, true)).join('');
+      homeGrid.innerHTML = homePrograms.map((p) => renderCard(p, 0, false, false)).join('');
     }
   }
 
