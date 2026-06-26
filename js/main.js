@@ -1,5 +1,31 @@
 // Gotabgaa Australia — Main JavaScript
 
+(function initMobileShellEarly() {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+  const run = () => {
+    if (document.body.classList.contains('admin-page')) return;
+    if (document.querySelector('.site-shell')) return;
+
+    const shell = document.createElement('div');
+    shell.className = 'site-shell';
+    const movable = [];
+
+    document.body.childNodes.forEach(node => {
+      if (node.nodeType !== 1) return;
+      if (node.tagName === 'SCRIPT') return;
+      movable.push(node);
+    });
+
+    if (!movable.length) return;
+    movable.forEach(node => shell.appendChild(node));
+    document.body.insertBefore(shell, document.body.firstChild);
+  };
+
+  if (document.body) run();
+  else document.addEventListener('DOMContentLoaded', run, { once: true });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   initSiteConfig();
   initHeader();
@@ -434,6 +460,7 @@ function initPageHeroBackground() {
 window.mountPageHeroBackground = mountPageHeroBackground;
 
 function initPageHeroLogos() {
+  if (window.matchMedia('(max-width: 768px)').matches) return;
   if (!document.body.classList.contains('page-sub')) return;
 
   const hero = document.querySelector('.page-hero');
@@ -558,10 +585,13 @@ function lockMobileViewport() {
   document.documentElement.style.overflowX = 'hidden';
   document.body.style.overflowX = 'hidden';
   document.body.style.maxWidth = '100%';
+  document.documentElement.style.maxWidth = '100%';
 
   document.querySelectorAll('.hero__slide__photo').forEach(img => {
-    img.style.maxWidth = '100%';
+    img.removeAttribute('style');
   });
+
+  document.querySelectorAll('.page-hero__logo').forEach(el => el.remove());
 }
 
 // 3D tilt on program & leader cards (desktop only)

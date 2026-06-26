@@ -3531,8 +3531,9 @@ body.modal-open {
     flex-direction: row;
     justify-content: center;
     gap: 8px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     width: 100%;
+    max-width: 100%;
     padding: 0;
     background: none;
     backdrop-filter: none;
@@ -3542,8 +3543,8 @@ body.modal-open {
 
   .hero__actions .btn {
     width: auto;
-    flex: 1;
-    max-width: 168px;
+    flex: 1 1 calc(50% - 8px);
+    max-width: 100%;
     min-width: 0;
     padding: 10px 12px;
     font-size: 0.82rem;
@@ -5610,5 +5611,100 @@ body.modal-open {
   .events__search {
     min-width: 0;
     max-width: 100%;
+  }
+}
+
+/* ============================================
+   MOBILE VIEWPORT LOCK (must stay last)
+   ============================================ */
+.site-shell {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  html {
+    overflow-x: hidden !important;
+    max-width: 100%;
+  }
+
+  body {
+    overflow-x: hidden !important;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .site-shell {
+    overflow-x: hidden !important;
+    contain: layout style;
+  }
+
+  .site-shell > * {
+    max-width: 100%;
+  }
+
+  .impact::after,
+  .btn--shine::after,
+  .tribal-border::after {
+    display: none !important;
+  }
+
+  .page-hero__logo,
+  .hero__visual,
+  .hero__orbs,
+  .hero__scroll {
+    display: none !important;
+  }
+
+  .nav__logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .nav__title {
+    font-size: 0.95rem;
+  }
+
+  .header {
+    overflow: hidden;
+  }
+
+  .hero,
+  .page-hero,
+  .impact,
+  .footer,
+  .section,
+  .cta-banner {
+    overflow-x: hidden !important;
+  }
+
+  img,
+  video,
+  svg,
+  iframe {
+    max-width: 100%;
+  }
+
+  .hero__slide__photo {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav__title {
+    display: none;
+  }
+
+  .nav__brand {
+    gap: 0;
   }
 }
