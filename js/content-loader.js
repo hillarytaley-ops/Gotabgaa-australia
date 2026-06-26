@@ -300,8 +300,8 @@
 
     const timeline = document.querySelector('.events-timeline__list');
     if (timeline && content.timeline) {
-      timeline.innerHTML = content.timeline.map((item, i) => `
-        <li class="events-timeline__item animate-on-scroll" data-animate="fade-right" data-delay="${i}">
+      timeline.innerHTML = content.timeline.map((item) => `
+        <li class="events-timeline__item">
           <span class="events-timeline__month">${escapeHtml(item.month)}</span>
           <div class="events-timeline__content">
             <h3>${escapeHtml(item.title)}</h3>

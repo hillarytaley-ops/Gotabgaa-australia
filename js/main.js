@@ -14,6 +14,8 @@
     document.body.childNodes.forEach(node => {
       if (node.nodeType !== 1) return;
       if (node.tagName === 'SCRIPT') return;
+      if (node.tagName === 'HEADER') return;
+      if (node.classList?.contains('scroll-progress')) return;
       movable.push(node);
     });
 
@@ -610,6 +612,13 @@ function lockMobileViewport() {
     card.style.opacity = '1';
     card.style.transform = 'none';
     card.style.visibility = 'visible';
+  });
+
+  document.querySelectorAll('.events-timeline__item').forEach(item => {
+    item.classList.add('is-visible');
+    item.style.opacity = '1';
+    item.style.transform = 'none';
+    item.style.visibility = 'visible';
   });
 }
 
