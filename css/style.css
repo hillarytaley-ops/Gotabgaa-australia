@@ -1252,10 +1252,15 @@ body.page-sub .section {
 /* CTA Banner */
 .cta-banner__inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.cta-banner__text {
+  max-width: 720px;
 }
 
 .cta-banner h2 {
@@ -1268,12 +1273,16 @@ body.page-sub .section {
 .cta-banner p {
   color: rgba(255, 255, 255, 0.75);
   font-size: 1.05rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .cta-banner__actions {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Leadership */
@@ -2032,6 +2041,9 @@ body.page-sub .section {
 .events-group__header {
   margin-bottom: 28px;
   max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .events-group__title {
@@ -2829,7 +2841,10 @@ body.page-form-only {
 .events-timeline__list {
   list-style: none;
   max-width: 720px;
-  margin: 0 auto;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
 }
 
 .events-timeline__item {
@@ -3773,11 +3788,6 @@ body.modal-open {
 
   .contact__grid {
     grid-template-columns: 1fr;
-  }
-
-  .cta-banner__inner {
-    flex-direction: column;
-    text-align: center;
   }
 
   .footer__grid {
