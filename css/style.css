@@ -1358,8 +1358,14 @@ body.page-sub .section {
 }
 
 .gallery-group__header {
-  margin-bottom: 28px;
+  margin: 0 auto 28px;
   max-width: 720px;
+  text-align: center;
+}
+
+.gallery-group__header .section__tag::after {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .gallery-group__title {
