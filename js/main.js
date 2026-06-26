@@ -1,7 +1,7 @@
 // Gotabgaa Australia — Main JavaScript
 
 (function initMobileShellEarly() {
-  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  if (!window.matchMedia('(max-width: 1024px)').matches) return;
 
   const run = () => {
     if (document.body.classList.contains('admin-page')) return;
@@ -586,12 +586,18 @@ function initHeroParallax() {
 }
 
 function lockMobileViewport() {
-  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+  if (!isMobile) return;
 
   document.documentElement.style.overflowX = 'hidden';
   document.body.style.overflowX = 'hidden';
   document.body.style.maxWidth = '100%';
   document.documentElement.style.maxWidth = '100%';
+
+  document.documentElement.scrollLeft = 0;
+  document.body.scrollLeft = 0;
+  const shell = document.querySelector('.site-shell');
+  if (shell) shell.scrollLeft = 0;
 
   document.querySelectorAll('.hero__slide__photo').forEach(img => {
     img.removeAttribute('style');
@@ -603,6 +609,7 @@ function lockMobileViewport() {
     card.classList.add('is-visible');
     card.style.opacity = '1';
     card.style.transform = 'none';
+    card.style.visibility = 'visible';
   });
 }
 
@@ -611,7 +618,7 @@ function initTiltCards() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (window.matchMedia('(max-width: 768px)').matches) return;
 
-  const cards = document.querySelectorAll('.program-card, .leader-card, .event-card');
+  const cards = document.querySelectorAll('.programs .program-card, .leader-card, .event-card');
 
   cards.forEach(card => {
     card.addEventListener('mousemove', e => {

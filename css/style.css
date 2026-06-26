@@ -1512,12 +1512,16 @@ body.page-sub .section {
 /* Programs preview (home) */
 .programs-preview {
   background: var(--cream);
-  overflow-x: hidden;
+  overflow-x: clip;
+  width: 100%;
 }
 
 .programs-preview .container {
-  max-width: 100%;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: clip;
 }
 
 .programs-preview__grid {
@@ -1527,6 +1531,8 @@ body.page-sub .section {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .programs-preview .program-card {
@@ -1536,17 +1542,24 @@ body.page-sub .section {
   min-width: 0;
   max-width: 100%;
   width: 100%;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 1024px) {
   .programs-preview__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+    gap: 24px;
+  }
+
+  .programs-preview .program-card {
+    padding: 32px 28px;
   }
 }
 
 @media (max-width: 640px) {
   .programs-preview__grid {
-    grid-template-columns: 1fr;
+    max-width: 100%;
   }
 
   .programs-preview .program-card {
@@ -5691,7 +5704,6 @@ body.modal-open {
 
   .site-shell {
     overflow-x: hidden !important;
-    contain: layout style;
   }
 
   .site-shell > * {
