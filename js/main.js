@@ -16,11 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initPageHeroLogos();
   initAdminPortalLinks();
   initMemberPortalLinks();
+  lockMobileViewport();
+  window.addEventListener('resize', lockMobileViewport, { passive: true });
 });
 
 document.addEventListener('cms-ready', () => {
   initScrollAnimations();
   initTiltCards();
+  initHeroPhotoFit();
+  lockMobileViewport();
 });
 
 document.addEventListener('events-ready', () => {
@@ -546,6 +550,18 @@ function initHeroParallax() {
       visual.style.transform = `translateY(${progress * -15}px)`;
     }
   }, { passive: true });
+}
+
+function lockMobileViewport() {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+  document.documentElement.style.overflowX = 'hidden';
+  document.body.style.overflowX = 'hidden';
+  document.body.style.maxWidth = '100%';
+
+  document.querySelectorAll('.hero__slide__photo').forEach(img => {
+    img.style.maxWidth = '100%';
+  });
 }
 
 // 3D tilt on program & leader cards (desktop only)

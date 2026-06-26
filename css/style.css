@@ -42,7 +42,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--header-height);
-  overflow-x: clip;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -51,7 +52,7 @@ body {
   line-height: 1.6;
   color: var(--text);
   background: var(--cream);
-  overflow-x: clip;
+  overflow-x: hidden;
   max-width: 100%;
   min-width: 0;
   -webkit-tap-highlight-color: transparent;
@@ -200,6 +201,14 @@ a:hover {
   background: var(--brown-800);
   box-shadow: 0 2px 16px rgba(42, 31, 23, 0.25);
   transition: all var(--transition);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.header .container {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .header.scrolled {
@@ -350,6 +359,7 @@ a:hover {
   border: none;
   cursor: pointer;
   padding: 8px;
+  flex: 0 0 auto;
 }
 
 .nav__toggle span {
@@ -3058,7 +3068,8 @@ body.modal-open {
   background: var(--brown-900);
   color: rgba(255, 255, 255, 0.7);
   padding: calc(var(--header-height) + 48px + var(--tribal-height)) 0 max(32px, env(safe-area-inset-bottom, 0px) + 16px);
-  overflow: visible;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .footer .tribal-border--edge {
@@ -3073,7 +3084,8 @@ body.modal-open {
   gap: 40px 48px;
   padding-bottom: 48px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: visible;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .footer__brand {
@@ -3281,6 +3293,7 @@ body.modal-open {
 .footer__legal {
   display: flex;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
 .footer__legal a {
@@ -3372,14 +3385,18 @@ body.modal-open {
 
   .nav__title {
     font-size: 1.15rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(100vw - 120px);
   }
 
   .nav__brand {
-    max-width: calc(100% - 56px);
+    flex: 1 1 auto;
     min-width: 0;
+    max-width: none;
+    overflow: hidden;
   }
 
   .nav__toggle {
@@ -3636,6 +3653,13 @@ body.modal-open {
 
   .events__search-wrap {
     max-width: none;
+    min-width: 0;
+  }
+
+  .events__search {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
   }
 
   .about__grid {
@@ -3813,7 +3837,9 @@ body.modal-open {
 
   .nav__title {
     font-size: 1rem;
-    max-width: calc(100vw - 110px);
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -5409,11 +5435,17 @@ body.modal-open {
 @media (max-width: 768px) {
   html,
   body {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     width: 100%;
+    max-width: 100%;
+  }
+
+  body {
+    position: relative;
   }
 
   .header,
+  .header .container,
   .hero,
   .impact,
   .section,
@@ -5424,23 +5456,65 @@ body.modal-open {
   .mv-panels,
   .home-about,
   .home-events,
-  .programs-preview {
+  .programs-preview,
+  .scroll-progress {
     max-width: 100%;
-    overflow-x: clip;
+    overflow-x: hidden;
   }
 
   .header {
     width: 100%;
   }
 
+  .header .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
   .nav {
     min-width: 0;
     gap: 8px;
+    width: 100%;
   }
 
   .nav__brand {
     flex: 1 1 auto;
     min-width: 0;
+    overflow: hidden;
+  }
+
+  .nav__logo {
+    flex-shrink: 0;
+  }
+
+  .hero {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .hero__content {
+    left: 12px;
+    right: 12px;
+  }
+
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .about-preview__photo--1,
+  .about-preview__photo--2 {
+    animation: none;
+    transform: none;
+  }
+
+  .about-preview__photo--2 {
+    opacity: 0;
+  }
+
+  .about__visual .about__quote {
+    left: 0;
+    right: 0;
   }
 
   .home-about__layout,
@@ -5455,6 +5529,7 @@ body.modal-open {
   .about__image-frame,
   .footer__grid,
   .footer__nav,
+  .footer__bottom,
   .cta-banner__inner,
   .impact__grid {
     min-width: 0;
@@ -5473,29 +5548,21 @@ body.modal-open {
     max-width: 100%;
   }
 
-  .footer {
-    overflow-x: clip;
-  }
-
-  .footer__grid {
-    overflow-x: clip;
-  }
-
   .footer__legal {
-    flex-wrap: wrap;
     justify-content: center;
     gap: 10px 14px;
   }
 
   .footer__bottom {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 16px;
+    padding-right: 16px;
     flex-wrap: wrap;
     gap: 12px;
+    justify-content: center;
   }
 
   .footer__legal a {
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .cta-banner__actions {
@@ -5537,6 +5604,11 @@ body.modal-open {
   }
 
   .floating-social {
-    max-width: calc(100vw - 24px);
+    left: max(12px, env(safe-area-inset-left, 0px) + 8px);
+  }
+
+  .events__search {
+    min-width: 0;
+    max-width: 100%;
   }
 }
