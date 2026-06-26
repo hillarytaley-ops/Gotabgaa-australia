@@ -311,11 +311,17 @@ function initScrollAnimations() {
 
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
+  const getScrollDelay = (el, isMobile) => {
+    const raw = parseInt(el.dataset.delay || '0', 10);
+    const index = raw > 20 ? Math.floor(raw / 100) : raw;
+    return Math.min(Math.max(index, 0), 5) * (isMobile ? 60 : 100);
+  };
+
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const delay = parseInt(entry.target.dataset.delay || '0', 10) * (isMobile ? 60 : 100);
+          const delay = getScrollDelay(entry.target, isMobile);
           setTimeout(() => {
             entry.target.classList.add('is-visible');
           }, delay);
@@ -335,7 +341,7 @@ function initScrollAnimations() {
     const rect = el.getBoundingClientRect();
     const inView = rect.top < window.innerHeight && rect.bottom > 0;
     if (inView) {
-      const delay = parseInt(el.dataset.delay || '0', 10) * (isMobile ? 60 : 100);
+      const delay = getScrollDelay(el, isMobile);
       setTimeout(() => {
         el.classList.add('is-visible');
       }, delay);
@@ -592,6 +598,12 @@ function lockMobileViewport() {
   });
 
   document.querySelectorAll('.page-hero__logo').forEach(el => el.remove());
+
+  document.querySelectorAll('.programs-preview .program-card').forEach(card => {
+    card.classList.add('is-visible');
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  });
 }
 
 // 3D tilt on program & leader cards (desktop only)

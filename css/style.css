@@ -1512,17 +1512,46 @@ body.page-sub .section {
 /* Programs preview (home) */
 .programs-preview {
   background: var(--cream);
+  overflow-x: hidden;
+}
+
+.programs-preview .container {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .programs-preview__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .programs-preview .program-card {
-  opacity: 1;
-  transform: none;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .programs-preview__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .programs-preview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .programs-preview .program-card {
+    padding: 28px 24px;
+  }
 }
 
 .about__community-photo {

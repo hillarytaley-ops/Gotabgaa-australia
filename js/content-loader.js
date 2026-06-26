@@ -393,6 +393,11 @@
     if (homeGrid) {
       const homePrograms = programs.filter(p => p.showOnHome);
       homeGrid.innerHTML = homePrograms.map((p) => renderCard(p, 0, false, false)).join('');
+      homeGrid.querySelectorAll('.program-card').forEach(card => {
+        card.classList.add('is-visible');
+        card.style.opacity = '1';
+        card.style.transform = 'none';
+      });
     }
   }
 
