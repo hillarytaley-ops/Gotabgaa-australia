@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gotabgaa Australia — Membership Payments &amp; Tax Guide</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --brown-700: #5c4332;
+      --tan: #b8864e;
+      --cream: #f8f4ee;
+      --text: #2a1f17;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.65;
+      color: var(--text);
+      background: #fff;
+      margin: 0;
+    }
+
+    .doc { max-width: 820px; margin: 0 auto; padding: 48px 56px; }
+
+    .cover {
+      text-align: center;
+      padding: 40px 24px 48px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 36px;
+    }
+
+    .cover h1 {
+      font-size: 1.75rem;
+      color: var(--brown-900);
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+
+    .cover .subtitle {
+      font-size: 1.1rem;
+      color: var(--tan);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .cover .meta { font-size: 0.9rem; color: var(--muted); }
+
+    .notice {
+      background: #fff8e6;
+      border: 1px solid rgba(184, 134, 75, 0.45);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      color: var(--brown-800);
+      margin: 32px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--cream);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      color: var(--brown-700);
+      margin: 24px 0 10px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    ul, ol { margin: 0 0 16px; padding-left: 24px; }
+    li { margin-bottom: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 20px;
+      font-size: 10pt;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown-800);
+      font-weight: 600;
+    }
+
+    code, .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      background: var(--cream);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .flow {
+      background: var(--cream);
+      border-left: 4px solid var(--tan);
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-family: Consolas, monospace;
+      font-size: 10pt;
+      white-space: pre-wrap;
+    }
+
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li::before { content: "☐ "; }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 18px;
+      background: var(--brown-800);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .print-btn:hover { background: var(--brown-700); }
+
+    @media print {
+      .print-btn { display: none; }
+      .doc { padding: 24px 32px; max-width: none; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 640px) {
+      .doc { padding: 24px 20px; }
+      .print-btn { position: static; display: block; width: 100%; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+  <article class="doc">
+    <header class="cover">
+      <h1>Gotabgaa Australia</h1>
+      <p class="subtitle">Membership Payments &amp; Tax Guide</p>
+      <p class="meta">Version 1.0 · June 2026 · For leadership &amp; finance volunteers</p>
+    </header>
+
+    <div class="notice">
+      <strong>Important:</strong> This document is general guidance for Australian community associations.
+      It is <strong>not legal or tax advice</strong>. Confirm your obligations with a qualified accountant
+      or tax agent based on your legal structure (incorporated association, charity, company, etc.).
+    </div>
+
+    <h2>1. Purpose</h2>
+    <p>
+      This guide explains how Gotabgaa Australia can collect <strong>membership fees directly</strong>
+      (without third-party card processors such as Stripe or PayPal), and how to think about
+      <strong>GST, income tax, and record-keeping</strong> in Australia.
+    </p>
+    <p>
+      It supports the website membership portal at <code>join.html</code> and the admin dashboard
+      <strong>Membership</strong> section, where fees are adjustable and registrations can be exported as CSV.
+    </p>
+
+    <h2>2. Recommended payment method (Australia)</h2>
+    <h3>Primary recommendation: PayID + bank transfer (EFT)</h3>
+    <p>
+      For a community association that wants money paid <strong>directly into the association’s own bank account</strong>,
+      PayID and EFT are the simplest and most common approach in Australia.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>How it works</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PayID</strong></td>
+          <td>Member pays instantly using email, phone, or ABN linked to your business account</td>
+          <td>Very familiar in Australia; usually free for payer and receiver</td>
+        </tr>
+        <tr>
+          <td><strong>Bank transfer (EFT)</strong></td>
+          <td>Member transfers to your BSB + account number</td>
+          <td>Good backup; may take 1–2 business days</td>
+        </tr>
+        <tr>
+          <td><strong>BPAY</strong> (optional later)</td>
+          <td>Member pays using biller code + reference</td>
+          <td>Requires biller setup with your bank; more admin to establish</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Member payment flow (no Stripe)</h3>
+    <div class="flow">Register online on join.html
+        → See fee + PayID / bank details + unique reference
+        → Member pays from their bank
+        → Treasurer checks bank account
+        → Admin marks registration as Paid in dashboard
+        → Send receipt to member (email)</div>
+
+    <h3>What to set up with your bank</h3>
+    <ul>
+      <li><strong>Business or community association bank account</strong> (not a personal account)</li>
+      <li><strong>PayID</strong> linked to the association (e.g. official email or ABN)</li>
+      <li><strong>BSB and account number</strong> for members who prefer EFT</li>
+      <li>Optional: <strong>BPAY biller</strong> if the chapter grows and wants bill-style payments</li>
+    </ul>
+
+    <h3>Payment reference format</h3>
+    <p>Use a unique reference so you can match bank deposits to registrations, for example:</p>
+    <ul>
+      <li><code>GAA-MEM-{registration-id}</code></li>
+      <li><code>GAA-SURNAME-2026</code></li>
+    </ul>
+    <p>Store the reference in your admin registration record and on the member’s payment instructions.</p>
+
+    <h3>Methods not recommended as first choice</h3>
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Why defer or avoid initially</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Stripe / PayPal</td><td>Third-party processor; fees; not “direct” to your account in the same way</td></tr>
+        <tr><td>Card payments on your own site</td><td>PCI compliance, fraud risk, merchant facility complexity</td></tr>
+        <tr><td>Cash only</td><td>Hard to audit; poor for interstate members</td></tr>
+        <tr><td>Personal bank account</td><td>Governance and tax risk; use association account only</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Implementation phases</h3>
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Phase 1 — Now</strong></td>
+          <td>PayID + EFT; unique reference; admin marks paid; CSV export for records</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 2</strong></td>
+          <td>BPAY biller; automated payment instruction email; optional receipt upload from member</td>
+        </tr>
+        <tr>
+          <td><strong>Phase 3</strong></td>
+          <td>Bank merchant / eftpos only if card payments become essential</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Security &amp; governance</h2>
+    <ul>
+      <li>Publish bank details <strong>only</strong> on the official website (<code>join.html</code>) and in admin-published content.</li>
+      <li>Use a <strong>dedicated membership bank account</strong>, separate from personal funds.</li>
+      <li>Never ask members to pay to an individual’s personal account unless that PayID is officially registered to the association.</li>
+      <li>Maintain a simple ledger: registration ID, name, amount, date paid, payment method, who confirmed.</li>
+      <li>Reconcile bank statements against admin registrations at least monthly.</li>
+    </ul>
+
+    <h2>4. Tax overview (Australia)</h2>
+    <p>
+      Tax treatment depends on how Gotabgaa Australia is legally structured. The following is a
+      <strong>general overview</strong> — confirm with your accountant.
+    </p>
+
+    <h3>4.1 GST (Goods and Services Tax)</h3>
+    <p>Membership fees are often treated as a supply of services to members.</p>
+    <table>
+      <thead>
+        <tr><th>Situation</th><th>Typical GST picture</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Annual turnover <strong>under $75,000</strong></td>
+          <td>GST registration is usually <strong>optional</strong>; many small associations do not register</td>
+        </tr>
+        <tr>
+          <td>Turnover <strong>$75,000 or more</strong></td>
+          <td>You generally <strong>must</strong> register for GST and lodge BAS statements</td>
+        </tr>
+        <tr>
+          <td>Registered charity (ACNC) with appropriate concessions</td>
+          <td>Some membership income may be <strong>GST-free</strong> — depends on structure and benefits provided</td>
+        </tr>
+        <tr>
+          <td><strong>Not</strong> GST-registered</td>
+          <td>Do not charge 10% GST on fees; cannot claim GST credits on expenses</td>
+        </tr>
+        <tr>
+          <td><strong>GST-registered</strong> and fee is taxable</td>
+          <td>May need to show GST clearly (e.g. $50 + GST = $55) — confirm with accountant</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Income tax</h3>
+    <ul>
+      <li>Not-for-profit status does <strong>not</strong> automatically mean zero tax.</li>
+      <li>Small associations with limited income may have minimal income tax liability.</li>
+      <li>ACNC-registered charities meeting ATO conditions may be <strong>income tax exempt</strong>.</li>
+      <li>Non-charity incorporated associations may pay tax on certain non-member income (events, sponsorship) depending on structure.</li>
+    </ul>
+
+    <h3>4.3 ABN (Australian Business Number)</h3>
+    <p>Operate with an <strong>ABN</strong> for:</p>
+    <ul>
+      <li>Bank account in the association’s name</li>
+      <li>Receipts and payment instructions</li>
+      <li>PayID linked to the organisation</li>
+      <li>Transparency for members and auditors</li>
+    </ul>
+
+    <h3>4.4 DGR and donations</h3>
+    <p>
+      Standard <strong>membership fees</strong> are usually not tax-deductible for members.
+      <strong>Donations</strong> may be deductible only if the organisation has DGR (deductible gift recipient) status — ask your accountant.
+    </p>
+
+    <h2>5. Operational record-keeping</h2>
+    <p>For each membership payment, record:</p>
+    <ul class="checklist">
+      <li>Member full name</li>
+      <li>Registration ID (from website admin)</li>
+      <li>Email and phone</li>
+      <li>Membership type and state/chapter</li>
+      <li>Fee amount and currency</li>
+      <li>Fee display text at time of registration (snapshot)</li>
+      <li>Date payment received</li>
+      <li>Payment method (PayID / EFT / BPAY)</li>
+      <li>Bank reference used by member</li>
+      <li>Membership period covered (e.g. calendar year 2026)</li>
+      <li>Who confirmed payment in admin</li>
+      <li>Payment status: pending → paid</li>
+    </ul>
+
+    <h3>Membership receipt (recommended content)</h3>
+    <ul>
+      <li>Association legal name and <strong>ABN</strong></li>
+      <li>Member name</li>
+      <li>Amount received</li>
+      <li>Membership period (e.g. “Annual membership 2026”)</li>
+      <li>Date of payment</li>
+      <li>Statement whether GST is included or not applicable</li>
+      <li>Contact email for queries</li>
+    </ul>
+
+    <h3>Annual finance review</h3>
+    <ol>
+      <li>Reconcile bank account vs admin registration export (CSV)</li>
+      <li>Check whether GST registration is required for the new financial year</li>
+      <li>Prepare summary for AGM / board</li>
+      <li>Provide figures to accountant for tax return if required</li>
+    </ol>
+
+    <h2>6. Website integration (current &amp; suggested)</h2>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Status / recommendation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Public join portal (<code>join.html</code>)</td><td>Live — members register online</td></tr>
+        <tr><td>Adjustable membership fee in admin</td><td>Live — publish after fee changes</td></tr>
+        <tr><td>Payment status <code>pending</code></td><td>Live — ready for manual confirmation</td></tr>
+        <tr><td>Admin view + CSV export</td><td>Live — for treasurer and AGM reporting</td></tr>
+        <tr><td>PayID / BSB / account in CMS</td><td>Suggested — admin-editable payment instructions</td></tr>
+        <tr><td>Auto payment reference on registration</td><td>Suggested — e.g. <code>GAA-MEM-{id}</code></td></tr>
+        <tr><td>Admin “Mark as paid” button</td><td>Suggested — updates <code>payment_status</code></td></tr>
+        <tr><td>ABN + GST note on receipts</td><td>Suggested — editable in admin</td></tr>
+        <tr><td>Receipt email after payment confirmed</td><td>Suggested — Phase 2</td></tr>
+      </tbody>
+    </table>
+
+    <h2>7. Questions for your accountant</h2>
+    <p>Copy and send these to a qualified Australian accountant or tax agent:</p>
+    <ol>
+      <li>Gotabgaa Australia is a [incorporated association / other]. We collect annual membership fees via PayID and bank transfer. Should we register for GST?</li>
+      <li>Are our membership fees GST-free or taxable in our specific case?</li>
+      <li>Do we need to issue tax invoices for membership payments?</li>
+      <li>What records must we keep for the ATO and our AGM?</li>
+      <li>Are we eligible for income tax exemption or ACNC-related concessions?</li>
+      <li>Do membership fees vs donations need separate accounting treatment?</li>
+    </ol>
+
+    <h2>8. Common starting setup for community chapters</h2>
+    <ol>
+      <li>Incorporated association (state-based registration)</li>
+      <li>ABN registered to the association</li>
+      <li>Not GST-registered while turnover remains under $75,000 (confirm annually)</li>
+      <li>PayID + EFT for membership fees</li>
+      <li>Admin dashboard + CSV for registration records</li>
+      <li>Annual accountant review</li>
+    </ol>
+
+    <h2>9. Document control</h2>
+    <table>
+      <tbody>
+        <tr><td><strong>Document</strong></td><td>Membership Payments &amp; Tax Guide</td></tr>
+        <tr><td><strong>Version</strong></td><td>1.0</td></tr>
+        <tr><td><strong>Date</strong></td><td>June 2026</td></tr>
+        <tr><td><strong>Location</strong></td><td><code>docs/Gotabgaa-Australia-Membership-Payments-and-Tax-Guide.html</code></td></tr>
+        <tr><td><strong>Audience</strong></td><td>Chapter leadership, treasurer, finance volunteers</td></tr>
+        <tr><td><strong>Disclaimer</strong></td><td>General guidance only — not legal or tax advice</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 32px; font-size: 0.9rem; color: var(--muted);">
+      To save as PDF: click <strong>Save as PDF / Print</strong> above, or use your browser’s Print → Save as PDF.
+    </p>
+  </article>
+</body>
+</html>

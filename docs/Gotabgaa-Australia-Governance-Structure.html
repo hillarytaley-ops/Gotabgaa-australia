@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gotabgaa Australia — Governance Structure</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --brown-700: #5c4332;
+      --tan: #b8864e;
+      --tan-light: #d4a574;
+      --cream: #f8f4ee;
+      --text: #2a1f17;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.65;
+      color: var(--text);
+      background: #fff;
+      margin: 0;
+    }
+
+    .doc {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 56px;
+    }
+
+    .cover {
+      text-align: center;
+      padding: 40px 24px 48px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 36px;
+    }
+
+    .cover img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    .cover h1 {
+      font-size: 1.75rem;
+      color: var(--brown-900);
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+
+    .cover .subtitle {
+      font-size: 1.15rem;
+      color: var(--tan);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .cover .meta { font-size: 0.9rem; color: var(--muted); }
+    .cover .tagline {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      color: var(--brown-700);
+    }
+
+    .private-banner {
+      background: var(--brown-800);
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 9pt;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      color: var(--brown-900);
+      border-bottom: 2px solid var(--tan-light);
+      padding-bottom: 6px;
+      margin: 32px 0 14px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      color: var(--brown-800);
+      margin: 20px 0 8px;
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      color: var(--brown-700);
+      margin: 14px 0 6px;
+    }
+
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 0 0 12px; padding-left: 22px; }
+    li { margin-bottom: 5px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 18px;
+      font-size: 10pt;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown-900);
+      font-weight: 600;
+    }
+
+    .callout {
+      background: var(--cream);
+      border-left: 4px solid var(--tan);
+      padding: 14px 18px;
+      margin: 18px 0;
+      font-size: 10.5pt;
+    }
+
+    .toc {
+      background: #faf8f5;
+      border: 1px solid var(--border);
+      padding: 18px 22px;
+      margin-bottom: 28px;
+    }
+
+    .toc h2 {
+      margin-top: 0;
+      border: none;
+      font-size: 1.05rem;
+    }
+
+    .toc ol { margin: 0; columns: 2; column-gap: 24px; }
+    .toc li { break-inside: avoid; }
+
+    .organ-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+
+    .organ-card__head {
+      background: var(--brown-800);
+      color: #fff;
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 1.02rem;
+    }
+
+    .organ-card__head span {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .organ-card__body { padding: 14px 16px; background: #fff; }
+
+    .organ-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .organ-grid h4 { margin-top: 0; font-size: 0.88rem; }
+
+    .three-organs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .organ-box {
+      background: var(--cream);
+      border: 2px solid var(--tan-light);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .organ-box strong {
+      display: block;
+      color: var(--brown-900);
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .organ-box span { font-size: 0.85rem; color: var(--muted); }
+
+    .hierarchy {
+      margin: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .hierarchy__box {
+      width: 100%;
+      max-width: 520px;
+      background: var(--cream);
+      border: 2px solid var(--brown-800);
+      border-radius: 6px;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--brown-900);
+      font-size: 0.92rem;
+    }
+
+    .hierarchy__box--accent {
+      background: var(--brown-800);
+      color: #fff;
+      border-color: var(--brown-800);
+    }
+
+    .hierarchy__box--independent {
+      background: #fff;
+      border-color: var(--tan);
+      border-style: dashed;
+    }
+
+    .hierarchy__arrow {
+      width: 2px;
+      height: 18px;
+      background: var(--tan);
+      position: relative;
+    }
+
+    .hierarchy__arrow::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid var(--tan);
+      border-bottom: 2px solid var(--tan);
+      transform: rotate(-45deg);
+    }
+
+    .hierarchy-legend {
+      font-size: 9pt;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .committee-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .committee-item {
+      background: #faf8f5;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 10pt;
+    }
+
+    .committee-item strong {
+      display: block;
+      color: var(--brown-800);
+      margin-bottom: 4px;
+    }
+
+    .footer-note {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 9pt;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .page-break { page-break-before: always; }
+
+    .no-print {
+      background: var(--brown-800);
+      color: #fff;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 10pt;
+    }
+
+    .no-print button {
+      background: var(--tan);
+      color: var(--brown-900);
+      border: none;
+      padding: 8px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-left: 12px;
+    }
+
+    @media print {
+      .no-print { display: none; }
+      .private-banner { background: var(--brown-800); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .doc { padding: 20px 36px; max-width: none; }
+      .organ-card__head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .hierarchy__box--accent { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      h2 { page-break-after: avoid; }
+      .organ-card { page-break-inside: avoid; }
+      .toc ol { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="private-banner">Private — Gotabgaa Australia leadership &amp; governance planning document</div>
+
+  <div class="no-print">
+    PDF file: <strong>docs\Gotabgaa-Australia-Governance-Structure.pdf</strong>
+    <button type="button" onclick="window.print()">Print / Save PDF</button>
+  </div>
+
+  <div class="doc">
+
+    <header class="cover">
+      <img src="../assets/logo-round.png" alt="Gotabgaa Australia logo">
+      <h1>Gotabgaa Australia</h1>
+      <p class="subtitle">Governance Structure</p>
+      <p class="meta">Proposed model for national organisation · June 2026</p>
+      <p class="tagline">Unity • Heritage • Excellence</p>
+      <p class="meta" style="margin-top:14px;">Independent Australian association</p>
+    </header>
+
+    <div class="callout">
+      <strong>Foundation:</strong> Based on the existing Gotabgaa International By-Laws, the classical structure
+      has three main organs: <strong>Membership</strong>, <strong>Board of Directors</strong>, and
+      <strong>Oversight &amp; Compliance Council</strong>. This document proposes a modern governance model for
+      <strong>Gotabgaa Australia</strong> that separates governance (Board), management (Executive), and
+      oversight (Council) — considered best practice for large community organisations.
+    </div>
+
+    <nav class="toc">
+      <h2>Contents</h2>
+      <ol>
+        <li>Three Core Organs</li>
+        <li>General Assembly (AGM)</li>
+        <li>Board of Directors / National Council</li>
+        <li>National Executive Committee</li>
+        <li>Oversight, Ethics &amp; Compliance Council</li>
+        <li>Electoral Commission</li>
+        <li>National Advisory Council</li>
+        <li>National &amp; State Association Relationship</li>
+        <li>State Chapters</li>
+        <li>Standing Committees</li>
+        <li>Organisational Hierarchy Diagram</li>
+        <li>Roles Summary Table</li>
+        <li>Detailed Position Descriptions</li>
+        <li>Board vs Executive — Dual Roles</li>
+        <li>Meetings, Quorum &amp; Voting</li>
+        <li>Elections Process</li>
+        <li>Membership Categories &amp; Rights</li>
+        <li>Financial Governance</li>
+        <li>State Chapter Standards</li>
+        <li>Standing Committees — Expanded</li>
+        <li>Dispute Resolution Procedure</li>
+        <li>Code of Conduct &amp; Conflict of Interest</li>
+        <li>Reporting &amp; Communication Lines</li>
+        <li>AGM Agenda Template</li>
+        <li>Definitions</li>
+        <li>Implementation Roadmap</li>
+      </ol>
+    </nav>
+
+    <section>
+      <h2>1. Three Core Organs</h2>
+      <div class="three-organs">
+        <div class="organ-box">
+          <strong>Membership</strong>
+          <span>General Assembly (AGM) — supreme authority</span>
+        </div>
+        <div class="organ-box">
+          <strong>Board of Directors</strong>
+          <span>National Council — strategy &amp; policy</span>
+        </div>
+        <div class="organ-box">
+          <strong>Oversight &amp; Compliance Council</strong>
+          <span>Independent — ethics, elections, disputes</span>
+        </div>
+      </div>
+      <p>
+        <strong>Management</strong> (National Executive Committee) implements Board decisions day-to-day.
+        <strong>State chapters</strong> deliver programs locally under this national framework.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. General Assembly (AGM)</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Supreme decision-making body
+          <span>Meets annually</span>
+        </div>
+        <div class="organ-card__body">
+          <div class="organ-grid">
+            <div>
+              <h4>Composition</h4>
+              <ul>
+                <li>All registered and financial members</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Powers</h4>
+              <ul>
+                <li>Elect National Executive</li>
+                <li>Elect Oversight &amp; Compliance Council</li>
+                <li>Amend Constitution</li>
+                <li>Approve annual reports and audited accounts</li>
+                <li>Ratify strategic plans and major policies</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>2.1 AGM operational rules (recommended)</h3>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Recommended standard</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Notice period</td><td>At least 21 days written notice to all financial members (email + website)</td></tr>
+          <tr><td>Quorum</td><td>Minimum 25% of financial members, or 50 members, whichever is lower (set in constitution)</td></tr>
+          <tr><td>Chair of AGM</td><td>National Chairperson, or Deputy if unavailable</td></tr>
+          <tr><td>Minutes</td><td>Secretary General records; approved at following AGM</td></tr>
+          <tr><td>Constitutional amendments</td><td>66% majority of members present and voting; 30-day prior notice</td></tr>
+          <tr><td>Special resolutions</td><td>Dissolution, major asset sale — supermajority as per constitution</td></tr>
+          <tr><td>Proxy voting</td><td>Allowed if constitution permits; one proxy per member maximum</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>3. Board of Directors (National Council)</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Strategic leadership &amp; policy
+          <span>Meetings: quarterly minimum</span>
+        </div>
+        <div class="organ-card__body">
+          <h4>Composition</h4>
+          <table>
+            <thead>
+              <tr><th>Position</th><th>Role on Board</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>National Chairperson</td><td>Board leadership</td></tr>
+              <tr><td>Deputy Chairperson</td><td>Deputy board leadership</td></tr>
+              <tr><td>Secretary General</td><td>Records &amp; governance administration</td></tr>
+              <tr><td>Deputy Secretary</td><td>Supports Secretary General</td></tr>
+              <tr><td>Treasurer</td><td>Financial oversight</td></tr>
+              <tr><td>Deputy Treasurer</td><td>Supports Treasurer</td></tr>
+              <tr><td>Communications Director</td><td>Public messaging &amp; media strategy</td></tr>
+              <tr><td>Youth Representative</td><td>Youth voice on board</td></tr>
+              <tr><td>Women Representative</td><td>Women’s voice on board</td></tr>
+              <tr><td>Welfare Director</td><td>Welfare policy oversight</td></tr>
+              <tr><td>Business &amp; Investment Director</td><td>Economic empowerment portfolio</td></tr>
+              <tr><td>Education &amp; Professional Development Director</td><td>Education portfolio</td></tr>
+              <tr><td>State Chapter Representatives</td><td>One representative from each state chapter</td></tr>
+            </tbody>
+          </table>
+          <h4>Role of the Board</h4>
+          <ul>
+            <li>Strategic leadership and long-term vision for Gotabgaa Australia</li>
+            <li>Policy formulation (welfare, education, finance, communications, events)</li>
+            <li>Oversight of National Executive — reviews performance at least quarterly</li>
+            <li>Approval of annual budgets, audited accounts, and major projects above set thresholds</li>
+            <li>Appointment of ad hoc committees; receives reports from standing committees</li>
+            <li>Ratification of new state chapter recognition (recommendation from Executive)</li>
+          </ul>
+          <h4>Board meeting protocol</h4>
+          <ul>
+            <li>Quarterly scheduled meetings; extraordinary meetings on Chair or 3 directors’ request</li>
+            <li>Quorum: majority of board members (including at least 2 executive officers + 1 state rep)</li>
+            <li>Agenda circulated 7 days in advance; minutes within 14 days after meeting</li>
+            <li>Executive may attend without vote on items where they are subject of performance review</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. National Executive Committee</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Day-to-day operations &amp; implementation
+          <span>Accountable to the Board of Directors</span>
+        </div>
+        <div class="organ-card__body">
+          <h4>Executive positions</h4>
+          <table>
+            <thead>
+              <tr><th>#</th><th>Position</th><th>Primary focus</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>National Chairperson</td><td>Executive leadership</td></tr>
+              <tr><td>2</td><td>Deputy Chairperson</td><td>Deputy executive leadership</td></tr>
+              <tr><td>3</td><td>Secretary General</td><td>Administration &amp; correspondence</td></tr>
+              <tr><td>4</td><td>Deputy Secretary</td><td>Administrative support</td></tr>
+              <tr><td>5</td><td>Treasurer</td><td>Day-to-day finance operations</td></tr>
+              <tr><td>6</td><td>Deputy Treasurer</td><td>Financial operations support</td></tr>
+              <tr><td>7</td><td>Communications Director</td><td>Website, social media, newsletters</td></tr>
+              <tr><td>8</td><td>Welfare Director</td><td>Member welfare programs</td></tr>
+              <tr><td>9</td><td>Programs &amp; Events Director</td><td>National calendar &amp; events</td></tr>
+              <tr><td>10</td><td>Membership Director</td><td>Recruitment &amp; member records</td></tr>
+            </tbody>
+          </table>
+          <h4>Responsibilities</h4>
+          <ul>
+            <li>Implement Board decisions within 30 days or report obstacles to Board</li>
+            <li>Manage daily operations, staff/volunteers, and national email/website</li>
+            <li>Coordinate state chapters via monthly state chair calls (minimum quarterly)</li>
+            <li>Prepare quarterly operational reports and annual budget for Board approval</li>
+            <li>Executive meetings: monthly minimum; minutes to Secretary General archive</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <h2>5. Oversight, Ethics &amp; Compliance Council</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Independent organ — separate from Executive and Board
+          <span>Strengthens oversight contemplated in Article 6 (By-Laws reference)</span>
+        </div>
+        <div class="organ-card__body">
+          <h4>Composition (5 members)</h4>
+          <ul>
+            <li>Chairperson</li>
+            <li>Secretary</li>
+            <li>Three Council Members</li>
+          </ul>
+          <h4>Functions</h4>
+          <ul>
+            <li>Election supervision and certification of results</li>
+            <li>Dispute resolution per published procedure (Section 20)</li>
+            <li>Disciplinary hearings for breaches of code of conduct</li>
+            <li>Governance audits — annual checklist of compliance with constitution</li>
+            <li>Constitutional interpretation when Board and Executive disagree</li>
+            <li>Conflict of interest investigations; may require officer to step aside temporarily</li>
+          </ul>
+          <h4>Term &amp; meetings</h4>
+          <ul>
+            <li>3-year terms; members elected at AGM; one renewal permitted (recommended)</li>
+            <li>Minimum bi-annual meetings; extraordinary session on written request of 10+ members</li>
+            <li>Annual report to AGM on elections integrity and dispute statistics (confidential details omitted)</li>
+          </ul>
+          <div class="callout">
+            <strong>Independence rule:</strong> Members cannot simultaneously serve on the Oversight Council and:
+            <ul style="margin-top:8px;">
+              <li>National Executive Committee</li>
+              <li>Board of Directors</li>
+              <li>State Executive Committees</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Electoral Commission</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Temporary independent body
+          <span>Dissolved after elections conclude</span>
+        </div>
+        <div class="organ-card__body">
+          <h4>Composition</h4>
+          <p>5–7 members appointed by the Oversight &amp; Compliance Council.</p>
+          <h4>Functions</h4>
+          <ul>
+            <li>Conduct elections for Executive, Oversight Council, and Board positions as required</li>
+            <li>Vet candidates: membership standing, conduct history, conflict declarations</li>
+            <li>Manage voter register; verify financial membership status before ballot</li>
+            <li>Announce results publicly after Oversight Council certification</li>
+            <li>Preserve sealed ballots or digital audit logs for 12 months</li>
+          </ul>
+          <p><strong>Dissolution:</strong> Commission dissolves within 30 days after results certified and officers installed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>7. National Advisory Council (Elders &amp; Founders)</h2>
+      <div class="organ-card">
+        <div class="organ-card__head">
+          Advisory only — no executive powers
+        </div>
+        <div class="organ-card__body">
+          <h4>Composition</h4>
+          <ul>
+            <li>Founders</li>
+            <li>Former National Chairpersons</li>
+            <li>Distinguished community leaders</li>
+          </ul>
+          <h4>Role</h4>
+          <ul>
+            <li>Advisory guidance on culture, heritage, and long-term direction</li>
+            <li>Mediation and mentorship</li>
+            <li>No voting power on Executive or Board decisions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="national-state-relationship" class="page-break">
+      <h2>8. National &amp; State Association Relationship</h2>
+
+      <div class="callout">
+        <strong>Starting point:</strong> Kalenjin community associations already operate at state level
+        (events, welfare, sports days, Taunet Nelel gatherings, city networks). Gotabgaa Australia at
+        national level should <strong>unify and strengthen</strong> those bodies — not replace, absorb, or
+        override them without consent.
+      </div>
+
+      <h3>8.1 Recommended model: Federated partnership</h3>
+      <p>
+        The recommended relationship is a <strong>federation</strong>: each existing state association remains
+        a legal and operational entity in its own right, and <strong>joins</strong> Gotabgaa Australia as a
+        <strong>recognised state chapter</strong> through a signed Memorandum of Understanding (MOU). National
+        sets country-wide strategy, brand, and programs; states deliver locally with autonomy in day-to-day
+        affairs.
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>Principle</th><th>What it means in practice</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Autonomy</strong></td><td>State associations keep their own executive, AGM, bank account, and local constitution (or adopt national template)</td></tr>
+          <tr><td><strong>Recognition</strong></td><td>National Board formally recognises each state as the official Gotabgaa Australia chapter for that state/territory</td></tr>
+          <tr><td><strong>One national brand</strong></td><td>Public face: “Gotabgaa Australia — [State] Chapter” under shared logo and tagline</td></tr>
+          <tr><td><strong>Dual accountability</strong></td><td>State leaders answer to state members locally and to national policy through state rep on Board</td></tr>
+          <tr><td><strong>No takeover</strong></td><td>National cannot appoint state chairs or seize state funds without MOU breach and Oversight Council process</td></tr>
+          <tr><td><strong>Voluntary alignment</strong></td><td>States choose to federate; withdrawal possible with notice per MOU (see 8.8)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.2 Relationship models — comparison</h3>
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Description</th><th>Pros</th><th>Cons</th><th>Fit for Gotabgaa Australia?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>A. Federation (recommended)</strong></td>
+            <td>National + autonomous state chapters linked by MOU</td>
+            <td>Respects existing groups; clear roles; scalable</td>
+            <td>Requires coordination discipline</td>
+            <td><strong>Yes — best fit</strong></td>
+          </tr>
+          <tr>
+            <td><strong>B. Umbrella / affiliate</strong></td>
+            <td>States remain independent; national is loose coordinating forum only</td>
+            <td>Minimal friction; easy start</td>
+            <td>Weak national programs; duplicate events; unclear brand</td>
+            <td>Short-term only</td>
+          </tr>
+          <tr>
+            <td><strong>C. Merger / absorption</strong></td>
+            <td>States dissolve into one national entity with branches</td>
+            <td>Single legal body; simple finances</td>
+            <td>Resistance from established states; loss of local identity</td>
+            <td><strong>Not recommended</strong> unless states vote to merge</td>
+          </tr>
+          <tr>
+            <td><strong>D. Service provider</strong></td>
+            <td>National provides IT, insurance, templates; states pay fee</td>
+            <td>Clear commercial-style boundaries</td>
+            <td>Can feel transactional; less community ownership</td>
+            <td>Optional add-on within federation</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>8.3 Division of powers: national vs state</h3>
+      <table>
+        <thead>
+          <tr><th>Area</th><th>National association</th><th>State association</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Legal identity</td><td>Gotabgaa Australia (national constitution)</td><td>State entity (own or adopted constitution)</td></tr>
+          <tr><td>Membership</td><td>National register or federated sync; national membership policy</td><td>Local enrolment, renewals, welfare eligibility checks</td></tr>
+          <tr><td>Events</td><td>National calendar; cross-state dates; Taunet Nelel branding standards</td><td>Local BBQs, sports days, AGMs, city meetups</td></tr>
+          <tr><td>Finance</td><td>National account; benevolence pool; scholarships; national fundraising</td><td>State account; local dues; local event revenue; first-line welfare spend</td></tr>
+          <tr><td>Communications</td><td>Website, national email, national social links</td><td>State WhatsApp/Facebook with national brand guidelines</td></tr>
+          <tr><td>Leadership</td><td>National Board &amp; Executive elected at national AGM</td><td>State executive elected at state AGM</td></tr>
+          <tr><td>Representation</td><td>One state rep per chapter on National Board</td><td>State chair or delegate speaks for state at national council</td></tr>
+          <tr><td>Disputes (internal)</td><td>Oversight Council; national mediation stage</td><td>First response at state level</td></tr>
+          <tr><td>External/media</td><td>National Chairperson for national matters</td><td>State Chair for local press and community partners</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.4 What national offers existing state associations</h3>
+      <ul>
+        <li><strong>Unified identity</strong> — one national logo, website, and “Gotabgaa Australia” presence</li>
+        <li><strong>National programs</strong> — education, benevolence framework, cultural calendar, youth/women initiatives</li>
+        <li><strong>Voice at scale</strong> — representation in national forums, multicultural councils, partnerships</li>
+        <li><strong>Coordination</strong> — avoid clashing dates; share best practices across states</li>
+        <li><strong>Templates</strong> — constitution, financial policy, welfare forms, AGM agendas</li>
+        <li><strong>Escalation path</strong> — national benevolence when cases exceed state capacity</li>
+        <li><strong>Training</strong> — onboarding for new state officers; governance workshops</li>
+      </ul>
+
+      <h3>8.5 What state associations offer the national body</h3>
+      <ul>
+        <li><strong>Legitimacy</strong> — national exists because states choose to federate</li>
+        <li><strong>Local delivery</strong> — programs and welfare happen in states, not from a remote national office</li>
+        <li><strong>State Board seat</strong> — state rep brings local priorities into national decisions</li>
+        <li><strong>Quarterly reporting</strong> — membership, events, finances (summary)</li>
+        <li><strong>Implementation</strong> — national policies executed by volunteers on the ground</li>
+        <li><strong>Host rotation</strong> — states may host national cultural events (e.g. Taunet Nelel)</li>
+      </ul>
+
+      <h3>8.6 Membership relationship (suggested options)</h3>
+      <table>
+        <thead>
+          <tr><th>Option</th><th>How it works</th><th>Best when</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Option 1 — Single national membership (recommended)</strong></td>
+            <td>Members join Gotabgaa Australia; automatically members of their state chapter; one fee split or allocated per policy</td>
+            <td>Clear national strength; simpler welfare rules</td>
+          </tr>
+          <tr>
+            <td><strong>Option 2 — Dual registration</strong></td>
+            <td>Separate state fee + optional national fee; national benefits only if national fee paid</td>
+            <td>States want financial independence during transition</td>
+          </tr>
+          <tr>
+            <td><strong>Option 3 — State-only with national associate</strong></td>
+            <td>Primary membership with state; national lists “recognised chapter members” without separate fee initially</td>
+            <td>Early federation phase (first 12 months)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>AGM voting rights should be defined in the national constitution (typically financial members of Gotabgaa Australia).</p>
+
+      <h3>8.7 Financial relationship</h3>
+      <ul>
+        <li><strong>Separate accounts</strong> — state money stays in state accounts; national money in national accounts</li>
+        <li><strong>No automatic pooling</strong> — transfers only with written approval (dual signatories + Board if above threshold)</li>
+        <li><strong>Optional national levy</strong> — e.g. small % of state fundraising or fixed annual chapter contribution (AGM-approved)</li>
+        <li><strong>National grants to states</strong> — for agreed programs (e.g. youth camp); milestone-based disbursement</li>
+        <li><strong>Shared events</strong> — revenue split agreed before event (host state vs national program fund)</li>
+      </ul>
+
+      <h3>8.8 MOU essentials (national ↔ each state)</h3>
+      <p>Each recognised state chapter signs an MOU with Gotabgaa Australia covering:</p>
+      <ol>
+        <li>Recognition as official chapter for [State/Territory]</li>
+        <li>Autonomy of state executive and state AGM</li>
+        <li>Adoption of national brand guidelines and welfare policy minimums</li>
+        <li>Quarterly reporting to National Executive</li>
+        <li>State representative attendance at National Board / Chapter Council</li>
+        <li>Financial separation and any levy or grant terms</li>
+        <li>Dispute escalation (state → national → Oversight Council)</li>
+        <li>Term: renewable annually; withdrawal with 90-day notice and member communication</li>
+        <li>Signatures: National President, Secretary General, State Chair, State Secretary</li>
+      </ol>
+
+      <h3>8.9 When national and state disagree</h3>
+      <table>
+        <thead>
+          <tr><th>Situation</th><th>First step</th><th>Escalation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Policy disagreement</td><td>State rep raises at Board; discussion and vote</td><td>Oversight Council advisory opinion if deadlock</td></tr>
+          <tr><td>State refuses national program</td><td>Program optional unless AGM-mandated for all chapters</td><td>Board documents non-participation; no penalty except loss of program benefits</td></tr>
+          <tr><td>State breach of brand/conduct</td><td>National Executive letter; corrective plan 30 days</td><td>Oversight Council review; suspension of recognition as last resort</td></tr>
+          <tr><td>National overreach into state affairs</td><td>State Chair writes to Oversight Council</td><td>Council investigation; Board must comply with Council recommendation on governance</td></tr>
+          <tr><td>Financial dispute</td><td>Treasurers (state + national) reconcile</td><td>Finance &amp; Audit Committee → Oversight Council if needed</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.10 Transition path for associations already operating</h3>
+      <table>
+        <thead>
+          <tr><th>Step</th><th>Action</th><th>Timeline</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>National interim Executive invites each state to federation dialogue</td><td>Month 1–2</td></tr>
+          <tr><td>2</td><td>State AGMs discuss MOU; vote to join or defer</td><td>Month 2–4</td></tr>
+          <tr><td>3</td><td>First states sign MOU → recognised chapters; listed on website</td><td>Month 4–6</td></tr>
+          <tr><td>4</td><td>State reps seated on National Board; first Chapter Council meeting</td><td>Month 6</td></tr>
+          <tr><td>5</td><td>Unified membership model chosen at national AGM</td><td>Month 6–12</td></tr>
+          <tr><td>6</td><td>Remaining states join or remain informal allies until ready</td><td>Ongoing</td></tr>
+        </tbody>
+      </table>
+      <p>States that defer federation remain community partners; national does not claim authority over them until MOU is signed.</p>
+
+      <h3>8.11 Relationship diagram</h3>
+      <div class="diagram" style="font-family: Consolas, monospace; font-size: 9pt;">
+┌─────────────────────────────────────────────────────────────────┐
+│              GOTABGAA AUSTRALIA (National)                      │
+│   AGM · Board · Executive · Oversight Council · National brand  │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │ MOU (federation — not ownership)
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+┌───────▼───────┐   ┌───────▼───────┐   ┌───────▼───────┐
+│  NSW Chapter  │   │  QLD Chapter  │   │  VIC Chapter  │  ... SA, WA, ACT
+│  (existing    │   │  (existing    │   │  (existing    │
+│   association)│   │   association)│   │   association)│
+│               │   │               │   │               │
+│ State Exec    │   │ State Exec    │   │ State Exec    │
+│ State funds   │   │ State funds   │   │ State funds   │
+│ Local members │   │ Local members │   │ Local members │
+└───────┬───────┘   └───────┬───────┘   └───────┬───────┘
+        │                   │                   │
+   Sydney, etc.        Brisbane, etc.      Melbourne, etc.
+
+MOU defines: recognition · reporting · brand · programs · dispute path
+National does NOT replace state executives or control state bank accounts
+      </div>
+
+      <div class="callout">
+        <strong>Summary:</strong> Gotabgaa Australia is the <strong>national forum and federation</strong>.
+        Existing state associations become <strong>recognised chapters</strong> through MOU — equal partners
+        in a national family, with local autonomy and a shared mission: Unity • Heritage • Excellence.
+      </div>
+    </section>
+
+    <section class="page-break">
+      <h2>9. State Chapters</h2>
+      <p>
+        Each recognised state or territory chapter manages local affairs under national policy. Recognition
+        follows the <strong>federated partnership model</strong> (Section 8): existing state associations join
+        via MOU rather than being replaced by national.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Chapter</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>New South Wales (NSW)</td><td>Chapter</td></tr>
+          <tr><td>Victoria (VIC)</td><td>Chapter</td></tr>
+          <tr><td>Queensland (QLD)</td><td>Chapter</td></tr>
+          <tr><td>Western Australia (WA)</td><td>Chapter</td></tr>
+          <tr><td>South Australia (SA)</td><td>Chapter</td></tr>
+          <tr><td>Australian Capital Territory (ACT)</td><td>Chapter</td></tr>
+          <tr><td>Tasmania (TAS)</td><td>Chapter</td></tr>
+          <tr><td>Northern Territory (NT)</td><td>Chapter</td></tr>
+        </tbody>
+      </table>
+
+      <h3>State Executive (each chapter)</h3>
+      <table>
+        <thead>
+          <tr><th>Position</th><th>Local responsibility</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Chairperson</td><td>Chapter leadership</td></tr>
+          <tr><td>Vice Chairperson</td><td>Deputy chapter leadership</td></tr>
+          <tr><td>Secretary</td><td>Records &amp; correspondence</td></tr>
+          <tr><td>Treasurer</td><td>Chapter finances</td></tr>
+          <tr><td>Welfare Coordinator</td><td>Local welfare response</td></tr>
+          <tr><td>Communications Officer</td><td>Local announcements &amp; social media</td></tr>
+          <tr><td>Youth Representative</td><td>Youth programs &amp; voice</td></tr>
+          <tr><td>Women Representative</td><td>Women’s programs &amp; voice</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Chapter functions</h4>
+      <ul>
+        <li>Manage local affairs</li>
+        <li>Recruit members</li>
+        <li>Organise events</li>
+        <li>Implement national programs</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>10. Standing Committees</h2>
+      <p>The Board of Directors may establish the following standing committees:</p>
+      <div class="committee-list">
+        <div class="committee-item">
+          <strong>Welfare Committee</strong>
+          Manages welfare programs and emergency support.
+        </div>
+        <div class="committee-item">
+          <strong>Finance &amp; Audit Committee</strong>
+          Reviews finances and budgets.
+        </div>
+        <div class="committee-item">
+          <strong>Education &amp; Scholarship Committee</strong>
+          Supports students and professional growth.
+        </div>
+        <div class="committee-item">
+          <strong>Business &amp; Investment Committee</strong>
+          Promotes entrepreneurship and investments.
+        </div>
+        <div class="committee-item">
+          <strong>Culture &amp; Sports Committee</strong>
+          Coordinates cultural and sporting activities.
+        </div>
+        <div class="committee-item">
+          <strong>Youth &amp; Women Affairs Committee</strong>
+          Promotes inclusion and leadership development.
+        </div>
+        <div class="committee-item" style="grid-column: 1 / -1;">
+          <strong>Constitution &amp; Governance Committee</strong>
+          Reviews governance documents and policies.
+        </div>
+      </div>
+    </section>
+
+    <section class="page-break">
+      <h2>11. Organisational Hierarchy Diagram</h2>
+      <p>Visual flow from supreme authority to local members. Oversight Council operates independently (parallel oversight).</p>
+
+      <div class="hierarchy">
+        <div class="hierarchy__box hierarchy__box--accent">GENERAL ASSEMBLY (AGM)<br><small style="font-weight:400;opacity:0.9;">All registered &amp; financial members · Annual</small></div>
+        <div class="hierarchy__arrow"></div>
+        <div class="hierarchy__box hierarchy__box--independent">OVERSIGHT, ETHICS &amp; COMPLIANCE COUNCIL<br><small style="font-weight:400;">Independent · Elections · Disputes · Audits</small></div>
+        <div class="hierarchy__arrow"></div>
+        <div class="hierarchy__box">BOARD OF DIRECTORS / NATIONAL COUNCIL<br><small style="font-weight:400;">Strategy · Policy · Budget approval</small></div>
+        <div class="hierarchy__arrow"></div>
+        <div class="hierarchy__box">NATIONAL EXECUTIVE COMMITTEE<br><small style="font-weight:400;">Day-to-day operations · Chapter coordination</small></div>
+        <div class="hierarchy__arrow"></div>
+        <div class="hierarchy__box">STATE CHAPTERS (NSW, VIC, QLD, WA, SA, ACT, TAS, NT)<br><small style="font-weight:400;">State Executive · Local events · Membership</small></div>
+        <div class="hierarchy__arrow"></div>
+        <div class="hierarchy__box">LOCAL MEMBERS</div>
+      </div>
+
+      <p class="hierarchy-legend">
+        Dashed box: independent oversight — not subordinate to Executive or Board for ethics/election functions.<br>
+        Electoral Commission and Advisory Council sit outside daily hierarchy (temporary elections body; advisory elders).
+      </p>
+
+      <div class="diagram" style="font-family: Consolas, monospace; font-size: 9pt;">
+RELATIONSHIP SUMMARY (private reference)
+
+  AGM ──────────────► elects ──────────► National Executive
+  AGM ──────────────► elects ──────────► Oversight Council
+
+  Board ◄── oversees ──► National Executive
+  Board ◄── approves ──► Budgets &amp; major projects
+
+  Oversight Council ◄── appoints ──► Electoral Commission (temporary)
+  Oversight Council ──► independent of ──► Board &amp; Executive
+
+  State Chapters ◄── coordinated by ──► National Executive
+  State Chapters ──► report to ──► Board (via state representatives)
+      </div>
+    </section>
+
+    <section>
+      <h2>12. Roles Summary Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Organ / Body</th>
+            <th>Type</th>
+            <th>Key function</th>
+            <th>Meets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>General Assembly (AGM)</td><td>Membership organ</td><td>Supreme decisions &amp; elections</td><td>Annual</td></tr>
+          <tr><td>Board of Directors</td><td>Governance</td><td>Strategy, policy, budget approval</td><td>Quarterly+</td></tr>
+          <tr><td>National Executive</td><td>Management</td><td>Operations &amp; implementation</td><td>Regular</td></tr>
+          <tr><td>Oversight &amp; Compliance Council</td><td>Independent oversight</td><td>Ethics, elections, disputes</td><td>As required</td></tr>
+          <tr><td>Electoral Commission</td><td>Temporary</td><td>Run elections</td><td>Election periods only</td></tr>
+          <tr><td>Advisory Council</td><td>Advisory</td><td>Mentorship &amp; mediation</td><td>Bi-annual suggested</td></tr>
+          <tr><td>State Chapters</td><td>Local delivery</td><td>Members, events, welfare</td><td>Per chapter schedule</td></tr>
+          <tr><td>Standing Committees</td><td>Board sub-groups</td><td>Specialist portfolios</td><td>Per committee</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Best practice:</strong> This structure separates <strong>governance</strong> (Board),
+        <strong>management</strong> (Executive), and <strong>oversight</strong> (Compliance Council).
+        It scales well for a national community organisation with multiple state chapters.
+      </div>
+    </section>
+
+    <section id="positions-detail" class="page-break">
+      <h2>13. Detailed Position Descriptions</h2>
+      <p>Key duties for national roles. Final wording should appear in constitution and job descriptions.</p>
+
+      <h3>12.1 National Chairperson</h3>
+      <ul>
+        <li>Chief spokesperson; chairs Board and Executive meetings</li>
+        <li>Sets meeting agendas with Secretary General; represents organisation at major events</li>
+        <li>Signs official documents with Secretary General or Treasurer as required</li>
+        <li>Leads strategic planning; ensures non-partisan community focus</li>
+      </ul>
+
+      <h3>12.2 Deputy Chairperson</h3>
+      <ul>
+        <li>Acts for Chairperson when absent; leads assigned portfolios</li>
+        <li>Supports succession planning and deputy training across chapters</li>
+        <li>Mediates inter-chapter coordination issues before escalation</li>
+      </ul>
+
+      <h3>12.3 Secretary General</h3>
+      <ul>
+        <li>Maintains constitution, policies, minutes, and official correspondence</li>
+        <li>Manages membership register (or oversees Membership Director)</li>
+        <li>Issues AGM notices; coordinates with Electoral Commission during elections</li>
+        <li>Safe storage of records (digital archive with backup)</li>
+      </ul>
+
+      <h3>12.4 Treasurer</h3>
+      <ul>
+        <li>Day-to-day banking; payment authorisation per financial policy</li>
+        <li>Monthly reconciliations; quarterly reports to Board</li>
+        <li>Annual budget preparation with Executive; supports audit process</li>
+        <li>Two-signatory rule for payments above threshold (e.g. $5,000 — set in policy)</li>
+      </ul>
+
+      <h3>12.5 Communications Director</h3>
+      <ul>
+        <li>Website, email, social media aligned with national brand guidelines</li>
+        <li>Press enquiries routed through Chairperson; no unauthorised statements</li>
+        <li>National newsletter minimum quarterly</li>
+      </ul>
+
+      <h3>12.6 Welfare Director</h3>
+      <ul>
+        <li>Oversees benevolence policy; confidential case handling</li>
+        <li>Coordinates with state welfare coordinators; escalates per policy thresholds</li>
+        <li>Never discusses individual cases in open meetings</li>
+      </ul>
+
+      <h3>12.7 Programs &amp; Events Director</h3>
+      <ul>
+        <li>Maintains national events calendar; avoids date clashes across states</li>
+        <li>Standards for Taunet Nelel, sports days, AGMs, cultural programs</li>
+        <li>Post-event reports: attendance, finances, lessons learned</li>
+      </ul>
+
+      <h3>12.8 Membership Director</h3>
+      <ul>
+        <li>Recruitment campaigns; onboarding kit for new members</li>
+        <li>Tracks financial vs non-financial members; renewal reminders</li>
+        <li>Reports membership growth quarterly to Executive and Board</li>
+      </ul>
+
+      <h3>12.9 Portfolio directors (Education, Business, Youth, Women on Board)</h3>
+      <p>Lead respective standing committees; present annual portfolio plans to Board; coordinate state chapter volunteers in their area.</p>
+    </section>
+
+    <section>
+      <h2>14. Board vs Executive — Dual Roles</h2>
+      <table>
+        <thead>
+          <tr><th>Topic</th><th>Board</th><th>Executive</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Focus</td><td>Strategy, policy, oversight</td><td>Operations, implementation</td></tr>
+          <tr><td>Budget</td><td>Approves annual budget &amp; major spend</td><td>Proposes budget; spends within approval</td></tr>
+          <tr><td>Staff/volunteers</td><td>Sets volunteer policy</td><td>Recruits, schedules, supervises day-to-day</td></tr>
+          <tr><td>State chapters</td><td>State reps vote on national policy</td><td>Programs Director coordinates execution</td></tr>
+          <tr><td>Same person?</td><td colspan="2">Executive officers typically sit on Board <strong>ex officio</strong> with vote. Oversight Council members must not hold Board or Executive roles.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>15. Meetings, Quorum &amp; Voting</h2>
+      <table>
+        <thead>
+          <tr><th>Body</th><th>Frequency</th><th>Quorum</th><th>Voting</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AGM</td><td>Annual</td><td>25% financial members or 50 members (min)</td><td>One vote per financial member</td></tr>
+          <tr><td>Board</td><td>Quarterly+</td><td>Majority of directors</td><td>One vote per director; Chair has casting vote if tie</td></tr>
+          <tr><td>Executive</td><td>Monthly</td><td>Majority of executive officers</td><td>Consensus preferred; majority if needed</td></tr>
+          <tr><td>Oversight Council</td><td>As required</td><td>3 of 5 members</td><td>Majority; Chair has casting vote</td></tr>
+          <tr><td>State chapter AGM</td><td>Annual</td><td>Per state constitution</td><td>State financial members</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>16. Elections Process</h2>
+      <ol>
+        <li><strong>Timeline:</strong> Oversight Council announces election date at least 60 days before AGM</li>
+        <li><strong>Nominations:</strong> Open period 30 days; candidates must be financial members 12+ months (configurable)</li>
+        <li><strong>Vetting:</strong> Electoral Commission checks eligibility, conflicts, code of conduct acceptance</li>
+        <li><strong>Campaign:</strong> Fair access; no misuse of organisation resources for one candidate</li>
+        <li><strong>Voting:</strong> Secret ballot at AGM or approved electronic vote with audit trail</li>
+        <li><strong>Results:</strong> Electoral Commission certifies; Oversight Council publishes within 48 hours</li>
+        <li><strong>Handover:</strong> Outgoing officers transfer records within 14 days</li>
+        <li><strong>Terms:</strong> 2–3 years staggered; maximum two consecutive terms (recommended)</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>17. Membership Categories &amp; Rights</h2>
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Requirements</th><th>Rights</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Full member</td><td>Kalenjin individual/family; fees paid; application accepted</td><td>Vote at AGM; welfare eligibility per policy</td></tr>
+          <tr><td>Associate member</td><td>Spouse, friend, supporter</td><td>Programs access; voting as per constitution</td></tr>
+          <tr><td>Youth member</td><td>Aged 13–17 (or under 18)</td><td>Youth programs; transitions to full at 18</td></tr>
+          <tr><td>Honorary member</td><td>Board nomination for exceptional service</td><td>Recognition; no obligation; voting optional</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Financial member</strong> = fees current for the membership year. Only financial members vote at AGM and in national elections.</p>
+    </section>
+
+    <section class="page-break">
+      <h2>18. Financial Governance</h2>
+      <h3>17.1 Approval thresholds (illustrative — set in financial policy)</h3>
+      <table>
+        <thead>
+          <tr><th>Amount (AUD)</th><th>Approver</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Up to $500</td><td>Treasurer or delegated officer</td></tr>
+          <tr><td>$501 – $5,000</td><td>Treasurer + Chairperson (or two signatories)</td></tr>
+          <tr><td>$5,001 – $20,000</td><td>Executive resolution; notify Board</td></tr>
+          <tr><td>Above $20,000</td><td>Board approval in advance (except emergency welfare per policy)</td></tr>
+        </tbody>
+      </table>
+      <h3>17.2 Controls</h3>
+      <ul>
+        <li>Separate national and state bank accounts; no commingling without documented transfer</li>
+        <li>Annual financial report to AGM; independent review every 2–3 years</li>
+        <li>Finance &amp; Audit Committee reviews quarterly statements before Board</li>
+        <li>Donations receipted; public summary of major funds published annually</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>19. State Chapter Standards</h2>
+      <p>Operational detail for recognised chapters under the federation model (Section 8).</p>
+      <h3>18.1 Recognition criteria</h3>
+      <ul>
+        <li>Minimum 15–25 committed families (set in national constitution)</li>
+        <li>Interim state executive named (Chair, Secretary, Treasurer minimum)</li>
+        <li>State constitution or adoption of national template</li>
+        <li>Board ratification at meeting following Executive recommendation</li>
+      </ul>
+      <h3>18.2 Quarterly reporting to National Executive</h3>
+      <ul>
+        <li>Membership numbers (full / associate / youth)</li>
+        <li>Events held and attendance estimates</li>
+        <li>Financial summary (income, expenditure, balance)</li>
+        <li>Welfare cases supported (summary only — no private details)</li>
+        <li>Planned events for next quarter</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>20. Standing Committees — Expanded Charters</h2>
+      <table>
+        <thead>
+          <tr><th>Committee</th><th>Chair</th><th>Key deliverables</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Welfare</td><td>Welfare Director</td><td>Benevolence policy, case procedures, annual welfare report</td></tr>
+          <tr><td>Finance &amp; Audit</td><td>Treasurer</td><td>Quarterly review, audit preparation, fraud prevention</td></tr>
+          <tr><td>Education &amp; Scholarship</td><td>Education Director</td><td>Scholarship criteria, mentor list, student events</td></tr>
+          <tr><td>Business &amp; Investment</td><td>Business Director</td><td>Networking events, investment education workshops</td></tr>
+          <tr><td>Culture &amp; Sports</td><td>Programs Director (shared)</td><td>Cultural calendar, sports day standards, Taunet Nelel planning</td></tr>
+          <tr><td>Youth &amp; Women Affairs</td><td>Youth/Women reps</td><td>Leadership camps, inclusion policy, safe spaces policy</td></tr>
+          <tr><td>Constitution &amp; Governance</td><td>Secretary General (shared)</td><td>Policy review, constitution amendments draft for AGM</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>21. Dispute Resolution Procedure</h2>
+      <table>
+        <thead>
+          <tr><th>Stage</th><th>Actor</th><th>Action</th><th>Timeline</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Parties + State Chair</td><td>Direct good-faith discussion</td><td>14 days</td></tr>
+          <tr><td>2</td><td>State Vice Chair / Welfare lead</td><td>Internal mediation</td><td>14 days</td></tr>
+          <tr><td>3</td><td>National Deputy Chair or Programs Director</td><td>National mediation</td><td>21 days</td></tr>
+          <tr><td>4</td><td>Oversight Council</td><td>Formal hearing; binding recommendation on conduct/governance</td><td>30 days</td></tr>
+          <tr><td>5</td><td>Advisory Council (optional)</td><td>Cultural mediation for community harmony</td><td>As agreed</td></tr>
+          <tr><td>6</td><td>External</td><td>Legal or professional mediation if required</td><td>Per constitution</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>22. Code of Conduct &amp; Conflict of Interest</h2>
+      <h3>21.1 All officers and volunteers must:</h3>
+      <ul>
+        <li>Treat members with respect; zero tolerance for harassment or discrimination</li>
+        <li>Keep welfare and personal data confidential</li>
+        <li>Not use Gotabgaa name for personal political campaigning</li>
+        <li>Declare conflicts of interest before relevant votes (written register updated annually)</li>
+        <li>Separate personal business from organisation transactions</li>
+      </ul>
+      <h3>21.2 Conflict examples requiring declaration</h3>
+      <ul>
+        <li>Family member applying for benevolence or scholarship</li>
+        <li>Vendor owned by an officer receiving contract</li>
+        <li>Dual role in another organisation with competing interests</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>23. Reporting &amp; Communication Lines</h2>
+      <div class="diagram" style="font-family: Consolas, monospace; font-size: 9pt;">
+MEMBER ──► State Chapter Executive ──► National Executive ──► Board of Directors
+                │                           │
+                │                           └──► AGM (annual accountability)
+                │
+                └──► Oversight Council (ethics, elections, disputes — independent)
+
+MEDIA / PUBLIC ──► National Chairperson (or Board-designated spokesperson)
+WELFARE REQUEST ──► State Welfare Coordinator ──► National Welfare Director
+WEBSITE / SOCIAL ──► Communications Director (content) ──► Board (policy)
+FINANCE ──► Treasurer ──► Finance & Audit Committee ──► Board ──► AGM
+      </div>
+    </section>
+
+    <section class="page-break">
+      <h2>24. AGM Agenda Template</h2>
+      <ol>
+        <li>Welcome and acknowledgment of country</li>
+        <li>Confirmation of quorum and apologies</li>
+        <li>Minutes of previous AGM — approval</li>
+        <li>National Chairperson’s annual report</li>
+        <li>Secretary General’s report (membership, governance)</li>
+        <li>Treasurer’s report and audited accounts — approval</li>
+        <li>Programs &amp; Events Director — national programs report</li>
+        <li>Welfare Director — confidential summary only</li>
+        <li>State chapter highlights (each state rep, max 5 minutes)</li>
+        <li>Oversight Council annual report</li>
+        <li>Elections (if scheduled) — Electoral Commission process</li>
+        <li>Constitutional amendments (if any) — with prior notice</li>
+        <li>Strategic plan ratification (if presented)</li>
+        <li>General business and member questions</li>
+        <li>Close and thanks</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>25. Definitions</h2>
+      <table>
+        <tbody>
+          <tr><td><strong>AGM</strong></td><td>Annual General Meeting of financial members — supreme governing meeting</td></tr>
+          <tr><td><strong>Board</strong></td><td>Board of Directors / National Council</td></tr>
+          <tr><td><strong>Executive</strong></td><td>National Executive Committee — operational leadership</td></tr>
+          <tr><td><strong>Financial member</strong></td><td>Member with current fees paid for the membership year</td></tr>
+          <tr><td><strong>Chapter</strong></td><td>Recognised state or territory branch of Gotabgaa Australia</td></tr>
+          <tr><td><strong>Oversight Council</strong></td><td>Independent ethics, elections, and compliance body</td></tr>
+          <tr><td><strong>Electoral Commission</strong></td><td>Temporary body appointed to run a specific election</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>26. Implementation Roadmap</h2>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Timeline</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Phase 1 — Foundation</strong></td>
+            <td>0–3 months</td>
+            <td>Draft constitution; interim Executive; confirm state list; publish governance model</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 2 — Legitimacy</strong></td>
+            <td>3–6 months</td>
+            <td>First AGM; elect Executive and Oversight Council; seat Board; adopt financial policy</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 3 — Operations</strong></td>
+            <td>6–12 months</td>
+            <td>Standing committees active; benevolence policy live; national events calendar; state reporting</td>
+          </tr>
+          <tr>
+            <td><strong>Phase 4 — Maturity</strong></td>
+            <td>12+ months</td>
+            <td>Financial audit; Advisory Council seated; refine constitution; expand TAS/NT if ready</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="footer-note">
+      <p><strong>Gotabgaa Australia</strong> — Unity • Heritage • Excellence</p>
+      <p>Private governance planning document · Version 1.2 · June 2026</p>
+      <p>info@gotabgaaaustralia.org</p>
+      <p>For leadership review. Not legal advice. Constitution and By-Laws should be drafted with qualified advisers.</p>
+    </footer>
+
+  </div>
+</body>
+</html>

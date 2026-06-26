@@ -5130,6 +5130,7 @@ body.modal-open {
   color: var(--brown-900);
   margin-bottom: 28px;
   line-height: 1.2;
+  text-align: center;
 }
 
 .story-section__intro {
@@ -5265,6 +5266,18 @@ body.modal-open {
 
 .home-events {
   background: var(--cream-dark);
+  text-align: center;
+}
+
+.home-events .container {
+  text-align: center;
+}
+
+.home-events .story-section__title,
+.home-events .story-section__intro {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .home-events__grid {
@@ -5696,6 +5709,18 @@ body.modal-open {
     bottom: auto !important;
     max-width: 100% !important;
     object-fit: cover !important;
+  }
+
+  .home-events .story-section__title {
+    width: 100%;
+    padding: 0 4px;
+  }
+
+  .home-events .story-section__intro {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 4px;
+    text-align: center;
   }
 }
 
