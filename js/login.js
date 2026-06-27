@@ -87,6 +87,24 @@
   }
 
   async function redirectIfAlreadySignedIn() {
+    const params = getParams();
+    const tab = params.get('tab');
+    const isLeadership = tab === 'leadership' || tab === 'admin';
+    const token = localStorage.getItem(ADMIN_TOKEN_KEY) || sessionStorage.getItem(ADMIN_TOKEN_KEY);
+
+    if (isLeadership && token) {
+      if (params.get('preview') === '1') {
+        window.location.replace('members.html?preview=1');
+      } else {
+        window.location.replace('admin/');
+      }
+      return true;
+    }
+
+    if (isLeadership) {
+      return false;
+    }
+
     const session = loadMemberSession();
     if (session?.email && session?.membershipId) {
       try {
@@ -96,13 +114,6 @@
       } catch {
         localStorage.removeItem(SESSION_KEY);
       }
-    }
-
-    const token = localStorage.getItem(ADMIN_TOKEN_KEY) || sessionStorage.getItem(ADMIN_TOKEN_KEY);
-    const tab = getParams().get('tab');
-    if (token && (tab === 'leadership' || tab === 'admin')) {
-      window.location.replace('admin/');
-      return true;
     }
 
     return false;
@@ -175,8 +186,7 @@
 
       saveAdminToken(data.token);
 
-      const params = getParams();
-      if (params.get('preview') === '1' || params.get('return') === 'members') {
+      if (getParams().get('preview') === '1') {
         window.location.href = 'members.html?preview=1';
         return;
       }
@@ -199,6 +209,9 @@
         switchTab(btn.dataset.tab);
         const url = new URL(window.location.href);
         url.searchParams.set('tab', btn.dataset.tab);
+        if (btn.dataset.tab === 'leadership') {
+          url.searchParams.delete('return');
+        }
         window.history.replaceState(null, '', url.pathname + url.search);
       });
     });
