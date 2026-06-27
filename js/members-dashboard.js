@@ -12,13 +12,8 @@
   let isPreviewMode = false;
 
   const els = {
-    gate: document.getElementById('memberGate'),
     dashboard: document.getElementById('memberDashboard'),
     previewBanner: document.getElementById('memberPreviewBanner'),
-    previewBtn: document.getElementById('memberPreviewBtn'),
-    loginForm: document.getElementById('memberLoginForm'),
-    loginError: document.getElementById('memberLoginError'),
-    loginBtn: document.getElementById('memberLoginBtn'),
     signOut: document.getElementById('memberSignOut'),
     welcomeTitle: document.getElementById('memberWelcomeTitle'),
     welcomeMessage: document.getElementById('memberWelcomeMessage'),
@@ -92,7 +87,7 @@
   async function enterDeveloperPreview() {
     const token = getAdminToken();
     if (!token) {
-      showError('Sign in to the admin panel first, then open preview again.');
+      window.location.replace('login.html?tab=leadership&return=members&preview=1');
       return false;
     }
 
@@ -114,31 +109,15 @@
     return true;
   }
 
+  function redirectToLogin() {
+    window.location.replace('login.html?return=members');
+  }
+
   function showError(msg) {
-    if (!els.loginError) return;
-    els.loginError.textContent = msg;
-    els.loginError.hidden = !msg;
-    if (msg) {
-      els.loginError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-
-  function isPlaceholderMembershipId(id) {
-    const value = String(id || '').trim().toUpperCase();
-    return !value
-      || value === 'GAA-MEM-XXXXXXXX'
-      || /X{4,}/.test(value)
-      || value.length < 12;
-  }
-
-  function showGate() {
-    if (els.gate) els.gate.hidden = false;
-    if (els.dashboard) els.dashboard.hidden = true;
-    setPreviewBanner(false);
+    if (msg) console.warn('[members]', msg);
   }
 
   function showDashboard() {
-    if (els.gate) els.gate.hidden = true;
     if (els.dashboard) els.dashboard.hidden = false;
     renderDashboard();
   }
@@ -455,67 +434,13 @@
     });
   }
 
-  async function handleLogin(e) {
-    e.preventDefault();
-    showError('');
-
-    const email = document.getElementById('memberEmail')?.value.trim();
-    const membershipId = document.getElementById('memberId')?.value.trim().toUpperCase();
-
-    if (!email || !membershipId) {
-      showError('Please enter your email and membership ID.');
-      return;
-    }
-
-    if (isPlaceholderMembershipId(membershipId)) {
-      showError('Enter your real membership ID (e.g. GAA-MEM-ABC12345) from admin approval — not the placeholder text.');
-      return;
-    }
-
-    els.loginBtn.disabled = true;
-    els.loginBtn.textContent = 'Verifying…';
-
-    try {
-      const member = await verifyMember(email, membershipId);
-      if (member.memberStatus === 'inactive') {
-        showError('Your membership is inactive. Contact Gotabgaa Australia if you believe this is an error.');
-        return;
-      }
-      saveSession(member);
-      showDashboard();
-    } catch (err) {
-      showError(err.message || 'Could not sign in.');
-    } finally {
-      els.loginBtn.disabled = false;
-      els.loginBtn.textContent = 'Access Dashboard';
-    }
-  }
-
   async function init() {
     memberSession = loadSession();
 
-    els.loginForm?.addEventListener('submit', handleLogin);
-
     els.signOut?.addEventListener('click', () => {
-      const hadPreviewUrl = isPreviewRequested();
       clearSession();
       setPreviewBanner(false);
-      if (hadPreviewUrl) {
-        const url = new URL(window.location.href);
-        url.searchParams.delete('preview');
-        window.history.replaceState(null, '', url.pathname + url.search);
-      }
-      showGate();
-      showError('');
-    });
-
-    els.previewBtn?.addEventListener('click', async () => {
-      els.previewBtn.disabled = true;
-      try {
-        await enterDeveloperPreview();
-      } finally {
-        els.previewBtn.disabled = false;
-      }
+      redirectToLogin();
     });
 
     els.tabs?.addEventListener('click', e => {
@@ -539,14 +464,6 @@
       if (ok) return;
     }
 
-    if (getAdminToken()) {
-      fetch('/api/member-preview', {
-        headers: { Authorization: `Bearer ${getAdminToken()}` }
-      }).then(res => {
-        if (res.ok && els.previewBtn) els.previewBtn.hidden = false;
-      }).catch(() => {});
-    }
-
     if (memberSession?.email && memberSession?.membershipId) {
       try {
         const member = await verifyMember(memberSession.email, memberSession.membershipId);
@@ -554,10 +471,10 @@
         showDashboard();
       } catch {
         clearSession();
-        showGate();
+        redirectToLogin();
       }
     } else {
-      showGate();
+      redirectToLogin();
     }
   }
 

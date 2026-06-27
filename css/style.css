@@ -4753,6 +4753,69 @@ body.modal-open {
 
 .members-gate__footer { margin-top: 1.25rem; margin-bottom: 0; }
 
+/* Unified sign-in hub */
+.signin-hub {
+  background: var(--cream);
+}
+
+.signin-hub__wrap {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.signin-hub__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.signin-hub__tab {
+  padding: 14px 20px;
+  border: none;
+  background: var(--cream-dark);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.signin-hub__tab:hover {
+  color: var(--brown-800);
+}
+
+.signin-hub__tab.is-active {
+  background: var(--white);
+  color: var(--brown-900);
+  box-shadow: 0 -2px 12px rgba(42, 31, 23, 0.06);
+}
+
+.signin-hub__card {
+  max-width: none;
+  margin: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-top: none;
+}
+
+.signin-hub__panel[hidden] {
+  display: none !important;
+}
+
+.signin-hub__panel h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--brown-900);
+}
+
+.page-signin .nav__cta--member.is-active {
+  border-color: var(--tan-light);
+  color: var(--white);
+}
+
 /* Members page footer — center brand + link columns */
 .page-members .footer__grid {
   flex-direction: column;

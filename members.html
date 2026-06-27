@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=12">
+  <link rel="stylesheet" href="css/style.css?v=13">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-sub page-members">
@@ -31,7 +31,7 @@
         <li><a href="leadership.html" class="nav__link">Leadership</a></li>
         <li><a href="gallery.html" class="nav__link">Gallery</a></li>
         <li><a href="contact.html" class="nav__link">Contact</a></li>
-        <li><a href="members.html" class="btn btn--outline nav__cta nav__cta--member is-active" aria-current="page">Member Sign In</a></li>
+        <li><a href="login.html" class="btn btn--outline nav__cta nav__cta--member">Sign In</a></li>
         <li><a href="join.html" class="btn btn--primary nav__cta">Join Us</a></li>
       </ul>
     </nav>
@@ -54,31 +54,10 @@
   <section class="members-portal section">
     <div class="container">
 
-      <div class="members-gate" id="memberGate">
-        <div class="members-gate__card">
-          <h2>Sign in to your dashboard</h2>
-          <p class="members-gate__hint">Enter the email you registered with and your membership ID (issued after admin approval).</p>
-          <form id="memberLoginForm" class="members-gate__form" novalidate>
-            <div class="form__group">
-              <label for="memberEmail">Email address</label>
-              <input type="email" id="memberEmail" name="email" required autocomplete="email" placeholder="you@example.com">
-            </div>
-            <div class="form__group">
-              <label for="memberId">Membership ID</label>
-              <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="e.g. GAA-MEM-ABC12345" spellcheck="false" autocapitalize="characters">
-            </div>
-            <p class="form__error members-login-error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
-            <button type="submit" class="btn btn--primary btn--block" id="memberLoginBtn">Access Dashboard</button>
-            <button type="button" class="btn btn--outline btn--block" id="memberPreviewBtn" hidden>Developer preview</button>
-          </form>
-          <p class="members-gate__footer">Not a member yet? <a href="join.html">Register here</a>. Need help? <a href="contact.html">Contact us</a>.</p>
-        </div>
-      </div>
-
       <div class="members-dashboard" id="memberDashboard" hidden>
         <div class="members-preview-banner" id="memberPreviewBanner" hidden>
           <strong>Developer preview</strong> — sample member view for admins. Bookings and membership data are placeholders.
-          <a href="admin/">Return to admin</a>
+          <a href="admin/">Return to admin</a> · <a href="login.html?tab=leadership">Sign in</a>
         </div>
         <div class="members-dashboard__top">
           <div class="members-dashboard__welcome">
@@ -158,6 +137,7 @@
         <div class="footer__links">
           <h4>Members</h4>
           <ul>
+            <li><a href="login.html">Sign In</a></li>
             <li><a href="members.html">Dashboard</a></li>
             <li><a href="join.html">Join</a></li>
             <li><a href="book.html">Book events</a></li>
@@ -179,8 +159,8 @@
     </div>
   </footer>
 
-  <script src="js/content-loader.js?v=12"></script>
-  <script src="js/main.js?v=12"></script>
+  <script src="js/content-loader.js?v=13"></script>
+  <script src="js/main.js?v=13"></script>
   <script src="js/members-dashboard.js"></script>
 </body>
 </html>

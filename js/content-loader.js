@@ -80,6 +80,7 @@
       'privacy.html': 'privacy',
       'terms.html': 'terms',
       'portal.html': 'portal',
+      'login.html': 'portal',
       'join.html': 'join',
       'book.html': 'book',
       'members.html': 'members',

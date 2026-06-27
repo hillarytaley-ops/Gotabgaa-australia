@@ -755,7 +755,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../members.html" target="_blank" rel="noopener">members.html</a> with their membership ID. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
+        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../login.html" target="_blank" rel="noopener">login.html</a> with their membership ID. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
       </div>
       <div class="card" id="membershipRegistrationsCard">
         <h3>Member registrations</h3>

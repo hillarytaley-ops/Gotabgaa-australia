@@ -164,8 +164,8 @@ function initNavigation() {
     link.classList.toggle('active', isActive);
   });
 
-  const memberLink = document.querySelector('[data-member-link]');
-  if (memberLink && (currentPage === 'members.html' || currentPage === 'members')) {
+  const memberLink = document.querySelector('[data-signin-link], [data-member-link]');
+  if (memberLink && (currentPage === 'login.html' || currentPage === 'login')) {
     memberLink.classList.add('is-active');
   }
 
@@ -419,6 +419,7 @@ const PAGE_HERO_BACKGROUNDS = {
   'join.html': 'assets/hero/page/gala-celebration.png',
   'book.html': 'assets/hero/page/kokwet-sports-day.png',
   'members.html': 'assets/hero/page/community-gathering.png',
+  'login.html': 'assets/hero/page/stage-address.png',
   'portal.html': 'assets/hero/page/stage-address.png',
   'privacy.html': 'assets/hero/page/women-traditional.png',
   'terms.html': 'assets/hero/page/women-traditional.png',
@@ -495,46 +496,22 @@ function initPageHeroLogos() {
   container.insertAdjacentElement('afterend', createSideLogo('right'));
 }
 
-// Footer and community links to admin portal
-function initAdminPortalLinks() {
-  document.querySelectorAll('.footer__nav .footer__links').forEach(col => {
-    const h4 = col.querySelector('h4');
-    if (!h4 || h4.textContent.trim() !== 'Community') return;
-    const ul = col.querySelector('ul');
-    if (!ul || ul.querySelector('[data-portal-link]')) return;
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = 'portal.html';
-    a.textContent = 'Admin Portal';
-    a.setAttribute('data-portal-link', '');
-    li.appendChild(a);
-    ul.appendChild(li);
-  });
-
-  document.querySelectorAll('.footer__legal').forEach(legal => {
-    if (legal.querySelector('[data-admin-link]')) return;
-    const a = document.createElement('a');
-    a.href = 'portal.html';
-    a.textContent = 'Admin Portal';
-    a.setAttribute('data-admin-link', '');
-    a.setAttribute('aria-label', 'Open leadership admin portal');
-    legal.appendChild(a);
-  });
-}
-
-function initMemberPortalLinks() {
+// Footer and sign-in link (members + leadership)
+function initSignInLinks() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const onLoginPage = currentPage === 'login.html' || currentPage === 'login';
   const onMembersPage = currentPage === 'members.html' || currentPage === 'members';
 
   const menu = document.getElementById('navMenu');
-  if (menu && !menu.querySelector('[data-member-link]') && !onMembersPage) {
+  if (menu && !menu.querySelector('[data-signin-link]') && !onLoginPage) {
     const joinItem = menu.querySelector('a.nav__cta[href*="join"]')?.closest('li');
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = 'members.html';
+    a.href = 'login.html';
     a.className = 'btn btn--outline nav__cta nav__cta--member';
-    a.textContent = 'Member Sign In';
-    a.setAttribute('data-member-link', '');
+    a.textContent = 'Sign In';
+    a.setAttribute('data-signin-link', '');
+    if (onMembersPage) a.setAttribute('aria-label', 'Sign in to members dashboard');
     li.appendChild(a);
     if (joinItem) joinItem.before(li);
     else menu.appendChild(li);
@@ -542,28 +519,37 @@ function initMemberPortalLinks() {
 
   document.querySelectorAll('.footer__nav .footer__links').forEach(col => {
     const h4 = col.querySelector('h4');
-    if (!h4 || h4.textContent.trim() !== 'Community') return;
+    if (!h4) return;
+    const label = h4.textContent.trim();
+    if (label !== 'Community' && label !== 'Members') return;
     const ul = col.querySelector('ul');
-    if (!ul || ul.querySelector('[data-member-footer-link]')) return;
+    if (!ul || ul.querySelector('[data-signin-footer-link]')) return;
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = 'members.html';
-    a.textContent = 'Member Sign In';
-    a.setAttribute('data-member-footer-link', '');
+    a.href = 'login.html';
+    a.textContent = 'Sign In';
+    a.setAttribute('data-signin-footer-link', '');
     li.appendChild(a);
-    const joinLink = ul.querySelector('a[href*="join"]');
-    if (joinLink?.parentElement) joinLink.parentElement.before(li);
-    else ul.appendChild(li);
+    ul.insertBefore(li, ul.firstChild);
   });
 
   document.querySelectorAll('.footer__legal').forEach(legal => {
-    if (legal.querySelector('[data-member-legal-link]')) return;
+    if (legal.querySelector('[data-signin-legal-link]')) return;
+    legal.querySelectorAll('[data-admin-link], [data-portal-link], [data-member-legal-link]').forEach(el => el.remove());
     const a = document.createElement('a');
-    a.href = 'members.html';
-    a.textContent = 'Member Sign In';
-    a.setAttribute('data-member-legal-link', '');
+    a.href = 'login.html';
+    a.textContent = 'Sign In';
+    a.setAttribute('data-signin-legal-link', '');
     legal.insertBefore(a, legal.firstChild);
   });
+}
+
+function initAdminPortalLinks() {
+  initSignInLinks();
+}
+
+function initMemberPortalLinks() {
+  initSignInLinks();
 }
 
 // Subtle parallax on hero logo only (slideshow parallax cropped photos)

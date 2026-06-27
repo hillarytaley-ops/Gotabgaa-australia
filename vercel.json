@@ -3,7 +3,8 @@
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
-    { "source": "/portal", "destination": "/portal.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/portal", "destination": "/login.html?tab=leadership" },
     { "source": "/book", "destination": "/book.html" },
     { "source": "/join", "destination": "/join.html" },
     { "source": "/ailcd-apply", "destination": "/ailcd-apply.html" },
