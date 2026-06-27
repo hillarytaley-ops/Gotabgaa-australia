@@ -497,13 +497,49 @@ function initPageHeroLogos() {
 }
 
 // Footer and sign-in link (members + leadership)
+function hasSignInAnchor(root) {
+  if (!root) return false;
+  return !!root.querySelector(
+    'a[href*="login"], [data-signin-link], [data-signin-footer-link], [data-signin-legal-link], [data-member-link], [data-member-footer-link], [data-member-legal-link], [data-admin-link], [data-portal-link]'
+  );
+}
+
+function dedupeSignInLinks() {
+  const menu = document.getElementById('navMenu');
+  if (menu) {
+    const items = [...menu.querySelectorAll('li')].filter(li =>
+      li.querySelector('a[href*="login"], [data-signin-link], [data-member-link]')
+    );
+    items.slice(1).forEach(li => li.remove());
+    const keep = menu.querySelector('a[href*="login"], [data-signin-link], [data-member-link]');
+    if (keep) keep.setAttribute('data-signin-link', '');
+  }
+
+  document.querySelectorAll('.footer__links ul').forEach(ul => {
+    const loginItems = [...ul.querySelectorAll('li')].filter(li =>
+      li.querySelector('a[href*="login"], [data-signin-footer-link], [data-member-footer-link]')
+    );
+    loginItems.slice(1).forEach(li => li.remove());
+    const keep = ul.querySelector('a[href*="login"], [data-signin-footer-link], [data-member-footer-link]');
+    if (keep) keep.setAttribute('data-signin-footer-link', '');
+  });
+
+  document.querySelectorAll('.footer__legal').forEach(legal => {
+    const links = [...legal.querySelectorAll('a[href*="login"], [data-signin-legal-link], [data-member-legal-link], [data-admin-link], [data-portal-link]')];
+    links.slice(1).forEach(link => link.remove());
+    if (links[0]) links[0].setAttribute('data-signin-legal-link', '');
+  });
+}
+
 function initSignInLinks() {
+  dedupeSignInLinks();
+
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   const onLoginPage = currentPage === 'login.html' || currentPage === 'login';
   const onMembersPage = currentPage === 'members.html' || currentPage === 'members';
 
   const menu = document.getElementById('navMenu');
-  if (menu && !menu.querySelector('[data-signin-link]') && !onLoginPage) {
+  if (menu && !hasSignInAnchor(menu) && !onLoginPage) {
     const joinItem = menu.querySelector('a.nav__cta[href*="join"]')?.closest('li');
     const li = document.createElement('li');
     const a = document.createElement('a');
@@ -523,7 +559,7 @@ function initSignInLinks() {
     const label = h4.textContent.trim();
     if (label !== 'Community' && label !== 'Members') return;
     const ul = col.querySelector('ul');
-    if (!ul || ul.querySelector('[data-signin-footer-link]')) return;
+    if (!ul || hasSignInAnchor(ul)) return;
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = 'login.html';
@@ -534,7 +570,7 @@ function initSignInLinks() {
   });
 
   document.querySelectorAll('.footer__legal').forEach(legal => {
-    if (legal.querySelector('[data-signin-legal-link]')) return;
+    if (hasSignInAnchor(legal)) return;
     legal.querySelectorAll('[data-admin-link], [data-portal-link], [data-member-legal-link]').forEach(el => el.remove());
     const a = document.createElement('a');
     a.href = 'login.html';
@@ -542,6 +578,8 @@ function initSignInLinks() {
     a.setAttribute('data-signin-legal-link', '');
     legal.insertBefore(a, legal.firstChild);
   });
+
+  dedupeSignInLinks();
 }
 
 function initAdminPortalLinks() {
@@ -549,7 +587,7 @@ function initAdminPortalLinks() {
 }
 
 function initMemberPortalLinks() {
-  initSignInLinks();
+  /* handled by initAdminPortalLinks */
 }
 
 // Subtle parallax on hero logo only (slideshow parallax cropped photos)
