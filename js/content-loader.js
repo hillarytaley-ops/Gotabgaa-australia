@@ -851,6 +851,63 @@
     return (items || []).filter(item => item.published !== false);
   }
 
+  function mergeHubDefaults(content, local) {
+    if (!local) return content;
+    const merged = { ...content };
+    for (const key of ['welfare', 'sports', 'business']) {
+      if (local[key]) {
+        merged[key] = deepMergeHubSection(local[key], content[key] || {});
+      }
+    }
+    merged.pages = { ...(local.pages || {}), ...(content.pages || {}) };
+    for (const pageKey of ['welfare', 'sports', 'business']) {
+      if (local.pages?.[pageKey]) {
+        merged.pages[pageKey] = deepMergeHubSection(
+          local.pages[pageKey],
+          content.pages?.[pageKey] || {}
+        );
+      }
+    }
+    return merged;
+  }
+
+  function deepMergeHubSection(base, override) {
+    if (override === null || override === undefined) return base;
+    if (base === null || base === undefined) return override;
+    if (Array.isArray(base)) {
+      return Array.isArray(override) && override.length > 0 ? override : base;
+    }
+    if (typeof base !== 'object' || typeof override !== 'object') {
+      return override !== undefined && override !== '' ? override : base;
+    }
+    const result = { ...base };
+    for (const key of new Set([...Object.keys(base), ...Object.keys(override)])) {
+      result[key] = deepMergeHubSection(base[key], override[key]);
+    }
+    return result;
+  }
+
+  function renderWelfarePackageCards(packages) {
+    const list = packages || [];
+    if (!list.length) {
+      return '<p class="hub-empty">Welfare packages will appear here once configured in the admin dashboard.</p>';
+    }
+    return list.map(pkg => `
+      <article class="welfare-package-card animate-on-scroll${pkg.highlight ? ' welfare-package-card--highlight' : ''}" data-animate="fade-up">
+        ${pkg.highlight ? '<span class="welfare-package-card__badge">Popular</span>' : ''}
+        <h3>${escapeHtml(pkg.title)}</h3>
+        <p class="welfare-package-card__price">${escapeHtml(pkg.priceDisplay || `$${pkg.price} AUD / ${pkg.period || 'year'}`)}</p>
+        <p class="welfare-package-card__desc">${escapeHtml(pkg.description || '')}</p>
+        ${(pkg.benefits || []).length ? `
+          <ul class="welfare-package-card__benefits">
+            ${pkg.benefits.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
+          </ul>
+        ` : ''}
+        <button type="button" class="btn btn--outline btn--sm welfare-package-card__select" data-package-id="${escapeHtml(pkg.id)}">Select package</button>
+      </article>
+    `).join('');
+  }
+
   function renderWelfare(content) {
     const page = content.pages?.welfare;
     const data = content.welfare || {};
@@ -871,6 +928,11 @@
 
     const feeNote = document.getElementById('welfareFeeNote');
     if (feeNote && membership.feeNote) feeNote.textContent = membership.feeNote;
+
+    const packagesGrid = document.getElementById('welfarePackagesGrid');
+    if (packagesGrid) {
+      packagesGrid.innerHTML = renderWelfarePackageCards(membership.packages);
+    }
 
     const initiativesGrid = document.getElementById('welfareInitiativesGrid');
     if (initiativesGrid) {
@@ -1011,7 +1073,20 @@
         res = await fetch('/data/content.json', { cache: 'no-cache' });
       }
       if (!res.ok) throw new Error('Content fetch failed');
-      const content = await res.json();
+      let content = await res.json();
+
+      const needsHubDefaults = !content.welfare?.membership?.packages?.length
+        || !content.pages?.welfare
+        || !content.sports
+        || !content.business;
+      if (needsHubDefaults) {
+        const localRes = await fetch('/data/content.json', { cache: 'no-cache' });
+        if (localRes.ok) {
+          const local = await localRes.json();
+          content = mergeHubDefaults(content, local);
+        }
+      }
+
       hydrate(content);
     } catch (err) {
       console.warn('CMS content not loaded:', err.message);

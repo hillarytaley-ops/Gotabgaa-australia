@@ -53,6 +53,50 @@ function readLocalContent() {
   return fs.readFileSync(file, 'utf8');
 }
 
+function readLocalContentObject() {
+  return JSON.parse(readLocalContent());
+}
+
+/** Local defaults fill gaps when Supabase content predates hub/welfare sections. */
+function deepMergeDefaults(base, override) {
+  if (override === null || override === undefined) return base;
+  if (base === null || base === undefined) return override;
+  if (Array.isArray(base)) {
+    return Array.isArray(override) && override.length > 0 ? override : base;
+  }
+  if (typeof base !== 'object' || typeof override !== 'object') {
+    return override !== undefined && override !== '' ? override : base;
+  }
+  const result = { ...base };
+  for (const key of new Set([...Object.keys(base), ...Object.keys(override)])) {
+    result[key] = deepMergeDefaults(base[key], override[key]);
+  }
+  return result;
+}
+
+function mergeWithLocalDefaults(liveContent) {
+  const local = readLocalContentObject();
+  const merged = { ...liveContent };
+
+  for (const key of ['welfare', 'sports', 'business']) {
+    if (local[key]) {
+      merged[key] = deepMergeDefaults(local[key], liveContent[key] || {});
+    }
+  }
+
+  merged.pages = { ...(local.pages || {}), ...(liveContent.pages || {}) };
+  for (const pageKey of ['welfare', 'sports', 'business']) {
+    if (local.pages?.[pageKey]) {
+      merged.pages[pageKey] = deepMergeDefaults(
+        local.pages[pageKey],
+        liveContent.pages?.[pageKey] || {}
+      );
+    }
+  }
+
+  return merged;
+}
+
 async function readFromSupabase() {
   const supabase = getSupabase();
   if (!supabase) return null;
@@ -92,7 +136,12 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       let json = await readFromSupabase();
-      if (!json) json = readLocalContent();
+      if (json) {
+        const live = JSON.parse(json);
+        json = JSON.stringify(mergeWithLocalDefaults(live));
+      } else {
+        json = readLocalContent();
+      }
 
       res.setHeader('Cache-Control', 'public, max-age=60');
       res.status(200).send(json);
