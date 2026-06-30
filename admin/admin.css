@@ -1770,3 +1770,245 @@ body {
   gap: 8px;
   margin-top: 10px;
 }
+
+/* Compact admin layout — less vertical scroll */
+.content {
+  padding: 20px 24px 40px;
+}
+
+.card {
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+}
+
+.form-grid {
+  gap: 10px;
+}
+
+.form-field {
+  margin-bottom: 8px;
+}
+
+.form-field label {
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  padding: 8px 11px;
+}
+
+.form-field textarea {
+  min-height: 56px;
+}
+
+.form-field textarea:focus {
+  min-height: 80px;
+}
+
+.list-item {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.list-item__header {
+  margin-bottom: 0;
+}
+
+.topbar {
+  padding: 16px 24px;
+}
+
+/* Hub section sub-tabs (Welfare, Sports, Business) */
+.hub-admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px;
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  box-shadow: 0 4px 16px rgba(42, 31, 23, 0.06);
+}
+
+.hub-admin-tabs__btn {
+  padding: 7px 13px;
+  border: 1px solid var(--cream-dark);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.hub-admin-tabs__btn:hover {
+  border-color: var(--brown-700);
+  color: var(--brown-900);
+}
+
+.hub-admin-tabs__btn.is-active {
+  background: var(--brown-900);
+  border-color: var(--brown-900);
+  color: var(--white);
+}
+
+.hub-admin-panel[hidden] {
+  display: none !important;
+}
+
+/* Collapsible cards */
+.card--accordion.is-collapsed .card__body {
+  display: none;
+}
+
+.card--accordion .card__summary {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--cream-dark);
+}
+
+.card--accordion.is-collapsed .card__summary {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.card--accordion .card__summary h3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  flex: 1;
+}
+
+.card--accordion .card__summary h3::after {
+  display: none;
+}
+
+.card__chevron,
+.list-item__chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.55;
+  background: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  transition: transform 0.2s ease;
+}
+
+.card--accordion.is-expanded .card__chevron {
+  transform: rotate(180deg);
+}
+
+/* Collapsible list items (JS-enhanced) */
+.list-item--accordion.is-collapsed .list-item__body {
+  display: none;
+}
+
+.list-item--accordion .list-item__summary {
+  cursor: pointer;
+}
+
+.list-item--accordion.is-expanded .list-item__chevron {
+  transform: rotate(180deg);
+}
+
+/* Native details accordions */
+details.list-item {
+  padding: 0;
+}
+
+details.list-item > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+details.list-item > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.list-item > .list-item__body {
+  padding: 0 12px 12px;
+}
+
+details.list-item[open] > summary {
+  border-bottom: 1px solid var(--cream-dark);
+  margin-bottom: 10px;
+}
+
+/* Page heroes panel */
+.card--page-hero > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card--page-hero > summary::-webkit-details-marker {
+  display: none;
+}
+
+.card--page-hero > summary h3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.card--page-hero > summary h3::after {
+  display: none;
+}
+
+.card--page-hero[open] > summary .card__chevron {
+  transform: rotate(180deg);
+}
+
+.card--page-hero > .card__body {
+  padding-top: 12px;
+}
+
+/* Scrollable item lists */
+.admin-scroll-list {
+  max-height: min(420px, 52vh);
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-top: 8px;
+}
+
+.admin-scroll-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-scroll-list::-webkit-scrollbar-thumb {
+  background: rgba(61, 43, 31, 0.25);
+  border-radius: 999px;
+}

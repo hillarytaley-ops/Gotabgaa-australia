@@ -7,6 +7,7 @@
   let content = null;
   let activeSection = 'dashboard';
   let memberPortalActiveTab = 'welcome';
+  let hubAdminTabs = { welfare: 'inbox', sports: 'content', business: 'content' };
   let isPreviewMode = false;
 
   const els = {
@@ -249,7 +250,8 @@
   function field(label, id, value, type = 'text', opts = {}) {
     const val = value ?? '';
     if (type === 'textarea') {
-      return `<div class="form-field ${opts.full ? 'form-field--full' : ''}"><label for="${id}">${label}</label><textarea id="${id}" name="${id}">${escapeHtml(val)}</textarea></div>`;
+      const rows = opts.rows || (opts.full ? 3 : 2);
+      return `<div class="form-field ${opts.full ? 'form-field--full' : ''}"><label for="${id}">${label}</label><textarea id="${id}" name="${id}" rows="${rows}">${escapeHtml(val)}</textarea></div>`;
     }
     if (type === 'select') {
       const options = opts.options.map(o =>
@@ -269,6 +271,128 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function renderHubTabNav(section, tabs) {
+    const active = hubAdminTabs[section] || tabs[0].id;
+    return `
+      <nav class="hub-admin-tabs" data-hub-section="${section}" aria-label="Section tabs">
+        ${tabs.map(tab => `
+          <button type="button" class="hub-admin-tabs__btn${active === tab.id ? ' is-active' : ''}" data-hub-tab="${tab.id}">${tab.label}</button>
+        `).join('')}
+      </nav>
+    `;
+  }
+
+  function hubAdminPanel(section, tabId, html) {
+    const active = hubAdminTabs[section] || tabId;
+    return `<div class="hub-admin-panel" data-hub-panel-section="${section}" data-hub-panel="${tabId}"${active !== tabId ? ' hidden' : ''}>${html}</div>`;
+  }
+
+  function switchHubAdminTab(section, tab) {
+    hubAdminTabs[section] = tab;
+    document.querySelectorAll(`[data-hub-section="${section}"] [data-hub-tab]`).forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.hubTab === tab);
+    });
+    document.querySelectorAll(`[data-hub-panel-section="${section}"]`).forEach(panel => {
+      panel.hidden = panel.dataset.hubPanel !== tab;
+    });
+  }
+
+  function initPanelCompact(panel) {
+    if (!panel) return;
+
+    panel.querySelectorAll('[id$="List"], #membershipRegistrationsList, .gallery-admin-albums').forEach(el => {
+      if (!el.classList.contains('admin-scroll-list') && el.children.length > 2) {
+        el.classList.add('admin-scroll-list');
+      }
+    });
+
+    panel.querySelectorAll('.card:not(.card--notice):not(.card--accordion)').forEach((card, index) => {
+      if (card.closest('.hub-admin-panel[hidden], .mp-admin-panel[hidden]')) return;
+      if (card.closest('.hub-admin-panel')) return;
+      if (card.classList.contains('card--page-hero')) return;
+      if (card.dataset.accordionReady) return;
+
+      const header = card.querySelector(':scope > h3') || card.querySelector(':scope > .list-item__header');
+      if (!header) return;
+
+      const openByDefault = index < 2
+        || card.id === 'welfareRegistrationsCard'
+        || card.id === 'eventBookingsCard'
+        || card.id === 'ailcdApplicationsCard'
+        || !!card.querySelector('#membershipRegistrationsList');
+
+      makeCardCollapsible(card, header, openByDefault);
+    });
+
+    panel.querySelectorAll('.list-item:not(.list-item--accordion):not(details)').forEach(item => {
+      if (item.dataset.accordionReady) return;
+      const header = item.querySelector('.list-item__header');
+      if (!header) return;
+      makeListItemCollapsible(item, header, false);
+    });
+  }
+
+  function makeCardCollapsible(card, header, open) {
+    card.dataset.accordionReady = '1';
+    card.classList.add('card--accordion', open ? 'is-expanded' : 'is-collapsed');
+
+    const body = document.createElement('div');
+    body.className = 'card__body';
+    [...card.children].forEach(child => {
+      if (child !== header) body.appendChild(child);
+    });
+    card.appendChild(body);
+
+    header.classList.add('card__summary');
+    if (!header.querySelector('.card__chevron')) {
+      header.insertAdjacentHTML('beforeend', '<span class="card__chevron" aria-hidden="true"></span>');
+    }
+
+    const toggle = () => {
+      const expanded = card.classList.toggle('is-expanded');
+      card.classList.toggle('is-collapsed', !expanded);
+    };
+
+    header.addEventListener('click', e => {
+      if (e.target.closest('button, a, select, input, textarea, label')) return;
+      toggle();
+    });
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+    header.setAttribute('tabindex', '0');
+    header.setAttribute('role', 'button');
+  }
+
+  function makeListItemCollapsible(item, header, open) {
+    item.dataset.accordionReady = '1';
+    item.classList.add('list-item--accordion', open ? 'is-expanded' : 'is-collapsed');
+
+    let body = item.querySelector('.list-item__body');
+    if (!body) {
+      body = document.createElement('div');
+      body.className = 'list-item__body';
+      [...item.children].forEach(child => {
+        if (child !== header) body.appendChild(child);
+      });
+      item.appendChild(body);
+    }
+
+    if (!header.querySelector('.list-item__chevron')) {
+      header.insertAdjacentHTML('beforeend', '<span class="list-item__chevron" aria-hidden="true"></span>');
+    }
+
+    header.classList.add('list-item__summary');
+    header.addEventListener('click', e => {
+      if (e.target.closest('button, a, select, input, textarea, label')) return;
+      const expanded = item.classList.toggle('is-expanded');
+      item.classList.toggle('is-collapsed', !expanded);
+    });
   }
 
   function renderDashboardStats() {
@@ -437,24 +561,26 @@
 
   function programItemHtml(p, i) {
     return `
-      <div class="list-item" data-program-index="${i}">
-        <div class="list-item__header">
+      <details class="list-item list-item--accordion" data-program-index="${i}">
+        <summary class="list-item__header">
           <h4>${escapeHtml(p.title)}</h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-program="${i}">Remove</button>
+        </summary>
+        <div class="list-item__body">
+          <div class="form-grid">
+            ${field('Title', `progTitle${i}`, p.title)}
+            ${field('Link', `progLink${i}`, p.link)}
+            ${field('Icon', `progIcon${i}`, p.icon, 'select', { options: [
+              { value: 'education', label: 'Education' },
+              { value: 'heart', label: 'Heart / Support' },
+              { value: 'building', label: 'Building' },
+              { value: 'music', label: 'Music / Cultural' }
+            ]})}
+            ${field('Description', `progDesc${i}`, p.description, 'textarea', { full: true })}
+            ${field('Show on home page', `progHome${i}`, p.showOnHome, 'checkbox')}
+          </div>
         </div>
-        <div class="form-grid">
-          ${field('Title', `progTitle${i}`, p.title)}
-          ${field('Link', `progLink${i}`, p.link)}
-          ${field('Icon', `progIcon${i}`, p.icon, 'select', { options: [
-            { value: 'education', label: 'Education' },
-            { value: 'heart', label: 'Heart / Support' },
-            { value: 'building', label: 'Building' },
-            { value: 'music', label: 'Music / Cultural' }
-          ]})}
-          ${field('Description', `progDesc${i}`, p.description, 'textarea', { full: true })}
-          ${field('Show on home page', `progHome${i}`, p.showOnHome, 'checkbox')}
-        </div>
-      </div>
+      </details>
     `;
   }
 
@@ -510,34 +636,36 @@
         `;
 
     return `
-      <div class="list-item" data-event-index="${i}">
-        <div class="list-item__header">
+      <details class="list-item list-item--accordion" data-event-index="${i}">
+        <summary class="list-item__header">
           <h4>${escapeHtml(e.title)} <span class="form-hint">(${e.status})</span></h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-event="${i}">Remove</button>
+        </summary>
+        <div class="list-item__body">
+          <div class="form-grid">
+            ${field('Title', `evtTitle${i}`, e.title)}
+            ${field('Date pill', `evtPill${i}`, e.datePill)}
+            ${field('Full date', `evtDate${i}`, e.date)}
+            ${field('Time', `evtTime${i}`, e.time)}
+            ${field('Location', `evtLocation${i}`, e.location)}
+            ${field('Meta line', `evtMeta${i}`, e.meta)}
+            ${field('Image path', `evtImage${i}`, e.image)}
+            ${field('Status', `evtStatus${i}`, e.status, 'select', { options: [
+              { value: 'upcoming', label: 'Upcoming' },
+              { value: 'past', label: 'Past' }
+            ]})}
+            ${field('Category', `evtCategory${i}`, e.category, 'select', { options: [
+              { value: 'cultural', label: 'Cultural' },
+              { value: 'sports', label: 'Sports' },
+              { value: 'community', label: 'Community' },
+              { value: 'agm', label: 'AGM' }
+            ]})}
+            ${field('Summary', `evtSummary${i}`, e.summary, 'textarea')}
+            ${field('Full description', `evtDesc${i}`, e.description, 'textarea', { full: true })}
+            ${bookingFields}
+          </div>
         </div>
-        <div class="form-grid">
-          ${field('Title', `evtTitle${i}`, e.title)}
-          ${field('Date pill', `evtPill${i}`, e.datePill)}
-          ${field('Full date', `evtDate${i}`, e.date)}
-          ${field('Time', `evtTime${i}`, e.time)}
-          ${field('Location', `evtLocation${i}`, e.location)}
-          ${field('Meta line', `evtMeta${i}`, e.meta)}
-          ${field('Image path', `evtImage${i}`, e.image)}
-          ${field('Status', `evtStatus${i}`, e.status, 'select', { options: [
-            { value: 'upcoming', label: 'Upcoming' },
-            { value: 'past', label: 'Past' }
-          ]})}
-          ${field('Category', `evtCategory${i}`, e.category, 'select', { options: [
-            { value: 'cultural', label: 'Cultural' },
-            { value: 'sports', label: 'Sports' },
-            { value: 'community', label: 'Community' },
-            { value: 'agm', label: 'AGM' }
-          ]})}
-          ${field('Summary', `evtSummary${i}`, e.summary, 'textarea')}
-          ${field('Full description', `evtDesc${i}`, e.description, 'textarea', { full: true })}
-          ${bookingFields}
-        </div>
-      </div>
+      </details>
     `;
   }
 
@@ -554,18 +682,20 @@
 
   function leaderItemHtml(l, i) {
     return `
-      <div class="list-item" data-leader-index="${i}">
-        <div class="list-item__header">
+      <details class="list-item list-item--accordion" data-leader-index="${i}">
+        <summary class="list-item__header">
           <h4>${escapeHtml(l.name)}</h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-leader="${i}">Remove</button>
+        </summary>
+        <div class="list-item__body">
+          <div class="form-grid">
+            ${field('Name / title', `ldrName${i}`, l.name)}
+            ${field('Role', `ldrRole${i}`, l.role)}
+            ${field('Initials', `ldrInitials${i}`, l.initials)}
+            ${field('Photo URL (optional)', `ldrPhoto${i}`, l.photo)}
+          </div>
         </div>
-        <div class="form-grid">
-          ${field('Name / title', `ldrName${i}`, l.name)}
-          ${field('Role', `ldrRole${i}`, l.role)}
-          ${field('Initials', `ldrInitials${i}`, l.initials)}
-          ${field('Photo URL (optional)', `ldrPhoto${i}`, l.photo)}
-        </div>
-      </div>
+      </details>
     `;
   }
 
@@ -1348,13 +1478,12 @@
           loadEventBookingsPanel(card.dataset.paymentFilter);
         });
       });
+      initPanelCompact(document.querySelector('[data-panel="events"]'));
     } catch (err) {
       if (isAuthError(err)) return;
       card.innerHTML = renderEventBookingsPanel([], err.message, paymentFilter);
     }
   }
-
-  async function loadMembershipRegistrations(paymentFilter) {
     const token = getToken();
     if (!token) return [];
 
@@ -1646,6 +1775,7 @@
           }
         });
       });
+      initPanelCompact(document.querySelector('[data-panel="membership"]'));
     } catch (err) {
       if (isAuthError(err)) return;
       card.innerHTML = renderMembershipRegistrationsPanel([], err.message);
@@ -2112,6 +2242,7 @@
           }
         });
       });
+      initPanelCompact(document.querySelector('[data-panel="welfare"]'));
     } catch (err) {
       if (isAuthError(err)) return;
       card.innerHTML = `<h3>Welfare registrations</h3><p class="form-hint">${escapeHtml(err.message)}</p>`;
@@ -2137,39 +2268,43 @@
 
   function hubNewsItemHtml(item, i, prefix, removeAttr) {
     return `
-      <div class="list-item" data-hub-index="${i}">
-        <div class="list-item__header">
+      <details class="list-item list-item--accordion">
+        <summary class="list-item__header">
           <h4>${escapeHtml(item.title || 'News item')}</h4>
           <button type="button" class="btn btn--danger btn--sm" ${removeAttr}="${i}">Remove</button>
+        </summary>
+        <div class="list-item__body">
+          <div class="form-grid">
+            ${field('Title', `${prefix}Title${i}`, item.title)}
+            ${field('Date', `${prefix}Date${i}`, item.date)}
+            ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
+            ${field('Link URL', `${prefix}Link${i}`, item.link)}
+            ${field('Image path', `${prefix}Image${i}`, item.image)}
+            ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
+          </div>
         </div>
-        <div class="form-grid">
-          ${field('Title', `${prefix}Title${i}`, item.title)}
-          ${field('Date', `${prefix}Date${i}`, item.date)}
-          ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
-          ${field('Link URL', `${prefix}Link${i}`, item.link)}
-          ${field('Image path', `${prefix}Image${i}`, item.image)}
-          ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
-        </div>
-      </div>
+      </details>
     `;
   }
 
   function hubVlogItemHtml(item, i, prefix, removeAttr) {
     return `
-      <div class="list-item" data-hub-index="${i}">
-        <div class="list-item__header">
+      <details class="list-item list-item--accordion">
+        <summary class="list-item__header">
           <h4>${escapeHtml(item.title || 'Vlog')}</h4>
           <button type="button" class="btn btn--danger btn--sm" ${removeAttr}="${i}">Remove</button>
+        </summary>
+        <div class="list-item__body">
+          <div class="form-grid">
+            ${field('Title', `${prefix}Title${i}`, item.title)}
+            ${field('Date', `${prefix}Date${i}`, item.date)}
+            ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
+            ${field('Video URL (YouTube watch or channel)', `${prefix}Video${i}`, item.videoUrl)}
+            ${field('Thumbnail image', `${prefix}Thumb${i}`, item.thumbnail)}
+            ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
+          </div>
         </div>
-        <div class="form-grid">
-          ${field('Title', `${prefix}Title${i}`, item.title)}
-          ${field('Date', `${prefix}Date${i}`, item.date)}
-          ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
-          ${field('Video URL (YouTube watch or channel)', `${prefix}Video${i}`, item.videoUrl)}
-          ${field('Thumbnail image', `${prefix}Thumb${i}`, item.thumbnail)}
-          ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
-        </div>
-      </div>
+      </details>
     `;
   }
 
@@ -2179,94 +2314,117 @@
     const w = content.welfare;
     const m = w.membership || {};
     const pkgs = m.packages || [];
+    const tabs = [
+      { id: 'inbox', label: 'Registrations' },
+      { id: 'settings', label: 'Settings & packages' },
+      { id: 'content', label: 'Page content' },
+      { id: 'initiatives', label: 'Initiatives' },
+      { id: 'news', label: 'News' }
+    ];
+
     return `
       <div class="card card--notice">
         <p><strong>Public page:</strong> <a href="../welfare.html" target="_blank" rel="noopener">welfare.html</a> — registration form, packages, and sign-in portal. Hero text under <button type="button" class="btn btn--outline btn--sm" data-goto="pages">Page Heroes</button>.</p>
         <p class="form-hint">Run <code>supabase/migrate-welfare.sql</code> in Supabase if welfare registrations are not saving yet.</p>
       </div>
-      <div class="card" id="welfareRegistrationsCard">
-        <h3>Welfare registrations &amp; reimbursements</h3>
-        <p class="form-hint">Loading from database…</p>
-      </div>
-      <div class="card"><h3>Welfare membership settings</h3><div class="form-grid">
-        ${field('Registration enabled', 'welfMemEnabled', m.enabled !== false, 'checkbox')}
-        ${field('Registration intro', 'welfMemIntro', m.intro, 'textarea', { full: true })}
-        ${field('Fee note', 'welfMemFeeNote', m.feeNote, 'textarea')}
-        ${field('Sign-in intro', 'welfMemSignInIntro', m.signInIntro, 'textarea', { full: true })}
-        ${field('Community alert message', 'welfMemAlertMsg', m.communityAlertMessage, 'textarea', { full: true })}
-        ${field('Packages section tag', 'welfPkgTag', m.packagesHeader?.tag)}
-        ${field('Packages section title', 'welfPkgSectionTitle', m.packagesHeader?.title)}
-        ${field('Packages section description', 'welfPkgSectionDesc', m.packagesHeader?.description, 'textarea')}
-      </div></div>
-      <div class="card">
-        <div class="list-item__header"><h3>Welfare packages (${pkgs.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addWelfarePackage">+ Add package</button>
+      ${renderHubTabNav('welfare', tabs)}
+      ${hubAdminPanel('welfare', 'inbox', `
+        <div class="card" id="welfareRegistrationsCard">
+          <h3>Welfare registrations &amp; reimbursements</h3>
+          <p class="form-hint">Loading from database…</p>
         </div>
-        <div id="welfarePackagesList">${pkgs.map((pkg, i) => `
-          <div class="list-item" data-welfare-pkg-index="${i}">
-            <div class="list-item__header">
-              <h4>${escapeHtml(pkg.title)} — ${escapeHtml(pkg.priceDisplay || `$${pkg.price}`)}</h4>
-              <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-pkg="${i}">Remove</button>
-            </div>
-            <div class="form-grid">
-              ${field('Title', `welfPkgTitle${i}`, pkg.title)}
-              ${field('Description', `welfPkgItemDesc${i}`, pkg.description, 'textarea', { full: true })}
-              ${field('Price (number)', `welfPkgPrice${i}`, pkg.price, 'number')}
-              ${field('Price display', `welfPkgPriceDisplay${i}`, pkg.priceDisplay)}
-              ${field('Period', `welfPkgPeriod${i}`, pkg.period || 'year')}
-              ${field('Highlight (popular)', `welfPkgHighlight${i}`, pkg.highlight === true, 'checkbox')}
-              ${field('Benefits (one per line)', `welfPkgBenefits${i}`, (pkg.benefits || []).join('\n'), 'textarea', { full: true })}
-            </div>
+      `)}
+      ${hubAdminPanel('welfare', 'settings', `
+        <div class="card"><h3>Welfare membership settings</h3><div class="form-grid">
+          ${field('Registration enabled', 'welfMemEnabled', m.enabled !== false, 'checkbox')}
+          ${field('Registration intro', 'welfMemIntro', m.intro, 'textarea', { full: true })}
+          ${field('Fee note', 'welfMemFeeNote', m.feeNote, 'textarea')}
+          ${field('Sign-in intro', 'welfMemSignInIntro', m.signInIntro, 'textarea', { full: true })}
+          ${field('Community alert message', 'welfMemAlertMsg', m.communityAlertMessage, 'textarea', { full: true })}
+          ${field('Packages section tag', 'welfPkgTag', m.packagesHeader?.tag)}
+          ${field('Packages section title', 'welfPkgSectionTitle', m.packagesHeader?.title)}
+          ${field('Packages section description', 'welfPkgSectionDesc', m.packagesHeader?.description, 'textarea')}
+        </div></div>
+        <div class="card">
+          <div class="list-item__header"><h3>Welfare packages (${pkgs.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addWelfarePackage">+ Add package</button>
           </div>
-        `).join('')}</div>
-      </div>
-      <div class="card"><h3>Page intro &amp; CTA</h3><div class="form-grid">
-        ${field('Intro paragraph', 'welfareIntro', p.intro, 'textarea', { full: true })}
-        ${field('CTA title', 'welfareCtaTitle', p.cta?.title)}
-        ${field('CTA description', 'welfareCtaDesc', p.cta?.description, 'textarea')}
-        ${field('CTA button', 'welfareCtaBtn', p.cta?.button)}
-        ${field('CTA URL', 'welfareCtaUrl', p.cta?.buttonUrl)}
-      </div></div>
-      <div class="card"><h3>Section headers</h3><div class="form-grid">
-        ${field('Initiatives tag', 'welfareInitTag', p.initiativesHeader?.tag)}
-        ${field('Initiatives title', 'welfareInitTitle', p.initiativesHeader?.title)}
-        ${field('Initiatives description', 'welfareInitDesc', p.initiativesHeader?.description, 'textarea')}
-        ${field('News tag', 'welfareNewsTag', p.newsHeader?.tag)}
-        ${field('News title', 'welfareNewsTitle', p.newsHeader?.title)}
-        ${field('News description', 'welfareNewsDesc', p.newsHeader?.description, 'textarea')}
-      </div></div>
-      <div class="card">
-        <div class="list-item__header"><h3>Welfare initiatives (${w.initiatives.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addWelfareInitiative">+ Add initiative</button>
+          <div id="welfarePackagesList">${pkgs.map((pkg, i) => `
+            <details class="list-item list-item--accordion">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(pkg.title)} — ${escapeHtml(pkg.priceDisplay || `$${pkg.price}`)}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-pkg="${i}">Remove</button>
+              </summary>
+              <div class="list-item__body">
+                <div class="form-grid">
+                  ${field('Title', `welfPkgTitle${i}`, pkg.title)}
+                  ${field('Description', `welfPkgItemDesc${i}`, pkg.description, 'textarea', { full: true })}
+                  ${field('Price (number)', `welfPkgPrice${i}`, pkg.price, 'number')}
+                  ${field('Price display', `welfPkgPriceDisplay${i}`, pkg.priceDisplay)}
+                  ${field('Period', `welfPkgPeriod${i}`, pkg.period || 'year')}
+                  ${field('Highlight (popular)', `welfPkgHighlight${i}`, pkg.highlight === true, 'checkbox')}
+                  ${field('Benefits (one per line)', `welfPkgBenefits${i}`, (pkg.benefits || []).join('\n'), 'textarea', { full: true })}
+                </div>
+              </div>
+            </details>
+          `).join('')}</div>
         </div>
-        <div id="welfareInitiativesList">${w.initiatives.map((item, i) => `
-          <div class="list-item" data-welfare-init-index="${i}">
-            <div class="list-item__header">
-              <h4>${escapeHtml(item.title)}</h4>
-              <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-init="${i}">Remove</button>
-            </div>
-            <div class="form-grid">
-              ${field('Title', `welfInitTitle${i}`, item.title)}
-              ${field('Description', `welfInitDesc${i}`, item.description, 'textarea', { full: true })}
-              ${field('Link URL', `welfInitLink${i}`, item.link)}
-              ${field('Link label', `welfInitLinkLabel${i}`, item.linkLabel)}
-              ${field('Icon', `welfInitIcon${i}`, item.icon, 'select', { options: [
-                { value: 'heart', label: 'Heart' },
-                { value: 'support', label: 'Support' },
-                { value: 'health', label: 'Health' },
-                { value: 'family', label: 'Family' },
-                { value: 'building', label: 'Building' }
-              ]})}
-            </div>
+      `)}
+      ${hubAdminPanel('welfare', 'content', `
+        <div class="card"><h3>Page intro &amp; CTA</h3><div class="form-grid">
+          ${field('Intro paragraph', 'welfareIntro', p.intro, 'textarea', { full: true })}
+          ${field('CTA title', 'welfareCtaTitle', p.cta?.title)}
+          ${field('CTA description', 'welfareCtaDesc', p.cta?.description, 'textarea')}
+          ${field('CTA button', 'welfareCtaBtn', p.cta?.button)}
+          ${field('CTA URL', 'welfareCtaUrl', p.cta?.buttonUrl)}
+        </div></div>
+        <div class="card"><h3>Section headers</h3><div class="form-grid">
+          ${field('Initiatives tag', 'welfareInitTag', p.initiativesHeader?.tag)}
+          ${field('Initiatives title', 'welfareInitTitle', p.initiativesHeader?.title)}
+          ${field('Initiatives description', 'welfareInitDesc', p.initiativesHeader?.description, 'textarea')}
+          ${field('News tag', 'welfareNewsTag', p.newsHeader?.tag)}
+          ${field('News title', 'welfareNewsTitle', p.newsHeader?.title)}
+          ${field('News description', 'welfareNewsDesc', p.newsHeader?.description, 'textarea')}
+        </div></div>
+      `)}
+      ${hubAdminPanel('welfare', 'initiatives', `
+        <div class="card">
+          <div class="list-item__header"><h3>Welfare initiatives (${w.initiatives.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addWelfareInitiative">+ Add initiative</button>
           </div>
-        `).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Welfare news (${w.news.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addWelfareNews">+ Add news</button>
+          <div id="welfareInitiativesList">${w.initiatives.map((item, i) => `
+            <details class="list-item list-item--accordion">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(item.title)}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-init="${i}">Remove</button>
+              </summary>
+              <div class="list-item__body">
+                <div class="form-grid">
+                  ${field('Title', `welfInitTitle${i}`, item.title)}
+                  ${field('Description', `welfInitDesc${i}`, item.description, 'textarea', { full: true })}
+                  ${field('Link URL', `welfInitLink${i}`, item.link)}
+                  ${field('Link label', `welfInitLinkLabel${i}`, item.linkLabel)}
+                  ${field('Icon', `welfInitIcon${i}`, item.icon, 'select', { options: [
+                    { value: 'heart', label: 'Heart' },
+                    { value: 'support', label: 'Support' },
+                    { value: 'health', label: 'Health' },
+                    { value: 'family', label: 'Family' },
+                    { value: 'building', label: 'Building' }
+                  ]})}
+                </div>
+              </div>
+            </details>
+          `).join('')}</div>
         </div>
-        <div id="welfareNewsList">${w.news.map((item, i) => hubNewsItemHtml(item, i, 'welfNews', 'data-remove-welfare-news')).join('')}</div>
-      </div>
+      `)}
+      ${hubAdminPanel('welfare', 'news', `
+        <div class="card">
+          <div class="list-item__header"><h3>Welfare news (${w.news.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addWelfareNews">+ Add news</button>
+          </div>
+          <div id="welfareNewsList">${w.news.map((item, i) => hubNewsItemHtml(item, i, 'welfNews', 'data-remove-welfare-news')).join('')}</div>
+        </div>
+      `)}
     `;
   }
 
@@ -2274,60 +2432,78 @@
     ensureHubContent();
     const p = content.pages?.sports || {};
     const s = content.sports;
+    const tabs = [
+      { id: 'content', label: 'Section headers' },
+      { id: 'vlogs', label: 'Vlog' },
+      { id: 'events', label: 'Events' },
+      { id: 'news', label: 'News' }
+    ];
+
     return `
       <div class="card card--notice">
         <p><strong>Public page:</strong> <a href="../sports.html" target="_blank" rel="noopener">sports.html</a> — vlogs, planned sports events, and sports news.</p>
       </div>
-      <div class="card"><h3>Section headers</h3><div class="form-grid">
-        ${field('Vlog tag', 'sportsVlogTag', p.vlogHeader?.tag)}
-        ${field('Vlog title', 'sportsVlogTitle', p.vlogHeader?.title)}
-        ${field('Vlog description', 'sportsVlogDesc', p.vlogHeader?.description, 'textarea')}
-        ${field('Events tag', 'sportsEventsTag', p.eventsHeader?.tag)}
-        ${field('Events title', 'sportsEventsTitle', p.eventsHeader?.title)}
-        ${field('Events description', 'sportsEventsDesc', p.eventsHeader?.description, 'textarea')}
-        ${field('News tag', 'sportsNewsTag', p.newsHeader?.tag)}
-        ${field('News title', 'sportsNewsTitle', p.newsHeader?.title)}
-        ${field('News description', 'sportsNewsDesc', p.newsHeader?.description, 'textarea')}
-      </div></div>
-      <div class="card">
-        <div class="list-item__header"><h3>Sports vlog (${s.vlogs.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addSportsVlog">+ Add vlog</button>
-        </div>
-        <div id="sportsVlogList">${s.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'sportVlog', 'data-remove-sports-vlog')).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Planned sports events (${s.events.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addSportsEvent">+ Add event</button>
-        </div>
-        <div id="sportsEventsList">${s.events.map((item, i) => `
-          <div class="list-item" data-sports-event-index="${i}">
-            <div class="list-item__header">
-              <h4>${escapeHtml(item.title)} <span class="form-hint">(${item.status || 'upcoming'})</span></h4>
-              <button type="button" class="btn btn--danger btn--sm" data-remove-sports-event="${i}">Remove</button>
-            </div>
-            <div class="form-grid">
-              ${field('Title', `sportEvtTitle${i}`, item.title)}
-              ${field('Date pill', `sportEvtPill${i}`, item.datePill)}
-              ${field('Full date', `sportEvtDate${i}`, item.date)}
-              ${field('Location', `sportEvtLocation${i}`, item.location)}
-              ${field('Summary', `sportEvtSummary${i}`, item.summary, 'textarea')}
-              ${field('Image path', `sportEvtImage${i}`, item.image)}
-              ${field('Status', `sportEvtStatus${i}`, item.status || 'upcoming', 'select', { options: [
-                { value: 'upcoming', label: 'Upcoming' },
-                { value: 'past', label: 'Past' }
-              ]})}
-              ${field('Link URL', `sportEvtLink${i}`, item.link)}
-              ${field('Link label', `sportEvtLinkLabel${i}`, item.linkLabel)}
-            </div>
+      ${renderHubTabNav('sports', tabs)}
+      ${hubAdminPanel('sports', 'content', `
+        <div class="card"><h3>Section headers</h3><div class="form-grid">
+          ${field('Vlog tag', 'sportsVlogTag', p.vlogHeader?.tag)}
+          ${field('Vlog title', 'sportsVlogTitle', p.vlogHeader?.title)}
+          ${field('Vlog description', 'sportsVlogDesc', p.vlogHeader?.description, 'textarea')}
+          ${field('Events tag', 'sportsEventsTag', p.eventsHeader?.tag)}
+          ${field('Events title', 'sportsEventsTitle', p.eventsHeader?.title)}
+          ${field('Events description', 'sportsEventsDesc', p.eventsHeader?.description, 'textarea')}
+          ${field('News tag', 'sportsNewsTag', p.newsHeader?.tag)}
+          ${field('News title', 'sportsNewsTitle', p.newsHeader?.title)}
+          ${field('News description', 'sportsNewsDesc', p.newsHeader?.description, 'textarea')}
+        </div></div>
+      `)}
+      ${hubAdminPanel('sports', 'vlogs', `
+        <div class="card">
+          <div class="list-item__header"><h3>Sports vlog (${s.vlogs.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addSportsVlog">+ Add vlog</button>
           </div>
-        `).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Sports news (${s.news.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addSportsNews">+ Add news</button>
+          <div id="sportsVlogList">${s.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'sportVlog', 'data-remove-sports-vlog')).join('')}</div>
         </div>
-        <div id="sportsNewsList">${s.news.map((item, i) => hubNewsItemHtml(item, i, 'sportNews', 'data-remove-sports-news')).join('')}</div>
-      </div>
+      `)}
+      ${hubAdminPanel('sports', 'events', `
+        <div class="card">
+          <div class="list-item__header"><h3>Planned sports events (${s.events.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addSportsEvent">+ Add event</button>
+          </div>
+          <div id="sportsEventsList">${s.events.map((item, i) => `
+            <details class="list-item list-item--accordion">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(item.title)} <span class="form-hint">(${item.status || 'upcoming'})</span></h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-sports-event="${i}">Remove</button>
+              </summary>
+              <div class="list-item__body">
+                <div class="form-grid">
+                  ${field('Title', `sportEvtTitle${i}`, item.title)}
+                  ${field('Date pill', `sportEvtPill${i}`, item.datePill)}
+                  ${field('Full date', `sportEvtDate${i}`, item.date)}
+                  ${field('Location', `sportEvtLocation${i}`, item.location)}
+                  ${field('Summary', `sportEvtSummary${i}`, item.summary, 'textarea')}
+                  ${field('Image path', `sportEvtImage${i}`, item.image)}
+                  ${field('Status', `sportEvtStatus${i}`, item.status || 'upcoming', 'select', { options: [
+                    { value: 'upcoming', label: 'Upcoming' },
+                    { value: 'past', label: 'Past' }
+                  ]})}
+                  ${field('Link URL', `sportEvtLink${i}`, item.link)}
+                  ${field('Link label', `sportEvtLinkLabel${i}`, item.linkLabel)}
+                </div>
+              </div>
+            </details>
+          `).join('')}</div>
+        </div>
+      `)}
+      ${hubAdminPanel('sports', 'news', `
+        <div class="card">
+          <div class="list-item__header"><h3>Sports news (${s.news.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addSportsNews">+ Add news</button>
+          </div>
+          <div id="sportsNewsList">${s.news.map((item, i) => hubNewsItemHtml(item, i, 'sportNews', 'data-remove-sports-news')).join('')}</div>
+        </div>
+      `)}
     `;
   }
 
@@ -2335,99 +2511,133 @@
     ensureHubContent();
     const p = content.pages?.business || {};
     const b = content.business;
+    const tabs = [
+      { id: 'content', label: 'Section headers' },
+      { id: 'vlogs', label: 'Vlog' },
+      { id: 'adverts', label: 'Adverts' },
+      { id: 'investments', label: 'Investments' },
+      { id: 'news', label: 'News' }
+    ];
+
     return `
       <div class="card card--notice">
         <p><strong>Public page:</strong> <a href="../business.html" target="_blank" rel="noopener">business.html</a> — vlogs, member adverts, investments, and business news.</p>
       </div>
-      <div class="card"><h3>Section headers</h3><div class="form-grid">
-        ${field('Vlog tag', 'bizVlogTag', p.vlogHeader?.tag)}
-        ${field('Vlog title', 'bizVlogTitle', p.vlogHeader?.title)}
-        ${field('Vlog description', 'bizVlogDesc', p.vlogHeader?.description, 'textarea')}
-        ${field('Adverts tag', 'bizAdvertsTag', p.advertsHeader?.tag)}
-        ${field('Adverts title', 'bizAdvertsTitle', p.advertsHeader?.title)}
-        ${field('Adverts description', 'bizAdvertsDesc', p.advertsHeader?.description, 'textarea')}
-        ${field('Investments tag', 'bizInvTag', p.investmentsHeader?.tag)}
-        ${field('Investments title', 'bizInvTitle', p.investmentsHeader?.title)}
-        ${field('Investments description', 'bizInvDesc', p.investmentsHeader?.description, 'textarea')}
-        ${field('News tag', 'bizNewsTag', p.newsHeader?.tag)}
-        ${field('News title', 'bizNewsTitle', p.newsHeader?.title)}
-        ${field('News description', 'bizNewsDesc', p.newsHeader?.description, 'textarea')}
-      </div></div>
-      <div class="card">
-        <div class="list-item__header"><h3>Business vlog (${b.vlogs.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addBusinessVlog">+ Add vlog</button>
-        </div>
-        <div id="businessVlogList">${b.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'bizVlog', 'data-remove-business-vlog')).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Business adverts (${b.adverts.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addBusinessAdvert">+ Add advert</button>
-        </div>
-        <div id="businessAdvertsList">${b.adverts.map((item, i) => `
-          <div class="list-item" data-business-advert-index="${i}">
-            <div class="list-item__header">
-              <h4>${escapeHtml(item.title)}</h4>
-              <button type="button" class="btn btn--danger btn--sm" data-remove-business-advert="${i}">Remove</button>
-            </div>
-            <div class="form-grid">
-              ${field('Title', `bizAdTitle${i}`, item.title)}
-              ${field('Description', `bizAdDesc${i}`, item.description, 'textarea', { full: true })}
-              ${field('Category', `bizAdCategory${i}`, item.category)}
-              ${field('Image path', `bizAdImage${i}`, item.image)}
-              ${field('Website URL', `bizAdLink${i}`, item.link)}
-              ${field('Contact email', `bizAdEmail${i}`, item.contactEmail)}
-              ${field('Published', `bizAdPublished${i}`, item.published !== false, 'checkbox')}
-            </div>
+      ${renderHubTabNav('business', tabs)}
+      ${hubAdminPanel('business', 'content', `
+        <div class="card"><h3>Section headers</h3><div class="form-grid">
+          ${field('Vlog tag', 'bizVlogTag', p.vlogHeader?.tag)}
+          ${field('Vlog title', 'bizVlogTitle', p.vlogHeader?.title)}
+          ${field('Vlog description', 'bizVlogDesc', p.vlogHeader?.description, 'textarea')}
+          ${field('Adverts tag', 'bizAdvertsTag', p.advertsHeader?.tag)}
+          ${field('Adverts title', 'bizAdvertsTitle', p.advertsHeader?.title)}
+          ${field('Adverts description', 'bizAdvertsDesc', p.advertsHeader?.description, 'textarea')}
+          ${field('Investments tag', 'bizInvTag', p.investmentsHeader?.tag)}
+          ${field('Investments title', 'bizInvTitle', p.investmentsHeader?.title)}
+          ${field('Investments description', 'bizInvDesc', p.investmentsHeader?.description, 'textarea')}
+          ${field('News tag', 'bizNewsTag', p.newsHeader?.tag)}
+          ${field('News title', 'bizNewsTitle', p.newsHeader?.title)}
+          ${field('News description', 'bizNewsDesc', p.newsHeader?.description, 'textarea')}
+        </div></div>
+      `)}
+      ${hubAdminPanel('business', 'vlogs', `
+        <div class="card">
+          <div class="list-item__header"><h3>Business vlog (${b.vlogs.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addBusinessVlog">+ Add vlog</button>
           </div>
-        `).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Investments (${b.investments.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addBusinessInvestment">+ Add investment</button>
+          <div id="businessVlogList">${b.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'bizVlog', 'data-remove-business-vlog')).join('')}</div>
         </div>
-        <div id="businessInvestmentsList">${b.investments.map((item, i) => `
-          <div class="list-item" data-business-inv-index="${i}">
-            <div class="list-item__header">
-              <h4>${escapeHtml(item.title)}</h4>
-              <button type="button" class="btn btn--danger btn--sm" data-remove-business-inv="${i}">Remove</button>
-            </div>
-            <div class="form-grid">
-              ${field('Title', `bizInvTitle${i}`, item.title)}
-              ${field('Summary', `bizInvSummary${i}`, item.summary, 'textarea', { full: true })}
-              ${field('Amount / scale', `bizInvAmount${i}`, item.amount)}
-              ${field('Deadline', `bizInvDeadline${i}`, item.deadline)}
-              ${field('Image path', `bizInvImage${i}`, item.image)}
-              ${field('Status', `bizInvStatus${i}`, item.status || 'open', 'select', { options: [
-                { value: 'open', label: 'Open' },
-                { value: 'closed', label: 'Closed' }
-              ]})}
-              ${field('Link URL', `bizInvLink${i}`, item.link)}
-              ${field('Link label', `bizInvLinkLabel${i}`, item.linkLabel)}
-            </div>
+      `)}
+      ${hubAdminPanel('business', 'adverts', `
+        <div class="card">
+          <div class="list-item__header"><h3>Business adverts (${b.adverts.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addBusinessAdvert">+ Add advert</button>
           </div>
-        `).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="list-item__header"><h3>Business news (${b.news.length})</h3>
-          <button type="button" class="btn btn--outline btn--sm" id="addBusinessNews">+ Add news</button>
+          <div id="businessAdvertsList">${b.adverts.map((item, i) => `
+            <details class="list-item list-item--accordion" data-business-advert-index="${i}">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(item.title)}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-business-advert="${i}">Remove</button>
+              </summary>
+              <div class="list-item__body">
+                <div class="form-grid">
+                  ${field('Title', `bizAdTitle${i}`, item.title)}
+                  ${field('Description', `bizAdDesc${i}`, item.description, 'textarea', { full: true })}
+                  ${field('Category', `bizAdCategory${i}`, item.category)}
+                  ${field('Image path', `bizAdImage${i}`, item.image)}
+                  ${field('Website URL', `bizAdLink${i}`, item.link)}
+                  ${field('Contact email', `bizAdEmail${i}`, item.contactEmail)}
+                  ${field('Published', `bizAdPublished${i}`, item.published !== false, 'checkbox')}
+                </div>
+              </div>
+            </details>
+          `).join('')}</div>
         </div>
-        <div id="businessNewsList">${b.news.map((item, i) => hubNewsItemHtml(item, i, 'bizNews', 'data-remove-business-news')).join('')}</div>
-      </div>
+      `)}
+      ${hubAdminPanel('business', 'investments', `
+        <div class="card">
+          <div class="list-item__header"><h3>Investments (${b.investments.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addBusinessInvestment">+ Add investment</button>
+          </div>
+          <div id="businessInvestmentsList">${b.investments.map((item, i) => `
+            <details class="list-item list-item--accordion" data-business-inv-index="${i}">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(item.title)}</h4>
+                <button type="button" class="btn btn--danger btn--sm" data-remove-business-inv="${i}">Remove</button>
+              </summary>
+              <div class="list-item__body">
+                <div class="form-grid">
+                  ${field('Title', `bizInvTitle${i}`, item.title)}
+                  ${field('Summary', `bizInvSummary${i}`, item.summary, 'textarea', { full: true })}
+                  ${field('Amount / scale', `bizInvAmount${i}`, item.amount)}
+                  ${field('Deadline', `bizInvDeadline${i}`, item.deadline)}
+                  ${field('Image path', `bizInvImage${i}`, item.image)}
+                  ${field('Status', `bizInvStatus${i}`, item.status || 'open', 'select', { options: [
+                    { value: 'open', label: 'Open' },
+                    { value: 'closed', label: 'Closed' }
+                  ]})}
+                  ${field('Link URL', `bizInvLink${i}`, item.link)}
+                  ${field('Link label', `bizInvLinkLabel${i}`, item.linkLabel)}
+                </div>
+              </div>
+            </details>
+          `).join('')}</div>
+        </div>
+      `)}
+      ${hubAdminPanel('business', 'news', `
+        <div class="card">
+          <div class="list-item__header"><h3>Business news (${b.news.length})</h3>
+            <button type="button" class="btn btn--outline btn--sm" id="addBusinessNews">+ Add news</button>
+          </div>
+          <div id="businessNewsList">${b.news.map((item, i) => hubNewsItemHtml(item, i, 'bizNews', 'data-remove-business-news')).join('')}</div>
+        </div>
+      `)}
     `;
   }
 
   function renderPagesPanel() {
     const pages = ['programs', 'welfare', 'sports', 'business', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'];
-    return pages.map(key => {
-      const h = content.pages[key]?.hero || {};
-      return `
-        <div class="card"><h3>${key.charAt(0).toUpperCase() + key.slice(1)} hero</h3><div class="form-grid">
-          ${field('Tag', `heroTag_${key}`, h.tag)}
-          ${field('Title', `heroTitle_${key}`, h.title)}
-          ${field('Description', `heroDesc_${key}`, h.description, 'textarea', { full: true })}
-        </div></div>
-      `;
-    }).join('');
+    return `
+      <div class="card card--notice">
+        <p class="form-hint">Expand a page below to edit its hero banner. Most fields are collapsed to keep this screen short.</p>
+      </div>
+      ${pages.map((key, index) => {
+        const h = content.pages[key]?.hero || {};
+        const label = key.charAt(0).toUpperCase() + key.slice(1);
+        return `
+          <details class="card card--page-hero"${index === 0 ? ' open' : ''}>
+            <summary class="card__summary"><h3>${label} hero</h3><span class="card__chevron" aria-hidden="true"></span></summary>
+            <div class="card__body">
+              <div class="form-grid">
+                ${field('Tag', `heroTag_${key}`, h.tag)}
+                ${field('Title', `heroTitle_${key}`, h.title)}
+                ${field('Description', `heroDesc_${key}`, h.description, 'textarea', { full: true })}
+              </div>
+            </div>
+          </details>
+        `;
+      }).join('')}
+    `;
   }
 
   function renderSection(section) {
@@ -2476,6 +2686,9 @@
         if (section === 'ailcd') loadAilcdApplicationsPanel();
       }
     });
+
+    const activePanel = document.querySelector(`[data-panel="${section}"]`);
+    initPanelCompact(activePanel);
   }
 
   function bindListActions(section) {
@@ -3592,6 +3805,13 @@
   });
 
   document.getElementById('contentArea')?.addEventListener('click', e => {
+    const hubBtn = e.target.closest('[data-hub-tab]');
+    if (hubBtn?.closest('[data-hub-section]')) {
+      collectFromForm();
+      switchHubAdminTab(hubBtn.closest('[data-hub-section]').dataset.hubSection, hubBtn.dataset.hubTab);
+      return;
+    }
+
     const goto = e.target.closest('[data-goto]');
     if (goto) {
       collectFromForm();
