@@ -1,7 +1,9 @@
 import { verifyToken, readAuthToken, getAdminSecret } from './lib/auth.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import { generateMembershipId } from './lib/member-id.js';
-import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes, syncMemberMetaEverywhere } from './lib/member-registration.js';
+import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes, syncMemberMetaEverywhere, getPaymentReferenceFromRow } from './lib/member-registration.js';
+import { loadPaymentConfig, buildMembershipReference } from './lib/payment.js';
+import { sendMembershipApproved, sendPaymentReceipt } from './lib/email.js';
 
 const SELECT_FIELDS = [
   'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, membership_id, member_status, created_at, read, data',
@@ -173,7 +175,12 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const data = await selectRegistrations(supabase);
+      let data = await selectRegistrations(supabase);
+      const paymentFilter = req.query?.payment;
+
+      if (paymentFilter && paymentFilter !== 'all') {
+        data = data.filter(r => (r.payment_status || 'pending') === paymentFilter);
+      }
 
       if (req.query?.format === 'csv') {
         const csv = toCsv(data);
@@ -191,13 +198,48 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH') {
-    const { id, read, action, paymentStatus } = req.body || {};
+    const { id, read, action, paymentStatus, paymentMethod } = req.body || {};
     if (!id) {
       res.status(400).json({ error: 'Missing registration id' });
       return;
     }
 
     try {
+      if (action === 'markPaid') {
+        const rows = await selectRegistrations(supabase);
+        const row = rows.find(r => r.id === id);
+        if (!row) {
+          res.status(404).json({ error: 'Registration not found' });
+          return;
+        }
+
+        const paymentConfig = await loadPaymentConfig();
+        const reference = getPaymentReferenceFromRow(row) || buildMembershipReference(row.id, paymentConfig);
+        const paidAt = new Date().toISOString();
+
+        await updateRegistration(supabase, id, {
+          payment_status: 'paid',
+          payment_method: paymentMethod || 'PayID/EFT',
+          payment_reference: reference,
+          paid_at: paidAt,
+          read: true,
+          data: { ...(row.data || {}), paymentReference: reference }
+        });
+
+        await sendPaymentReceipt({
+          to: row.email,
+          name: row.name,
+          type: 'membership fee',
+          payment: paymentConfig,
+          amount: row.fee_display || '',
+          reference,
+          invoiceNumber: `GAA-INV-MEM-${String(row.id).slice(0, 8).toUpperCase()}`
+        });
+
+        res.status(200).json({ ok: true, paymentStatus: 'paid', paymentReference: reference });
+        return;
+      }
+
       if (action === 'approve') {
         const rows = await selectRegistrations(supabase);
         const row = rows.find(r => r.id === id);
@@ -208,12 +250,17 @@ export default async function handler(req, res) {
 
         const meta = getMemberMeta(row);
         const membershipId = meta.membershipId || generateMembershipId();
+        const paymentConfig = await loadPaymentConfig();
+        const reference = getPaymentReferenceFromRow(row) || buildMembershipReference(row.id, paymentConfig);
+        const currentPayment = row.payment_status || 'pending';
 
         await updateRegistration(supabase, id, {
           membership_id: membershipId,
           member_status: 'active',
-          payment_status: paymentStatus || row.payment_status || 'approved',
-          read: true
+          payment_status: currentPayment === 'paid' ? 'paid' : (paymentStatus || currentPayment || 'pending'),
+          payment_reference: reference,
+          read: true,
+          data: { ...(row.data || {}), paymentReference: reference, _membershipId: membershipId, _memberStatus: 'active' }
         });
 
         await syncMemberMetaEverywhere(supabase, id, {
@@ -221,7 +268,17 @@ export default async function handler(req, res) {
           memberStatus: 'active'
         });
 
-        res.status(200).json({ ok: true, membershipId, memberStatus: 'active' });
+        await sendMembershipApproved({
+          to: row.email,
+          name: row.name,
+          membershipId,
+          payment: paymentConfig,
+          amount: row.fee_display || '',
+          reference,
+          paymentStatus: currentPayment === 'paid' ? 'paid' : 'pending'
+        });
+
+        res.status(200).json({ ok: true, membershipId, memberStatus: 'active', paymentReference: reference });
         return;
       }
 

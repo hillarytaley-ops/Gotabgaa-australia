@@ -1,8 +1,9 @@
 /**
- * Event booking portal — register for upcoming events (payment later)
+ * Event booking portal — PayID / bank transfer when fee applies
  */
 (function () {
   let currentEvent = null;
+  let paymentConfig = null;
 
   function getEventIdFromUrl() {
     return new URLSearchParams(window.location.search).get('id')?.trim() || '';
@@ -17,10 +18,23 @@
     document.getElementById('bookingLayout').hidden = true;
   }
 
+  function getEventFee(event) {
+    const amount = Number(event.ticketAmount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return { amount: 0, display: event.ticketFeeDisplay || 'Free' };
+    }
+    const display = event.ticketFeeDisplay || `$${amount % 1 === 0 ? amount : amount.toFixed(2)} AUD per place`;
+    return { amount, display };
+  }
+
   function populateEvent(event) {
     currentEvent = event;
+    paymentConfig = window.CMS_CONTENT?.payment || null;
+
     document.getElementById('bookingMissing').hidden = true;
     document.getElementById('bookingLayout').hidden = false;
+
+    const fee = getEventFee(event);
 
     document.getElementById('bookingEventImage').src = event.image;
     document.getElementById('bookingEventImage').alt = event.title;
@@ -29,30 +43,56 @@
     document.getElementById('bookingEventTime').textContent = event.time;
     document.getElementById('bookingEventLocation').textContent = event.location;
     document.getElementById('bookingEventSummary').textContent = event.summary || event.description || '';
-    document.getElementById('bookingEventNote').textContent = event.ticketPriceNote || 'Free registration — secure payment coming soon.';
+    document.getElementById('bookingEventNote').textContent = event.ticketPriceNote
+      || (fee.amount > 0 ? `Fee: ${fee.display} — pay via PayID after booking` : 'Free registration — no payment required');
     document.getElementById('bookingEventId').value = event.id;
     document.getElementById('bookingEventTitleField').value = event.title;
     document.title = `Book: ${event.title} | Gotabgaa Australia`;
   }
 
+  function showPaymentInstructions(data) {
+    const wrap = document.getElementById('bookingPaymentInstructions');
+    if (!wrap || !window.PaymentInstructions) return;
+
+    wrap.hidden = false;
+    window.PaymentInstructions.render(wrap, {
+      payment: data.payment || paymentConfig,
+      amount: data.amount,
+      reference: data.paymentReference,
+      title: 'Complete your event payment',
+      subtitle: (data.payment || paymentConfig)?.instructions
+    });
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function initBookingForm() {
     const form = document.getElementById('bookingForm');
-    if (!form) return;
+    if (!form || form.dataset.initialized) return;
+    form.dataset.initialized = '1';
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
       const success = document.getElementById('bookingSuccess');
       const error = document.getElementById('bookingError');
       const btn = document.getElementById('bookingSubmitBtn');
+      const payWrap = document.getElementById('bookingPaymentInstructions');
 
       success.hidden = true;
       error.hidden = true;
+      if (payWrap) payWrap.hidden = true;
 
       if (!currentEvent) {
         error.textContent = 'Event not loaded.';
         error.hidden = false;
         return;
       }
+
+      const fee = getEventFee(currentEvent);
+      const tickets = parseInt(document.getElementById('bookingTickets').value, 10) || 1;
+      const totalAmount = fee.amount * tickets;
+      const totalDisplay = totalAmount > 0
+        ? `$${totalAmount % 1 === 0 ? totalAmount : totalAmount.toFixed(2)} AUD (${tickets} × ${fee.display})`
+        : 'Free';
 
       if (btn) {
         btn.disabled = true;
@@ -70,15 +110,18 @@
             email: document.getElementById('bookingEmail').value,
             phone: document.getElementById('bookingPhone').value,
             tickets: document.getElementById('bookingTickets').value,
-            notes: document.getElementById('bookingNotes').value
+            notes: document.getElementById('bookingNotes').value,
+            feeAmount: fee.amount,
+            feeDisplay: totalDisplay
           })
         });
 
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || data.detail || 'Booking failed');
 
-        success.textContent = data.message || 'Booking received! We will email you shortly. Online payment will be added in a future update.';
+        success.textContent = data.message || 'Booking received!';
         success.hidden = false;
+        if (data.paymentReference && totalAmount > 0) showPaymentInstructions(data);
         form.reset();
         document.getElementById('bookingEventId').value = currentEvent.id;
         document.getElementById('bookingEventTitleField').value = currentEvent.title;
@@ -124,10 +167,7 @@
 
   document.addEventListener('cms-ready', loadEvent);
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      if (window.CMS_CONTENT) loadEvent();
-      else if (!window.CMS_CONTENT) loadEvent();
-    });
+    document.addEventListener('DOMContentLoaded', loadEvent);
   } else {
     loadEvent();
   }

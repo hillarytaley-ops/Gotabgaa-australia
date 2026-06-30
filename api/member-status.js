@@ -63,7 +63,9 @@ export default async function handler(req, res) {
         membershipId: meta.membershipId,
         memberStatus: meta.memberStatus || 'active',
         paymentStatus: meta.paymentStatus,
+        paymentReference: meta.paymentReference,
         feeDisplay: row.fee_display,
+        feeAmount: row.fee_amount,
         joinedAt: row.created_at
       }
     });

@@ -21,6 +21,7 @@
     feedList: document.getElementById('feedList'),
     feedFilters: document.getElementById('feedFilters'),
     membershipCard: document.getElementById('membershipCard'),
+    memberPaymentInstructions: document.getElementById('memberPaymentInstructions'),
     eventsList: document.getElementById('eventsList'),
     bookingsList: document.getElementById('bookingsList'),
     photoAlbums: document.getElementById('photoAlbums'),
@@ -198,6 +199,8 @@
 
   function renderMembershipCard(member) {
     const statusClass = member.memberStatus === 'active' ? 'is-active' : 'is-pending';
+    const payStatus = member.paymentStatus || 'pending';
+    const payClass = payStatus === 'paid' ? 'is-active' : 'is-pending';
     els.membershipCard.innerHTML = `
       <h3>${escapeHtml(member.name)}</h3>
       <dl class="members-dl">
@@ -207,11 +210,29 @@
         <div><dt>Phone</dt><dd>${escapeHtml(member.phone || '—')}</dd></div>
         <div><dt>State</dt><dd>${escapeHtml(member.stateChapter || '—')}</dd></div>
         <div><dt>Membership type</dt><dd>${escapeHtml(member.membershipType || '—')}</dd></div>
-        <div><dt>Payment</dt><dd>${escapeHtml(member.paymentStatus || 'pending')}</dd></div>
+        <div><dt>Payment</dt><dd><span class="members-status ${payClass}">${escapeHtml(payStatus)}</span></dd></div>
         <div><dt>Fee</dt><dd>${escapeHtml(member.feeDisplay || '—')}</dd></div>
         <div><dt>Registered</dt><dd>${formatDate(member.joinedAt)}</dd></div>
       </dl>
     `;
+
+    const payWrap = els.memberPaymentInstructions;
+    if (!payWrap || isPreviewMode) return;
+
+    if (payStatus === 'pending' && member.paymentReference && window.PaymentInstructions) {
+      payWrap.hidden = false;
+      const payment = siteContent?.payment || {};
+      window.PaymentInstructions.render(payWrap, {
+        payment,
+        amount: member.feeDisplay,
+        reference: member.paymentReference,
+        title: 'Membership payment pending',
+        subtitle: payment.instructions
+      });
+    } else if (payWrap) {
+      payWrap.hidden = true;
+      payWrap.innerHTML = '';
+    }
   }
 
   function renderEvents(content) {
@@ -247,13 +268,17 @@
       return;
     }
 
-    els.bookingsList.innerHTML = bookings.map(b => `
+    els.bookingsList.innerHTML = bookings.map(b => {
+      const payStatus = b.payment_status || (Number(b.fee_amount) > 0 ? 'pending' : 'n/a');
+      const ref = b.payment_reference || b.data?.paymentReference || '';
+      return `
       <div class="members-booking-item">
         <h4>${escapeHtml(b.event_title)}</h4>
-        <p class="members-event-item__meta">${formatDate(b.created_at)} · ${b.tickets} place(s)</p>
+        <p class="members-event-item__meta">${formatDate(b.created_at)} · ${b.tickets} place(s)${b.fee_display ? ` · ${escapeHtml(b.fee_display)}` : ''}</p>
+        ${payStatus !== 'n/a' ? `<p class="members-event-item__meta">Payment: ${escapeHtml(payStatus)}${ref ? ` · Ref: <code>${escapeHtml(ref)}</code>` : ''}</p>` : ''}
         ${b.notes ? `<p>${escapeHtml(b.notes)}</p>` : ''}
       </div>
-    `).join('');
+    `}).join('');
   }
 
   function renderPhotos(content) {

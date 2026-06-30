@@ -1,8 +1,9 @@
 /**
- * Membership registration portal — payment integration planned for later
+ * Membership registration portal — PayID / bank transfer after submit
  */
 (function () {
   let membershipConfig = null;
+  let paymentConfig = null;
 
   function populateMembershipTypes(types) {
     const select = document.getElementById('memberType');
@@ -50,7 +51,8 @@
 
     const paymentPlaceholder = document.getElementById('membershipPaymentPlaceholder');
     if (paymentPlaceholder && m.paymentPlaceholder) {
-      paymentPlaceholder.innerHTML = `<p class="form-hint"><strong>Payment:</strong> ${escapeHtml(m.paymentPlaceholder)}</p>`;
+      paymentPlaceholder.innerHTML = `<p class="form-hint"><strong>Payment:</strong> ${escapeHtml(m.paymentPlaceholder)}</p>
+        <p class="form-hint" style="margin-top:12px">Already approved? <a href="login.html">Sign in to the members dashboard</a>.</p>`;
     }
 
     const benefitsList = document.getElementById('membershipBenefits');
@@ -74,6 +76,21 @@
     populateMembershipTypes(m.types);
   }
 
+  function showPaymentInstructions(data) {
+    const wrap = document.getElementById('membershipPaymentInstructions');
+    if (!wrap || !window.PaymentInstructions) return;
+
+    wrap.hidden = false;
+    window.PaymentInstructions.render(wrap, {
+      payment: data.payment || paymentConfig,
+      amount: data.amount || membershipConfig?.feeDisplay,
+      reference: data.paymentReference,
+      title: 'Complete your membership payment',
+      subtitle: (data.payment || paymentConfig)?.instructions
+    });
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   let formInitialized = false;
 
   function initMembershipForm() {
@@ -86,9 +103,11 @@
       const success = document.getElementById('membershipSuccess');
       const error = document.getElementById('membershipError');
       const btn = document.getElementById('membershipSubmitBtn');
+      const payWrap = document.getElementById('membershipPaymentInstructions');
 
       success.hidden = true;
       error.hidden = true;
+      if (payWrap) payWrap.hidden = true;
 
       if (!membershipConfig || membershipConfig.enabled === false) {
         error.textContent = 'Registration is currently unavailable.';
@@ -124,8 +143,9 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || data.detail || 'Registration failed');
 
-        success.textContent = data.message || 'Registration received! Our team will email you shortly. Online payment will be added in a future update.';
+        success.textContent = data.message || 'Registration received!';
         success.hidden = false;
+        if (data.paymentReference) showPaymentInstructions(data);
         form.reset();
       } catch (err) {
         error.textContent = err.message || 'Could not submit registration. Please contact us directly.';
@@ -141,14 +161,16 @@
 
   function loadMembership() {
     const content = window.CMS_CONTENT;
+    paymentConfig = content?.payment || null;
+
     if (!content?.membership) {
       applyMembershipConfig({
         enabled: true,
         feeAmount: 50,
         feeCurrency: 'AUD',
         feeDisplay: '$50 AUD / year',
-        feeNote: 'Annual membership fee — secure online payment will be integrated in a future update.',
-        paymentPlaceholder: 'Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.',
+        feeNote: 'Annual membership fee — pay via PayID or bank transfer after registering.',
+        paymentPlaceholder: 'After you submit this form, you will receive PayID and bank details with a unique payment reference.',
         intro: 'Join our growing community across Australia — access events, programs, and cultural initiatives.'
       });
     } else {

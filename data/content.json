@@ -29,8 +29,8 @@
     "feeCurrency": "AUD",
     "feePeriod": "year",
     "feeDisplay": "$50 AUD / year",
-    "feeNote": "Annual membership fee — secure online payment will be integrated in a future update. Our team will confirm your registration by email.",
-    "paymentPlaceholder": "Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.",
+    "feeNote": "Annual membership fee — pay via PayID or bank transfer after registering.",
+    "paymentPlaceholder": "After you submit this form, you will receive PayID and bank details with a unique payment reference.",
     "intro": "Join our growing community across Australia — access events, programs, and cultural initiatives.",
     "image": "assets/hero/brisbane-team.png",
     "benefits": [
@@ -44,6 +44,20 @@
       { "id": "youth", "label": "Youth Member", "description": "Ages 12–17" },
       { "id": "family", "label": "Family Membership", "description": "Household membership" }
     ]
+  },
+  "payment": {
+    "enabled": true,
+    "legalName": "Gotabgaa Australia",
+    "abn": "",
+    "payId": "",
+    "bsb": "",
+    "accountNumber": "",
+    "accountName": "Gotabgaa Australia",
+    "gstNote": "No GST has been charged unless stated on your receipt. Confirm GST treatment with your accountant.",
+    "instructions": "Pay via PayID or bank transfer. You must include the payment reference exactly as shown.",
+    "receiptEmail": "info@gotabgaaaustralia.org",
+    "memReferencePrefix": "GAA-MEM",
+    "evtReferencePrefix": "GAA-EVT"
   },
   "pages": {
     "home": {
@@ -255,7 +269,8 @@
       "description": "Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations. Food vendors, children's activities, and live performances throughout the day.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "ticketPriceNote": "Free registration — no payment required",
+      "ticketAmount": 0,
       "registerUrl": "book.html?id=evt-cultural-fete-2026",
       "registerLabel": "Book Now"
     },
@@ -274,7 +289,8 @@
       "description": "Monthly community meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "ticketPriceNote": "Free registration — no payment required",
+      "ticketAmount": 0,
       "registerUrl": "book.html?id=evt-brisbane-meetup",
       "registerLabel": "Book Now"
     },
@@ -293,7 +309,8 @@
       "description": "Career guidance and mentorship for young members navigating education and employment in Australia. Guest speakers from our professional network share insights on study pathways, CV writing, and workplace culture.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "ticketPriceNote": "Free registration — no payment required",
+      "ticketAmount": 0,
       "registerUrl": "book.html?id=evt-youth-workshop",
       "registerLabel": "Book Now"
     },
@@ -312,7 +329,8 @@
       "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate members compete. Bring your family — picnic areas and refreshments on site.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "ticketPriceNote": "Free registration — no payment required",
+      "ticketAmount": 0,
       "registerUrl": "book.html?id=evt-kokwet-sports",
       "registerLabel": "Book Now"
     },
@@ -331,7 +349,8 @@
       "description": "Western Australia community gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
       "bookingEnabled": true,
       "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — secure payment coming soon",
+      "ticketPriceNote": "Free registration — no payment required",
+      "ticketAmount": 0,
       "registerUrl": "book.html?id=evt-wa-gathering",
       "registerLabel": "Book Now"
     },

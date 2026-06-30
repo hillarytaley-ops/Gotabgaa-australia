@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gotabgaa Australia — GST Registration &amp; PayID Readiness Guide</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --brown-700: #5c4332;
+      --tan: #b8864e;
+      --cream: #f8f4ee;
+      --text: #2a1f17;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.65;
+      color: var(--text);
+      background: #fff;
+      margin: 0;
+    }
+
+    .doc { max-width: 820px; margin: 0 auto; padding: 48px 56px; }
+
+    .cover {
+      text-align: center;
+      padding: 40px 24px 48px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 36px;
+    }
+
+    .cover h1 {
+      font-size: 1.75rem;
+      color: var(--brown-900);
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+
+    .cover .subtitle {
+      font-size: 1.1rem;
+      color: var(--tan);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .cover .meta { font-size: 0.9rem; color: var(--muted); }
+
+    .notice {
+      background: #fff8e6;
+      border: 1px solid rgba(184, 134, 75, 0.45);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      color: var(--brown-800);
+      margin: 32px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--cream);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      color: var(--brown-700);
+      margin: 24px 0 10px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    ul, ol { margin: 0 0 16px; padding-left: 24px; }
+    li { margin-bottom: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 20px;
+      font-size: 10pt;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--cream);
+      color: var(--brown-800);
+      font-weight: 600;
+    }
+
+    code, .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      background: var(--cream);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .flow {
+      background: var(--cream);
+      border-left: 4px solid var(--tan);
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-family: Consolas, monospace;
+      font-size: 10pt;
+      white-space: pre-wrap;
+    }
+
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li::before { content: "☐ "; }
+
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 18px;
+      background: var(--brown-800);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .print-btn:hover { background: var(--brown-700); }
+
+    @media print {
+      .print-btn { display: none; }
+      .doc { padding: 24px 32px; max-width: none; }
+      h2 { page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 640px) {
+      .doc { padding: 24px 20px; }
+      .print-btn { position: static; display: block; width: 100%; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+  <article class="doc">
+    <header class="cover">
+      <h1>Gotabgaa Australia</h1>
+      <p class="subtitle">GST Registration &amp; PayID Readiness Guide</p>
+      <p class="meta">Version 1.0 · June 2026 · For leadership, treasurer &amp; finance volunteers</p>
+    </header>
+
+    <div class="notice">
+      <strong>Important:</strong> This document is general guidance for Australian community associations.
+      It is <strong>not legal or tax advice</strong>. Confirm your obligations with a qualified accountant
+      or tax agent based on your legal structure (incorporated association, ACNC charity, company, etc.).
+    </div>
+
+    <h2>1. Purpose</h2>
+    <p>
+      This guide explains what Gotabgaa Australia needs <strong>after registering for GST</strong>
+      (or while preparing to register) before integrating <strong>PayID</strong> and bank transfer (EFT)
+      for membership fees and event bookings on the website.
+    </p>
+    <p>
+      <strong>GST registration</strong> and <strong>PayID</strong> are separate steps:
+    </p>
+    <ul>
+      <li><strong>GST</strong> — how you report tax to the ATO</li>
+      <li><strong>PayID</strong> — how money arrives in your association bank account</li>
+    </ul>
+    <p>
+      PayID does <strong>not</strong> calculate or deduct GST. Your invoices, bookkeeping, and BAS (Business Activity Statement) do.
+    </p>
+    <p>
+      <strong>Related document:</strong> <em>Membership Payments &amp; Tax Guide</em> (same <code>docs</code> folder).
+    </p>
+
+    <h2>2. What is a “GST account”? (Clarification)</h2>
+    <p>
+      In Australia you do <strong>not</strong> receive a separate “GST account number” from the ATO.
+      When people say “GST account” they usually mean one or more of the following:
+    </p>
+    <ol>
+      <li><strong>GST registration</strong> linked to your ABN</li>
+      <li>Your association’s <strong>business bank account</strong> (where PayID payments land)</li>
+      <li><strong>Internal bookkeeping</strong> to track GST collected and owed</li>
+    </ol>
+    <p>For PayID integration you need all three set up correctly — but only one actual bank account.</p>
+
+    <h2>3. What you get from GST registration (ATO / ABN)</h2>
+    <p>After registering for GST, record and use these details on invoices, receipts, and the website:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Why you need it</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Legal entity name</strong></td>
+          <td>Exact spelling on tax invoices and receipts (e.g. Gotabgaa Australia Inc.)</td>
+        </tr>
+        <tr>
+          <td><strong>ABN</strong></td>
+          <td>Required on tax invoices; can also be used as your <strong>PayID</strong></td>
+        </tr>
+        <tr>
+          <td><strong>GST registration start date</strong></td>
+          <td>When you must start charging or showing GST correctly</td>
+        </tr>
+        <tr>
+          <td><strong>Accounting basis</strong></td>
+          <td><strong>Cash</strong> or <strong>Accrual</strong> — affects when GST is reported on your BAS</td>
+        </tr>
+        <tr>
+          <td><strong>BAS lodgement cycle</strong></td>
+          <td>Usually <strong>quarterly</strong> (sometimes monthly or annual)</td>
+        </tr>
+        <tr>
+          <td><strong>GST reporting method</strong></td>
+          <td>Usually Simpler BAS or full GST reporting</td>
+        </tr>
+        <tr>
+          <td><strong>Registered business address</strong></td>
+          <td>For invoices and ATO records</td>
+        </tr>
+        <tr>
+          <td><strong>Contact email / phone</strong></td>
+          <td>For member receipts and finance queries</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. What you need from your bank (for PayID)</h2>
+    <p>Set up on the <strong>association’s bank account</strong> — not a personal account:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Bank detail</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Account name</strong></td>
+          <td>Must match your legal entity name</td>
+        </tr>
+        <tr>
+          <td><strong>BSB + account number</strong></td>
+          <td>Backup payment method if a member pays by EFT instead of PayID</td>
+        </tr>
+        <tr>
+          <td><strong>PayID</strong></td>
+          <td>Instant payments — commonly your <strong>ABN</strong> or official association email</td>
+        </tr>
+        <tr>
+          <td><strong>Business / community account</strong></td>
+          <td>Correct account type for an incorporated association or NFP</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Money goes <strong>directly</strong> to your association account. No Stripe, PayPal, or third-party processor is required for Phase 1.
+    </p>
+
+    <h2>5. Questions for your accountant (before going live)</h2>
+    <p>Confirm these before showing GST amounts on the website:</p>
+    <ol>
+      <li>Should Gotabgaa Australia register for GST? (Turnover of $75k+ generally requires registration.)</li>
+      <li>Are <strong>membership fees</strong> GST-taxable for our structure?</li>
+      <li>Are <strong>event ticket / booking fees</strong> GST-taxable?</li>
+      <li>Are <strong>donations</strong> treated separately from membership fees?</li>
+      <li>Should prices be <strong>GST-inclusive</strong> or <strong>GST-exclusive</strong>?
+        <ul>
+          <li>Example inclusive: $55 total ($50 + $5 GST)</li>
+          <li>Example exclusive: $50 + $5 GST = $55 total</li>
+        </ul>
+      </li>
+      <li>Do we need formal <strong>tax invoices</strong> for every payment?</li>
+      <li>Are we ACNC registered / income tax exempt? (This does not automatically answer GST treatment.)</li>
+    </ol>
+
+    <h2>6. What to show on every receipt / tax invoice</h2>
+    <p>Once GST-registered (or if your accountant confirms GST-free supplies), each receipt should include:</p>
+    <ul class="checklist">
+      <li>Association <strong>legal name</strong></li>
+      <li><strong>ABN</strong></li>
+      <li><strong>“Tax invoice”</strong> wording (when required)</li>
+      <li>Unique <strong>invoice / receipt number</strong> (e.g. <code>GAA-INV-2026-0042</code>)</li>
+      <li><strong>Date</strong> of issue</li>
+      <li>Member or payer <strong>name and email</strong></li>
+      <li><strong>Description</strong> (e.g. “Annual membership 2026” or “Event booking — Cultural Fete”)</li>
+      <li><strong>Amount</strong> (and GST component if applicable)</li>
+      <li><strong>Total</strong> amount paid</li>
+      <li>GST note: “GST included”, “GST free”, or “No GST has been charged”</li>
+      <li><strong>Payment method</strong> (PayID / EFT / BPAY)</li>
+      <li><strong>Payment reference</strong> used by the member (e.g. <code>GAA-MEM-B722PUFW</code>)</li>
+    </ul>
+
+    <h2>7. Internal bookkeeping (GST tracking)</h2>
+    <p>You do not need a second bank account for GST, but you <strong>should</strong> track GST in your records:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Ledger</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Membership income</td>
+          <td>Fees received from <code>join.html</code> registrations</td>
+        </tr>
+        <tr>
+          <td>Event income</td>
+          <td>Ticket and booking fees from <code>book.html</code></td>
+        </tr>
+        <tr>
+          <td>GST collected</td>
+          <td>10% set aside for the ATO (liability account)</td>
+        </tr>
+        <tr>
+          <td>Bank fees</td>
+          <td>Usually minimal for PayID / EFT</td>
+        </tr>
+        <tr>
+          <td>Expenses</td>
+          <td>With GST credits if GST-registered</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>For each PayID payment, record:</h3>
+    <ul class="checklist">
+      <li>Gross amount received</li>
+      <li>GST portion (if taxable supply)</li>
+      <li>Net income portion</li>
+      <li>Member or booking reference</li>
+      <li>Date received in bank</li>
+      <li>Who confirmed payment in admin</li>
+      <li>Receipt / invoice number issued</li>
+    </ul>
+    <p>
+      This supports your <strong>BAS</strong>: GST collected on sales minus GST credits on expenses = net GST owed to the ATO.
+    </p>
+
+    <h2>8. Payment reference format</h2>
+    <p>Unique references help the treasurer match bank deposits to registrations:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Example format</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Membership</td>
+          <td><code>GAA-MEM-{registration-id}</code></td>
+        </tr>
+        <tr>
+          <td>Event booking</td>
+          <td><code>GAA-EVT-{booking-id}</code></td>
+        </tr>
+        <tr>
+          <td>Alternative</td>
+          <td><code>GAA-SURNAME-2026</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Members <strong>must</strong> include the reference when paying via PayID or EFT.</p>
+
+    <h2>9. Member payment flow (Phase 1 — PayID + EFT)</h2>
+    <div class="flow">Member registers on join.html or book.html
+  → Confirmation shows fee + PayID + BSB/account + unique reference
+  → Member pays from their banking app
+  → Treasurer sees deposit in association account
+  → Admin marks registration / booking as Paid
+  → Receipt sent to member</div>
+
+    <h3>Website status</h3>
+    <ul>
+      <li><strong>Live:</strong> Join portal, adjustable fee, pending status, admin view, CSV export</li>
+      <li><strong>Planned:</strong> PayID / BSB in CMS, auto reference, Mark as paid, ABN on receipts</li>
+    </ul>
+
+    <h2>10. Pre-launch checklist</h2>
+    <ul class="checklist">
+      <li>ABN active and correct on all documents</li>
+      <li>GST registered (if required or chosen by leadership)</li>
+      <li>Accountant confirmed GST treatment for membership and events</li>
+      <li>Association business bank account opened (not personal)</li>
+      <li>PayID enabled and linked (ABN or official email recommended)</li>
+      <li>BSB + account number ready for EFT backup</li>
+      <li>Invoice / receipt template agreed with accountant</li>
+      <li>Payment reference format documented (<code>GAA-MEM-*</code>, <code>GAA-EVT-*</code>)</li>
+      <li>Treasurer process: match reference → mark paid → send receipt</li>
+      <li>BAS lodgement dates in calendar (usually quarterly)</li>
+      <li>Two-signatory rule for payments above policy threshold</li>
+      <li>Bank details published only on official website pages</li>
+    </ul>
+
+    <h2>11. What to provide for website PayID integration</h2>
+    <p>When leadership is ready to add PayID to the website, provide:</p>
+    <ol>
+      <li>Legal entity name</li>
+      <li>ABN</li>
+      <li>PayID (ABN, email, or phone as registered with your bank)</li>
+      <li>BSB and account number</li>
+      <li>Membership fee amount(s)</li>
+      <li>Event fee amounts (if applicable)</li>
+      <li>GST wording from accountant (included / free / not applicable)</li>
+      <li>Payment reference prefix (<code>GAA-MEM</code>, <code>GAA-EVT</code>, etc.)</li>
+      <li>Receipt contact email</li>
+    </ol>
+
+    <h2>12. Security &amp; governance reminders</h2>
+    <ul>
+      <li>Never use a personal bank account for association fees</li>
+      <li>Publish bank details only on official Gotabgaa Australia website pages</li>
+      <li>Keep a ledger: ID, name, amount, date, method, who confirmed</li>
+      <li>Reconcile bank statement monthly against admin CSV export</li>
+      <li>Separate membership fees from donations in records where required</li>
+    </ul>
+
+    <h2>13. Related documents (local folder)</h2>
+    <ul>
+      <li><code>Gotabgaa-Australia-Membership-Payments-and-Tax-Guide.pdf</code></li>
+      <li><code>Gotabgaa-Australia-Governance-Structure.pdf</code></li>
+      <li><code>Gotabgaa-Australia-National-Structure.pdf</code></li>
+    </ul>
+
+    <hr style="margin: 40px 0 16px; border: none; border-top: 1px solid var(--border);">
+    <p style="text-align: center; color: var(--muted); font-size: 0.9rem;">
+      Gotabgaa Australia · Unity · Heritage · Excellence<br>
+      June 2026 — For leadership review only. Not legal or tax advice.
+    </p>
+  </article>
+</body>
+</html>

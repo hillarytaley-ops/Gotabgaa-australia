@@ -145,7 +145,7 @@
               <textarea id="memberNotes" name="notes" rows="4" placeholder="Family members, accessibility needs, etc."></textarea>
             </div>
             <button type="submit" class="btn btn--primary btn--shine" id="membershipSubmitBtn">Submit Registration</button>
-            <button type="button" class="btn btn--outline membership-pay-placeholder" id="membershipPayBtn" disabled aria-disabled="true" title="Online payment coming soon">Pay membership fee (coming soon)</button>
+            <div id="membershipPaymentInstructions" class="payment-instructions-wrap" hidden></div>
             <p class="booking-portal__success" id="membershipSuccess" hidden></p>
             <p class="booking-portal__error" id="membershipError" hidden></p>
           </form>
@@ -170,8 +170,9 @@
   </footer>
 
   <script src="js/site-config.js"></script>
-  <script src="js/content-loader.js?v=13"></script>
-  <script src="js/join-membership.js"></script>
-  <script src="js/main.js?v=13" defer></script>
+  <script src="js/content-loader.js?v=16"></script>
+  <script src="js/payment-instructions.js?v=16"></script>
+  <script src="js/join-membership.js?v=16"></script>
+  <script src="js/main.js?v=16" defer></script>
 </body>
 </html>

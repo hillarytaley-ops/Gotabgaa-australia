@@ -1,0 +1,141 @@
+================================================================================
+GOTABGAA AUSTRALIA — MEMBERSHIP PAYMENTS & TAX GUIDE
+Version 1.0 · June 2026 · For leadership & finance volunteers
+================================================================================
+
+IMPORTANT: General guidance only — NOT legal or tax advice. Confirm obligations
+with a qualified Australian accountant based on your legal structure.
+
+--------------------------------------------------------------------------------
+1. PURPOSE
+--------------------------------------------------------------------------------
+How to collect membership fees directly (without Stripe/PayPal) and handle
+GST, income tax, and record-keeping in Australia. Supports join.html portal
+and admin Membership section (adjustable fees, CSV export).
+
+--------------------------------------------------------------------------------
+2. RECOMMENDED PAYMENT METHOD (AUSTRALIA)
+--------------------------------------------------------------------------------
+
+PRIMARY: PayID + bank transfer (EFT)
+  - Money goes directly to the association's own bank account
+  - PayID: instant (email, phone, or ABN linked to business account)
+  - EFT: BSB + account number (backup; 1–2 business days)
+
+OPTIONAL LATER: BPAY (requires biller setup with your bank)
+
+MEMBER FLOW:
+  Register on join.html
+  → See fee + PayID/bank details + unique reference
+  → Member pays from their bank
+  → Treasurer checks bank account
+  → Admin marks registration Paid
+  → Send receipt to member
+
+PAYMENT REFERENCE EXAMPLES:
+  GAA-MEM-{registration-id}
+  GAA-SURNAME-2026
+
+BANK SETUP:
+  - Business/community association account (not personal)
+  - PayID linked to association
+  - BSB + account for EFT
+  - Optional BPAY biller later
+
+NOT RECOMMENDED FIRST:
+  - Stripe/PayPal (third-party; fees)
+  - Card payments on own site (PCI, fraud, merchant complexity)
+  - Cash only (hard to audit)
+  - Personal bank account (governance/tax risk)
+
+PHASES:
+  Phase 1: PayID + EFT, unique reference, admin mark paid, CSV export
+  Phase 2: BPAY, payment instruction emails, receipt upload
+  Phase 3: Bank merchant/eftpos only if cards essential
+
+--------------------------------------------------------------------------------
+3. SECURITY & GOVERNANCE
+--------------------------------------------------------------------------------
+  - Publish bank details only on official join.html / admin content
+  - Dedicated membership bank account
+  - Never pay to personal accounts (unless PayID is association-registered)
+  - Ledger: ID, name, amount, date, method, who confirmed
+  - Monthly bank reconciliation
+
+--------------------------------------------------------------------------------
+4. TAX OVERVIEW (AUSTRALIA)
+--------------------------------------------------------------------------------
+
+GST:
+  Under $75k turnover     → GST registration usually optional
+  $75k+ turnover          → Generally must register; lodge BAS
+  ACNC charity            → Some fees may be GST-free (confirm)
+  Not GST-registered      → Don't charge GST; can't claim GST on expenses
+  GST-registered          → May need to show GST on fees (confirm)
+
+INCOME TAX:
+  - NFP ≠ automatic zero tax
+  - Small associations: may have minimal liability
+  - ACNC charities: may be income tax exempt if conditions met
+  - Non-charity: tax on some non-member income possible
+
+ABN: Required for association bank account, receipts, PayID, transparency
+
+DGR: Membership fees usually NOT tax-deductible; donations may differ
+
+--------------------------------------------------------------------------------
+5. RECORD-KEEPING (per payment)
+--------------------------------------------------------------------------------
+  [ ] Member name
+  [ ] Registration ID
+  [ ] Email, phone
+  [ ] Membership type, state/chapter
+  [ ] Amount, currency, fee snapshot
+  [ ] Date received
+  [ ] Method (PayID/EFT/BPAY)
+  [ ] Bank reference
+  [ ] Membership period (e.g. 2026)
+  [ ] Who confirmed in admin
+  [ ] Status: pending → paid
+
+RECEIPT SHOULD INCLUDE:
+  Association name, ABN, member name, amount, period, date,
+  GST note (included or not applicable), contact email
+
+ANNUAL:
+  1. Reconcile bank vs CSV export
+  2. Check GST registration threshold
+  3. AGM summary
+  4. Accountant for tax return if needed
+
+--------------------------------------------------------------------------------
+6. WEBSITE (current & suggested)
+--------------------------------------------------------------------------------
+  LIVE: join portal, adjustable fee, pending status, admin view, CSV export
+  SUGGESTED: PayID/BSB in CMS, auto reference, Mark as paid, ABN on receipts
+
+--------------------------------------------------------------------------------
+7. QUESTIONS FOR YOUR ACCOUNTANT
+--------------------------------------------------------------------------------
+  1. Should we register for GST?
+  2. Are membership fees GST-free or taxable for us?
+  3. Do we need tax invoices?
+  4. What ATO/AGM records are required?
+  5. Income tax exemption / ACNC concessions?
+  6. Separate treatment for fees vs donations?
+
+--------------------------------------------------------------------------------
+8. TYPICAL STARTING SETUP
+--------------------------------------------------------------------------------
+  Incorporated association + ABN + no GST if under $75k + PayID/EFT +
+  admin CSV + annual accountant review
+
+--------------------------------------------------------------------------------
+FILE LOCATION
+--------------------------------------------------------------------------------
+  HTML (print to PDF): docs\Gotabgaa-Australia-Membership-Payments-and-Tax-Guide.html
+  Text:                docs\Gotabgaa-Australia-Membership-Payments-and-Tax-Guide.txt
+
+To create PDF: Open the .html file in Chrome → Print → Save as PDF
+
+================================================================================

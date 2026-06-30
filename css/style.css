@@ -5877,3 +5877,95 @@ body.modal-open {
     gap: 0;
   }
 }
+
+/* PayID / bank transfer instructions */
+.payment-instructions-wrap {
+  margin-top: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.payment-instructions {
+  background: var(--color-surface-alt, #f8f6f2);
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.payment-instructions h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.payment-instructions__intro,
+.payment-instructions__gst,
+.payment-instructions__footer {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.payment-instructions__grid {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.payment-instructions__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.payment-instructions__row:last-child {
+  border-bottom: none;
+}
+
+.payment-instructions__label {
+  flex: 0 0 7rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #666);
+}
+
+.payment-instructions__value {
+  flex: 1 1 auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+
+.payment-instructions__copy {
+  flex-shrink: 0;
+}
+
+.payment-instructions--muted {
+  opacity: 0.95;
+}
+
+.booking-portal__form,
+.membership-portal__form {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+  .payment-instructions {
+    padding: 1rem;
+  }
+
+  .payment-instructions__label {
+    flex: 0 0 100%;
+  }
+
+  .payment-instructions__value {
+    flex: 1 1 100%;
+  }
+}

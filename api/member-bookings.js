@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
       .from('event_bookings')
-      .select('id, event_id, event_title, tickets, notes, created_at')
+      .select('id, event_id, event_title, tickets, notes, payment_status, payment_reference, fee_amount, fee_display, created_at, data')
       .ilike('email', email)
       .order('created_at', { ascending: false })
       .limit(50);

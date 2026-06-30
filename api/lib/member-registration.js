@@ -52,13 +52,22 @@ export function normalizeMembershipId(membershipId) {
   return String(membershipId || '').trim().toUpperCase();
 }
 
+export function getPaymentReferenceFromRow(row) {
+  const data = row?.data || {};
+  if (data.paymentReference) return data.paymentReference;
+  if (row?.payment_reference) return row.payment_reference;
+  const notesMatch = String(row?.notes || '').match(/\[gaa-payment-ref\]([^\s\]]+)/);
+  return notesMatch ? notesMatch[1] : null;
+}
+
 export function getMemberMeta(row) {
   const data = row?.data || {};
   const notesMeta = parseMemberMetaFromNotes(row?.notes);
   return {
     membershipId: row?.membership_id || data._membershipId || notesMeta?.membershipId || null,
     memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending',
-    paymentStatus: row?.payment_status || 'pending'
+    paymentStatus: row?.payment_status || 'pending',
+    paymentReference: getPaymentReferenceFromRow(row)
   };
 }
 

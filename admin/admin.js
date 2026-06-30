@@ -259,8 +259,27 @@
     `;
   }
 
+  function defaultPayment() {
+    return {
+      enabled: true,
+      legalName: 'Gotabgaa Australia',
+      abn: '',
+      payId: '',
+      bsb: '',
+      accountNumber: '',
+      accountName: 'Gotabgaa Australia',
+      gstNote: 'No GST has been charged unless stated on your receipt. Confirm GST treatment with your accountant.',
+      instructions: 'Pay via PayID or bank transfer. You must include the payment reference exactly as shown.',
+      receiptEmail: 'info@gotabgaaaustralia.org',
+      memReferencePrefix: 'GAA-MEM',
+      evtReferencePrefix: 'GAA-EVT'
+    };
+  }
+
   function renderSitePanel() {
+    if (!content.payment) content.payment = defaultPayment();
     const s = content.site;
+    const p = content.payment;
     return `
       <div class="card"><h3>General</h3><div class="form-grid">
         ${field('Site name', 'siteName', s.siteName)}
@@ -277,6 +296,20 @@
         ${field('Instagram', 'socialInstagram', s.social?.instagram)}
         ${field('WhatsApp / mailto', 'socialWhatsapp', s.social?.whatsapp)}
         ${field('YouTube', 'socialYoutube', s.social?.youtube)}
+      </div></div>
+      <div class="card"><h3>PayID &amp; bank details</h3>
+        <p class="form-hint">Shown on join/book forms after registration and on the member dashboard when payment is pending. Leave PayID blank until your association account is ready.</p>
+        <div class="form-grid">
+        ${field('Payments enabled', 'payEnabled', p.enabled !== false, 'checkbox')}
+        ${field('Legal name', 'payLegalName', p.legalName || 'Gotabgaa Australia')}
+        ${field('ABN', 'payAbn', p.abn || '')}
+        ${field('PayID (email or phone)', 'payPayId', p.payId || '')}
+        ${field('BSB', 'payBsb', p.bsb || '')}
+        ${field('Account number', 'payAccountNumber', p.accountNumber || '')}
+        ${field('Account name', 'payAccountName', p.accountName || p.legalName || 'Gotabgaa Australia')}
+        ${field('Receipt / enquiries email', 'payReceiptEmail', p.receiptEmail || 'info@gotabgaaaustralia.org', 'email')}
+        ${field('Payment instructions (public)', 'payInstructions', p.instructions || '', 'textarea', { full: true })}
+        ${field('GST note (public)', 'payGstNote', p.gstNote || '', 'textarea', { full: true })}
       </div></div>
     `;
   }
@@ -385,7 +418,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Public site:</strong> Events appear in <strong>Upcoming</strong> and <strong>Past</strong> groups on <a href="../events.html" target="_blank" rel="noopener">events.html</a>. Upcoming events link to the <a href="../book.html" target="_blank" rel="noopener">booking portal</a> (payments coming later).</p>
+        <p><strong>Public site:</strong> Events appear in <strong>Upcoming</strong> and <strong>Past</strong> groups on <a href="../events.html" target="_blank" rel="noopener">events.html</a>. Upcoming events link to the <a href="../book.html" target="_blank" rel="noopener">booking portal</a> with PayID / bank transfer when a ticket fee is set.</p>
       </div>
       <div class="card" id="eventBookingsCard">
         <h3>Recent bookings</h3>
@@ -413,6 +446,7 @@
     const bookingFields = e.status === 'upcoming' ? `
           ${field('Booking enabled', `evtBooking${i}`, e.bookingEnabled !== false, 'checkbox')}
           ${field('Book button label', `evtBookingLabel${i}`, e.bookingLabel || 'Book Now')}
+          ${field('Ticket fee (AUD, 0 = free)', `evtTicketAmount${i}`, e.ticketAmount ?? 0, 'number')}
           ${field('Ticket / price note', `evtPriceNote${i}`, e.ticketPriceNote || '', 'textarea')}
           ${field('Booking URL (optional)', `evtBookingUrl${i}`, e.bookingUrl || `book.html?id=${e.id}`)}
         ` : `
@@ -697,8 +731,8 @@
       feeCurrency: 'AUD',
       feePeriod: 'year',
       feeDisplay: '$50 AUD / year',
-      feeNote: 'Annual membership fee — secure online payment will be integrated in a future update.',
-      paymentPlaceholder: 'Online payment (card, bank transfer) coming soon. Submit this form to register — our team will follow up by email.',
+      feeNote: 'Annual membership fee — pay via PayID or bank transfer after registering.',
+      paymentPlaceholder: 'After you submit this form, you will receive PayID and bank details with a unique payment reference.',
       intro: 'Join our growing community across Australia.',
       image: 'assets/hero/brisbane-team.png',
       benefits: ['Community events and gatherings', 'Cultural and youth programs', 'Community support network'],
@@ -709,6 +743,13 @@
         { id: 'family', label: 'Family Membership' }
       ]
     };
+  }
+
+  function getPaymentReference(row) {
+    if (row?.payment_reference) return row.payment_reference;
+    if (row?.data?.paymentReference) return row.data.paymentReference;
+    const match = String(row?.notes || '').match(/\[gaa-payment-ref\]([^\s\]]+)/);
+    return match ? match[1] : null;
   }
 
   function getMemberMeta(row) {
@@ -1102,11 +1143,16 @@
     `;
   }
 
-  async function loadEventBookings() {
+  async function loadEventBookings(paymentFilter) {
     const token = getToken();
     if (!token) return [];
 
-    const res = await authFetch('/api/event-bookings');
+    let url = '/api/event-bookings';
+    if (paymentFilter && paymentFilter !== 'all') {
+      url += `?payment=${encodeURIComponent(paymentFilter)}`;
+    }
+
+    const res = await authFetch(url);
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -1117,35 +1163,60 @@
     return data.bookings || [];
   }
 
-  function renderEventBookingsPanel(bookings, errorMsg) {
+  function renderEventBookingsPanel(bookings, errorMsg, paymentFilter) {
+    const filter = paymentFilter || 'all';
     if (errorMsg) {
       return `<h3>Recent bookings</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
     }
+
+    const toolbar = `
+      <div class="list-item__header">
+        <h3>Recent bookings (${bookings.length})</h3>
+        <div class="admin-toolbar">
+          <label class="form-hint">Payment:
+            <select id="bookingPaymentFilter" class="admin-filter-select">
+              <option value="all"${filter === 'all' ? ' selected' : ''}>All</option>
+              <option value="pending"${filter === 'pending' ? ' selected' : ''}>Pending</option>
+              <option value="paid"${filter === 'paid' ? ' selected' : ''}>Paid</option>
+            </select>
+          </label>
+          <a href="/api/event-bookings?format=csv" class="btn btn--outline btn--sm" id="exportBookingsCsv" target="_blank" rel="noopener">Download CSV</a>
+        </div>
+      </div>
+    `;
+
     if (!bookings.length) {
-      return `<h3>Recent bookings</h3><p class="form-hint">No booking requests yet. Submissions from the booking portal appear here when Supabase is connected.</p>`;
+      return `${toolbar}<p class="form-hint">No booking requests yet. Submissions from the booking portal appear here when Supabase is connected.</p>`;
     }
 
     return `
-      <h3>Recent bookings (${bookings.length})</h3>
+      ${toolbar}
       <div id="bookingsList">
-        ${bookings.slice(0, 20).map(b => `
+        ${bookings.slice(0, 50).map(b => {
+          const ref = getPaymentReference(b);
+          const payStatus = b.payment_status || 'pending';
+          return `
           <div class="list-item inbox-item ${b.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(b.id)}">
             <div class="list-item__header">
               <h4>${escapeHtml(b.event_title)}</h4>
               <span class="inbox-item__date">${new Date(b.created_at).toLocaleString()}</span>
             </div>
             <p><strong>${escapeHtml(b.name)}</strong> · ${escapeHtml(b.email)}${b.phone ? ` · ${escapeHtml(b.phone)}` : ''}</p>
-            <p class="form-hint">${b.tickets} place(s)${b.notes ? ` · ${escapeHtml(b.notes)}` : ''}</p>
-            <button type="button" class="btn btn--outline btn--sm booking-mark-read" data-id="${escapeHtml(b.id)}" data-read="${b.read ? '0' : '1'}">
-              ${b.read ? 'Mark unread' : 'Mark read'}
-            </button>
+            <p class="form-hint">${b.tickets} place(s) · ${escapeHtml(b.fee_display || 'Free')}${b.notes ? ` · ${escapeHtml(b.notes)}` : ''}</p>
+            <p class="form-hint"><strong>Payment:</strong> ${escapeHtml(payStatus)}${ref ? ` · Ref: <code>${escapeHtml(ref)}</code>` : ''}</p>
+            <div class="inbox-item__actions">
+              ${payStatus !== 'paid' ? `<button type="button" class="btn btn--primary btn--sm booking-mark-paid" data-id="${escapeHtml(b.id)}">Mark as paid</button>` : ''}
+              <button type="button" class="btn btn--outline btn--sm booking-mark-read" data-id="${escapeHtml(b.id)}" data-read="${b.read ? '0' : '1'}">
+                ${b.read ? 'Mark unread' : 'Mark read'}
+              </button>
+            </div>
           </div>
-        `).join('')}
+        `}).join('')}
       </div>
     `;
   }
 
-  async function loadEventBookingsPanel() {
+  async function loadEventBookingsPanel(paymentFilter) {
     const card = document.getElementById('eventBookingsCard');
     if (!card) return;
 
@@ -1157,8 +1228,57 @@
     card.innerHTML = '<h3>Recent bookings</h3><p class="form-hint">Loading…</p>';
 
     try {
-      const bookings = await loadEventBookings();
-      card.innerHTML = renderEventBookingsPanel(bookings);
+      const filter = paymentFilter || card.dataset.paymentFilter || 'all';
+      const bookings = await loadEventBookings(filter);
+      card.dataset.paymentFilter = filter;
+      card.innerHTML = renderEventBookingsPanel(bookings, null, filter);
+
+      card.querySelector('#bookingPaymentFilter')?.addEventListener('change', e => {
+        loadEventBookingsPanel(e.target.value);
+      });
+
+      card.querySelector('#exportBookingsCsv')?.addEventListener('click', e => {
+        const token = getToken();
+        if (token) {
+          e.preventDefault();
+          const f = card.dataset.paymentFilter || 'all';
+          let href = `/api/event-bookings?format=csv`;
+          if (f !== 'all') href += `&payment=${encodeURIComponent(f)}`;
+          fetch(href, { headers: { Authorization: `Bearer ${token}` } })
+            .then(r => r.blob())
+            .then(blob => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = `event-bookings-${new Date().toISOString().slice(0, 10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(a.href);
+            })
+            .catch(() => showStatus('Could not export CSV.', 'error'));
+        }
+      });
+
+      card.querySelectorAll('.booking-mark-paid').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Mark this booking as paid? A receipt email will be sent if email is configured.')) return;
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/event-bookings', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'markPaid' })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not mark as paid');
+            showStatus('Booking marked as paid.', 'success');
+            loadEventBookingsPanel(card.dataset.paymentFilter);
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
+          }
+        });
+      });
+
       card.querySelectorAll('.booking-mark-read').forEach(btn => {
         btn.addEventListener('click', async () => {
           const token = getToken();
@@ -1170,20 +1290,25 @@
             },
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
-          loadEventBookingsPanel();
+          loadEventBookingsPanel(card.dataset.paymentFilter);
         });
       });
     } catch (err) {
       if (isAuthError(err)) return;
-      card.innerHTML = renderEventBookingsPanel([], err.message);
+      card.innerHTML = renderEventBookingsPanel([], err.message, paymentFilter);
     }
   }
 
-  async function loadMembershipRegistrations() {
+  async function loadMembershipRegistrations(paymentFilter) {
     const token = getToken();
     if (!token) return [];
 
-    const res = await authFetch('/api/membership-registrations');
+    let url = '/api/membership-registrations';
+    if (paymentFilter && paymentFilter !== 'all') {
+      url += `?payment=${encodeURIComponent(paymentFilter)}`;
+    }
+
+    const res = await authFetch(url);
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -1215,12 +1340,24 @@
     URL.revokeObjectURL(a.href);
   }
 
-  function renderMembershipRegistrationsPanel(registrations, errorMsg) {
+  function renderMembershipRegistrationsPanel(registrations, errorMsg, paymentFilter) {
+    const filter = paymentFilter || 'all';
     if (errorMsg) {
       return `<h3>Member registrations</h3><p class="form-hint">${escapeHtml(errorMsg)}</p>`;
     }
     if (!registrations.length) {
-      return `<h3>Member registrations</h3><p class="form-hint">No registrations yet. Submissions from the join portal appear here when Supabase is connected.</p>`;
+      return `
+        <div class="list-item__header">
+          <h3>Member registrations</h3>
+          <label class="form-hint">Payment:
+            <select id="membershipPaymentFilter" class="admin-filter-select">
+              <option value="all"${filter === 'all' ? ' selected' : ''}>All</option>
+              <option value="pending"${filter === 'pending' ? ' selected' : ''}>Pending</option>
+              <option value="paid"${filter === 'paid' ? ' selected' : ''}>Paid</option>
+            </select>
+          </label>
+        </div>
+        <p class="form-hint">No registrations yet. Submissions from the join portal appear here when Supabase is connected.</p>`;
     }
 
     const unread = registrations.filter(r => !r.read).length;
@@ -1228,17 +1365,28 @@
     return `
       <div class="list-item__header">
         <h3>Member registrations (${registrations.length}${unread ? ` · ${unread} new` : ''})</h3>
-        <button type="button" class="btn btn--outline btn--sm" id="exportMembershipCsv">Download CSV</button>
+        <div class="admin-toolbar">
+          <label class="form-hint">Payment:
+            <select id="membershipPaymentFilter" class="admin-filter-select">
+              <option value="all"${filter === 'all' ? ' selected' : ''}>All</option>
+              <option value="pending"${filter === 'pending' ? ' selected' : ''}>Pending</option>
+              <option value="paid"${filter === 'paid' ? ' selected' : ''}>Paid</option>
+            </select>
+          </label>
+          <button type="button" class="btn btn--outline btn--sm" id="exportMembershipCsv">Download CSV</button>
+        </div>
       </div>
-      <p class="form-hint">View full registration details below. Data is only visible to signed-in admins — use Download CSV to export.</p>
+      <p class="form-hint">Approve members to issue a membership ID. Mark as paid when PayID/EFT is received — separate from approval.</p>
       <div id="membershipRegistrationsList">
         ${registrations.map(r => {
           const meta = getMemberMeta(r);
+          const payRef = getPaymentReference(r);
+          const payStatus = r.payment_status || 'pending';
           return `
           <details class="list-item inbox-item membership-reg-item ${r.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(r.id)}">
             <summary class="membership-reg-item__summary">
               <span class="membership-reg-item__name">${escapeHtml(r.name)}</span>
-              <span class="membership-reg-item__meta">${escapeHtml(r.membership_type || 'Member')} · ${escapeHtml(r.state_chapter || '—')}${meta.membershipId ? ` · ${escapeHtml(meta.membershipId)}` : ''}</span>
+              <span class="membership-reg-item__meta">${escapeHtml(r.membership_type || 'Member')} · ${escapeHtml(r.state_chapter || '—')}${meta.membershipId ? ` · ${escapeHtml(meta.membershipId)}` : ''} · ${escapeHtml(payStatus)}</span>
               <span class="inbox-item__date">${new Date(r.created_at).toLocaleString()}</span>
             </summary>
             <div class="membership-reg-item__body">
@@ -1253,11 +1401,13 @@
                 <p><strong>Date of birth:</strong> ${escapeHtml(r.date_of_birth || '—')}</p>
                 <p><strong>Referral:</strong> ${escapeHtml(r.referral_source || '—')}</p>
                 <p><strong>Fee at registration:</strong> ${escapeHtml(r.fee_display || '—')}</p>
-                <p><strong>Payment status:</strong> ${escapeHtml(r.payment_status || 'pending')}${r.payment_method ? ` (${escapeHtml(r.payment_method)})` : ''}</p>
+                <p><strong>Payment status:</strong> ${escapeHtml(payStatus)}${r.payment_method ? ` (${escapeHtml(r.payment_method)})` : ''}</p>
+                ${payRef ? `<p><strong>Payment reference:</strong> <code>${escapeHtml(payRef)}</code></p>` : ''}
                 ${displayMemberNotes(r.notes) ? `<p class="form-field--full"><strong>Notes:</strong> ${escapeHtml(displayMemberNotes(r.notes))}</p>` : ''}
               </div>
               <div class="inbox-item__actions">
                 ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
+                ${payStatus !== 'paid' ? `<button type="button" class="btn btn--outline btn--sm membership-mark-paid" data-id="${escapeHtml(r.id)}">Mark as paid</button>` : ''}
                 ${meta.membershipId ? `<button type="button" class="btn btn--outline btn--sm membership-resync" data-id="${escapeHtml(r.id)}">Sync member login</button>` : ''}
                 ${meta.memberStatus === 'active' ? `<button type="button" class="btn btn--outline btn--sm membership-revoke" data-id="${escapeHtml(r.id)}">Deactivate member</button>` : ''}
                 <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
@@ -1274,7 +1424,7 @@
     `;
   }
 
-  async function loadMembershipRegistrationsPanel() {
+  async function loadMembershipRegistrationsPanel(paymentFilter) {
     const card = document.getElementById('membershipRegistrationsCard');
     if (!card) return;
 
@@ -1286,12 +1436,40 @@
     card.innerHTML = '<h3>Member registrations</h3><p class="form-hint">Loading…</p>';
 
     try {
-      const registrations = await loadMembershipRegistrations();
-      card.innerHTML = renderMembershipRegistrationsPanel(registrations);
+      const filter = paymentFilter || card.dataset.paymentFilter || 'all';
+      const registrations = await loadMembershipRegistrations(filter);
+      card.dataset.paymentFilter = filter;
+      card.innerHTML = renderMembershipRegistrationsPanel(registrations, null, filter);
+
+      card.querySelector('#membershipPaymentFilter')?.addEventListener('change', e => {
+        loadMembershipRegistrationsPanel(e.target.value);
+      });
 
       card.querySelector('#exportMembershipCsv')?.addEventListener('click', () => {
         downloadMembershipCsvClient(registrations);
         showStatus('Membership registrations exported as CSV.', 'success');
+      });
+
+      card.querySelectorAll('.membership-mark-paid').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Mark this membership payment as received? A receipt email will be sent if email is configured.')) return;
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/membership-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'markPaid' })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not mark as paid');
+            showStatus('Payment marked as received.', 'success');
+            loadMembershipRegistrationsPanel(card.dataset.paymentFilter);
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
+          }
+        });
       });
 
       card.querySelectorAll('.membership-mark-read').forEach(btn => {
@@ -1305,7 +1483,7 @@
             },
             body: JSON.stringify({ id: btn.dataset.id, read: btn.dataset.read === '1' })
           });
-          loadMembershipRegistrationsPanel();
+          loadMembershipRegistrationsPanel(card.dataset.paymentFilter);
         });
       });
 
@@ -2061,6 +2239,20 @@
         whatsapp: val('socialWhatsapp'),
         youtube: val('socialYoutube')
       };
+      if (document.getElementById('payPayId')) {
+        if (!content.payment) content.payment = defaultPayment();
+        const p = content.payment;
+        p.enabled = val('payEnabled');
+        p.legalName = val('payLegalName');
+        p.abn = val('payAbn');
+        p.payId = val('payPayId');
+        p.bsb = val('payBsb');
+        p.accountNumber = val('payAccountNumber');
+        p.accountName = val('payAccountName');
+        p.receiptEmail = val('payReceiptEmail');
+        p.instructions = val('payInstructions');
+        p.gstNote = val('payGstNote');
+      }
     }
 
     const h = content.pages?.home;
@@ -2134,6 +2326,7 @@
         if (e.status === 'upcoming') {
           e.bookingEnabled = val(`evtBooking${i}`);
           e.bookingLabel = val(`evtBookingLabel${i}`);
+          e.ticketAmount = parseFloat(val(`evtTicketAmount${i}`)) || 0;
           e.ticketPriceNote = val(`evtPriceNote${i}`);
           e.bookingUrl = val(`evtBookingUrl${i}`);
           e.registerUrl = e.bookingUrl || `book.html?id=${e.id}`;

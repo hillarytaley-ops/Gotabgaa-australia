@@ -1,0 +1,223 @@
+================================================================================
+GOTABGAA AUSTRALIA — GST REGISTRATION & PAYID READINESS GUIDE
+Version 1.0 · June 2026 · For leadership, treasurer & finance volunteers
+================================================================================
+
+IMPORTANT: General guidance only — NOT legal or tax advice. Confirm all
+obligations with a qualified Australian accountant or tax agent based on your
+legal structure (incorporated association, ACNC charity, company, etc.).
+
+--------------------------------------------------------------------------------
+1. PURPOSE
+--------------------------------------------------------------------------------
+This guide explains what Gotabgaa Australia needs after registering for GST
+(or preparing to register) before integrating PayID and bank transfer (EFT)
+for membership fees and event bookings on the website.
+
+GST registration and PayID are separate steps:
+  - GST = how you report tax to the ATO
+  - PayID = how money arrives in your association bank account
+
+PayID does NOT calculate or deduct GST. Your invoices, bookkeeping, and BAS do.
+
+Related document: Gotabgaa-Australia-Membership-Payments-and-Tax-Guide
+
+--------------------------------------------------------------------------------
+2. WHAT IS A "GST ACCOUNT"? (CLARIFICATION)
+--------------------------------------------------------------------------------
+In Australia you do not receive a separate "GST account number" from the ATO.
+
+When people say "GST account" they usually mean ONE OR MORE of:
+  (a) GST registration linked to your ABN
+  (b) Your association's business bank account (where PayID payments land)
+  (c) Internal bookkeeping to track GST collected and owed
+
+For PayID integration you need (a) + (b) + basic setup for (c).
+
+--------------------------------------------------------------------------------
+3. WHAT YOU GET FROM GST REGISTRATION (ATO / ABN)
+--------------------------------------------------------------------------------
+After registering for GST with the ATO, record and use these details:
+
+  [ ] Legal entity name (exact spelling for invoices)
+  [ ] ABN (Australian Business Number)
+  [ ] GST registration start date
+  [ ] Accounting basis — Cash or Accrual (affects BAS timing)
+  [ ] BAS lodgement cycle — usually quarterly
+  [ ] GST reporting method — Simpler BAS or full GST reporting
+  [ ] Registered business address
+  [ ] Official contact email and phone for receipts
+
+USE ON:
+  - Tax invoices and member receipts
+  - PayID (ABN can be used as PayID)
+  - Website payment instructions
+  - BAS lodgements
+
+--------------------------------------------------------------------------------
+4. WHAT YOU NEED FROM YOUR BANK (FOR PAYID)
+--------------------------------------------------------------------------------
+Set up on the ASSOCIATION'S bank account — not a personal account:
+
+  [ ] Account name matching legal entity name
+  [ ] BSB and account number (EFT backup)
+  [ ] PayID enabled (recommended: link to ABN or official association email)
+  [ ] Business / community association account type
+
+PayID requirements:
+  - Valid business or community account in the association's name
+  - PayID registration with your bank
+  - ABN-linked PayID is common and easy for members to recognise
+
+Money goes DIRECTLY to your association account. No Stripe or PayPal required.
+
+--------------------------------------------------------------------------------
+5. QUESTIONS FOR YOUR ACCOUNTANT (BEFORE GOING LIVE)
+--------------------------------------------------------------------------------
+Confirm these before showing GST amounts on the website:
+
+  1. Should Gotabgaa Australia register for GST? (Turnover $75k+ generally
+     requires registration; under $75k is usually optional.)
+  2. Are membership fees GST-taxable for our structure?
+  3. Are event ticket / booking fees GST-taxable?
+  4. Are donations treated separately from membership fees?
+  5. Should prices be GST-inclusive or GST-exclusive?
+        Example inclusive:  $55 total ($50 + $5 GST)
+        Example exclusive:  $50 + $5 GST = $55 total
+  6. Do we need formal tax invoices for every payment?
+  7. Are we ACNC registered / income tax exempt? (Does not automatically
+     answer GST treatment for all fees.)
+
+--------------------------------------------------------------------------------
+6. WHAT TO SHOW ON EVERY RECEIPT / TAX INVOICE
+--------------------------------------------------------------------------------
+Once GST-registered (or if accountant confirms GST-free supplies), each receipt
+should include:
+
+  [ ] Association legal name
+  [ ] ABN
+  [ ] "Tax invoice" wording (when required by your accountant)
+  [ ] Unique invoice / receipt number (e.g. GAA-INV-2026-0042)
+  [ ] Date of issue
+  [ ] Member or payer name and email
+  [ ] Description (e.g. "Annual membership 2026" or "Event booking — Cultural Fete")
+  [ ] Amount (and GST component if applicable)
+  [ ] Total amount paid
+  [ ] GST note: "GST included", "GST free", or "No GST has been charged"
+  [ ] Payment method (PayID / EFT / BPAY)
+  [ ] Payment reference used by member (e.g. GAA-MEM-B722PUFW)
+
+--------------------------------------------------------------------------------
+7. INTERNAL BOOKKEEPING (GST TRACKING)
+--------------------------------------------------------------------------------
+You do not need a second bank account for GST, but you SHOULD track GST in
+your records:
+
+  LEDGER                    PURPOSE
+  ------------------------  ------------------------------------------
+  Membership income         Fees received from join.html registrations
+  Event income              Ticket and booking fees
+  GST collected             10% set aside for ATO (liability account)
+  Bank fees                 Usually minimal for PayID/EFT
+  Expenses                  With GST credits if GST-registered
+
+FOR EACH PAYID PAYMENT RECORD:
+  [ ] Gross amount received
+  [ ] GST portion (if taxable supply)
+  [ ] Net income portion
+  [ ] Member or booking reference
+  [ ] Date received in bank
+  [ ] Who confirmed payment in admin
+  [ ] Receipt / invoice number issued
+
+This supports your BAS (Business Activity Statement):
+  GST collected on sales  minus  GST credits on expenses  =  net GST owed to ATO
+
+--------------------------------------------------------------------------------
+8. PAYMENT REFERENCE FORMAT (WEBSITE)
+--------------------------------------------------------------------------------
+Unique references help the treasurer match bank deposits to registrations:
+
+  Membership:   GAA-MEM-{registration-id}
+  Event booking: GAA-EVT-{booking-id}
+  Alternative:  GAA-SURNAME-2026
+
+Members MUST include the reference when paying via PayID or EFT.
+
+--------------------------------------------------------------------------------
+9. MEMBER PAYMENT FLOW (PHASE 1 — PAYID + EFT)
+--------------------------------------------------------------------------------
+  Member registers on join.html or book.html
+    → Confirmation shows fee, PayID, BSB/account, unique reference
+    → Member pays from their banking app
+    → Treasurer sees deposit in association account
+    → Admin marks registration / booking as Paid
+    → Receipt emailed or available to member
+
+WEBSITE STATUS TODAY:
+  Live: join portal, adjustable fee, pending status, admin view, CSV export
+  Planned: PayID/BSB in CMS, auto reference, Mark as paid, ABN on receipts
+
+--------------------------------------------------------------------------------
+10. PRE-LAUNCH CHECKLIST
+--------------------------------------------------------------------------------
+  [ ] ABN active and correct on all documents
+  [ ] GST registered (if required or chosen by leadership)
+  [ ] Accountant confirmed GST treatment for membership and events
+  [ ] Association business bank account opened (not personal)
+  [ ] PayID enabled and linked (ABN or official email recommended)
+  [ ] BSB + account number ready for EFT backup
+  [ ] Invoice / receipt template agreed with accountant
+  [ ] Payment reference format documented (GAA-MEM-*, GAA-EVT-*)
+  [ ] Treasurer process: match reference → mark paid → send receipt
+  [ ] BAS lodgement dates in calendar (usually quarterly)
+  [ ] Two-signatory rule for payments above policy threshold
+  [ ] Bank details published only on official website pages
+
+--------------------------------------------------------------------------------
+11. WHAT TO PROVIDE FOR WEBSITE PAYID INTEGRATION
+--------------------------------------------------------------------------------
+When leadership is ready to add PayID to the website, provide:
+
+  1. Legal entity name
+  2. ABN
+  3. PayID (ABN, email, or phone as registered with bank)
+  4. BSB and account number
+  5. Membership fee amount(s)
+  6. Event fee amounts (if applicable)
+  7. GST wording from accountant (included / free / not applicable)
+  8. Payment reference prefix (GAA-MEM, GAA-EVT, etc.)
+  9. Receipt contact email
+
+These can be stored in the admin dashboard payment settings (future update).
+
+--------------------------------------------------------------------------------
+12. SECURITY & GOVERNANCE REMINDERS
+--------------------------------------------------------------------------------
+  - Never use a personal bank account for association fees
+  - Publish bank details only on official gotabgaa-australia.vercel.app pages
+  - Keep a ledger: ID, name, amount, date, method, who confirmed
+  - Reconcile bank statement monthly against admin CSV export
+  - Separate membership fees from donations in records where required
+
+--------------------------------------------------------------------------------
+13. RELATED DOCUMENTS (LOCAL FOLDER)
+--------------------------------------------------------------------------------
+  docs\Gotabgaa-Australia-Membership-Payments-and-Tax-Guide.pdf
+  docs\Gotabgaa-Australia-Governance-Structure.pdf
+  docs\Gotabgaa-Australia-National-Structure.pdf
+
+--------------------------------------------------------------------------------
+FILE LOCATION
+--------------------------------------------------------------------------------
+  PDF:  docs\Gotabgaa-Australia-GST-PayID-Readiness-Guide.pdf
+  HTML: docs\Gotabgaa-Australia-GST-PayID-Readiness-Guide.html
+  TXT:  docs\Gotabgaa-Australia-GST-PayID-Readiness-Guide.txt
+
+To re-print PDF: Open the .html file in Chrome → Print → Save as PDF,
+or use the Print button at the top of the HTML file.
+
+================================================================================
+Gotabgaa Australia · Unity · Heritage · Excellence
+June 2026 — For leadership review only. Not legal or tax advice.
+================================================================================
