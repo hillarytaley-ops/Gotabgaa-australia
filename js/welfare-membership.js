@@ -6,6 +6,52 @@
   let paymentConfig = null;
   let packages = [];
 
+  const DEFAULT_PACKAGES = [
+    {
+      id: 'welf-individual',
+      title: 'Individual Package',
+      description: 'Single adult member — includes bereavement reimbursement eligibility and welfare community alerts.',
+      price: 120,
+      priceDisplay: '$120 AUD / year',
+      period: 'year',
+      highlight: false,
+      benefits: [
+        'Bereavement reimbursement eligibility',
+        'Welfare community alerts',
+        'Settlement and hardship support referrals'
+      ]
+    },
+    {
+      id: 'welf-family',
+      title: 'Family Package',
+      description: 'Household coverage for member families — covers spouse and dependent children under one welfare membership.',
+      price: 200,
+      priceDisplay: '$200 AUD / year',
+      period: 'year',
+      highlight: true,
+      benefits: [
+        'Covers household members',
+        'Bereavement reimbursement eligibility',
+        'Priority welfare team contact',
+        'Welfare community alerts'
+      ]
+    },
+    {
+      id: 'welf-senior',
+      title: 'Senior Package',
+      description: 'Reduced rate for members aged 60+ — full welfare benefits with community check-ins.',
+      price: 80,
+      priceDisplay: '$80 AUD / year',
+      period: 'year',
+      highlight: false,
+      benefits: [
+        'Reduced annual contribution',
+        'Bereavement reimbursement eligibility',
+        'Wellbeing check-in calls'
+      ]
+    }
+  ];
+
   function escapeHtml(str) {
     return String(str ?? '')
       .replace(/&/g, '&amp;')
@@ -39,7 +85,14 @@
       </article>
     `).join('');
 
-    grid.querySelectorAll('[data-package-id]').forEach(btn => {
+    bindPackageSelectButtons(grid);
+  }
+
+  function bindPackageSelectButtons(root) {
+    if (!root) return;
+    root.querySelectorAll('.welfare-package-card__select[data-package-id]').forEach(btn => {
+      if (btn.dataset.bound === '1') return;
+      btn.dataset.bound = '1';
       btn.addEventListener('click', () => {
         const select = document.getElementById('welfPackage');
         if (select) {
@@ -74,7 +127,13 @@
   }
 
   function applyConfig(welfare) {
-    welfareConfig = welfare?.membership || {};
+    const membership = welfare?.membership || {};
+    welfareConfig = {
+      ...membership,
+      packages: (membership.packages && membership.packages.length)
+        ? membership.packages
+        : DEFAULT_PACKAGES
+    };
     paymentConfig = window.CMS_CONTENT?.payment || null;
 
     const m = welfareConfig;
@@ -196,16 +255,21 @@
     });
   }
 
-  function load() {
-    const welfare = window.CMS_CONTENT?.welfare;
-    if (welfare) applyConfig(welfare);
+  function load(event) {
+    const welfare = event?.detail?.welfare || window.CMS_CONTENT?.welfare;
+    applyConfig(welfare || { membership: { enabled: true, packages: DEFAULT_PACKAGES } });
     initForm();
+    bindPackageSelectButtons(document.getElementById('welfarePackagesGrid'));
   }
 
   document.addEventListener('cms-ready', load);
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', load);
+    document.addEventListener('DOMContentLoaded', () => {
+      bindPackageSelectButtons(document.getElementById('welfarePackagesGrid'));
+      load();
+    });
   } else {
+    bindPackageSelectButtons(document.getElementById('welfarePackagesGrid'));
     load();
   }
 })();

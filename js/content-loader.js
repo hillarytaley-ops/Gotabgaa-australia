@@ -77,8 +77,11 @@
       'about.html': 'about',
       'programs.html': 'programs',
       'welfare.html': 'welfare',
+      'welfare': 'welfare',
       'sports.html': 'sports',
+      'sports': 'sports',
       'business.html': 'business',
+      'business': 'business',
       'events.html': 'events',
       'leadership.html': 'leadership',
       'gallery.html': 'gallery',
@@ -893,7 +896,7 @@
       return '<p class="hub-empty">Welfare packages will appear here once configured in the admin dashboard.</p>';
     }
     return list.map(pkg => `
-      <article class="welfare-package-card animate-on-scroll${pkg.highlight ? ' welfare-package-card--highlight' : ''}" data-animate="fade-up">
+      <article class="welfare-package-card${pkg.highlight ? ' welfare-package-card--highlight' : ''}">
         ${pkg.highlight ? '<span class="welfare-package-card__badge">Popular</span>' : ''}
         <h3>${escapeHtml(pkg.title)}</h3>
         <p class="welfare-package-card__price">${escapeHtml(pkg.priceDisplay || `$${pkg.price} AUD / ${pkg.period || 'year'}`)}</p>
@@ -1059,7 +1062,7 @@
     if (page === 'programs') renderPrograms(content);
     if (page === 'leadership') renderLeadership(content);
     if (page === 'gallery') renderGallery(content);
-    if (page === 'welfare') renderWelfare(content);
+    if (page === 'welfare' || document.getElementById('welfarePackagesGrid')) renderWelfare(content);
     if (page === 'sports') renderSports(content);
     if (page === 'business') renderBusiness(content);
 

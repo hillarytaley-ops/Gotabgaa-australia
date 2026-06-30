@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/style.css?v=22">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/welfare.html">
 </head>
@@ -67,7 +67,43 @@
         <h2 class="section__title">Welfare Member Packages</h2>
         <p class="section__desc">Choose the package that fits your household. Prices are set by the welfare committee and may be updated annually.</p>
       </div>
-      <div class="welfare-packages__grid" id="welfarePackagesGrid"></div>
+      <div class="welfare-packages__grid" id="welfarePackagesGrid">
+        <article class="welfare-package-card">
+          <h3>Individual Package</h3>
+          <p class="welfare-package-card__price">$120 AUD / year</p>
+          <p class="welfare-package-card__desc">Single adult member — includes bereavement reimbursement eligibility and welfare community alerts.</p>
+          <ul class="welfare-package-card__benefits">
+            <li>Bereavement reimbursement eligibility</li>
+            <li>Welfare community alerts</li>
+            <li>Settlement and hardship support referrals</li>
+          </ul>
+          <button type="button" class="btn btn--outline btn--sm welfare-package-card__select" data-package-id="welf-individual">Select package</button>
+        </article>
+        <article class="welfare-package-card welfare-package-card--highlight">
+          <span class="welfare-package-card__badge">Popular</span>
+          <h3>Family Package</h3>
+          <p class="welfare-package-card__price">$200 AUD / year</p>
+          <p class="welfare-package-card__desc">Household coverage for member families — covers spouse and dependent children under one welfare membership.</p>
+          <ul class="welfare-package-card__benefits">
+            <li>Covers household members</li>
+            <li>Bereavement reimbursement eligibility</li>
+            <li>Priority welfare team contact</li>
+            <li>Welfare community alerts</li>
+          </ul>
+          <button type="button" class="btn btn--outline btn--sm welfare-package-card__select" data-package-id="welf-family">Select package</button>
+        </article>
+        <article class="welfare-package-card">
+          <h3>Senior Package</h3>
+          <p class="welfare-package-card__price">$80 AUD / year</p>
+          <p class="welfare-package-card__desc">Reduced rate for members aged 60+ — full welfare benefits with community check-ins.</p>
+          <ul class="welfare-package-card__benefits">
+            <li>Reduced annual contribution</li>
+            <li>Bereavement reimbursement eligibility</li>
+            <li>Wellbeing check-in calls</li>
+          </ul>
+          <button type="button" class="btn btn--outline btn--sm welfare-package-card__select" data-package-id="welf-senior">Select package</button>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -234,10 +270,10 @@
   </footer>
 
   <script src="js/site-config.js"></script>
-  <script src="js/content-loader.js?v=21"></script>
-  <script src="js/payment-instructions.js?v=21"></script>
-  <script src="js/welfare-membership.js?v=21"></script>
+  <script src="js/content-loader.js?v=22"></script>
+  <script src="js/payment-instructions.js?v=22"></script>
+  <script src="js/welfare-membership.js?v=22"></script>
   <script src="floating-social/floating-social.js" defer></script>
-  <script src="js/main.js?v=20" defer></script>
+  <script src="js/main.js?v=22" defer></script>
 </body>
 </html>
