@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=16">
+  <link rel="stylesheet" href="admin.css?v=17">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -43,33 +43,96 @@
       <div class="sidebar__overlay" id="sidebarOverlay" hidden aria-hidden="true"></div>
       <div class="sidebar__drawer" id="sidebarDrawer">
         <nav class="sidebar__nav" id="sidebarNav">
-          <button type="button" data-section="dashboard" class="is-active">Dashboard</button>
-          <button type="button" data-section="site">Site Settings</button>
-          <button type="button" data-section="home">Home Page</button>
-          <button type="button" data-section="about">About</button>
-          <button type="button" data-section="programs">Programs</button>
-          <button type="button" data-section="events">Events</button>
-          <button type="button" data-section="leadership">Leadership</button>
-          <button type="button" data-section="gallery">Gallery</button>
-          <button type="button" data-section="contact">Contact</button>
-          <button type="button" data-section="membership">Membership</button>
-          <button type="button" data-section="memberPortal">Member Portal</button>
-          <button type="button" data-section="ailcd">Leadership EOI</button>
-          <button type="button" data-section="inbox">Inbox</button>
-          <button type="button" data-section="pages">Page Heroes</button>
+          <div class="sidebar__group">
+            <span class="sidebar__group-label">Overview</span>
+            <button type="button" class="nav-item is-active" data-section="dashboard">
+              <span class="nav-item__icon nav-item__icon--dashboard" aria-hidden="true"></span>
+              <span class="nav-item__label">Dashboard</span>
+            </button>
+          </div>
+          <div class="sidebar__group">
+            <span class="sidebar__group-label">Website content</span>
+            <button type="button" class="nav-item" data-section="site">
+              <span class="nav-item__icon nav-item__icon--site" aria-hidden="true"></span>
+              <span class="nav-item__label">Site &amp; PayID</span>
+            </button>
+            <button type="button" class="nav-item" data-section="home">
+              <span class="nav-item__icon nav-item__icon--home" aria-hidden="true"></span>
+              <span class="nav-item__label">Home Page</span>
+            </button>
+            <button type="button" class="nav-item" data-section="about">
+              <span class="nav-item__icon nav-item__icon--about" aria-hidden="true"></span>
+              <span class="nav-item__label">About</span>
+            </button>
+            <button type="button" class="nav-item" data-section="programs">
+              <span class="nav-item__icon nav-item__icon--programs" aria-hidden="true"></span>
+              <span class="nav-item__label">Programs</span>
+            </button>
+            <button type="button" class="nav-item" data-section="events">
+              <span class="nav-item__icon nav-item__icon--events" aria-hidden="true"></span>
+              <span class="nav-item__label">Events</span>
+            </button>
+            <button type="button" class="nav-item" data-section="leadership">
+              <span class="nav-item__icon nav-item__icon--leadership" aria-hidden="true"></span>
+              <span class="nav-item__label">Leadership</span>
+            </button>
+            <button type="button" class="nav-item" data-section="gallery">
+              <span class="nav-item__icon nav-item__icon--gallery" aria-hidden="true"></span>
+              <span class="nav-item__label">Gallery</span>
+            </button>
+            <button type="button" class="nav-item" data-section="contact">
+              <span class="nav-item__icon nav-item__icon--contact" aria-hidden="true"></span>
+              <span class="nav-item__label">Contact</span>
+            </button>
+            <button type="button" class="nav-item" data-section="pages">
+              <span class="nav-item__icon nav-item__icon--pages" aria-hidden="true"></span>
+              <span class="nav-item__label">Page Heroes</span>
+            </button>
+          </div>
+          <div class="sidebar__group">
+            <span class="sidebar__group-label">Members &amp; community</span>
+            <button type="button" class="nav-item" data-section="membership">
+              <span class="nav-item__icon nav-item__icon--membership" aria-hidden="true"></span>
+              <span class="nav-item__label">Membership</span>
+            </button>
+            <button type="button" class="nav-item" data-section="memberPortal">
+              <span class="nav-item__icon nav-item__icon--portal" aria-hidden="true"></span>
+              <span class="nav-item__label">Member Portal</span>
+            </button>
+            <button type="button" class="nav-item" data-section="ailcd">
+              <span class="nav-item__icon nav-item__icon--eoi" aria-hidden="true"></span>
+              <span class="nav-item__label">Leadership EOI</span>
+            </button>
+          </div>
+          <div class="sidebar__group">
+            <span class="sidebar__group-label">Inbox</span>
+            <button type="button" class="nav-item" data-section="inbox">
+              <span class="nav-item__icon nav-item__icon--inbox" aria-hidden="true"></span>
+              <span class="nav-item__label">Contact Inbox</span>
+            </button>
+          </div>
         </nav>
         <div class="sidebar__footer">
-          <a href="../index.html" target="_blank" rel="noopener">View Site ↗</a>
-          <button type="button" id="logoutBtn">Sign Out</button>
+          <a href="../index.html" target="_blank" rel="noopener" class="sidebar__footer-link">
+            <span class="nav-item__icon nav-item__icon--external" aria-hidden="true"></span>
+            View live site
+          </a>
+          <button type="button" id="logoutBtn" class="sidebar__footer-btn">
+            <span class="nav-item__icon nav-item__icon--logout" aria-hidden="true"></span>
+            Sign out
+          </button>
         </div>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <div>
-          <h2 id="sectionTitle">Dashboard</h2>
-          <p id="lastUpdated" class="topbar__meta"></p>
+        <div class="topbar__heading">
+          <span class="topbar__icon nav-item__icon nav-item__icon--dashboard" id="sectionIcon" aria-hidden="true"></span>
+          <div>
+            <h2 id="sectionTitle">Dashboard</h2>
+            <p id="lastUpdated" class="topbar__meta"></p>
+          </div>
         </div>
         <div class="topbar__actions">
           <button type="button" class="btn btn--outline" id="exportBtn">Export JSON</button>
@@ -153,6 +216,6 @@
     </main>
   </div>
 
-  <script src="admin.js?v=16"></script>
+  <script src="admin.js?v=17"></script>
 </body>
 </html>

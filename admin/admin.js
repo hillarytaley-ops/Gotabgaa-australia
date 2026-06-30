@@ -30,7 +30,7 @@
 
   const SECTION_TITLES = {
     dashboard: 'Dashboard',
-    site: 'Site Settings',
+    site: 'Site & PayID',
     home: 'Home Page',
     about: 'About Page',
     programs: 'Programs',
@@ -43,6 +43,23 @@
     ailcd: 'Leadership EOI',
     inbox: 'Contact Inbox',
     pages: 'Page Heroes'
+  };
+
+  const SECTION_ICONS = {
+    dashboard: 'dashboard',
+    site: 'site',
+    home: 'home',
+    about: 'about',
+    programs: 'programs',
+    events: 'events',
+    leadership: 'leadership',
+    gallery: 'gallery',
+    contact: 'contact',
+    membership: 'membership',
+    memberPortal: 'portal',
+    ailcd: 'eoi',
+    inbox: 'inbox',
+    pages: 'pages'
   };
 
   function setPreviewMode(on) {
@@ -1960,7 +1977,13 @@
     activeSection = section;
     els.sectionTitle.textContent = SECTION_TITLES[section] || section;
 
-    document.querySelectorAll('.sidebar__nav button').forEach(btn => {
+    const iconEl = document.getElementById('sectionIcon');
+    if (iconEl) {
+      const icon = SECTION_ICONS[section] || 'dashboard';
+      iconEl.className = `topbar__icon nav-item__icon nav-item__icon--${icon}`;
+    }
+
+    document.querySelectorAll('.sidebar__nav button[data-section]').forEach(btn => {
       btn.classList.toggle('is-active', btn.dataset.section === section);
     });
 
