@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin.css?v=16">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -81,20 +81,52 @@
 
       <div class="content" id="contentArea">
         <section class="panel" data-panel="dashboard">
-          <div class="stats-grid" id="statsGrid"></div>
-          <div class="card">
-            <h3>Quick actions</h3>
-            <div class="quick-actions">
-              <button type="button" class="btn btn--outline" data-goto="events">Manage Events</button>
-              <button type="button" class="btn btn--outline" data-goto="gallery">Update Gallery</button>
-              <button type="button" class="btn btn--outline" data-goto="leadership">Edit Leadership</button>
-              <button type="button" class="btn btn--outline" data-goto="membership">Membership</button>
-              <button type="button" class="btn btn--outline" data-goto="memberPortal">Member Portal</button>
-              <button type="button" class="btn btn--outline" data-goto="site">Site Settings</button>
-              <button type="button" class="btn btn--outline" id="seedSupabaseBtn">Load content into Supabase</button>
+          <div class="dashboard-hero" id="dashboardHero">
+            <div class="dashboard-hero__glow" aria-hidden="true"></div>
+            <div class="dashboard-hero__content">
+              <p class="dashboard-hero__eyebrow">Leadership portal</p>
+              <h3 id="dashboardWelcome">Welcome back</h3>
+              <p class="dashboard-hero__sub">Manage content, members, events, and payments for Gotabgaa Australia.</p>
+            </div>
+            <div class="dashboard-hero__logo">
+              <img src="../assets/logo-round.png" alt="" width="72" height="72">
             </div>
           </div>
-          <div class="card">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="card card--elevated">
+            <h3>Quick actions</h3>
+            <div class="quick-actions">
+              <button type="button" class="quick-action" data-goto="events">
+                <span class="quick-action__icon quick-action__icon--events" aria-hidden="true"></span>
+                <span class="quick-action__label">Manage Events</span>
+              </button>
+              <button type="button" class="quick-action" data-goto="gallery">
+                <span class="quick-action__icon quick-action__icon--gallery" aria-hidden="true"></span>
+                <span class="quick-action__label">Update Gallery</span>
+              </button>
+              <button type="button" class="quick-action" data-goto="leadership">
+                <span class="quick-action__icon quick-action__icon--leadership" aria-hidden="true"></span>
+                <span class="quick-action__label">Edit Leadership</span>
+              </button>
+              <button type="button" class="quick-action" data-goto="membership">
+                <span class="quick-action__icon quick-action__icon--membership" aria-hidden="true"></span>
+                <span class="quick-action__label">Membership</span>
+              </button>
+              <button type="button" class="quick-action" data-goto="memberPortal">
+                <span class="quick-action__icon quick-action__icon--portal" aria-hidden="true"></span>
+                <span class="quick-action__label">Member Portal</span>
+              </button>
+              <button type="button" class="quick-action" data-goto="site">
+                <span class="quick-action__icon quick-action__icon--site" aria-hidden="true"></span>
+                <span class="quick-action__label">Site &amp; PayID</span>
+              </button>
+              <button type="button" class="quick-action quick-action--muted" id="seedSupabaseBtn">
+                <span class="quick-action__icon quick-action__icon--sync" aria-hidden="true"></span>
+                <span class="quick-action__label">Load into Supabase</span>
+              </button>
+            </div>
+          </div>
+          <div class="card card--tip">
             <h3>How publishing works</h3>
             <ol class="help-list">
               <li>Edit content in any section below.</li>
@@ -121,6 +153,6 @@
     </main>
   </div>
 
-  <script src="admin.js?v=15"></script>
+  <script src="admin.js?v=16"></script>
 </body>
 </html>

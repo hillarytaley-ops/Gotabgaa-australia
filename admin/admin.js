@@ -251,11 +251,43 @@
   function renderDashboardStats() {
     const upcoming = content.events?.filter(e => e.status === 'upcoming').length || 0;
     const past = content.events?.filter(e => e.status === 'past').length || 0;
+    const programs = content.programs?.length || 0;
+    const leaders = content.leadership?.length || 0;
+    const siteName = content.site?.siteName || 'Gotabgaa Australia';
+
+    const welcome = document.getElementById('dashboardWelcome');
+    if (welcome) {
+      const hour = new Date().getHours();
+      const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      welcome.textContent = `${greeting}`;
+    }
+
+    const heroSub = document.querySelector('.dashboard-hero__sub');
+    if (heroSub) {
+      heroSub.textContent = `Managing ${siteName} — content, members, events, and PayID settings.`;
+    }
+
     els.statsGrid.innerHTML = `
-      <div class="stat-card"><strong>${upcoming}</strong><span>Upcoming Events</span></div>
-      <div class="stat-card"><strong>${past}</strong><span>Past Events</span></div>
-      <div class="stat-card"><strong>${content.programs?.length || 0}</strong><span>Programs</span></div>
-      <div class="stat-card"><strong>${content.leadership?.length || 0}</strong><span>Leaders</span></div>
+      <div class="stat-card stat-card--upcoming">
+        <span class="stat-card__icon" aria-hidden="true"></span>
+        <strong>${upcoming}</strong>
+        <span>Upcoming events</span>
+      </div>
+      <div class="stat-card stat-card--past">
+        <span class="stat-card__icon" aria-hidden="true"></span>
+        <strong>${past}</strong>
+        <span>Past events</span>
+      </div>
+      <div class="stat-card stat-card--programs">
+        <span class="stat-card__icon" aria-hidden="true"></span>
+        <strong>${programs}</strong>
+        <span>Programs</span>
+      </div>
+      <div class="stat-card stat-card--leaders">
+        <span class="stat-card__icon" aria-hidden="true"></span>
+        <strong>${leaders}</strong>
+        <span>Leaders</span>
+      </div>
     `;
   }
 
