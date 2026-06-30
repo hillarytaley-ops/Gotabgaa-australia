@@ -18,6 +18,8 @@
     welcomeTitle: document.getElementById('memberWelcomeTitle'),
     welcomeMessage: document.getElementById('memberWelcomeMessage'),
     memberBadge: document.getElementById('memberBadge'),
+    memberAvatar: document.getElementById('memberAvatar'),
+    memberStats: document.getElementById('memberStats'),
     feedList: document.getElementById('feedList'),
     feedFilters: document.getElementById('feedFilters'),
     membershipCard: document.getElementById('membershipCard'),
@@ -168,6 +170,38 @@
       .catch(() => window.open(url, '_blank', 'noopener'));
   }
 
+  function getInitials(name) {
+    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'GA';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  function renderMemberStats(member, content) {
+    if (!els.memberStats) return;
+    const upcoming = (content.events || []).filter(e => e.status === 'upcoming' && e.showOnSite !== false).length;
+    const payStatus = member.paymentStatus || 'pending';
+    const memberStatus = member.memberStatus || 'pending';
+
+    els.memberStats.innerHTML = `
+      <div class="members-stat members-stat--events">
+        <span class="members-stat__icon" aria-hidden="true"></span>
+        <strong>${upcoming}</strong>
+        <span>Upcoming events</span>
+      </div>
+      <div class="members-stat members-stat--status">
+        <span class="members-stat__icon" aria-hidden="true"></span>
+        <strong>${escapeHtml(memberStatus)}</strong>
+        <span>Member status</span>
+      </div>
+      <div class="members-stat members-stat--payment">
+        <span class="members-stat__icon" aria-hidden="true"></span>
+        <strong>${escapeHtml(payStatus)}</strong>
+        <span>Payment</span>
+      </div>
+    `;
+  }
+
   function renderFeeds(portal) {
     const feeds = (portal?.feeds || []).slice().sort((a, b) => {
       const da = new Date(a.publishedAt || 0).getTime();
@@ -184,17 +218,22 @@
       return;
     }
 
-    els.feedList.innerHTML = filtered.map(feed => `
-      <article class="members-feed-item">
-        <div class="members-feed-item__meta">
-          <span class="members-feed-item__cat">${escapeHtml(FEED_LABELS[feed.category] || feed.category || 'News')}</span>
-          <time datetime="${escapeHtml(feed.publishedAt || '')}">${formatDate(feed.publishedAt)}</time>
+    els.feedList.innerHTML = filtered.map(feed => {
+      const cat = feed.category || 'news';
+      return `
+      <article class="members-feed-item members-feed-item--${escapeHtml(cat)}">
+        <div class="members-feed-item__accent" aria-hidden="true"></div>
+        <div class="members-feed-item__body">
+          <div class="members-feed-item__meta">
+            <span class="members-feed-item__cat">${escapeHtml(FEED_LABELS[cat] || cat || 'News')}</span>
+            <time datetime="${escapeHtml(feed.publishedAt || '')}">${formatDate(feed.publishedAt)}</time>
+          </div>
+          <h3>${escapeHtml(feed.title)}</h3>
+          <p>${escapeHtml(feed.body).replace(/\n/g, '<br>')}</p>
+          ${feed.link ? `<a href="${escapeHtml(feed.link)}" class="members-feed-item__link" target="_blank" rel="noopener">Read more →</a>` : ''}
         </div>
-        <h3>${escapeHtml(feed.title)}</h3>
-        <p>${escapeHtml(feed.body).replace(/\n/g, '<br>')}</p>
-        ${feed.link ? `<a href="${escapeHtml(feed.link)}" class="members-feed-item__link" target="_blank" rel="noopener">Read more</a>` : ''}
       </article>
-    `).join('');
+    `}).join('');
   }
 
   function renderMembershipCard(member) {
@@ -202,14 +241,19 @@
     const payStatus = member.paymentStatus || 'pending';
     const payClass = payStatus === 'paid' ? 'is-active' : 'is-pending';
     els.membershipCard.innerHTML = `
-      <h3>${escapeHtml(member.name)}</h3>
-      <dl class="members-dl">
+      <div class="members-profile">
+        <div class="members-profile__avatar">${escapeHtml(getInitials(member.name))}</div>
+        <div class="members-profile__info">
+          <h3>${escapeHtml(member.name)}</h3>
+          <p class="members-profile__meta">${escapeHtml(member.membershipType || 'Member')} · ${escapeHtml(member.stateChapter || 'Australia')}</p>
+        </div>
+        <span class="members-status ${statusClass} members-profile__status">${escapeHtml(member.memberStatus || 'pending')}</span>
+      </div>
+      <dl class="members-dl members-dl--grid">
         <div><dt>Membership ID</dt><dd><code>${escapeHtml(member.membershipId)}</code></dd></div>
-        <div><dt>Status</dt><dd><span class="members-status ${statusClass}">${escapeHtml(member.memberStatus || 'pending')}</span></dd></div>
         <div><dt>Email</dt><dd>${escapeHtml(member.email)}</dd></div>
         <div><dt>Phone</dt><dd>${escapeHtml(member.phone || '—')}</dd></div>
         <div><dt>State</dt><dd>${escapeHtml(member.stateChapter || '—')}</dd></div>
-        <div><dt>Membership type</dt><dd>${escapeHtml(member.membershipType || '—')}</dd></div>
         <div><dt>Payment</dt><dd><span class="members-status ${payClass}">${escapeHtml(payStatus)}</span></dd></div>
         <div><dt>Fee</dt><dd>${escapeHtml(member.feeDisplay || '—')}</dd></div>
         <div><dt>Registered</dt><dd>${formatDate(member.joinedAt)}</dd></div>
@@ -244,10 +288,12 @@
 
     els.eventsList.innerHTML = events.map(evt => `
       <div class="members-event-item">
-        <div class="members-event-item__pill">${escapeHtml(evt.datePill || evt.date || 'Event')}</div>
-        <h4>${escapeHtml(evt.title)}</h4>
-        <p class="members-event-item__meta">${escapeHtml(evt.time || '')}${evt.location ? ` · ${escapeHtml(evt.location)}` : ''}</p>
-        <a href="book.html?id=${encodeURIComponent(evt.id)}" class="btn btn--outline btn--sm">Book / register</a>
+        <div class="members-event-item__date">${escapeHtml(evt.datePill || evt.date || 'Event')}</div>
+        <div class="members-event-item__content">
+          <h4>${escapeHtml(evt.title)}</h4>
+          <p class="members-event-item__meta">${escapeHtml(evt.time || '')}${evt.location ? ` · ${escapeHtml(evt.location)}` : ''}</p>
+          <a href="book.html?id=${encodeURIComponent(evt.id)}" class="btn btn--outline btn--sm">Book / register</a>
+        </div>
       </div>
     `).join('');
   }
@@ -413,8 +459,11 @@
 
     els.exploreLinks.innerHTML = links.map(link => `
       <a href="${link.href}" class="members-quicklink">
-        <strong>${escapeHtml(link.label)}</strong>
-        <span>${escapeHtml(link.desc)}</span>
+        <span class="members-quicklink__icon" aria-hidden="true"></span>
+        <span class="members-quicklink__text">
+          <strong>${escapeHtml(link.label)}</strong>
+          <span>${escapeHtml(link.desc)}</span>
+        </span>
       </a>
     `).join('');
   }
@@ -425,9 +474,18 @@
     const content = await fetchContent();
     const portal = content.memberPortal || {};
 
-    els.welcomeTitle.textContent = portal.welcomeTitle || `Welcome, ${memberSession.name.split(' ')[0]}`;
-    els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates and Gotabgaa Australia resources.';
+    const firstName = memberSession.name.split(' ')[0];
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+    els.welcomeTitle.textContent = portal.welcomeTitle || `${greeting}, ${firstName}`;
+    els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates, events, and community resources in one place.';
     els.memberBadge.textContent = memberSession.membershipId;
+    if (els.memberAvatar) {
+      els.memberAvatar.textContent = getInitials(memberSession.name);
+    }
+
+    renderMemberStats(memberSession, content);
 
     if (els.eventsIntro) {
       els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming Gotabgaa Australia events and manage your bookings.';

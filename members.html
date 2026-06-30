@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="stylesheet" href="css/style.css?v=17">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-sub page-members">
@@ -58,24 +58,49 @@
           <strong>Developer preview</strong> — sample member view for admins. Bookings and membership data are placeholders.
           <a href="admin/">Return to admin</a> · <a href="login.html?tab=leadership">Sign in</a>
         </div>
-        <div class="members-dashboard__top">
-          <div class="members-dashboard__welcome">
-            <h2 id="memberWelcomeTitle">Welcome back</h2>
-            <p id="memberWelcomeMessage"></p>
+        <div class="members-hero" id="memberHero">
+          <div class="members-hero__glow" aria-hidden="true"></div>
+          <div class="members-hero__main">
+            <div class="members-hero__avatar" id="memberAvatar" aria-hidden="true">GA</div>
+            <div class="members-hero__text">
+              <p class="members-hero__eyebrow">Members area</p>
+              <h2 id="memberWelcomeTitle">Welcome back</h2>
+              <p id="memberWelcomeMessage"></p>
+            </div>
           </div>
-          <div class="members-dashboard__actions">
+          <div class="members-hero__actions">
             <span class="members-badge" id="memberBadge"></span>
-            <button type="button" class="btn btn--outline btn--sm" id="memberSignOut">Sign out</button>
+            <button type="button" class="btn btn--outline btn--sm members-hero__signout" id="memberSignOut">Sign out</button>
           </div>
         </div>
 
+        <div class="members-stats" id="memberStats" aria-label="Quick overview"></div>
+
         <nav class="members-tabs" id="memberTabs" aria-label="Dashboard sections">
-          <button type="button" class="members-tabs__btn is-active" data-tab="feeds">News &amp; Feeds</button>
-          <button type="button" class="members-tabs__btn" data-tab="membership">My Membership</button>
-          <button type="button" class="members-tabs__btn" data-tab="events">Events &amp; Bookings</button>
-          <button type="button" class="members-tabs__btn" data-tab="photos">Event Photos</button>
-          <button type="button" class="members-tabs__btn" data-tab="governance">Governance</button>
-          <button type="button" class="members-tabs__btn" data-tab="explore">Explore Site</button>
+          <button type="button" class="members-tabs__btn is-active" data-tab="feeds">
+            <span class="members-tab-icon members-tab-icon--feeds" aria-hidden="true"></span>
+            <span>News &amp; Feeds</span>
+          </button>
+          <button type="button" class="members-tabs__btn" data-tab="membership">
+            <span class="members-tab-icon members-tab-icon--membership" aria-hidden="true"></span>
+            <span>My Membership</span>
+          </button>
+          <button type="button" class="members-tabs__btn" data-tab="events">
+            <span class="members-tab-icon members-tab-icon--events" aria-hidden="true"></span>
+            <span>Events &amp; Bookings</span>
+          </button>
+          <button type="button" class="members-tabs__btn" data-tab="photos">
+            <span class="members-tab-icon members-tab-icon--photos" aria-hidden="true"></span>
+            <span>Event Photos</span>
+          </button>
+          <button type="button" class="members-tabs__btn" data-tab="governance">
+            <span class="members-tab-icon members-tab-icon--governance" aria-hidden="true"></span>
+            <span>Governance</span>
+          </button>
+          <button type="button" class="members-tabs__btn" data-tab="explore">
+            <span class="members-tab-icon members-tab-icon--explore" aria-hidden="true"></span>
+            <span>Explore Site</span>
+          </button>
         </nav>
 
         <div class="members-panel is-active" data-panel="feeds" id="panelFeeds">
@@ -158,9 +183,9 @@
     </div>
   </footer>
 
-  <script src="js/content-loader.js?v=16"></script>
-  <script src="js/payment-instructions.js?v=16"></script>
-  <script src="js/main.js?v=16"></script>
-  <script src="js/members-dashboard.js?v=16"></script>
+  <script src="js/content-loader.js?v=17"></script>
+  <script src="js/payment-instructions.js?v=17"></script>
+  <script src="js/main.js?v=17"></script>
+  <script src="js/members-dashboard.js?v=17"></script>
 </body>
 </html>
