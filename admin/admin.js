@@ -1484,6 +1484,8 @@
       card.innerHTML = renderEventBookingsPanel([], err.message, paymentFilter);
     }
   }
+
+  async function loadMembershipRegistrations(paymentFilter) {
     const token = getToken();
     if (!token) return [];
 
@@ -2011,6 +2013,7 @@
           loadAilcdApplicationsPanel();
         });
       });
+      initPanelCompact(document.querySelector('[data-panel="ailcd"]'));
     } catch (err) {
       if (isAuthError(err)) return;
       card.innerHTML = renderAilcdApplicationsPanel([], err.message);
