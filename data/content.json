@@ -519,6 +519,64 @@
     { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia members at AGM", "caption": "SA representatives", "wide": false }
   ],
   "welfare": {
+    "membership": {
+      "enabled": true,
+      "intro": "Join the Gotabgaa Australia Social Welfare program for bereavement support, mutual aid, and community care. You must be a registered Gotabgaa Australia member to enrol.",
+      "feeNote": "Select a package below. Pay via PayID or bank transfer after registering — the welfare team activates your membership once payment is confirmed.",
+      "paymentPlaceholder": "After you submit the form, you will receive PayID and bank details with a unique welfare payment reference (GAA-WEL-*).",
+      "signInIntro": "Already enrolled in social welfare? Sign in with your Gotabgaa membership ID to access your welfare dashboard, reimbursement requests, and community alerts.",
+      "packagesHeader": {
+        "tag": "Membership",
+        "title": "Welfare Member Packages",
+        "description": "Choose the package that fits your household. Prices are set by the welfare committee and may be updated annually."
+      },
+      "communityAlertMessage": "A fellow welfare member is currently going through a bereavement reimbursement process. Please keep our community in your thoughts and prayers — member details remain confidential.",
+      "packages": [
+        {
+          "id": "welf-individual",
+          "title": "Individual Package",
+          "description": "Single adult member — includes bereavement reimbursement eligibility and welfare community alerts.",
+          "price": 120,
+          "priceDisplay": "$120 AUD / year",
+          "period": "year",
+          "highlight": false,
+          "benefits": [
+            "Bereavement reimbursement eligibility",
+            "Welfare community alerts",
+            "Settlement and hardship support referrals"
+          ]
+        },
+        {
+          "id": "welf-family",
+          "title": "Family Package",
+          "description": "Household coverage for member families — covers spouse and dependent children under one welfare membership.",
+          "price": 200,
+          "priceDisplay": "$200 AUD / year",
+          "period": "year",
+          "highlight": true,
+          "benefits": [
+            "Covers household members",
+            "Bereavement reimbursement eligibility",
+            "Priority welfare team contact",
+            "Welfare community alerts"
+          ]
+        },
+        {
+          "id": "welf-senior",
+          "title": "Senior Package",
+          "description": "Reduced rate for members aged 60+ — full welfare benefits with community check-ins.",
+          "price": 80,
+          "priceDisplay": "$80 AUD / year",
+          "period": "year",
+          "highlight": false,
+          "benefits": [
+            "Reduced annual contribution",
+            "Bereavement reimbursement eligibility",
+            "Wellbeing check-in calls"
+          ]
+        }
+      ]
+    },
     "initiatives": [
       {
         "id": "welf-benevolence",

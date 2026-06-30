@@ -854,12 +854,23 @@
   function renderWelfare(content) {
     const page = content.pages?.welfare;
     const data = content.welfare || {};
+    const membership = data.membership || {};
 
     const introEl = document.getElementById('welfareIntro');
     if (introEl && page?.intro) introEl.textContent = page.intro;
 
     applySectionHeader('welfareInitiativesHeader', page?.initiativesHeader);
     applySectionHeader('welfareNewsHeader', page?.newsHeader);
+    applySectionHeader('welfarePackagesHeader', membership.packagesHeader);
+
+    const regIntro = document.getElementById('welfareRegIntro');
+    if (regIntro && membership.intro) regIntro.textContent = membership.intro;
+
+    const signInIntro = document.getElementById('welfareSignInIntro');
+    if (signInIntro && membership.signInIntro) signInIntro.textContent = membership.signInIntro;
+
+    const feeNote = document.getElementById('welfareFeeNote');
+    if (feeNote && membership.feeNote) feeNote.textContent = membership.feeNote;
 
     const initiativesGrid = document.getElementById('welfareInitiativesGrid');
     if (initiativesGrid) {

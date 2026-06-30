@@ -12,7 +12,8 @@ export const DEFAULT_PAYMENT_CONFIG = {
   instructions: 'Pay via PayID or bank transfer. You must include the payment reference exactly as shown.',
   receiptEmail: 'info@gotabgaaaustralia.org',
   memReferencePrefix: 'GAA-MEM',
-  evtReferencePrefix: 'GAA-EVT'
+  evtReferencePrefix: 'GAA-EVT',
+  welReferencePrefix: 'GAA-WEL'
 };
 
 export function shortId(id) {

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-sub page-members">
@@ -100,6 +100,10 @@
             <span class="members-tab-icon members-tab-icon--governance" aria-hidden="true"></span>
             <span>Governance</span>
           </button>
+          <button type="button" class="members-tabs__btn" data-tab="welfare" id="welfareTabBtn" hidden>
+            <span class="members-tab-icon members-tab-icon--welfare" aria-hidden="true"></span>
+            <span>Social Welfare</span>
+          </button>
           <button type="button" class="members-tabs__btn" data-tab="explore">
             <span class="members-tab-icon members-tab-icon--explore" aria-hidden="true"></span>
             <span>Explore Site</span>
@@ -143,6 +147,42 @@
 
         <div class="members-panel" data-panel="governance" id="panelGovernance" hidden>
           <div class="members-grid members-grid--2" id="governanceCards"></div>
+        </div>
+
+        <div class="members-panel" data-panel="welfare" id="panelWelfare" hidden>
+          <div id="welfareMemberStatus" class="members-card"></div>
+          <div id="welfareCommunityAlerts" class="members-card members-card--alert" hidden></div>
+          <div class="members-grid members-grid--2">
+            <div class="members-card" id="welfareReimbursementFormCard" hidden>
+              <h3>Request bereavement reimbursement</h3>
+              <p class="members-panel__intro">For the loss of a close family member. Your request is handled confidentially by the welfare team.</p>
+              <form id="welfareReimbursementForm" class="welfare-form">
+                <div class="form__group">
+                  <label for="welfDeceasedName">Deceased full name *</label>
+                  <input type="text" id="welfDeceasedName" required>
+                </div>
+                <div class="form__group">
+                  <label for="welfRelationship">Your relationship *</label>
+                  <input type="text" id="welfRelationship" required placeholder="e.g. Parent, sibling, spouse">
+                </div>
+                <div class="form__group">
+                  <label for="welfDateOfLoss">Date of loss</label>
+                  <input type="date" id="welfDateOfLoss">
+                </div>
+                <div class="form__group">
+                  <label for="welfReimbSummary">Additional details</label>
+                  <textarea id="welfReimbSummary" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn--primary" id="welfareReimbSubmitBtn">Submit request</button>
+                <p class="welfare-portal__success" id="welfareReimbSuccess" hidden></p>
+                <p class="welfare-portal__error" id="welfareReimbError" hidden></p>
+              </form>
+            </div>
+            <div class="members-card">
+              <h3>Your reimbursement requests</h3>
+              <div id="welfareReimbursementList"></div>
+            </div>
+          </div>
         </div>
 
         <div class="members-panel" data-panel="explore" id="panelExplore" hidden>
@@ -189,9 +229,9 @@
     </div>
   </footer>
 
-  <script src="js/content-loader.js?v=19"></script>
-  <script src="js/payment-instructions.js?v=19"></script>
-  <script src="js/main.js?v=19"></script>
-  <script src="js/members-dashboard.js?v=19"></script>
+  <script src="js/content-loader.js?v=20"></script>
+  <script src="js/payment-instructions.js?v=20"></script>
+  <script src="js/main.js?v=20"></script>
+  <script src="js/members-dashboard.js?v=20"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/welfare.html">
 </head>
@@ -57,6 +57,91 @@
   <section class="hub-intro section">
     <div class="container">
       <p class="hub-intro__text animate-on-scroll" data-animate="fade-up" id="welfareIntro">Gotabgaa Australia’s welfare initiatives connect members with practical support — from the benevolence fund and hardship assistance to settlement help and health awareness.</p>
+    </div>
+  </section>
+
+  <section class="welfare-membership section" id="welfareMembershipSection">
+    <div class="container">
+      <div class="section__header animate-on-scroll" data-animate="fade-up" id="welfarePackagesHeader">
+        <span class="section__tag">Membership</span>
+        <h2 class="section__title">Welfare Member Packages</h2>
+        <p class="section__desc">Choose the package that fits your household. Prices are set by the welfare committee and may be updated annually.</p>
+      </div>
+      <div class="welfare-packages__grid" id="welfarePackagesGrid"></div>
+    </div>
+  </section>
+
+  <section class="welfare-portal section hub-section--alt" id="welfarePortalSection">
+    <div class="container welfare-portal__layout">
+      <div class="welfare-portal__register animate-on-scroll" data-animate="fade-right">
+        <div class="welfare-portal__card">
+          <h2>Enrol in Social Welfare</h2>
+          <p class="welfare-portal__intro" id="welfareRegIntro">Join the Gotabgaa Australia Social Welfare program. You must be a registered Gotabgaa Australia member.</p>
+          <p class="form-hint" id="welfareRegDisabled" hidden>Social welfare registration is currently paused. Please contact the welfare team.</p>
+          <form class="welfare-form" id="welfareForm" hidden>
+            <div class="form-grid form-grid--2">
+              <div class="form__group">
+                <label for="welfName">Full name *</label>
+                <input type="text" id="welfName" name="name" required autocomplete="name">
+              </div>
+              <div class="form__group">
+                <label for="welfEmail">Email *</label>
+                <input type="email" id="welfEmail" name="email" required autocomplete="email">
+              </div>
+              <div class="form__group">
+                <label for="welfPhone">Phone</label>
+                <input type="tel" id="welfPhone" name="phone" autocomplete="tel">
+              </div>
+              <div class="form__group">
+                <label for="welfMemberId">Gotabgaa membership ID *</label>
+                <input type="text" id="welfMemberId" name="membershipId" required placeholder="GAA-MEM-XXXXXXXX" autocomplete="off">
+              </div>
+              <div class="form__group">
+                <label for="welfState">State / territory</label>
+                <select id="welfState" name="stateChapter">
+                  <option value="">— Select —</option>
+                  <option value="NSW">NSW</option>
+                  <option value="VIC">VIC</option>
+                  <option value="QLD">QLD</option>
+                  <option value="WA">WA</option>
+                  <option value="SA">SA</option>
+                  <option value="ACT">ACT</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form__group">
+                <label for="welfPackage">Welfare package *</label>
+                <select id="welfPackage" name="packageId" required></select>
+              </div>
+              <div class="form__group form__group--full">
+                <label for="welfNotes">Notes (optional)</label>
+                <textarea id="welfNotes" name="notes" rows="3" placeholder="Any additional information for the welfare team"></textarea>
+              </div>
+            </div>
+            <p class="welfare-portal__fee" id="welfareSelectedFee"></p>
+            <p class="form-hint" id="welfareFeeNote"></p>
+            <button type="submit" class="btn btn--primary btn--lg" id="welfareSubmitBtn">Submit Welfare Registration</button>
+            <p class="welfare-portal__success" id="welfareSuccess" hidden></p>
+            <p class="welfare-portal__error" id="welfareError" hidden></p>
+          </form>
+          <div id="welfarePaymentInstructions" class="payment-instructions-wrap" hidden></div>
+        </div>
+      </div>
+      <aside class="welfare-portal__signin animate-on-scroll" data-animate="fade-left">
+        <div class="welfare-portal__card welfare-portal__card--signin">
+          <span class="welfare-portal__signin-icon" aria-hidden="true"></span>
+          <h2>Welfare Member Sign In</h2>
+          <p id="welfareSignInIntro">Already enrolled in social welfare? Sign in with your Gotabgaa membership ID to access your welfare dashboard.</p>
+          <ul class="welfare-portal__signin-features">
+            <li>Check your active welfare membership status</li>
+            <li>Request bereavement reimbursement</li>
+            <li>Track reimbursement progress</li>
+            <li>Receive confidential community alerts</li>
+          </ul>
+          <a href="login.html?return=members&amp;tab=member" class="btn btn--primary btn--lg btn--shine">Sign In to Dashboard</a>
+          <p class="form-hint">Use the same email and membership ID as your Gotabgaa Australia account. The <strong>Social Welfare</strong> tab appears once you are enrolled.</p>
+        </div>
+      </aside>
     </div>
   </section>
 
@@ -149,8 +234,10 @@
   </footer>
 
   <script src="js/site-config.js"></script>
-  <script src="js/content-loader.js?v=19"></script>
+  <script src="js/content-loader.js?v=20"></script>
+  <script src="js/payment-instructions.js?v=20"></script>
+  <script src="js/welfare-membership.js?v=20"></script>
   <script src="floating-social/floating-social.js" defer></script>
-  <script src="js/main.js?v=19" defer></script>
+  <script src="js/main.js?v=20" defer></script>
 </body>
 </html>

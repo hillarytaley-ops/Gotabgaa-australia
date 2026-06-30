@@ -1965,10 +1965,165 @@
     }
   }
 
+  async function loadWelfareRegistrationsPanel() {
+    const card = document.getElementById('welfareRegistrationsCard');
+    if (!card) return;
+
+    if (isPreviewMode || !getToken()) {
+      card.innerHTML = '<h3>Welfare registrations &amp; reimbursements</h3><p class="form-hint">Sign in to manage welfare registrations.</p>';
+      return;
+    }
+
+    card.innerHTML = '<h3>Welfare registrations &amp; reimbursements</h3><p class="form-hint">Loading…</p>';
+
+    try {
+      const res = await authFetch('/api/welfare-registrations');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not load welfare data');
+
+      const regs = data.registrations || [];
+      const reimbs = data.reimbursements || [];
+
+      card.innerHTML = `
+        <h3>Welfare registrations (${regs.length})</h3>
+        ${!regs.length ? '<p class="form-hint">No welfare registrations yet.</p>' : regs.map(r => {
+          const meta = r.meta || {};
+          return `
+            <details class="list-item" style="margin-bottom:12px">
+              <summary><strong>${escapeHtml(r.name)}</strong> — ${escapeHtml(r.package_title || '')} · ${escapeHtml(r.welfare_status)} · ${escapeHtml(r.payment_status)}</summary>
+              <div style="margin-top:12px">
+                <p><strong>Email:</strong> ${escapeHtml(r.email)}</p>
+                <p><strong>Membership ID:</strong> ${escapeHtml(r.membership_id || '—')}</p>
+                <p><strong>Reference:</strong> <code>${escapeHtml(meta.paymentReference || r.payment_reference || '—')}</code></p>
+                <p><strong>Fee:</strong> ${escapeHtml(r.fee_display || '—')}</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                  ${r.welfare_status !== 'active' ? `<button type="button" class="btn btn--primary btn--sm welfare-approve" data-id="${r.id}">Activate welfare member</button>` : ''}
+                  ${r.payment_status !== 'paid' ? `<button type="button" class="btn btn--outline btn--sm welfare-mark-paid" data-id="${r.id}">Mark as paid</button>` : ''}
+                  ${r.welfare_status === 'active' ? `<button type="button" class="btn btn--danger btn--sm welfare-revoke" data-id="${r.id}">Deactivate</button>` : ''}
+                  <button type="button" class="btn btn--danger btn--sm welfare-delete" data-id="${r.id}">Delete</button>
+                </div>
+              </div>
+            </details>
+          `;
+        }).join('')}
+        <h3 style="margin-top:24px">Reimbursement requests (${reimbs.length})</h3>
+        ${!reimbs.length ? '<p class="form-hint">No reimbursement requests yet.</p>' : reimbs.map(req => `
+          <details class="list-item" style="margin-bottom:12px">
+            <summary><strong>${escapeHtml(req.deceased_name || 'Request')}</strong> — ${escapeHtml(req.status)} · ${escapeHtml(req.member_name || req.email)}</summary>
+            <div style="margin-top:12px">
+              <p><strong>Relationship:</strong> ${escapeHtml(req.relationship || '—')}</p>
+              <p><strong>Date of loss:</strong> ${escapeHtml(req.date_of_loss || '—')}</p>
+              <p>${escapeHtml(req.summary || '')}</p>
+              <div class="form-grid" style="margin-top:8px">
+                ${field('Status', `welfReimbStatus_${req.id}`, req.status, 'select', { options: [
+                  { value: 'submitted', label: 'Submitted' },
+                  { value: 'under_review', label: 'Under review' },
+                  { value: 'approved', label: 'Approved' },
+                  { value: 'paid', label: 'Paid' },
+                  { value: 'declined', label: 'Declined' }
+                ]})}
+                ${field('Status message to member', `welfReimbMsg_${req.id}`, req.status_message || '', 'textarea')}
+              </div>
+              <button type="button" class="btn btn--primary btn--sm welfare-reimb-update" data-id="${req.id}" style="margin-top:8px">Update reimbursement</button>
+              <p class="form-hint">Under review / Approved / Paid sends an anonymous alert to all active welfare members.</p>
+            </div>
+          </details>
+        `).join('')}
+      `;
+
+      const reload = () => loadWelfareRegistrationsPanel();
+
+      card.querySelectorAll('.welfare-approve').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/welfare-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'approve' })
+            });
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed');
+            showStatus('Welfare member activated.', 'success');
+            reload();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
+          }
+        });
+      });
+
+      card.querySelectorAll('.welfare-mark-paid').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Mark welfare payment as received?')) return;
+          const res = await authFetch('/api/welfare-registrations', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: btn.dataset.id, action: 'markPaid' })
+          });
+          if (res.ok) {
+            showStatus('Welfare payment marked as paid.', 'success');
+            reload();
+          }
+        });
+      });
+
+      card.querySelectorAll('.welfare-revoke').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Deactivate this welfare member?')) return;
+          await authFetch('/api/welfare-registrations', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: btn.dataset.id, action: 'revoke' })
+          });
+          reload();
+        });
+      });
+
+      card.querySelectorAll('.welfare-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this welfare registration permanently?')) return;
+          await authFetch(`/api/welfare-registrations?id=${encodeURIComponent(btn.dataset.id)}`, { method: 'DELETE' });
+          reload();
+        });
+      });
+
+      card.querySelectorAll('.welfare-reimb-update').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/welfare-reimbursements', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id,
+                status: val(`welfReimbStatus_${id}`),
+                statusMessage: val(`welfReimbMsg_${id}`)
+              })
+            });
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed');
+            showStatus('Reimbursement updated.', 'success');
+            reload();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
+          }
+        });
+      });
+    } catch (err) {
+      if (isAuthError(err)) return;
+      card.innerHTML = `<h3>Welfare registrations</h3><p class="form-hint">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
   function ensureHubContent() {
-    if (!content.welfare) content.welfare = { initiatives: [], news: [] };
+    if (!content.welfare) content.welfare = { initiatives: [], news: [], membership: { packages: [] } };
     if (!content.welfare.initiatives) content.welfare.initiatives = [];
     if (!content.welfare.news) content.welfare.news = [];
+    if (!content.welfare.membership) content.welfare.membership = { enabled: true, packages: [] };
+    if (!content.welfare.membership.packages) content.welfare.membership.packages = [];
     if (!content.sports) content.sports = { vlogs: [], events: [], news: [] };
     if (!content.sports.vlogs) content.sports.vlogs = [];
     if (!content.sports.events) content.sports.events = [];
@@ -2022,9 +2177,48 @@
     ensureHubContent();
     const p = content.pages?.welfare || {};
     const w = content.welfare;
+    const m = w.membership || {};
+    const pkgs = m.packages || [];
     return `
       <div class="card card--notice">
-        <p><strong>Public page:</strong> <a href="../welfare.html" target="_blank" rel="noopener">welfare.html</a> — edit hero text under <button type="button" class="btn btn--outline btn--sm" data-goto="pages">Page Heroes</button>.</p>
+        <p><strong>Public page:</strong> <a href="../welfare.html" target="_blank" rel="noopener">welfare.html</a> — registration form, packages, and sign-in portal. Hero text under <button type="button" class="btn btn--outline btn--sm" data-goto="pages">Page Heroes</button>.</p>
+        <p class="form-hint">Run <code>supabase/migrate-welfare.sql</code> in Supabase if welfare registrations are not saving yet.</p>
+      </div>
+      <div class="card" id="welfareRegistrationsCard">
+        <h3>Welfare registrations &amp; reimbursements</h3>
+        <p class="form-hint">Loading from database…</p>
+      </div>
+      <div class="card"><h3>Welfare membership settings</h3><div class="form-grid">
+        ${field('Registration enabled', 'welfMemEnabled', m.enabled !== false, 'checkbox')}
+        ${field('Registration intro', 'welfMemIntro', m.intro, 'textarea', { full: true })}
+        ${field('Fee note', 'welfMemFeeNote', m.feeNote, 'textarea')}
+        ${field('Sign-in intro', 'welfMemSignInIntro', m.signInIntro, 'textarea', { full: true })}
+        ${field('Community alert message', 'welfMemAlertMsg', m.communityAlertMessage, 'textarea', { full: true })}
+        ${field('Packages section tag', 'welfPkgTag', m.packagesHeader?.tag)}
+        ${field('Packages section title', 'welfPkgSectionTitle', m.packagesHeader?.title)}
+        ${field('Packages section description', 'welfPkgSectionDesc', m.packagesHeader?.description, 'textarea')}
+      </div></div>
+      <div class="card">
+        <div class="list-item__header"><h3>Welfare packages (${pkgs.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addWelfarePackage">+ Add package</button>
+        </div>
+        <div id="welfarePackagesList">${pkgs.map((pkg, i) => `
+          <div class="list-item" data-welfare-pkg-index="${i}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(pkg.title)} — ${escapeHtml(pkg.priceDisplay || `$${pkg.price}`)}</h4>
+              <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-pkg="${i}">Remove</button>
+            </div>
+            <div class="form-grid">
+              ${field('Title', `welfPkgTitle${i}`, pkg.title)}
+              ${field('Description', `welfPkgItemDesc${i}`, pkg.description, 'textarea', { full: true })}
+              ${field('Price (number)', `welfPkgPrice${i}`, pkg.price, 'number')}
+              ${field('Price display', `welfPkgPriceDisplay${i}`, pkg.priceDisplay)}
+              ${field('Period', `welfPkgPeriod${i}`, pkg.period || 'year')}
+              ${field('Highlight (popular)', `welfPkgHighlight${i}`, pkg.highlight === true, 'checkbox')}
+              ${field('Benefits (one per line)', `welfPkgBenefits${i}`, (pkg.benefits || []).join('\n'), 'textarea', { full: true })}
+            </div>
+          </div>
+        `).join('')}</div>
       </div>
       <div class="card"><h3>Page intro &amp; CTA</h3><div class="form-grid">
         ${field('Intro paragraph', 'welfareIntro', p.intro, 'textarea', { full: true })}
@@ -2278,6 +2472,7 @@
         panel.innerHTML = renderers[section]?.() || '';
         bindListActions(section);
         if (section === 'membership') loadMembershipRegistrationsPanel();
+        if (section === 'welfare') loadWelfareRegistrationsPanel();
         if (section === 'ailcd') loadAilcdApplicationsPanel();
       }
     });
@@ -2305,6 +2500,29 @@
     }
 
     if (section === 'welfare') {
+      document.getElementById('addWelfarePackage')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.welfare.membership.packages.push({
+          id: `welf-pkg-${Date.now()}`,
+          title: 'New Package',
+          description: '',
+          price: 0,
+          priceDisplay: '$0 AUD / year',
+          period: 'year',
+          highlight: false,
+          benefits: []
+        });
+        renderSection('welfare');
+      });
+      document.querySelectorAll('[data-remove-welfare-pkg]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.welfare.membership.packages.splice(+btn.dataset.removeWelfarePkg, 1);
+          renderSection('welfare');
+        });
+      });
+
       document.getElementById('addWelfareInitiative')?.addEventListener('click', () => {
         collectFromForm();
         ensureHubContent();
@@ -2987,6 +3205,31 @@
         title: val('welfareNewsTitle'),
         description: val('welfareNewsDesc')
       };
+
+      if (!content.welfare.membership) content.welfare.membership = { packages: [] };
+      const m = content.welfare.membership;
+      m.enabled = val('welfMemEnabled');
+      m.intro = val('welfMemIntro');
+      m.feeNote = val('welfMemFeeNote');
+      m.signInIntro = val('welfMemSignInIntro');
+      m.communityAlertMessage = val('welfMemAlertMsg');
+      m.packagesHeader = {
+        tag: val('welfPkgTag'),
+        title: val('welfPkgSectionTitle'),
+        description: val('welfPkgSectionDesc')
+      };
+
+      m.packages.forEach((pkg, i) => {
+        if (document.getElementById(`welfPkgTitle${i}`)) {
+          pkg.title = val(`welfPkgTitle${i}`);
+          pkg.description = val(`welfPkgItemDesc${i}`);
+          pkg.price = parseFloat(val(`welfPkgPrice${i}`)) || 0;
+          pkg.priceDisplay = val(`welfPkgPriceDisplay${i}`);
+          pkg.period = val(`welfPkgPeriod${i}`) || 'year';
+          pkg.highlight = val(`welfPkgHighlight${i}`);
+          pkg.benefits = val(`welfPkgBenefits${i}`).split('\n').map(s => s.trim()).filter(Boolean);
+        }
+      });
 
       content.welfare.initiatives.forEach((item, i) => {
         if (document.getElementById(`welfInitTitle${i}`)) {

@@ -54,12 +54,12 @@ function paymentBlock(payment, amount, reference) {
   return lines.map(line => `<p style="margin:0 0 8px">${escapeHtml(line)}</p>`).join('');
 }
 
-export async function sendRegistrationConfirmation({ to, name, payment, amount, reference }) {
+export async function sendRegistrationConfirmation({ to, name, payment, amount, reference, subject, intro }) {
   const html = `
     <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
       <h2 style="color:#3d2e22">Registration received</h2>
       <p>Hi ${escapeHtml(name)},</p>
-      <p>Thank you for registering with Gotabgaa Australia. Please complete payment using the details below.</p>
+      <p>${escapeHtml(intro || 'Thank you for registering with Gotabgaa Australia. Please complete payment using the details below.')}</p>
       ${paymentBlock(payment, amount, reference)}
       <p>Our team will confirm your membership after payment is received.</p>
       <p style="color:#6b5b4f;font-size:14px">Questions? Reply to ${escapeHtml(payment?.receiptEmail || 'info@gotabgaaaustralia.org')}</p>
@@ -68,7 +68,7 @@ export async function sendRegistrationConfirmation({ to, name, payment, amount, 
 
   return sendEmail({
     to,
-    subject: 'Gotabgaa Australia — complete your membership payment',
+    subject: subject || 'Gotabgaa Australia — complete your membership payment',
     html
   });
 }

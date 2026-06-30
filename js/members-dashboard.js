@@ -9,6 +9,7 @@
   let siteContent = null;
   let activeFeed = 'all';
   let memberSession = null;
+  let welfareData = null;
   let isPreviewMode = false;
 
   const els = {
@@ -32,8 +33,24 @@
     eventsIntro: document.getElementById('eventsIntro'),
     photosIntro: document.getElementById('photosIntro'),
     exploreIntro: document.getElementById('exploreIntro'),
-    tabs: document.getElementById('memberTabs')
+    tabs: document.getElementById('memberTabs'),
+    welfareTabBtn: document.getElementById('welfareTabBtn'),
+    welfareMemberStatus: document.getElementById('welfareMemberStatus'),
+    welfareCommunityAlerts: document.getElementById('welfareCommunityAlerts'),
+    welfareReimbursementFormCard: document.getElementById('welfareReimbursementFormCard'),
+    welfareReimbursementForm: document.getElementById('welfareReimbursementForm'),
+    welfareReimbursementList: document.getElementById('welfareReimbursementList')
   };
+
+  const REIMBURSEMENT_LABELS = {
+    submitted: 'Submitted',
+    under_review: 'Under review',
+    approved: 'Approved',
+    paid: 'Paid',
+    declined: 'Declined'
+  };
+
+  const REIMBURSEMENT_STEPS = ['submitted', 'under_review', 'approved', 'paid'];
 
   function escapeHtml(str) {
     return String(str ?? '')
@@ -148,6 +165,184 @@
     const data = await res.json().catch(() => ({}));
     if (!res.ok) return [];
     return data.bookings || [];
+  }
+
+  async function fetchWelfareMember(email, membershipId) {
+    if (isPreviewMode) {
+      return {
+        welfare: {
+          packageTitle: 'Family Package (preview)',
+          welfareStatus: 'active',
+          paymentStatus: 'paid',
+          feeDisplay: '$200 AUD / year'
+        },
+        reimbursements: [],
+        alerts: [],
+        hasWelfareAccess: true
+      };
+    }
+
+    const params = new URLSearchParams({ email, id: membershipId });
+    const res = await fetch(`/api/welfare-member?${params}`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return null;
+    return data;
+  }
+
+  function renderReimbursementProgress(status) {
+    if (status === 'declined') {
+      return '<p class="members-welfare-progress members-welfare-progress--declined">This request was declined. Contact the welfare team if you have questions.</p>';
+    }
+
+    const currentIndex = REIMBURSEMENT_STEPS.indexOf(status);
+    return `
+      <ol class="members-welfare-progress">
+        ${REIMBURSEMENT_STEPS.map((step, i) => {
+          const done = currentIndex >= i;
+          const active = status === step;
+          return `<li class="${done ? 'is-done' : ''}${active ? ' is-active' : ''}">${escapeHtml(REIMBURSEMENT_LABELS[step])}</li>`;
+        }).join('')}
+      </ol>
+    `;
+  }
+
+  function renderWelfareDashboard() {
+    if (!welfareData?.hasWelfareAccess) {
+      if (els.welfareTabBtn) els.welfareTabBtn.hidden = true;
+      return;
+    }
+
+    if (els.welfareTabBtn) els.welfareTabBtn.hidden = false;
+
+    const w = welfareData.welfare;
+    const statusClass = w.welfareStatus === 'active' ? 'is-active' : 'is-pending';
+    const payClass = w.paymentStatus === 'paid' ? 'is-active' : 'is-pending';
+
+    if (els.welfareMemberStatus) {
+      els.welfareMemberStatus.innerHTML = `
+        <div class="members-profile">
+          <div class="members-profile__info">
+            <h3>Social Welfare Membership</h3>
+            <p class="members-profile__meta">${escapeHtml(w.packageTitle || 'Welfare member')}</p>
+          </div>
+          <span class="members-status ${statusClass}">${escapeHtml(w.welfareStatus || 'pending')}</span>
+        </div>
+        <dl class="members-dl members-dl--grid">
+          <div><dt>Package</dt><dd>${escapeHtml(w.packageTitle || '—')}</dd></div>
+          <div><dt>Welfare status</dt><dd><span class="members-status ${statusClass}">${escapeHtml(w.welfareStatus || 'pending')}</span></dd></div>
+          <div><dt>Payment</dt><dd><span class="members-status ${payClass}">${escapeHtml(w.paymentStatus || 'pending')}</span></dd></div>
+          <div><dt>Fee</dt><dd>${escapeHtml(w.feeDisplay || '—')}</dd></div>
+          ${w.paymentReference && w.paymentStatus !== 'paid' ? `<div><dt>Payment ref</dt><dd><code>${escapeHtml(w.paymentReference)}</code></dd></div>` : ''}
+          <div><dt>Enrolled</dt><dd>${formatDate(w.joinedAt)}</dd></div>
+        </dl>
+        ${w.welfareStatus !== 'active' ? '<p class="members-empty">Your welfare membership is pending activation by the welfare team after payment is confirmed.</p>' : ''}
+      `;
+    }
+
+    const alerts = welfareData.alerts || [];
+    if (els.welfareCommunityAlerts) {
+      if (w.welfareStatus === 'active' && alerts.length) {
+        els.welfareCommunityAlerts.hidden = false;
+        els.welfareCommunityAlerts.innerHTML = `
+          <h3>Community alerts</h3>
+          ${alerts.map(alert => `
+            <div class="members-welfare-alert">
+              <span class="members-welfare-alert__icon" aria-hidden="true"></span>
+              <div>
+                <p>${escapeHtml(alert.message)}</p>
+                <time class="members-welfare-alert__time">${formatDate(alert.created_at)}</time>
+              </div>
+            </div>
+          `).join('')}
+          <p class="form-hint">Alerts are anonymous — no member details are shared.</p>
+        `;
+      } else {
+        els.welfareCommunityAlerts.hidden = true;
+        els.welfareCommunityAlerts.innerHTML = '';
+      }
+    }
+
+    const isActive = w.welfareStatus === 'active';
+    if (els.welfareReimbursementFormCard) {
+      els.welfareReimbursementFormCard.hidden = !isActive || isPreviewMode;
+    }
+
+    const requests = welfareData.reimbursements || [];
+    const hasOpen = requests.some(r => ['submitted', 'under_review', 'approved'].includes(r.status));
+
+    if (els.welfareReimbursementFormCard && hasOpen) {
+      els.welfareReimbursementFormCard.hidden = true;
+    }
+
+    if (els.welfareReimbursementList) {
+      if (!requests.length) {
+        els.welfareReimbursementList.innerHTML = '<p class="members-empty">No reimbursement requests yet.</p>';
+      } else {
+        els.welfareReimbursementList.innerHTML = requests.map(req => `
+          <article class="members-welfare-request">
+            <div class="members-welfare-request__header">
+              <h4>${escapeHtml(req.deceased_name || 'Reimbursement request')}</h4>
+              <span class="members-status ${req.status === 'paid' ? 'is-active' : req.status === 'declined' ? 'is-pending' : 'is-pending'}">${escapeHtml(REIMBURSEMENT_LABELS[req.status] || req.status)}</span>
+            </div>
+            <p class="members-event-item__meta">${escapeHtml(req.relationship || '')}${req.date_of_loss ? ` · ${escapeHtml(req.date_of_loss)}` : ''}</p>
+            ${req.summary ? `<p>${escapeHtml(req.summary)}</p>` : ''}
+            ${renderReimbursementProgress(req.status)}
+            ${req.status_message ? `<p class="form-hint"><strong>Update:</strong> ${escapeHtml(req.status_message)}</p>` : ''}
+            <time class="members-welfare-request__date">Submitted ${formatDate(req.created_at)}</time>
+          </article>
+        `).join('');
+      }
+    }
+  }
+
+  async function submitReimbursementRequest(e) {
+    e.preventDefault();
+    if (!memberSession || isPreviewMode) return;
+
+    const success = document.getElementById('welfareReimbSuccess');
+    const error = document.getElementById('welfareReimbError');
+    const btn = document.getElementById('welfareReimbSubmitBtn');
+
+    success.hidden = true;
+    error.hidden = true;
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+    }
+
+    try {
+      const res = await fetch('/api/welfare-reimbursements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: memberSession.email,
+          membershipId: memberSession.membershipId,
+          deceasedName: document.getElementById('welfDeceasedName').value,
+          relationship: document.getElementById('welfRelationship').value,
+          dateOfLoss: document.getElementById('welfDateOfLoss').value,
+          summary: document.getElementById('welfReimbSummary').value
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not submit request');
+
+      success.textContent = data.message || 'Request submitted.';
+      success.hidden = false;
+      els.welfareReimbursementForm?.reset();
+
+      welfareData = await fetchWelfareMember(memberSession.email, memberSession.membershipId);
+      renderWelfareDashboard();
+    } catch (err) {
+      error.textContent = err.message;
+      error.hidden = false;
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Submit request';
+      }
+    }
   }
 
   function downloadPhoto(url, filename) {
@@ -503,6 +698,12 @@
     renderPhotos(content);
     renderGovernance(portal);
     renderExploreLinks(portal);
+
+    if (memberSession?.email && memberSession?.membershipId) {
+      welfareData = await fetchWelfareMember(memberSession.email, memberSession.membershipId);
+      renderWelfareDashboard();
+    }
+
     await renderBookings();
   }
 
@@ -541,6 +742,8 @@
       });
       fetchContent().then(content => renderFeeds(content.memberPortal));
     });
+
+    els.welfareReimbursementForm?.addEventListener('submit', submitReimbursementRequest);
 
     if (isPreviewRequested()) {
       const ok = await enterDeveloperPreview();
