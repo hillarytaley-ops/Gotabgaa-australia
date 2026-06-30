@@ -185,7 +185,26 @@
     const params = new URLSearchParams({ email, id: membershipId });
     const res = await fetch(`/api/welfare-member?${params}`);
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) return null;
+    if (!res.ok) {
+      return {
+        welfare: null,
+        reimbursements: [],
+        alerts: [],
+        hasWelfareAccess: false,
+        apiError: data.error || data.apiError || 'Could not load social welfare data',
+        setupRequired: res.status === 500 || res.status === 503 || data.setupRequired
+      };
+    }
+    if (data.setupRequired && data.apiError) {
+      return {
+        welfare: null,
+        reimbursements: [],
+        alerts: [],
+        hasWelfareAccess: false,
+        apiError: data.apiError,
+        setupRequired: true
+      };
+    }
     return data;
   }
 
@@ -207,14 +226,63 @@
   }
 
   function renderWelfareDashboard() {
-    if (!welfareData?.hasWelfareAccess) {
-      if (els.welfareTabBtn) els.welfareTabBtn.hidden = true;
+    if (els.welfareTabBtn) els.welfareTabBtn.hidden = false;
+
+    if (!welfareData) {
+      if (els.welfareMemberStatus) {
+        els.welfareMemberStatus.innerHTML = '<p class="members-empty">Loading social welfare information…</p>';
+      }
       return;
     }
 
-    if (els.welfareTabBtn) els.welfareTabBtn.hidden = false;
+    if (welfareData.apiError) {
+      if (els.welfareMemberStatus) {
+        els.welfareMemberStatus.innerHTML = `
+          <h3>Social Welfare</h3>
+          <p class="members-empty">${escapeHtml(welfareData.apiError)}</p>
+          ${welfareData.setupRequired ? '<p class="form-hint">The site admin may need to run <code>supabase/migrate-welfare.sql</code> in Supabase. You can still <a href="welfare.html">register on the welfare page</a>.</p>' : ''}
+        `;
+      }
+      if (els.welfareCommunityAlerts) els.welfareCommunityAlerts.hidden = true;
+      if (els.welfareReimbursementFormCard) els.welfareReimbursementFormCard.hidden = true;
+      if (els.welfareReimbursementList) {
+        els.welfareReimbursementList.innerHTML = '<p class="members-empty">Reimbursement tracking will appear once welfare is configured.</p>';
+      }
+      return;
+    }
+
+    if (!welfareData.welfare) {
+      if (els.welfareMemberStatus) {
+        els.welfareMemberStatus.innerHTML = `
+          <h3>Social Welfare Membership</h3>
+          <p class="members-panel__intro">You are not enrolled in the Gotabgaa Australia Social Welfare program yet. Enrol to access bereavement reimbursement support and confidential community alerts.</p>
+          <a href="welfare.html" class="btn btn--primary">Enrol on Welfare Page</a>
+          <p class="form-hint" style="margin-top:1rem">Choose a package, complete registration, and pay via PayID. The welfare team will activate your membership after payment is confirmed.</p>
+        `;
+      }
+      if (els.welfareCommunityAlerts) els.welfareCommunityAlerts.hidden = true;
+      if (els.welfareReimbursementFormCard) els.welfareReimbursementFormCard.hidden = true;
+      if (els.welfareReimbursementList) {
+        els.welfareReimbursementList.innerHTML = '<p class="members-empty">Reimbursement requests are available after you enrol and your welfare membership is active.</p>';
+      }
+      return;
+    }
 
     const w = welfareData.welfare;
+
+    if (w.welfareStatus === 'inactive') {
+      if (els.welfareMemberStatus) {
+        els.welfareMemberStatus.innerHTML = `
+          <h3>Social Welfare Membership</h3>
+          <p class="members-empty">Your social welfare membership is inactive. Contact the welfare team at <a href="contact.html">contact.html</a> for assistance.</p>
+        `;
+      }
+      if (els.welfareCommunityAlerts) els.welfareCommunityAlerts.hidden = true;
+      if (els.welfareReimbursementFormCard) els.welfareReimbursementFormCard.hidden = true;
+      if (els.welfareReimbursementList) els.welfareReimbursementList.innerHTML = '';
+      return;
+    }
+
     const statusClass = w.welfareStatus === 'active' ? 'is-active' : 'is-pending';
     const payClass = w.paymentStatus === 'paid' ? 'is-active' : 'is-pending';
 
@@ -377,6 +445,7 @@
     const upcoming = (content.events || []).filter(e => e.status === 'upcoming' && e.showOnSite !== false).length;
     const payStatus = member.paymentStatus || 'pending';
     const memberStatus = member.memberStatus || 'pending';
+    const welfareLabel = getWelfareStatusLabel();
 
     els.memberStats.innerHTML = `
       <div class="members-stat members-stat--events">
@@ -394,7 +463,21 @@
         <strong>${escapeHtml(payStatus)}</strong>
         <span>Payment</span>
       </div>
+      <div class="members-stat members-stat--welfare">
+        <span class="members-stat__icon" aria-hidden="true"></span>
+        <strong>${escapeHtml(welfareLabel)}</strong>
+        <span>Social welfare</span>
+      </div>
     `;
+  }
+
+  function getWelfareStatusLabel() {
+    if (!welfareData) return '…';
+    if (welfareData.apiError) return 'Unavailable';
+    if (!welfareData.welfare) return 'Not enrolled';
+    if (welfareData.welfare.welfareStatus === 'active') return 'Active';
+    if (welfareData.welfare.welfareStatus === 'inactive') return 'Inactive';
+    return 'Pending';
   }
 
   function renderFeeds(portal) {
@@ -680,7 +763,7 @@
       els.memberAvatar.textContent = getInitials(memberSession.name);
     }
 
-    renderMemberStats(memberSession, content);
+    renderWelfareDashboard();
 
     if (els.eventsIntro) {
       els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming Gotabgaa Australia events and manage your bookings.';
@@ -701,8 +784,9 @@
 
     if (memberSession?.email && memberSession?.membershipId) {
       welfareData = await fetchWelfareMember(memberSession.email, memberSession.membershipId);
-      renderWelfareDashboard();
     }
+    renderMemberStats(memberSession, content);
+    renderWelfareDashboard();
 
     await renderBookings();
   }

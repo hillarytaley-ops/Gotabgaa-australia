@@ -65,6 +65,18 @@ export default async function handler(req, res) {
       hasWelfareAccess: Boolean(welfare && welfare.welfareStatus !== 'inactive')
     });
   } catch (error) {
+    const msg = String(error.message || '');
+    if (/welfare_registrations|welfare_reimbursement|welfare_community|does not exist|relation/i.test(msg)) {
+      res.status(200).json({
+        welfare: null,
+        reimbursements: [],
+        alerts: [],
+        hasWelfareAccess: false,
+        setupRequired: true,
+        apiError: 'Social welfare database tables are not set up yet. Run supabase/migrate-welfare.sql in Supabase.'
+      });
+      return;
+    }
     res.status(500).json({ error: error.message || 'Could not load welfare membership' });
   }
 }
