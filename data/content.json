@@ -237,6 +237,41 @@
         "backgroundImage": "assets/hero/page/women-traditional.png"
       },
       "lastUpdated": "June 2026"
+    },
+    "welfare": {
+      "hero": {
+        "tag": "Community Care",
+        "title": "Social Welfare",
+        "description": "Support, benevolence, and mutual aid for Gotabgaa Australia members and families in times of need.",
+        "backgroundImage": "assets/hero/page/community-gathering.png"
+      },
+      "intro": "Gotabgaa Australia’s welfare initiatives connect members with practical support — from the benevolence fund and hardship assistance to settlement help and health awareness. Our community stands together when families need us most.",
+      "initiativesHeader": { "tag": "How We Help", "title": "Welfare Initiatives", "description": "Programs and services coordinated by our welfare team across Australian states." },
+      "newsHeader": { "tag": "Updates", "title": "Welfare News", "description": "Announcements, fund updates, and community support stories." },
+      "cta": { "title": "Need support or want to contribute?", "description": "Reach out to our welfare team confidentially — or learn how to support the benevolence fund.", "button": "Contact Welfare Team", "buttonUrl": "contact.html" }
+    },
+    "sports": {
+      "hero": {
+        "tag": "Active Community",
+        "title": "Sports",
+        "description": "Football, athletics, and family-friendly competitions that build camaraderie across Gotabgaa Australia.",
+        "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
+      },
+      "vlogHeader": { "tag": "Watch", "title": "Sports Vlog", "description": "Match highlights, training sessions, and community sports stories from our teams." },
+      "eventsHeader": { "tag": "Calendar", "title": "Planned Sports Events", "description": "Upcoming fixtures, tournaments, and sports days — register early where noted." },
+      "newsHeader": { "tag": "Latest", "title": "Sports News", "description": "Results, team updates, and announcements from the Gotabgaa sports committee." }
+    },
+    "business": {
+      "hero": {
+        "tag": "Economic Empowerment",
+        "title": "Business & Investment",
+        "description": "Member businesses, investment opportunities, and economic initiatives strengthening our community across Australia.",
+        "backgroundImage": "assets/hero/page/stage-address.png"
+      },
+      "vlogHeader": { "tag": "Watch", "title": "Business Vlog", "description": "Interviews, success stories, and tips from Kalenjin entrepreneurs in Australia." },
+      "advertsHeader": { "tag": "Member Directory", "title": "Business Adverts", "description": "Services and businesses owned or operated by Gotabgaa Australia members." },
+      "investmentsHeader": { "tag": "Opportunities", "title": "Investments", "description": "Community investment initiatives and partnership opportunities open to members." },
+      "newsHeader": { "tag": "Latest", "title": "Business News", "description": "Economic updates, workshops, and networking events for our business community." }
     }
   },
   "eventTypes": [
@@ -483,6 +518,151 @@
     { "id": "gal-p5", "eventId": "evt-agm-2026", "image": "assets/hero/berur-brisbane.png", "alt": "AGM community photo", "caption": "AGM 2026 group photo", "wide": true },
     { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia members at AGM", "caption": "SA representatives", "wide": false }
   ],
+  "welfare": {
+    "initiatives": [
+      {
+        "id": "welf-benevolence",
+        "title": "Benevolence Fund",
+        "description": "Member-supported financial assistance for families during bereavement, illness, or unexpected hardship.",
+        "icon": "heart",
+        "link": "contact.html",
+        "linkLabel": "Request support"
+      },
+      {
+        "id": "welf-settlement",
+        "title": "Settlement Support",
+        "description": "Practical guidance for new arrivals — housing, employment, schooling, and connecting with local members.",
+        "icon": "support",
+        "link": "contact.html",
+        "linkLabel": "Get help"
+      },
+      {
+        "id": "welf-health",
+        "title": "Health & Wellbeing",
+        "description": "Awareness campaigns, mental health resources, and referrals to community health services.",
+        "icon": "health",
+        "link": "contact.html",
+        "linkLabel": "Learn more"
+      },
+      {
+        "id": "welf-family",
+        "title": "Family Support Network",
+        "description": "Volunteer check-ins, meal trains, and pastoral care coordinated by state welfare representatives.",
+        "icon": "family",
+        "link": "contact.html",
+        "linkLabel": "Connect"
+      }
+    ],
+    "news": [
+      {
+        "id": "welf-news-1",
+        "title": "Benevolence fund contributions open for 2026",
+        "date": "June 2026",
+        "summary": "Members can contribute to the annual benevolence fund to support families in need across all states.",
+        "link": "contact.html",
+        "image": "assets/hero/charmen-gifting.png",
+        "published": true
+      }
+    ]
+  },
+  "sports": {
+    "vlogs": [
+      {
+        "id": "sport-vlog-1",
+        "title": "Kokwet Sports Day 2025 Highlights",
+        "date": "June 2025",
+        "summary": "Relive the football finals, athletics races, and family games from last year's Kokwet Sports Day in Sydney.",
+        "videoUrl": "https://www.youtube.com/@gotabgaainternational",
+        "thumbnail": "assets/hero/kokwet-sports-day.png",
+        "published": true
+      }
+    ],
+    "events": [
+      {
+        "id": "sport-evt-kokwet",
+        "title": "Kokwet Sports Day 2026",
+        "date": "Sunday, 14 June 2026",
+        "datePill": "14 Jun 2026",
+        "location": "Olympic Park, Sydney, NSW",
+        "summary": "Annual football, athletics, and family games — teams from across Australia.",
+        "status": "upcoming",
+        "link": "book.html?id=evt-kokwet-sports",
+        "linkLabel": "Register",
+        "image": "assets/hero/kokwet-sports-day.png"
+      },
+      {
+        "id": "sport-evt-football",
+        "title": "Interstate Football Friendly",
+        "date": "August 2026",
+        "datePill": "Aug 2026",
+        "location": "Melbourne, VIC",
+        "summary": "Victoria vs New South Wales friendly match — open to registered players and supporters.",
+        "status": "upcoming",
+        "link": "contact.html",
+        "linkLabel": "Express interest",
+        "image": "assets/hero/page/kokwet-sports-day.png"
+      }
+    ],
+    "news": [
+      {
+        "id": "sport-news-1",
+        "title": "Sports committee seeking team captains",
+        "date": "June 2026",
+        "summary": "Gotabgaa Australia is recruiting volunteer captains for football and athletics ahead of Kokwet Sports Day.",
+        "link": "contact.html",
+        "image": "assets/hero/kokwet-sports-day.png",
+        "published": true
+      }
+    ]
+  },
+  "business": {
+    "vlogs": [
+      {
+        "id": "biz-vlog-1",
+        "title": "Member Spotlight: Building in Australia",
+        "date": "May 2026",
+        "summary": "Entrepreneurs from our community share how they started businesses and give back to Gotabgaa Australia.",
+        "videoUrl": "https://www.youtube.com/@gotabgaainternational",
+        "thumbnail": "assets/hero/page/stage-address.png",
+        "published": true
+      }
+    ],
+    "adverts": [
+      {
+        "id": "biz-ad-1",
+        "title": "Your Business Here",
+        "description": "Members can advertise services to the community — contact us to list your business.",
+        "image": "assets/logo-round.png",
+        "link": "contact.html",
+        "contactEmail": "info@gotabgaaaustralia.org",
+        "category": "Services",
+        "published": true
+      }
+    ],
+    "investments": [
+      {
+        "id": "biz-inv-1",
+        "title": "Community Investment Fund",
+        "summary": "A member-led initiative exploring pooled investment opportunities in property and small business ventures.",
+        "amount": "Expressions of interest",
+        "deadline": "Rolling",
+        "link": "contact.html",
+        "status": "open",
+        "image": "assets/hero/page/gala-celebration.png"
+      }
+    ],
+    "news": [
+      {
+        "id": "biz-news-1",
+        "title": "Business networking evening — Sydney",
+        "date": "July 2026",
+        "summary": "An evening for members to connect, share opportunities, and hear from guest speakers in finance and trade.",
+        "link": "contact.html",
+        "image": "assets/hero/berur-brisbane.png",
+        "published": true
+      }
+    ]
+  },
   "submissions": [],
   "memberPortal": {
     "welcomeTitle": "Welcome to the Members Dashboard",
@@ -504,6 +684,9 @@
       { "href": "index.html", "label": "Home", "desc": "Gotabgaa Australia homepage" },
       { "href": "about.html", "label": "About", "desc": "Our story and mission" },
       { "href": "programs.html", "label": "Programs", "desc": "Education, culture, and outreach" },
+      { "href": "welfare.html", "label": "Welfare", "desc": "Social welfare and benevolence support" },
+      { "href": "sports.html", "label": "Sports", "desc": "Sports vlogs, events, and news" },
+      { "href": "business.html", "label": "Business", "desc": "Member adverts, investments, and business news" },
       { "href": "events.html", "label": "Events", "desc": "Public events calendar" },
       { "href": "leadership.html", "label": "Leadership", "desc": "Board and leadership team" },
       { "href": "gallery.html", "label": "Gallery", "desc": "Public photo gallery" },

@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Meet the Gotabgaa Australia leadership team.">
-  <title>Leadership | Gotabgaa Australia</title>
+  <meta name="description" content="Gotabgaa Australia social welfare — benevolence fund, family support, and community care for members across Australia.">
+  <title>Social Welfare | Gotabgaa Australia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=19">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
-  <link rel="canonical" href="https://gotabgaa-australia.vercel.app/leadership.html">
+  <link rel="canonical" href="https://gotabgaa-australia.vercel.app/welfare.html">
 </head>
-<body class="page-sub">
+<body class="page-sub page-hub page-hub--welfare">
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <header class="header" id="header">
@@ -28,7 +28,7 @@
         <li><a href="index.html" class="nav__link">Home</a></li>
         <li><a href="about.html" class="nav__link">About</a></li>
         <li><a href="programs.html" class="nav__link">Programs</a></li>
-                <li><a href="welfare.html" class="nav__link">Welfare</a></li>
+        <li><a href="welfare.html" class="nav__link">Welfare</a></li>
         <li><a href="sports.html" class="nav__link">Sports</a></li>
         <li><a href="business.html" class="nav__link">Business</a></li>
         <li><a href="events.html" class="nav__link">Events</a></li>
@@ -45,53 +45,48 @@
       <div class="tribal-border__track"></div>
     </div>
     <div class="container">
-      <span class="section__tag">Our Team</span>
-      <h1 class="page-hero__title">Gotabgaa Leadership</h1>
-      <p class="page-hero__desc">Dedicated volunteers leading Gotabgaa Australia with passion and integrity.</p>
+      <span class="section__tag">Community Care</span>
+      <h1 class="page-hero__title">Social Welfare</h1>
+      <p class="page-hero__desc">Support, benevolence, and mutual aid for Gotabgaa Australia members and families in times of need.</p>
     </div>
     <div class="tribal-border tribal-border--bottom" aria-hidden="true">
       <div class="tribal-border__track tribal-border__track--reverse"></div>
     </div>
   </section>
 
-  <section class="story-section section story-section--compact">
+  <section class="hub-intro section">
     <div class="container">
-      <h2 class="story-section__title animate-on-scroll" data-animate="fade-up">Gotabgaa Leadership</h2>
-      <div class="story-section__prose animate-on-scroll" data-animate="fade-up">
-        <p>Our dedicated team is composed of passionate volunteers committed to serving the Kalenjin community across Australia. With diverse backgrounds and skills, each member brings unique perspectives and expertise — from event planning to community outreach — working tirelessly to promote unity, empowerment, and growth.</p>
-      </div>
+      <p class="hub-intro__text animate-on-scroll" data-animate="fade-up" id="welfareIntro">Gotabgaa Australia’s welfare initiatives connect members with practical support — from the benevolence fund and hardship assistance to settlement help and health awareness.</p>
     </div>
   </section>
 
-  <section class="leadership section">
+  <section class="hub-section section">
     <div class="container">
-      <div class="leadership__grid">
-        <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="0">
-          <div class="leader-card__avatar">CR</div>
-          <h3>President</h3>
-          <p class="leader-card__role">Board President</p>
-        </div>
-        <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="1">
-          <div class="leader-card__avatar">VP</div>
-          <h3>Vice President</h3>
-          <p class="leader-card__role">Board Vice President</p>
-        </div>
-        <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="2">
-          <div class="leader-card__avatar">SG</div>
-          <h3>Secretary General</h3>
-          <p class="leader-card__role">Administration</p>
-        </div>
-        <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="3">
-          <div class="leader-card__avatar">NC</div>
-          <h3>National Coordinator</h3>
-          <p class="leader-card__role">Programs & Events</p>
-        </div>
-        <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="4">
-          <div class="leader-card__avatar">TR</div>
-          <h3>Treasurer</h3>
-          <p class="leader-card__role">Finance</p>
-        </div>
+      <div class="section__header animate-on-scroll" data-animate="fade-up" id="welfareInitiativesHeader">
+        <span class="section__tag">How We Help</span>
+        <h2 class="section__title">Welfare Initiatives</h2>
+        <p class="section__desc">Programs and services coordinated by our welfare team across Australian states.</p>
       </div>
+      <div class="programs__grid hub-initiatives__grid" id="welfareInitiativesGrid"></div>
+    </div>
+  </section>
+
+  <section class="hub-section hub-section--alt section">
+    <div class="container">
+      <div class="section__header animate-on-scroll" data-animate="fade-up" id="welfareNewsHeader">
+        <span class="section__tag">Updates</span>
+        <h2 class="section__title">Welfare News</h2>
+        <p class="section__desc">Announcements, fund updates, and community support stories.</p>
+      </div>
+      <div class="hub-news__grid" id="welfareNewsGrid"></div>
+    </div>
+  </section>
+
+  <section class="cta-banner section" id="welfareCta">
+    <div class="container cta-banner__inner animate-on-scroll" data-animate="fade-up">
+      <h2 class="cta-banner__title">Need support or want to contribute?</h2>
+      <p class="cta-banner__desc">Reach out to our welfare team confidentially — or learn how to support the benevolence fund.</p>
+      <a href="contact.html" class="btn btn--primary btn--lg btn--shine" id="welfareCtaBtn">Contact Welfare Team</a>
     </div>
   </section>
 
@@ -111,7 +106,7 @@
           <ul>
             <li><a href="about.html">About Us</a></li>
             <li><a href="programs.html">Programs</a></li>
-                        <li><a href="welfare.html">Welfare</a></li>
+            <li><a href="welfare.html">Welfare</a></li>
             <li><a href="sports.html">Sports</a></li>
             <li><a href="business.html">Business</a></li>
             <li><a href="events.html">Events</a></li>
@@ -129,7 +124,8 @@
         <div class="footer__links footer__links--connect">
           <h4>Connect</h4>
           <ul>
-            <li><a href="mailto:info@gotabgaaaustralia.org">Email Us</a></li>          </ul>
+            <li><a href="mailto:info@gotabgaaaustralia.org">Email Us</a></li>
+          </ul>
           <div class="footer__social">
             <span class="footer__social-label">Follow Us</span>
             <ul class="footer__social-list">

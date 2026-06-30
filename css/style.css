@@ -6854,3 +6854,285 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
     transform: none;
   }
 }
+
+/* ============================================
+   Community hub pages — welfare, sports, business
+   ============================================ */
+
+.hub-intro {
+  padding-top: 0;
+}
+
+.hub-intro__text {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--brown-700);
+  text-align: center;
+}
+
+.hub-section--alt {
+  background: linear-gradient(180deg, var(--cream) 0%, var(--white) 100%);
+}
+
+.hub-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--brown-600);
+  padding: 2rem;
+  background: var(--white);
+  border: 1px dashed var(--cream-dark);
+  border-radius: var(--radius-lg);
+}
+
+.hub-vlog__grid,
+.hub-news__grid,
+.hub-events__grid,
+.hub-adverts__grid,
+.hub-investments__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hub-vlog__grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+}
+
+.hub-news__grid,
+.hub-adverts__grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+.hub-events__grid,
+.hub-investments__grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+.hub-vlog-card,
+.hub-news-card,
+.hub-event-card,
+.hub-advert-card,
+.hub-investment-card {
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hub-vlog-card:hover,
+.hub-news-card:hover,
+.hub-event-card:hover,
+.hub-advert-card:hover,
+.hub-investment-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hub-vlog-card__embed {
+  position: relative;
+  padding-top: 56.25%;
+  background: var(--brown-900);
+}
+
+.hub-vlog-card__embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.hub-vlog-card__thumb-link {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.hub-vlog-card__thumb-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hub-vlog-card__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--white);
+  background: rgba(42, 31, 23, 0.45);
+}
+
+.hub-vlog-card__body,
+.hub-news-card__body,
+.hub-event-card__body,
+.hub-advert-card__body,
+.hub-investment-card__body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.hub-vlog-card__date,
+.hub-news-card__date {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tan);
+  margin-bottom: 0.5rem;
+}
+
+.hub-vlog-card h3,
+.hub-news-card h3,
+.hub-event-card h3,
+.hub-advert-card h3,
+.hub-investment-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--brown-800);
+  margin-bottom: 0.5rem;
+}
+
+.hub-vlog-card p,
+.hub-news-card p,
+.hub-event-card p,
+.hub-advert-card p,
+.hub-investment-card p {
+  color: var(--brown-600);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.hub-vlog-card__link,
+.hub-news-card__link,
+.hub-advert-card__link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-weight: 600;
+  color: var(--brown-800);
+}
+
+.hub-news-card__media,
+.hub-event-card__media,
+.hub-advert-card__media,
+.hub-investment-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.hub-news-card__media img,
+.hub-event-card__media img,
+.hub-advert-card__media img,
+.hub-investment-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hub-event-card__pill {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(42, 31, 23, 0.88);
+  color: var(--cream);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.hub-event-card__status,
+.hub-investment-card__status {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.hub-event-card__status--upcoming,
+.hub-investment-card__status--open {
+  background: rgba(123, 201, 154, 0.2);
+  color: #2d6a4f;
+}
+
+.hub-event-card__status--past,
+.hub-investment-card__status--closed {
+  background: rgba(184, 134, 75, 0.15);
+  color: var(--brown-700);
+}
+
+.hub-event-card__location {
+  font-size: 0.875rem;
+  color: var(--tan);
+  margin-bottom: 0.35rem;
+}
+
+.hub-advert-card__category {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--brown-800);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hub-advert-card__email {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--brown-700);
+}
+
+.hub-investment-card__meta {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--brown-700);
+}
+
+.hub-investment-card__meta li + li {
+  margin-top: 0.25rem;
+}
+
+.page-hub--welfare .page-hero {
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 120%, rgba(232, 140, 140, 0.15), transparent 55%),
+    linear-gradient(165deg, #3a2a1f 0%, var(--brown-900) 45%, #1a120c 100%);
+}
+
+.page-hub--sports .page-hero {
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 120%, rgba(123, 201, 154, 0.18), transparent 55%),
+    linear-gradient(165deg, #3a2a1f 0%, var(--brown-900) 45%, #1a120c 100%);
+}
+
+.page-hub--business .page-hero {
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 120%, rgba(212, 165, 116, 0.22), transparent 55%),
+    linear-gradient(165deg, #3a2a1f 0%, var(--brown-900) 45%, #1a120c 100%);
+}
+
+@media (max-width: 768px) {
+  .hub-vlog-card:hover,
+  .hub-news-card:hover,
+  .hub-event-card:hover,
+  .hub-advert-card:hover,
+  .hub-investment-card:hover {
+    transform: none;
+  }
+}

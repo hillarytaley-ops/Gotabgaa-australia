@@ -34,6 +34,9 @@
     home: 'Home Page',
     about: 'About Page',
     programs: 'Programs',
+    welfare: 'Welfare',
+    sports: 'Sports',
+    business: 'Business',
     events: 'Events',
     leadership: 'Leadership',
     gallery: 'Gallery',
@@ -51,6 +54,9 @@
     home: 'home',
     about: 'about',
     programs: 'programs',
+    welfare: 'welfare',
+    sports: 'sports',
+    business: 'business',
     events: 'events',
     leadership: 'leadership',
     gallery: 'gallery',
@@ -1959,8 +1965,265 @@
     }
   }
 
+  function ensureHubContent() {
+    if (!content.welfare) content.welfare = { initiatives: [], news: [] };
+    if (!content.welfare.initiatives) content.welfare.initiatives = [];
+    if (!content.welfare.news) content.welfare.news = [];
+    if (!content.sports) content.sports = { vlogs: [], events: [], news: [] };
+    if (!content.sports.vlogs) content.sports.vlogs = [];
+    if (!content.sports.events) content.sports.events = [];
+    if (!content.sports.news) content.sports.news = [];
+    if (!content.business) content.business = { vlogs: [], adverts: [], investments: [], news: [] };
+    if (!content.business.vlogs) content.business.vlogs = [];
+    if (!content.business.adverts) content.business.adverts = [];
+    if (!content.business.investments) content.business.investments = [];
+    if (!content.business.news) content.business.news = [];
+  }
+
+  function hubNewsItemHtml(item, i, prefix, removeAttr) {
+    return `
+      <div class="list-item" data-hub-index="${i}">
+        <div class="list-item__header">
+          <h4>${escapeHtml(item.title || 'News item')}</h4>
+          <button type="button" class="btn btn--danger btn--sm" ${removeAttr}="${i}">Remove</button>
+        </div>
+        <div class="form-grid">
+          ${field('Title', `${prefix}Title${i}`, item.title)}
+          ${field('Date', `${prefix}Date${i}`, item.date)}
+          ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
+          ${field('Link URL', `${prefix}Link${i}`, item.link)}
+          ${field('Image path', `${prefix}Image${i}`, item.image)}
+          ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
+        </div>
+      </div>
+    `;
+  }
+
+  function hubVlogItemHtml(item, i, prefix, removeAttr) {
+    return `
+      <div class="list-item" data-hub-index="${i}">
+        <div class="list-item__header">
+          <h4>${escapeHtml(item.title || 'Vlog')}</h4>
+          <button type="button" class="btn btn--danger btn--sm" ${removeAttr}="${i}">Remove</button>
+        </div>
+        <div class="form-grid">
+          ${field('Title', `${prefix}Title${i}`, item.title)}
+          ${field('Date', `${prefix}Date${i}`, item.date)}
+          ${field('Summary', `${prefix}Summary${i}`, item.summary, 'textarea')}
+          ${field('Video URL (YouTube watch or channel)', `${prefix}Video${i}`, item.videoUrl)}
+          ${field('Thumbnail image', `${prefix}Thumb${i}`, item.thumbnail)}
+          ${field('Published', `${prefix}Published${i}`, item.published !== false, 'checkbox')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderWelfarePanel() {
+    ensureHubContent();
+    const p = content.pages?.welfare || {};
+    const w = content.welfare;
+    return `
+      <div class="card card--notice">
+        <p><strong>Public page:</strong> <a href="../welfare.html" target="_blank" rel="noopener">welfare.html</a> — edit hero text under <button type="button" class="btn btn--outline btn--sm" data-goto="pages">Page Heroes</button>.</p>
+      </div>
+      <div class="card"><h3>Page intro &amp; CTA</h3><div class="form-grid">
+        ${field('Intro paragraph', 'welfareIntro', p.intro, 'textarea', { full: true })}
+        ${field('CTA title', 'welfareCtaTitle', p.cta?.title)}
+        ${field('CTA description', 'welfareCtaDesc', p.cta?.description, 'textarea')}
+        ${field('CTA button', 'welfareCtaBtn', p.cta?.button)}
+        ${field('CTA URL', 'welfareCtaUrl', p.cta?.buttonUrl)}
+      </div></div>
+      <div class="card"><h3>Section headers</h3><div class="form-grid">
+        ${field('Initiatives tag', 'welfareInitTag', p.initiativesHeader?.tag)}
+        ${field('Initiatives title', 'welfareInitTitle', p.initiativesHeader?.title)}
+        ${field('Initiatives description', 'welfareInitDesc', p.initiativesHeader?.description, 'textarea')}
+        ${field('News tag', 'welfareNewsTag', p.newsHeader?.tag)}
+        ${field('News title', 'welfareNewsTitle', p.newsHeader?.title)}
+        ${field('News description', 'welfareNewsDesc', p.newsHeader?.description, 'textarea')}
+      </div></div>
+      <div class="card">
+        <div class="list-item__header"><h3>Welfare initiatives (${w.initiatives.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addWelfareInitiative">+ Add initiative</button>
+        </div>
+        <div id="welfareInitiativesList">${w.initiatives.map((item, i) => `
+          <div class="list-item" data-welfare-init-index="${i}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(item.title)}</h4>
+              <button type="button" class="btn btn--danger btn--sm" data-remove-welfare-init="${i}">Remove</button>
+            </div>
+            <div class="form-grid">
+              ${field('Title', `welfInitTitle${i}`, item.title)}
+              ${field('Description', `welfInitDesc${i}`, item.description, 'textarea', { full: true })}
+              ${field('Link URL', `welfInitLink${i}`, item.link)}
+              ${field('Link label', `welfInitLinkLabel${i}`, item.linkLabel)}
+              ${field('Icon', `welfInitIcon${i}`, item.icon, 'select', { options: [
+                { value: 'heart', label: 'Heart' },
+                { value: 'support', label: 'Support' },
+                { value: 'health', label: 'Health' },
+                { value: 'family', label: 'Family' },
+                { value: 'building', label: 'Building' }
+              ]})}
+            </div>
+          </div>
+        `).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Welfare news (${w.news.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addWelfareNews">+ Add news</button>
+        </div>
+        <div id="welfareNewsList">${w.news.map((item, i) => hubNewsItemHtml(item, i, 'welfNews', 'data-remove-welfare-news')).join('')}</div>
+      </div>
+    `;
+  }
+
+  function renderSportsPanel() {
+    ensureHubContent();
+    const p = content.pages?.sports || {};
+    const s = content.sports;
+    return `
+      <div class="card card--notice">
+        <p><strong>Public page:</strong> <a href="../sports.html" target="_blank" rel="noopener">sports.html</a> — vlogs, planned sports events, and sports news.</p>
+      </div>
+      <div class="card"><h3>Section headers</h3><div class="form-grid">
+        ${field('Vlog tag', 'sportsVlogTag', p.vlogHeader?.tag)}
+        ${field('Vlog title', 'sportsVlogTitle', p.vlogHeader?.title)}
+        ${field('Vlog description', 'sportsVlogDesc', p.vlogHeader?.description, 'textarea')}
+        ${field('Events tag', 'sportsEventsTag', p.eventsHeader?.tag)}
+        ${field('Events title', 'sportsEventsTitle', p.eventsHeader?.title)}
+        ${field('Events description', 'sportsEventsDesc', p.eventsHeader?.description, 'textarea')}
+        ${field('News tag', 'sportsNewsTag', p.newsHeader?.tag)}
+        ${field('News title', 'sportsNewsTitle', p.newsHeader?.title)}
+        ${field('News description', 'sportsNewsDesc', p.newsHeader?.description, 'textarea')}
+      </div></div>
+      <div class="card">
+        <div class="list-item__header"><h3>Sports vlog (${s.vlogs.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addSportsVlog">+ Add vlog</button>
+        </div>
+        <div id="sportsVlogList">${s.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'sportVlog', 'data-remove-sports-vlog')).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Planned sports events (${s.events.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addSportsEvent">+ Add event</button>
+        </div>
+        <div id="sportsEventsList">${s.events.map((item, i) => `
+          <div class="list-item" data-sports-event-index="${i}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(item.title)} <span class="form-hint">(${item.status || 'upcoming'})</span></h4>
+              <button type="button" class="btn btn--danger btn--sm" data-remove-sports-event="${i}">Remove</button>
+            </div>
+            <div class="form-grid">
+              ${field('Title', `sportEvtTitle${i}`, item.title)}
+              ${field('Date pill', `sportEvtPill${i}`, item.datePill)}
+              ${field('Full date', `sportEvtDate${i}`, item.date)}
+              ${field('Location', `sportEvtLocation${i}`, item.location)}
+              ${field('Summary', `sportEvtSummary${i}`, item.summary, 'textarea')}
+              ${field('Image path', `sportEvtImage${i}`, item.image)}
+              ${field('Status', `sportEvtStatus${i}`, item.status || 'upcoming', 'select', { options: [
+                { value: 'upcoming', label: 'Upcoming' },
+                { value: 'past', label: 'Past' }
+              ]})}
+              ${field('Link URL', `sportEvtLink${i}`, item.link)}
+              ${field('Link label', `sportEvtLinkLabel${i}`, item.linkLabel)}
+            </div>
+          </div>
+        `).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Sports news (${s.news.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addSportsNews">+ Add news</button>
+        </div>
+        <div id="sportsNewsList">${s.news.map((item, i) => hubNewsItemHtml(item, i, 'sportNews', 'data-remove-sports-news')).join('')}</div>
+      </div>
+    `;
+  }
+
+  function renderBusinessPanel() {
+    ensureHubContent();
+    const p = content.pages?.business || {};
+    const b = content.business;
+    return `
+      <div class="card card--notice">
+        <p><strong>Public page:</strong> <a href="../business.html" target="_blank" rel="noopener">business.html</a> — vlogs, member adverts, investments, and business news.</p>
+      </div>
+      <div class="card"><h3>Section headers</h3><div class="form-grid">
+        ${field('Vlog tag', 'bizVlogTag', p.vlogHeader?.tag)}
+        ${field('Vlog title', 'bizVlogTitle', p.vlogHeader?.title)}
+        ${field('Vlog description', 'bizVlogDesc', p.vlogHeader?.description, 'textarea')}
+        ${field('Adverts tag', 'bizAdvertsTag', p.advertsHeader?.tag)}
+        ${field('Adverts title', 'bizAdvertsTitle', p.advertsHeader?.title)}
+        ${field('Adverts description', 'bizAdvertsDesc', p.advertsHeader?.description, 'textarea')}
+        ${field('Investments tag', 'bizInvTag', p.investmentsHeader?.tag)}
+        ${field('Investments title', 'bizInvTitle', p.investmentsHeader?.title)}
+        ${field('Investments description', 'bizInvDesc', p.investmentsHeader?.description, 'textarea')}
+        ${field('News tag', 'bizNewsTag', p.newsHeader?.tag)}
+        ${field('News title', 'bizNewsTitle', p.newsHeader?.title)}
+        ${field('News description', 'bizNewsDesc', p.newsHeader?.description, 'textarea')}
+      </div></div>
+      <div class="card">
+        <div class="list-item__header"><h3>Business vlog (${b.vlogs.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addBusinessVlog">+ Add vlog</button>
+        </div>
+        <div id="businessVlogList">${b.vlogs.map((item, i) => hubVlogItemHtml(item, i, 'bizVlog', 'data-remove-business-vlog')).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Business adverts (${b.adverts.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addBusinessAdvert">+ Add advert</button>
+        </div>
+        <div id="businessAdvertsList">${b.adverts.map((item, i) => `
+          <div class="list-item" data-business-advert-index="${i}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(item.title)}</h4>
+              <button type="button" class="btn btn--danger btn--sm" data-remove-business-advert="${i}">Remove</button>
+            </div>
+            <div class="form-grid">
+              ${field('Title', `bizAdTitle${i}`, item.title)}
+              ${field('Description', `bizAdDesc${i}`, item.description, 'textarea', { full: true })}
+              ${field('Category', `bizAdCategory${i}`, item.category)}
+              ${field('Image path', `bizAdImage${i}`, item.image)}
+              ${field('Website URL', `bizAdLink${i}`, item.link)}
+              ${field('Contact email', `bizAdEmail${i}`, item.contactEmail)}
+              ${field('Published', `bizAdPublished${i}`, item.published !== false, 'checkbox')}
+            </div>
+          </div>
+        `).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Investments (${b.investments.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addBusinessInvestment">+ Add investment</button>
+        </div>
+        <div id="businessInvestmentsList">${b.investments.map((item, i) => `
+          <div class="list-item" data-business-inv-index="${i}">
+            <div class="list-item__header">
+              <h4>${escapeHtml(item.title)}</h4>
+              <button type="button" class="btn btn--danger btn--sm" data-remove-business-inv="${i}">Remove</button>
+            </div>
+            <div class="form-grid">
+              ${field('Title', `bizInvTitle${i}`, item.title)}
+              ${field('Summary', `bizInvSummary${i}`, item.summary, 'textarea', { full: true })}
+              ${field('Amount / scale', `bizInvAmount${i}`, item.amount)}
+              ${field('Deadline', `bizInvDeadline${i}`, item.deadline)}
+              ${field('Image path', `bizInvImage${i}`, item.image)}
+              ${field('Status', `bizInvStatus${i}`, item.status || 'open', 'select', { options: [
+                { value: 'open', label: 'Open' },
+                { value: 'closed', label: 'Closed' }
+              ]})}
+              ${field('Link URL', `bizInvLink${i}`, item.link)}
+              ${field('Link label', `bizInvLinkLabel${i}`, item.linkLabel)}
+            </div>
+          </div>
+        `).join('')}</div>
+      </div>
+      <div class="card">
+        <div class="list-item__header"><h3>Business news (${b.news.length})</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="addBusinessNews">+ Add news</button>
+        </div>
+        <div id="businessNewsList">${b.news.map((item, i) => hubNewsItemHtml(item, i, 'bizNews', 'data-remove-business-news')).join('')}</div>
+      </div>
+    `;
+  }
+
   function renderPagesPanel() {
-    const pages = ['programs', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'];
+    const pages = ['programs', 'welfare', 'sports', 'business', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'];
     return pages.map(key => {
       const h = content.pages[key]?.hero || {};
       return `
@@ -2000,6 +2263,9 @@
           home: renderHomePanel,
           about: renderAboutPanel,
           programs: renderProgramsPanel,
+          welfare: renderWelfarePanel,
+          sports: renderSportsPanel,
+          business: renderBusinessPanel,
           events: renderEventsPanel,
           leadership: renderLeadershipPanel,
           gallery: renderGalleryPanel,
@@ -2034,6 +2300,209 @@
         btn.addEventListener('click', () => {
           content.programs.splice(+btn.dataset.removeProgram, 1);
           renderSection('programs');
+        });
+      });
+    }
+
+    if (section === 'welfare') {
+      document.getElementById('addWelfareInitiative')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.welfare.initiatives.push({
+          id: `welf-${Date.now()}`,
+          title: 'New Initiative',
+          description: '',
+          icon: 'heart',
+          link: 'contact.html',
+          linkLabel: 'Learn more'
+        });
+        renderSection('welfare');
+      });
+      document.querySelectorAll('[data-remove-welfare-init]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.welfare.initiatives.splice(+btn.dataset.removeWelfareInit, 1);
+          renderSection('welfare');
+        });
+      });
+      document.getElementById('addWelfareNews')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.welfare.news.push({
+          id: `welf-news-${Date.now()}`,
+          title: 'New update',
+          date: new Date().toISOString().slice(0, 7),
+          summary: '',
+          link: '',
+          image: '',
+          published: true
+        });
+        renderSection('welfare');
+      });
+      document.querySelectorAll('[data-remove-welfare-news]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.welfare.news.splice(+btn.dataset.removeWelfareNews, 1);
+          renderSection('welfare');
+        });
+      });
+    }
+
+    if (section === 'sports') {
+      document.getElementById('addSportsVlog')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.sports.vlogs.push({
+          id: `sport-vlog-${Date.now()}`,
+          title: 'New vlog',
+          date: '',
+          summary: '',
+          videoUrl: '',
+          thumbnail: 'assets/hero/kokwet-sports-day.png',
+          published: true
+        });
+        renderSection('sports');
+      });
+      document.querySelectorAll('[data-remove-sports-vlog]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.sports.vlogs.splice(+btn.dataset.removeSportsVlog, 1);
+          renderSection('sports');
+        });
+      });
+      document.getElementById('addSportsEvent')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.sports.events.push({
+          id: `sport-evt-${Date.now()}`,
+          title: 'New sports event',
+          date: '',
+          datePill: '',
+          location: '',
+          summary: '',
+          status: 'upcoming',
+          link: 'contact.html',
+          linkLabel: 'Register',
+          image: 'assets/hero/kokwet-sports-day.png'
+        });
+        renderSection('sports');
+      });
+      document.querySelectorAll('[data-remove-sports-event]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.sports.events.splice(+btn.dataset.removeSportsEvent, 1);
+          renderSection('sports');
+        });
+      });
+      document.getElementById('addSportsNews')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.sports.news.push({
+          id: `sport-news-${Date.now()}`,
+          title: 'New sports news',
+          date: '',
+          summary: '',
+          link: '',
+          image: '',
+          published: true
+        });
+        renderSection('sports');
+      });
+      document.querySelectorAll('[data-remove-sports-news]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.sports.news.splice(+btn.dataset.removeSportsNews, 1);
+          renderSection('sports');
+        });
+      });
+    }
+
+    if (section === 'business') {
+      document.getElementById('addBusinessVlog')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.business.vlogs.push({
+          id: `biz-vlog-${Date.now()}`,
+          title: 'New vlog',
+          date: '',
+          summary: '',
+          videoUrl: '',
+          thumbnail: 'assets/hero/page/stage-address.png',
+          published: true
+        });
+        renderSection('business');
+      });
+      document.querySelectorAll('[data-remove-business-vlog]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.business.vlogs.splice(+btn.dataset.removeBusinessVlog, 1);
+          renderSection('business');
+        });
+      });
+      document.getElementById('addBusinessAdvert')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.business.adverts.push({
+          id: `biz-ad-${Date.now()}`,
+          title: 'New advert',
+          description: '',
+          category: 'Services',
+          image: 'assets/logo-round.png',
+          link: '',
+          contactEmail: '',
+          published: true
+        });
+        renderSection('business');
+      });
+      document.querySelectorAll('[data-remove-business-advert]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.business.adverts.splice(+btn.dataset.removeBusinessAdvert, 1);
+          renderSection('business');
+        });
+      });
+      document.getElementById('addBusinessInvestment')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.business.investments.push({
+          id: `biz-inv-${Date.now()}`,
+          title: 'New opportunity',
+          summary: '',
+          amount: '',
+          deadline: '',
+          link: 'contact.html',
+          linkLabel: 'Express interest',
+          status: 'open',
+          image: 'assets/hero/page/gala-celebration.png'
+        });
+        renderSection('business');
+      });
+      document.querySelectorAll('[data-remove-business-inv]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.business.investments.splice(+btn.dataset.removeBusinessInv, 1);
+          renderSection('business');
+        });
+      });
+      document.getElementById('addBusinessNews')?.addEventListener('click', () => {
+        collectFromForm();
+        ensureHubContent();
+        content.business.news.push({
+          id: `biz-news-${Date.now()}`,
+          title: 'New business news',
+          date: '',
+          summary: '',
+          link: '',
+          image: '',
+          published: true
+        });
+        renderSection('business');
+      });
+      document.querySelectorAll('[data-remove-business-news]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          collectFromForm();
+          content.business.news.splice(+btn.dataset.removeBusinessNews, 1);
+          renderSection('business');
         });
       });
     }
@@ -2498,7 +2967,152 @@
       };
     }
 
-    ['programs', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'].forEach(key => {
+    if (document.getElementById('welfareIntro')) {
+      ensureHubContent();
+      if (!content.pages.welfare) content.pages.welfare = {};
+      const p = content.pages.welfare;
+      p.intro = val('welfareIntro');
+      if (!p.cta) p.cta = {};
+      p.cta.title = val('welfareCtaTitle');
+      p.cta.description = val('welfareCtaDesc');
+      p.cta.button = val('welfareCtaBtn');
+      p.cta.buttonUrl = val('welfareCtaUrl');
+      p.initiativesHeader = {
+        tag: val('welfareInitTag'),
+        title: val('welfareInitTitle'),
+        description: val('welfareInitDesc')
+      };
+      p.newsHeader = {
+        tag: val('welfareNewsTag'),
+        title: val('welfareNewsTitle'),
+        description: val('welfareNewsDesc')
+      };
+
+      content.welfare.initiatives.forEach((item, i) => {
+        if (document.getElementById(`welfInitTitle${i}`)) {
+          item.title = val(`welfInitTitle${i}`);
+          item.description = val(`welfInitDesc${i}`);
+          item.link = val(`welfInitLink${i}`);
+          item.linkLabel = val(`welfInitLinkLabel${i}`);
+          item.icon = val(`welfInitIcon${i}`);
+        }
+      });
+
+      content.welfare.news.forEach((item, i) => {
+        if (document.getElementById(`welfNewsTitle${i}`)) {
+          item.title = val(`welfNewsTitle${i}`);
+          item.date = val(`welfNewsDate${i}`);
+          item.summary = val(`welfNewsSummary${i}`);
+          item.link = val(`welfNewsLink${i}`);
+          item.image = val(`welfNewsImage${i}`);
+          item.published = val(`welfNewsPublished${i}`);
+        }
+      });
+    }
+
+    if (document.getElementById('sportsVlogTag')) {
+      ensureHubContent();
+      if (!content.pages.sports) content.pages.sports = {};
+      const p = content.pages.sports;
+      p.vlogHeader = { tag: val('sportsVlogTag'), title: val('sportsVlogTitle'), description: val('sportsVlogDesc') };
+      p.eventsHeader = { tag: val('sportsEventsTag'), title: val('sportsEventsTitle'), description: val('sportsEventsDesc') };
+      p.newsHeader = { tag: val('sportsNewsTag'), title: val('sportsNewsTitle'), description: val('sportsNewsDesc') };
+
+      content.sports.vlogs.forEach((item, i) => {
+        if (document.getElementById(`sportVlogTitle${i}`)) {
+          item.title = val(`sportVlogTitle${i}`);
+          item.date = val(`sportVlogDate${i}`);
+          item.summary = val(`sportVlogSummary${i}`);
+          item.videoUrl = val(`sportVlogVideo${i}`);
+          item.thumbnail = val(`sportVlogThumb${i}`);
+          item.published = val(`sportVlogPublished${i}`);
+        }
+      });
+
+      content.sports.events.forEach((item, i) => {
+        if (document.getElementById(`sportEvtTitle${i}`)) {
+          item.title = val(`sportEvtTitle${i}`);
+          item.datePill = val(`sportEvtPill${i}`);
+          item.date = val(`sportEvtDate${i}`);
+          item.location = val(`sportEvtLocation${i}`);
+          item.summary = val(`sportEvtSummary${i}`);
+          item.image = val(`sportEvtImage${i}`);
+          item.status = val(`sportEvtStatus${i}`);
+          item.link = val(`sportEvtLink${i}`);
+          item.linkLabel = val(`sportEvtLinkLabel${i}`);
+        }
+      });
+
+      content.sports.news.forEach((item, i) => {
+        if (document.getElementById(`sportNewsTitle${i}`)) {
+          item.title = val(`sportNewsTitle${i}`);
+          item.date = val(`sportNewsDate${i}`);
+          item.summary = val(`sportNewsSummary${i}`);
+          item.link = val(`sportNewsLink${i}`);
+          item.image = val(`sportNewsImage${i}`);
+          item.published = val(`sportNewsPublished${i}`);
+        }
+      });
+    }
+
+    if (document.getElementById('bizVlogTag')) {
+      ensureHubContent();
+      if (!content.pages.business) content.pages.business = {};
+      const p = content.pages.business;
+      p.vlogHeader = { tag: val('bizVlogTag'), title: val('bizVlogTitle'), description: val('bizVlogDesc') };
+      p.advertsHeader = { tag: val('bizAdvertsTag'), title: val('bizAdvertsTitle'), description: val('bizAdvertsDesc') };
+      p.investmentsHeader = { tag: val('bizInvTag'), title: val('bizInvTitle'), description: val('bizInvDesc') };
+      p.newsHeader = { tag: val('bizNewsTag'), title: val('bizNewsTitle'), description: val('bizNewsDesc') };
+
+      content.business.vlogs.forEach((item, i) => {
+        if (document.getElementById(`bizVlogTitle${i}`)) {
+          item.title = val(`bizVlogTitle${i}`);
+          item.date = val(`bizVlogDate${i}`);
+          item.summary = val(`bizVlogSummary${i}`);
+          item.videoUrl = val(`bizVlogVideo${i}`);
+          item.thumbnail = val(`bizVlogThumb${i}`);
+          item.published = val(`bizVlogPublished${i}`);
+        }
+      });
+
+      content.business.adverts.forEach((item, i) => {
+        if (document.getElementById(`bizAdTitle${i}`)) {
+          item.title = val(`bizAdTitle${i}`);
+          item.description = val(`bizAdDesc${i}`);
+          item.category = val(`bizAdCategory${i}`);
+          item.image = val(`bizAdImage${i}`);
+          item.link = val(`bizAdLink${i}`);
+          item.contactEmail = val(`bizAdEmail${i}`);
+          item.published = val(`bizAdPublished${i}`);
+        }
+      });
+
+      content.business.investments.forEach((item, i) => {
+        if (document.getElementById(`bizInvTitle${i}`)) {
+          item.title = val(`bizInvTitle${i}`);
+          item.summary = val(`bizInvSummary${i}`);
+          item.amount = val(`bizInvAmount${i}`);
+          item.deadline = val(`bizInvDeadline${i}`);
+          item.image = val(`bizInvImage${i}`);
+          item.status = val(`bizInvStatus${i}`);
+          item.link = val(`bizInvLink${i}`);
+          item.linkLabel = val(`bizInvLinkLabel${i}`);
+        }
+      });
+
+      content.business.news.forEach((item, i) => {
+        if (document.getElementById(`bizNewsTitle${i}`)) {
+          item.title = val(`bizNewsTitle${i}`);
+          item.date = val(`bizNewsDate${i}`);
+          item.summary = val(`bizNewsSummary${i}`);
+          item.link = val(`bizNewsLink${i}`);
+          item.image = val(`bizNewsImage${i}`);
+          item.published = val(`bizNewsPublished${i}`);
+        }
+      });
+    }
+
+    ['programs', 'welfare', 'sports', 'business', 'events', 'leadership', 'gallery', 'contact', 'join', 'privacy', 'terms'].forEach(key => {
       if (document.getElementById(`heroTag_${key}`) && content.pages?.[key]?.hero) {
         content.pages[key].hero.tag = val(`heroTag_${key}`);
         content.pages[key].hero.title = val(`heroTitle_${key}`);

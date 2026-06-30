@@ -13,7 +13,10 @@
     education: '<path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>',
     heart: '<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
     building: '<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>',
-    music: '<path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>'
+    music: '<path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>',
+    support: '<path d="M18 9a3 3 0 100-6 3 3 0 000 6zM6 9a3 3 0 100-6 3 3 0 000 6zM12 22c4.418 0 8-2.686 8-6H4c0 3.314 3.582 6 8 6z"/>',
+    health: '<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/><path d="M12 8v8m-4-4h8"/>',
+    family: '<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>'
   };
 
   function getPath(obj, path) {
@@ -73,6 +76,9 @@
       'index.html': 'home',
       'about.html': 'about',
       'programs.html': 'programs',
+      'welfare.html': 'welfare',
+      'sports.html': 'sports',
+      'business.html': 'business',
       'events.html': 'events',
       'leadership.html': 'leadership',
       'gallery.html': 'gallery',
@@ -684,6 +690,282 @@
     if (details[2]) details[2].querySelector('span').textContent = contact.officeHours;
   }
 
+  function applySectionHeader(rootId, header) {
+    if (!header) return;
+    const root = document.getElementById(rootId);
+    if (!root) return;
+    const tag = root.querySelector('.section__tag');
+    const title = root.querySelector('.section__title');
+    const desc = root.querySelector('.section__desc');
+    if (tag && header.tag) tag.textContent = header.tag;
+    if (title && header.title) title.textContent = header.title;
+    if (desc && header.description) desc.textContent = header.description;
+  }
+
+  function youtubeEmbedUrl(url) {
+    if (!url) return '';
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/@)([^&?/]+)/);
+    if (!match) return url;
+    if (url.includes('/@')) return url;
+    return `https://www.youtube.com/embed/${match[1]}`;
+  }
+
+  function isYoutubeChannel(url) {
+    return url && url.includes('youtube.com/@');
+  }
+
+  function renderVlogCard(item, delay) {
+    const thumb = item.thumbnail || 'assets/hero/page/kokwet-sports-day.png';
+    const embed = youtubeEmbedUrl(item.videoUrl);
+    const isChannel = isYoutubeChannel(item.videoUrl);
+    const media = isChannel
+      ? `<a href="${escapeHtml(item.videoUrl)}" class="hub-vlog-card__thumb-link" target="_blank" rel="noopener noreferrer">
+          <img src="${escapeHtml(thumb)}" alt="" loading="lazy" decoding="async">
+          <span class="hub-vlog-card__play" aria-hidden="true">▶</span>
+        </a>`
+      : `<div class="hub-vlog-card__embed">
+          <iframe src="${escapeHtml(embed)}" title="${escapeHtml(item.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>`;
+
+    return `
+      <article class="hub-vlog-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        ${media}
+        <div class="hub-vlog-card__body">
+          <time class="hub-vlog-card__date">${escapeHtml(item.date || '')}</time>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.summary || '')}</p>
+          ${isChannel ? `<a href="${escapeHtml(item.videoUrl)}" class="hub-vlog-card__link" target="_blank" rel="noopener noreferrer">Watch on YouTube →</a>` : ''}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderNewsCard(item, delay) {
+    const img = item.image
+      ? `<div class="hub-news-card__media"><img src="${escapeHtml(item.image)}" alt="" loading="lazy" decoding="async"></div>`
+      : '';
+    const link = item.link
+      ? `<a href="${escapeHtml(item.link)}" class="hub-news-card__link">Read more →</a>`
+      : '';
+
+    return `
+      <article class="hub-news-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        ${img}
+        <div class="hub-news-card__body">
+          <time class="hub-news-card__date">${escapeHtml(item.date || '')}</time>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.summary || '')}</p>
+          ${link}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderHubEventCard(item, delay) {
+    const statusLabel = item.status === 'upcoming' ? 'Upcoming' : 'Past';
+    const action = item.link
+      ? `<a href="${escapeHtml(item.link)}" class="btn btn--outline btn--sm">${escapeHtml(item.linkLabel || 'Learn more')}</a>`
+      : '';
+
+    return `
+      <article class="hub-event-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        <div class="hub-event-card__media">
+          <img src="${escapeHtml(item.image || 'assets/hero/kokwet-sports-day.png')}" alt="" loading="lazy" decoding="async">
+          <span class="hub-event-card__pill">${escapeHtml(item.datePill || item.date || '')}</span>
+        </div>
+        <div class="hub-event-card__body">
+          <span class="hub-event-card__status hub-event-card__status--${escapeHtml(item.status || 'upcoming')}">${statusLabel}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p class="hub-event-card__location">${escapeHtml(item.location || '')}</p>
+          <p class="hub-event-card__summary">${escapeHtml(item.summary || '')}</p>
+          ${action}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderAdvertCard(item, delay) {
+    const emailLink = item.contactEmail
+      ? `<a href="mailto:${escapeHtml(item.contactEmail)}" class="hub-advert-card__email">${escapeHtml(item.contactEmail)}</a>`
+      : '';
+    const extLink = item.link
+      ? `<a href="${escapeHtml(item.link)}" class="hub-advert-card__link">${escapeHtml(item.linkLabel || 'Visit website →')}</a>`
+      : '';
+
+    return `
+      <article class="hub-advert-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        <div class="hub-advert-card__media">
+          <img src="${escapeHtml(item.image || 'assets/logo-round.png')}" alt="" loading="lazy" decoding="async">
+          ${item.category ? `<span class="hub-advert-card__category">${escapeHtml(item.category)}</span>` : ''}
+        </div>
+        <div class="hub-advert-card__body">
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description || '')}</p>
+          ${emailLink}
+          ${extLink}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderInvestmentCard(item, delay) {
+    const statusLabel = item.status === 'open' ? 'Open' : 'Closed';
+    const action = item.link
+      ? `<a href="${escapeHtml(item.link)}" class="btn btn--primary btn--sm">${escapeHtml(item.linkLabel || 'Express interest')}</a>`
+      : '';
+
+    return `
+      <article class="hub-investment-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        <div class="hub-investment-card__media">
+          <img src="${escapeHtml(item.image || 'assets/hero/page/gala-celebration.png')}" alt="" loading="lazy" decoding="async">
+          <span class="hub-investment-card__status hub-investment-card__status--${escapeHtml(item.status || 'open')}">${statusLabel}</span>
+        </div>
+        <div class="hub-investment-card__body">
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.summary || '')}</p>
+          <ul class="hub-investment-card__meta">
+            ${item.amount ? `<li><strong>Amount:</strong> ${escapeHtml(item.amount)}</li>` : ''}
+            ${item.deadline ? `<li><strong>Deadline:</strong> ${escapeHtml(item.deadline)}</li>` : ''}
+          </ul>
+          ${action}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderWelfareInitiativeCard(item, delay) {
+    const iconPath = PROGRAM_ICONS[item.icon] || PROGRAM_ICONS.heart;
+    return `
+      <article class="program-card animate-on-scroll" data-animate="fade-up" data-delay="${delay}">
+        <div class="program-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${iconPath}</svg>
+        </div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.description || '')}</p>
+        <a href="${escapeHtml(item.link || 'contact.html')}" class="program-card__link">${escapeHtml(item.linkLabel || 'Learn more')} →</a>
+      </article>
+    `;
+  }
+
+  function renderPublished(items) {
+    return (items || []).filter(item => item.published !== false);
+  }
+
+  function renderWelfare(content) {
+    const page = content.pages?.welfare;
+    const data = content.welfare || {};
+
+    const introEl = document.getElementById('welfareIntro');
+    if (introEl && page?.intro) introEl.textContent = page.intro;
+
+    applySectionHeader('welfareInitiativesHeader', page?.initiativesHeader);
+    applySectionHeader('welfareNewsHeader', page?.newsHeader);
+
+    const initiativesGrid = document.getElementById('welfareInitiativesGrid');
+    if (initiativesGrid) {
+      const items = data.initiatives || [];
+      initiativesGrid.innerHTML = items.length
+        ? items.map((item, i) => renderWelfareInitiativeCard(item, i)).join('')
+        : '<p class="hub-empty">Welfare initiatives will appear here once added in the admin dashboard.</p>';
+    }
+
+    const newsGrid = document.getElementById('welfareNewsGrid');
+    if (newsGrid) {
+      const items = renderPublished(data.news);
+      newsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderNewsCard(item, i)).join('')
+        : '<p class="hub-empty">No welfare news yet.</p>';
+    }
+
+    const cta = page?.cta;
+    if (cta) {
+      const titleEl = document.querySelector('#welfareCta .cta-banner__title');
+      const descEl = document.querySelector('#welfareCta .cta-banner__desc');
+      const btnEl = document.getElementById('welfareCtaBtn');
+      if (titleEl && cta.title) titleEl.textContent = cta.title;
+      if (descEl && cta.description) descEl.textContent = cta.description;
+      if (btnEl && cta.button) {
+        btnEl.textContent = cta.button;
+        if (cta.buttonUrl) btnEl.href = cta.buttonUrl;
+      }
+    }
+  }
+
+  function renderSports(content) {
+    const page = content.pages?.sports;
+    const data = content.sports || {};
+
+    applySectionHeader('sportsVlogHeader', page?.vlogHeader);
+    applySectionHeader('sportsEventsHeader', page?.eventsHeader);
+    applySectionHeader('sportsNewsHeader', page?.newsHeader);
+
+    const vlogGrid = document.getElementById('sportsVlogGrid');
+    if (vlogGrid) {
+      const items = renderPublished(data.vlogs);
+      vlogGrid.innerHTML = items.length
+        ? items.map((item, i) => renderVlogCard(item, i)).join('')
+        : '<p class="hub-empty">Sports vlogs will appear here once added in the admin dashboard.</p>';
+    }
+
+    const eventsGrid = document.getElementById('sportsEventsGrid');
+    if (eventsGrid) {
+      const items = data.events || [];
+      eventsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderHubEventCard(item, i)).join('')
+        : '<p class="hub-empty">No planned sports events yet.</p>';
+    }
+
+    const newsGrid = document.getElementById('sportsNewsGrid');
+    if (newsGrid) {
+      const items = renderPublished(data.news);
+      newsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderNewsCard(item, i)).join('')
+        : '<p class="hub-empty">No sports news yet.</p>';
+    }
+  }
+
+  function renderBusiness(content) {
+    const page = content.pages?.business;
+    const data = content.business || {};
+
+    applySectionHeader('businessVlogHeader', page?.vlogHeader);
+    applySectionHeader('businessAdvertsHeader', page?.advertsHeader);
+    applySectionHeader('businessInvestmentsHeader', page?.investmentsHeader);
+    applySectionHeader('businessNewsHeader', page?.newsHeader);
+
+    const vlogGrid = document.getElementById('businessVlogGrid');
+    if (vlogGrid) {
+      const items = renderPublished(data.vlogs);
+      vlogGrid.innerHTML = items.length
+        ? items.map((item, i) => renderVlogCard(item, i)).join('')
+        : '<p class="hub-empty">Business vlogs will appear here once added in the admin dashboard.</p>';
+    }
+
+    const advertsGrid = document.getElementById('businessAdvertsGrid');
+    if (advertsGrid) {
+      const items = renderPublished(data.adverts);
+      advertsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderAdvertCard(item, i)).join('')
+        : '<p class="hub-empty">No business adverts yet.</p>';
+    }
+
+    const investmentsGrid = document.getElementById('businessInvestmentsGrid');
+    if (investmentsGrid) {
+      const items = data.investments || [];
+      investmentsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderInvestmentCard(item, i)).join('')
+        : '<p class="hub-empty">No investment opportunities listed yet.</p>';
+    }
+
+    const newsGrid = document.getElementById('businessNewsGrid');
+    if (newsGrid) {
+      const items = renderPublished(data.news);
+      newsGrid.innerHTML = items.length
+        ? items.map((item, i) => renderNewsCard(item, i)).join('')
+        : '<p class="hub-empty">No business news yet.</p>';
+    }
+  }
+
   function hydrate(content) {
     window.CMS_CONTENT = content;
     applySiteConfig(content.site);
@@ -704,6 +986,9 @@
     if (page === 'programs') renderPrograms(content);
     if (page === 'leadership') renderLeadership(content);
     if (page === 'gallery') renderGallery(content);
+    if (page === 'welfare') renderWelfare(content);
+    if (page === 'sports') renderSports(content);
+    if (page === 'business') renderBusiness(content);
 
     document.dispatchEvent(new CustomEvent('cms-ready', { detail: content }));
   }
