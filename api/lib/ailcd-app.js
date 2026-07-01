@@ -94,8 +94,8 @@ export async function findApplicationByEmailAndReference(supabase, email, refere
   return null;
 }
 
-/** Applications close at midnight at the end of 27 June 2026 (AEST, UTC+10). */
-export const AILCD_EOI_DEADLINE_ISO = '2026-06-28T00:00:00+10:00';
+/** Applications close at midnight at the end of 3 July 2026 (AEST, UTC+10). */
+export const AILCD_EOI_DEADLINE_ISO = '2026-07-04T00:00:00+10:00';
 
 export function getAilcdDeadlineDate() {
   return new Date(AILCD_EOI_DEADLINE_ISO);
@@ -110,7 +110,7 @@ export function getAilcdDeadlinePayload(at = new Date()) {
   return {
     deadline: AILCD_EOI_DEADLINE_ISO,
     deadlineMs: deadline.getTime(),
-    displayClose: 'midnight on 27 June 2026 (AEST)',
+    displayClose: 'midnight on 3 July 2026 (AEST)',
     open: isAilcdApplicationsOpen(at),
     serverTime: at.toISOString()
   };

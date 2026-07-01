@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   if (!isAilcdApplicationsOpen()) {
     res.status(403).json({
-      error: 'Expressions of interest closed at midnight on 27 June 2026 (AEST). You can still check an existing application using your email above.'
+      error: 'Expressions of interest closed at midnight on 3 July 2026 (AEST). You can still check an existing application using your email above.'
     });
     return;
   }

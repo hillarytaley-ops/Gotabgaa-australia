@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         res.status(404).json({
           error: isAilcdApplicationsOpen()
             ? 'No application found for this email. If you have not applied yet, complete the form below.'
-            : 'No application found for this email. Expressions of interest closed at midnight on 27 June 2026 (AEST).'
+            : 'No application found for this email. Expressions of interest closed at midnight on 3 July 2026 (AEST).'
         });
         return;
       }
