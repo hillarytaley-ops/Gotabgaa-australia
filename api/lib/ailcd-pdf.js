@@ -158,7 +158,14 @@ function drawCoverPage(doc, applications, generatedAt) {
   y += 8;
 
   drawIndexTable(doc, applications, y);
-  drawPageFooter(doc, 1);
+}
+
+function addRegisterFooters(doc) {
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p += 1) {
+    doc.setPage(p);
+    drawPageFooter(doc, p);
+  }
 }
 
 function drawIndexTable(doc, applications, startY) {
@@ -572,7 +579,8 @@ function drawApplication(doc, app, index, total, pageNumRef) {
   drawPageFooter(doc, pageNumRef.value);
 }
 
-export function buildAilcdApplicationsPdf(applications) {
+export function buildAilcdApplicationsPdf(applications, options = {}) {
+  const full = options.full === true;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const generatedAt = new Date();
   const sorted = [...applications].sort((a, b) => {
@@ -583,10 +591,14 @@ export function buildAilcdApplicationsPdf(applications) {
 
   drawCoverPage(doc, sorted, generatedAt);
 
-  const pageNumRef = { value: 1 };
-  sorted.forEach((app, index) => {
-    drawApplication(doc, app, index, sorted.length, pageNumRef);
-  });
+  if (full) {
+    const pageNumRef = { value: doc.internal.getNumberOfPages() };
+    sorted.forEach((app, index) => {
+      drawApplication(doc, app, index, sorted.length, pageNumRef);
+    });
+  } else {
+    addRegisterFooters(doc);
+  }
 
   return Buffer.from(doc.output('arraybuffer'));
 }

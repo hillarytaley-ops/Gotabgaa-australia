@@ -1827,12 +1827,13 @@
     return rows.join('') || '<p class="form-hint">No detail data</p>';
   }
 
-  async function downloadAilcdPdfClient() {
-    const res = await authFetch('/api/ailcd-applications?format=pdf');
+  async function downloadAilcdPdfClient(full = false) {
+    const scope = full ? 'full' : 'register';
+    const res = await authFetch(`/api/ailcd-applications?format=pdf&scope=${scope}`);
     const blob = await res.blob();
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `ailcd-applications-${new Date().toISOString().slice(0, 10)}.pdf`;
+    link.download = `ailcd-eoi-${scope}-${new Date().toISOString().slice(0, 10)}.pdf`;
     link.click();
     URL.revokeObjectURL(link.href);
   }
@@ -1875,11 +1876,12 @@
       <div class="list-item__header">
         <h3>Leadership EOI submissions (${applications.length}${unread ? ` · ${unread} new` : ''})</h3>
         <div class="list-item__actions">
-          <button type="button" class="btn btn--outline btn--sm" id="exportAilcdPdf">Download PDF</button>
+          <button type="button" class="btn btn--primary btn--sm" id="exportAilcdPdf">Download register PDF</button>
+          <button type="button" class="btn btn--outline btn--sm" id="exportAilcdPdfFull">Download full PDF</button>
           <button type="button" class="btn btn--outline btn--sm" id="exportAilcdCsv">Download CSV</button>
         </div>
       </div>
-      <p class="form-hint">Expand an application to view full details. Data is admin-only.</p>
+      <p class="form-hint">Use <strong>Download register PDF</strong> for the summary index (cover page + applicant table). Use <strong>Download full PDF</strong> when you need every application in detail.</p>
       <div id="ailcdApplicationsList">
         ${applications.map(a => `
           <details class="list-item inbox-item membership-reg-item ${a.read ? 'inbox-item--read' : ''}">
@@ -1940,17 +1942,36 @@
         const btn = card.querySelector('#exportAilcdPdf');
         if (btn) {
           btn.disabled = true;
-          btn.textContent = 'Preparing PDF…';
+          btn.textContent = 'Preparing…';
         }
         try {
-          await downloadAilcdPdfClient();
-          showStatus('All applications downloaded as PDF.', 'success');
+          await downloadAilcdPdfClient(false);
+          showStatus('EOI register PDF downloaded.', 'success');
         } catch (err) {
           showStatus(err.message || 'Could not generate PDF.', 'error');
         } finally {
           if (btn) {
             btn.disabled = false;
-            btn.textContent = 'Download PDF';
+            btn.textContent = 'Download register PDF';
+          }
+        }
+      });
+
+      card.querySelector('#exportAilcdPdfFull')?.addEventListener('click', async () => {
+        const btn = card.querySelector('#exportAilcdPdfFull');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Preparing…';
+        }
+        try {
+          await downloadAilcdPdfClient(true);
+          showStatus('Full EOI applications PDF downloaded.', 'success');
+        } catch (err) {
+          showStatus(err.message || 'Could not generate PDF.', 'error');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Download full PDF';
           }
         }
       });

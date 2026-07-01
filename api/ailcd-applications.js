@@ -101,8 +101,10 @@ export default async function handler(req, res) {
       }
 
       if (req.query?.format === 'pdf') {
-        const pdf = buildAilcdApplicationsPdf(applications);
-        const filename = `ailcd-applications-${new Date().toISOString().slice(0, 10)}.pdf`;
+        const full = req.query?.scope === 'full';
+        const pdf = buildAilcdApplicationsPdf(applications, { full });
+        const suffix = full ? 'full' : 'register';
+        const filename = `ailcd-eoi-${suffix}-${new Date().toISOString().slice(0, 10)}.pdf`;
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.status(200).send(pdf);
