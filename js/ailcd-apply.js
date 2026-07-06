@@ -10,8 +10,8 @@
   ];
 
   const STATUS_STORAGE_KEY = 'gotabgaaEoiStatus';
-  const EOI_DEADLINE_ISO = '2026-07-04T00:00:00+10:00';
-  const EOI_CLOSED_MESSAGE = 'Expressions of interest closed at midnight on 3 July 2026 (AEST). You can still check an existing application using your email above.';
+  const EOI_DEADLINE_ISO = '2026-07-11T00:00:00+10:00';
+  const EOI_CLOSED_MESSAGE = 'Expressions of interest closed at midnight on 10 July 2026 (AEST). You can still check an existing application using your email above.';
 
   let currentStep = 0;
   let signaturePad = null;

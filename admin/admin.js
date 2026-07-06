@@ -1319,7 +1319,7 @@
     return `
       <div class="card card--notice">
         <p><strong>Public form:</strong> <a href="../ailcd-apply.html" target="_blank" rel="noopener">ailcd-apply.html</a> — Gotabgaa Interim Leadership Expression of Interest. Share this link with applicants.</p>
-        <p class="form-hint">Applications close at <strong>midnight on 3 July 2026 (AEST)</strong>. After that, new submissions are blocked; applicants can still check status on the public form.</p>
+        <p class="form-hint">Applications close at <strong>midnight on 10 July 2026 (AEST)</strong>. After that, new submissions are blocked; applicants can still check status on the public form.</p>
       </div>
       <div class="card" id="ailcdApplicationsCard">
         <h3>Leadership EOI submissions</h3>
