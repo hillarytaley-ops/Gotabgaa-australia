@@ -321,7 +321,6 @@
       `).join('');
     }
 
-    const eventsPage = content.pages?.events;
     if (eventsPage?.typesHeader) {
       const header = document.querySelector('.events-types .section__header');
       if (header) {
