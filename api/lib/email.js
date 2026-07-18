@@ -8,10 +8,25 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function siteUrl() {
+  return String(process.env.SITE_URL || 'https://gotabgaa-australia.vercel.app').replace(/\/$/, '');
+}
+
+export function isEmailConfigured() {
+  return Boolean(process.env.RESEND_API_KEY);
+}
+
 export async function sendEmail({ to, subject, html, text }) {
   const key = process.env.RESEND_API_KEY;
-  if (!key || !to) {
-    return { ok: false, skipped: true, reason: 'Email not configured or missing recipient' };
+  if (!key) {
+    return {
+      ok: false,
+      skipped: true,
+      reason: 'RESEND_API_KEY is not set in Vercel. Add it under Project Settings → Environment Variables, then redeploy.'
+    };
+  }
+  if (!to) {
+    return { ok: false, skipped: true, reason: 'Missing recipient email' };
   }
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -103,7 +118,7 @@ export async function sendMembershipApproved({
         : 'Your Gotabgaa Australia membership has been approved.'}</p>
       <p>Your membership ID is <strong>${escapeHtml(membershipId)}</strong> (keep this for your records).</p>
       ${loginSection}
-      <p>After setting your password, sign in at <a href="https://gotabgaa-australia.vercel.app/login.html">the Sign In page</a> with your <strong>email and password</strong>.</p>
+      <p>After setting your password, sign in at <a href="${escapeHtml(siteUrl())}/login.html">the Sign In page</a> with your <strong>email and password</strong>.</p>
       ${paySection}
     </div>
   `;

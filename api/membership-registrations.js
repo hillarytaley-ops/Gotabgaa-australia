@@ -316,7 +316,7 @@ export default async function handler(req, res) {
           console.error('[membership-approve] auth provision failed', err);
         }
 
-        await sendMembershipApproved({
+        const emailResult = await sendMembershipApproved({
           to: row.email,
           name: row.name,
           membershipId,
@@ -333,7 +333,10 @@ export default async function handler(req, res) {
           memberStatus: 'active',
           paymentReference: reference,
           authUserId: loginInvite?.authUserId || null,
-          loginInviteSent: Boolean(loginInvite?.passwordSetupLink),
+          passwordLinkReady: Boolean(loginInvite?.passwordSetupLink),
+          emailSent: emailResult?.ok === true,
+          emailSkipped: emailResult?.skipped === true,
+          emailError: emailResult?.error || emailResult?.reason || null,
           authError
         });
         return;
@@ -381,11 +384,12 @@ export default async function handler(req, res) {
 
         let loginInvite = null;
         let authError = null;
+        let emailResult = null;
         if (memberStatus === 'active') {
           try {
             loginInvite = await provisionMemberLogin(supabase, row, membershipId);
             const paymentConfig = await loadPaymentConfig();
-            await sendMembershipApproved({
+            emailResult = await sendMembershipApproved({
               to: row.email,
               name: row.name,
               membershipId,
@@ -407,7 +411,10 @@ export default async function handler(req, res) {
           membershipId,
           memberStatus,
           authUserId: loginInvite?.authUserId || null,
-          loginInviteSent: Boolean(loginInvite?.passwordSetupLink),
+          passwordLinkReady: Boolean(loginInvite?.passwordSetupLink),
+          emailSent: emailResult?.ok === true,
+          emailSkipped: emailResult?.skipped === true,
+          emailError: emailResult?.error || emailResult?.reason || null,
           authError
         });
         return;

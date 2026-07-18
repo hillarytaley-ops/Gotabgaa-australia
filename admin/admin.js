@@ -92,6 +92,23 @@
     }
   }
 
+  function formatMemberEmailStatus(prefix, data) {
+    const idPart = data.membershipId ? ` ID: ${data.membershipId}.` : '';
+    if (data.emailSent) {
+      return `${prefix}.${idPart} Password setup email sent to the member.`;
+    }
+    if (data.emailSkipped || data.emailError) {
+      return `${prefix}.${idPart} Email NOT sent: ${data.emailError || 'email not configured'}. Add RESEND_API_KEY in Vercel, redeploy, then click Send password setup.`;
+    }
+    if (data.authError) {
+      return `${prefix}.${idPart} Login setup issue: ${data.authError}`;
+    }
+    if (data.passwordLinkReady) {
+      return `${prefix}.${idPart} Password link created, but email status unknown.`;
+    }
+    return `${prefix}.${idPart}`;
+  }
+
   function showStatus(msg, type = '') {
     els.statusBar.hidden = false;
     els.statusBar.textContent = msg;
@@ -1686,12 +1703,7 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Approval failed');
-            showStatus(
-              data.loginInviteSent
-                ? `Member approved. ID: ${data.membershipId}. Password setup email sent.`
-                : `Member approved. ID: ${data.membershipId}.${data.authError ? ` Login setup note: ${data.authError}` : ''}`,
-              data.authError && !data.loginInviteSent ? 'error' : 'success'
-            );
+            showStatus(formatMemberEmailStatus('Member approved', data), data.emailSent ? 'success' : 'error');
 
             const item = card.querySelector(`.membership-reg-item[data-id="${CSS.escape(btn.dataset.id)}"]`);
             if (item && data.membershipId) {
@@ -1742,12 +1754,7 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Could not sync member login');
-            showStatus(
-              data.loginInviteSent
-                ? `Member login synced. ID: ${data.membershipId}. Password setup email sent.`
-                : `Member login synced. ID: ${data.membershipId}.${data.authError ? ` Note: ${data.authError}` : ''}`,
-              data.authError && !data.loginInviteSent ? 'error' : 'success'
-            );
+            showStatus(formatMemberEmailStatus('Password setup', data), data.emailSent ? 'success' : 'error');
             loadMembershipRegistrationsPanel();
           } catch (err) {
             if (isAuthError(err)) return;

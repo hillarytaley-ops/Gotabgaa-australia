@@ -1,0 +1,48 @@
+GOTABGAA AUSTRALIA — RESEND EMAIL SETUP (password / approval emails)
+====================================================================
+
+The site already sends emails through Resend when a member is approved
+or when you click "Send password setup". You only need API keys in Vercel.
+
+STEP 1 — Create a Resend account
+  https://resend.com/signup
+
+STEP 2 — Create an API key
+  Resend dashboard → API Keys → Create API Key
+  Copy the key (starts with re_...)
+
+STEP 3 — (Recommended) Verify your domain
+  Resend → Domains → Add domain (e.g. gotabgaaaustralia.org)
+  Add the DNS records Resend shows (on your domain registrar)
+  Wait until status is Verified
+
+  Until a domain is verified, Resend only lets you send TO your own
+  account email address (good for testing).
+
+STEP 4 — Add Vercel environment variables
+  Vercel → your project → Settings → Environment Variables
+
+  RESEND_API_KEY = re_xxxxxxxx (from Step 2)
+  EMAIL_FROM     = Gotabgaa Australia <noreply@your-verified-domain.com>
+                   OR for quick testing:
+                   Gotabgaa Australia <onboarding@resend.dev>
+  SITE_URL       = https://gotabgaa-australia.vercel.app
+
+STEP 5 — Redeploy
+  Vercel → Deployments → … on latest → Redeploy
+
+STEP 6 — Test
+  Admin → Memberships → Approve a member
+    OR click "Send password setup" on an approved member
+  Admin status should say: "Password setup email sent to the member."
+  Check the member's inbox (and spam)
+
+TROUBLESHOOTING
+  "Email NOT sent: RESEND_API_KEY is not set..."
+    → Variable missing or no redeploy after adding it
+
+  Resend dashboard shows bounce / not delivered
+    → Domain not verified, or sending to an address Resend blocks on free/unverified setup
+
+  Member never gets email but admin says sent
+    → Check spam; confirm the member email is correct in the registration
