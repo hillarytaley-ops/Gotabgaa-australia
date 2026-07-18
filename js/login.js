@@ -4,16 +4,22 @@
 (function () {
   const SESSION_KEY = 'gaa_member_session';
   const ADMIN_TOKEN_KEY = 'gaa_admin_token';
+  const REMEMBER_EMAIL_KEY = 'gaa_member_remember_email';
 
   const els = {
-    tabs: document.querySelectorAll('.signin-hub__tab'),
-    panels: document.querySelectorAll('.signin-hub__panel'),
+    tabs: document.querySelectorAll('.auth-card__tab, .signin-hub__tab'),
+    panels: document.querySelectorAll('.auth-card__panel, .signin-hub__panel'),
     memberForm: document.getElementById('memberLoginForm'),
     memberError: document.getElementById('memberLoginError'),
     memberBtn: document.getElementById('memberLoginBtn'),
+    memberEmail: document.getElementById('memberEmail'),
+    memberId: document.getElementById('memberId'),
+    rememberEmail: document.getElementById('rememberMemberEmail'),
     adminForm: document.getElementById('adminLoginForm'),
     adminError: document.getElementById('adminLoginError'),
-    adminBtn: document.getElementById('adminLoginBtn')
+    adminBtn: document.getElementById('adminLoginBtn'),
+    adminPassword: document.getElementById('adminPassword'),
+    togglePassword: document.getElementById('toggleAdminPassword')
   };
 
   function getParams() {
@@ -75,6 +81,11 @@
     });
     showError(els.memberError, '');
     showError(els.adminError, '');
+
+    window.setTimeout(() => {
+      if (isLeadership) els.adminPassword?.focus();
+      else els.memberEmail?.focus();
+    }, 0);
   }
 
   function initTabFromUrl() {
@@ -84,6 +95,45 @@
       return;
     }
     switchTab('member');
+  }
+
+  function restoreRememberedEmail() {
+    try {
+      const saved = localStorage.getItem(REMEMBER_EMAIL_KEY);
+      if (saved && els.memberEmail) {
+        els.memberEmail.value = saved;
+        if (els.rememberEmail) els.rememberEmail.checked = true;
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function persistRememberedEmail(email) {
+    try {
+      if (els.rememberEmail?.checked && email) {
+        localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+      } else {
+        localStorage.removeItem(REMEMBER_EMAIL_KEY);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function initPasswordToggle() {
+    if (!els.togglePassword || !els.adminPassword) return;
+
+    els.togglePassword.addEventListener('click', () => {
+      const showing = els.adminPassword.type === 'text';
+      els.adminPassword.type = showing ? 'password' : 'text';
+      els.togglePassword.setAttribute('aria-pressed', showing ? 'false' : 'true');
+      els.togglePassword.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      const showLabel = els.togglePassword.querySelector('[data-show]');
+      const hideLabel = els.togglePassword.querySelector('[data-hide]');
+      if (showLabel) showLabel.hidden = !showing;
+      if (hideLabel) hideLabel.hidden = showing;
+    });
   }
 
   async function redirectIfAlreadySignedIn() {
@@ -123,21 +173,28 @@
     e.preventDefault();
     showError(els.memberError, '');
 
-    const email = document.getElementById('memberEmail')?.value.trim();
-    const membershipId = document.getElementById('memberId')?.value.trim().toUpperCase();
+    const email = els.memberEmail?.value.trim().toLowerCase();
+    const membershipId = els.memberId?.value.trim().toUpperCase();
 
     if (!email || !membershipId) {
       showError(els.memberError, 'Please enter your email and membership ID.');
       return;
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError(els.memberError, 'Please enter a valid email address.');
+      els.memberEmail?.focus();
+      return;
+    }
+
     if (isPlaceholderMembershipId(membershipId)) {
       showError(els.memberError, 'Enter your real membership ID from admin approval — not the placeholder text.');
+      els.memberId?.focus();
       return;
     }
 
     els.memberBtn.disabled = true;
-    els.memberBtn.textContent = 'Verifying…';
+    els.memberBtn.textContent = 'Signing in…';
 
     try {
       const member = await verifyMember(email, membershipId);
@@ -145,14 +202,14 @@
         showError(els.memberError, 'Your membership is inactive. Contact Gotabgaa Australia if you believe this is an error.');
         return;
       }
+      persistRememberedEmail(email);
       saveMemberSession(member);
-      const dest = getParams().get('return') === 'members' ? 'members.html' : 'members.html';
-      window.location.href = dest;
+      window.location.href = 'members.html';
     } catch (err) {
-      showError(els.memberError, err.message || 'Could not sign in.');
+      showError(els.memberError, err.message || 'Could not sign in. Check your email and membership ID.');
     } finally {
       els.memberBtn.disabled = false;
-      els.memberBtn.textContent = 'Access Dashboard';
+      els.memberBtn.textContent = 'Sign in';
     }
   }
 
@@ -160,9 +217,10 @@
     e.preventDefault();
     showError(els.adminError, '');
 
-    const password = document.getElementById('adminPassword')?.value;
+    const password = els.adminPassword?.value;
     if (!password?.trim()) {
-      showError(els.adminError, 'Please enter the admin password.');
+      showError(els.adminError, 'Please enter your password.');
+      els.adminPassword?.focus();
       return;
     }
 
@@ -178,10 +236,10 @@
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.error || `Login failed (${res.status})`);
+        throw new Error(data.error || `Sign in failed (${res.status})`);
       }
       if (!data.token) {
-        throw new Error('Login succeeded but no token returned.');
+        throw new Error('Sign in succeeded but no token returned.');
       }
 
       saveAdminToken(data.token);
@@ -192,10 +250,10 @@
       }
       window.location.href = 'admin/';
     } catch (err) {
-      showError(els.adminError, err.message || 'Could not sign in.');
+      showError(els.adminError, err.message || 'Could not sign in. Check your password and try again.');
     } finally {
       els.adminBtn.disabled = false;
-      els.adminBtn.textContent = 'Open Admin Dashboard';
+      els.adminBtn.textContent = 'Sign in';
     }
   }
 
@@ -203,6 +261,8 @@
     if (await redirectIfAlreadySignedIn()) return;
 
     initTabFromUrl();
+    restoreRememberedEmail();
+    initPasswordToggle();
 
     els.tabs.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -218,6 +278,17 @@
 
     els.memberForm?.addEventListener('submit', handleMemberLogin);
     els.adminForm?.addEventListener('submit', handleAdminLogin);
+
+    if (els.memberId) {
+      els.memberId.addEventListener('input', () => {
+        const start = els.memberId.selectionStart;
+        const end = els.memberId.selectionEnd;
+        els.memberId.value = els.memberId.value.toUpperCase();
+        if (typeof start === 'number' && typeof end === 'number') {
+          els.memberId.setSelectionRange(start, end);
+        }
+      });
+    }
   }
 
   if (document.readyState === 'loading') {

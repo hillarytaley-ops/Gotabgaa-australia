@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=21">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/login.html">
 </head>
@@ -28,7 +28,7 @@
         <li><a href="index.html" class="nav__link">Home</a></li>
         <li><a href="about.html" class="nav__link">About</a></li>
         <li><a href="programs.html" class="nav__link">Programs</a></li>
-                <li><a href="welfare.html" class="nav__link">Welfare</a></li>
+        <li><a href="welfare.html" class="nav__link">Welfare</a></li>
         <li><a href="sports.html" class="nav__link">Sports</a></li>
         <li><a href="business.html" class="nav__link">Business</a></li>
         <li><a href="events.html" class="nav__link">Events</a></li>
@@ -41,97 +41,83 @@
     </nav>
   </header>
 
-  <section class="page-hero page-hero--compact">
-    <div class="tribal-border tribal-border--top" aria-hidden="true">
-      <div class="tribal-border__track"></div>
-    </div>
-    <div class="container">
-      <span class="section__tag">Member &amp; Leadership</span>
-      <h1 class="page-hero__title">Sign In</h1>
-      <p class="page-hero__desc">One place for registered members and authorised leadership volunteers.</p>
-    </div>
-    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
-      <div class="tribal-border__track tribal-border__track--reverse"></div>
-    </div>
-  </section>
-
-  <section class="signin-hub section">
-    <div class="container">
-      <div class="signin-hub__wrap">
-        <div class="signin-hub__tabs" role="tablist" aria-label="Sign in type">
-          <button type="button" class="signin-hub__tab is-active" role="tab" id="tabMember" aria-selected="true" aria-controls="panelMember" data-tab="member">Member</button>
-          <button type="button" class="signin-hub__tab" role="tab" id="tabLeadership" aria-selected="false" aria-controls="panelLeadership" data-tab="leadership">Leadership</button>
+  <main class="auth-page">
+    <div class="auth-page__bg" aria-hidden="true"></div>
+    <div class="container auth-page__container">
+      <div class="auth-card">
+        <div class="auth-card__brand">
+          <img src="assets/logo-round.png" alt="" class="auth-card__logo logo-circle" width="72" height="72">
+          <p class="auth-card__org">Gotabgaa Australia</p>
+          <h1 class="auth-card__title">Sign in</h1>
+          <p class="auth-card__subtitle">Access your member dashboard or leadership admin portal.</p>
         </div>
 
-        <div class="signin-hub__card members-gate__card">
-          <div class="signin-hub__panel is-active" id="panelMember" role="tabpanel" aria-labelledby="tabMember">
-            <h2>Member sign in</h2>
-            <p class="members-gate__hint">Enter the email you registered with and your membership ID (issued after admin approval).</p>
-            <form id="memberLoginForm" class="members-gate__form" novalidate>
+        <div class="auth-card__tabs" role="tablist" aria-label="Sign in type">
+          <button type="button" class="auth-card__tab is-active" role="tab" id="tabMember" aria-selected="true" aria-controls="panelMember" data-tab="member">Member</button>
+          <button type="button" class="auth-card__tab" role="tab" id="tabLeadership" aria-selected="false" aria-controls="panelLeadership" data-tab="leadership">Leadership</button>
+        </div>
+
+        <div class="auth-card__body">
+          <div class="auth-card__panel is-active" id="panelMember" role="tabpanel" aria-labelledby="tabMember">
+            <h2 class="auth-card__panel-title">Member sign in</h2>
+            <p class="auth-card__hint">Use the email from your registration and the membership ID emailed after approval.</p>
+            <form id="memberLoginForm" class="auth-form" novalidate>
               <div class="form__group">
                 <label for="memberEmail">Email address</label>
-                <input type="email" id="memberEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+                <input type="email" id="memberEmail" name="email" required autocomplete="username" inputmode="email" placeholder="you@example.com">
               </div>
               <div class="form__group">
                 <label for="memberId">Membership ID</label>
-                <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="e.g. GAA-MEM-ABC12345" spellcheck="false" autocapitalize="characters">
+                <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="GAA-MEM-XXXXXXXX" spellcheck="false" autocapitalize="characters">
+                <p class="auth-form__help">Issued by Gotabgaa Australia after your registration is approved.</p>
               </div>
-              <p class="form__error members-login-error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
-              <button type="submit" class="btn btn--primary btn--block" id="memberLoginBtn">Access Dashboard</button>
+              <label class="auth-form__remember">
+                <input type="checkbox" id="rememberMemberEmail" name="rememberEmail">
+                <span>Remember my email on this device</span>
+              </label>
+              <p class="form__error auth-form__error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
+              <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="memberLoginBtn">Sign in</button>
             </form>
-            <p class="members-gate__footer">Not a member yet? <a href="join.html">Register here</a>.</p>
+            <p class="auth-card__footer">Not a member yet? <a href="join.html">Register here</a></p>
           </div>
 
-          <div class="signin-hub__panel" id="panelLeadership" role="tabpanel" aria-labelledby="tabLeadership" hidden>
-            <h2>Leadership sign in</h2>
-            <p class="members-gate__hint">For Gotabgaa Australia executive volunteers and authorised web administrators only.</p>
-            <form id="adminLoginForm" class="members-gate__form" novalidate>
+          <div class="auth-card__panel" id="panelLeadership" role="tabpanel" aria-labelledby="tabLeadership" hidden>
+            <h2 class="auth-card__panel-title">Leadership sign in</h2>
+            <p class="auth-card__hint">For authorised Gotabgaa Australia executive volunteers and web administrators.</p>
+            <form id="adminLoginForm" class="auth-form" novalidate>
               <div class="form__group">
-                <label for="adminPassword">Admin password</label>
-                <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter leadership password">
+                <label for="adminPassword">Password</label>
+                <div class="auth-form__password">
+                  <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                  <button type="button" class="auth-form__toggle-pass" id="toggleAdminPassword" aria-label="Show password" aria-pressed="false">
+                    <span class="auth-form__toggle-pass-text" data-show>Show</span>
+                    <span class="auth-form__toggle-pass-text" data-hide hidden>Hide</span>
+                  </button>
+                </div>
               </div>
-              <p class="form__error members-login-error" id="adminLoginError" hidden role="alert" aria-live="polite"></p>
-              <button type="submit" class="btn btn--primary btn--block" id="adminLoginBtn">Open Admin Dashboard</button>
+              <p class="form__error auth-form__error" id="adminLoginError" hidden role="alert" aria-live="polite"></p>
+              <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="adminLoginBtn">Sign in</button>
             </form>
-            <p class="members-gate__footer">Need access? <a href="contact.html">Contact us</a> or email <a href="mailto:info@gotabgaaaustralia.org">info@gotabgaaaustralia.org</a>.</p>
+            <p class="auth-card__footer">Need access? <a href="contact.html">Contact us</a> or email <a href="mailto:info@gotabgaaaustralia.org">info@gotabgaaaustralia.org</a></p>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </main>
 
-  <footer class="footer">
-    <div class="container footer__grid">
-      <div class="footer__brand">
-        <img src="assets/logo-round.png" alt="" class="footer__logo logo-circle">
-        <p>Gotabgaa Australia</p>
-        <p class="footer__tagline">Unity • Heritage • Excellence</p>
-      </div>
-      <div class="footer__nav footer__nav--members">
-        <div class="footer__links">
-          <h4>Members</h4>
-          <ul>
-            <li><a href="join.html">Join</a></li>
-            <li><a href="members.html">Dashboard</a></li>
-          </ul>
-        </div>
-        <div class="footer__links">
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="about.html">About</a></li>
-            <li><a href="events.html">Events</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+  <footer class="footer footer--auth">
     <div class="footer__bottom container">
       <p>&copy; <span data-copyright-year>2026</span> Gotabgaa Australia. All rights reserved.</p>
+      <div class="footer__legal">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="join.html">Join</a>
+      </div>
     </div>
   </footer>
 
-  <script src="js/content-loader.js?v=19"></script>
-  <script src="js/main.js?v=19"></script>
-  <script src="js/login.js?v=19"></script>
+  <script src="js/content-loader.js?v=20"></script>
+  <script src="js/main.js?v=20"></script>
+  <script src="js/login.js?v=21"></script>
 </body>
 </html>
