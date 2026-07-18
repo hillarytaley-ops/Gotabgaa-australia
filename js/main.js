@@ -650,7 +650,10 @@ function lockMobileViewport() {
 
 // 3D tilt on program & leader cards (desktop only)
 function initCitySlider() {
-  const root = document.querySelector('[data-city-slider]');
+  document.querySelectorAll('[data-city-slider]').forEach(initCitySliderRoot);
+}
+
+function initCitySliderRoot(root) {
   if (!root || root.dataset.sliderReady === '1') return;
 
   const slides = Array.from(root.querySelectorAll('[data-slide]'));

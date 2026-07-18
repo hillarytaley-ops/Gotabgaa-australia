@@ -628,6 +628,27 @@
     });
   }
 
+  function applyCitySlides(content) {
+    const slidesData = content.pages?.about?.slides;
+    const sliders = document.querySelectorAll('[data-city-slider]');
+    if (!sliders.length || !slidesData?.length) return;
+
+    sliders.forEach(slider => {
+      const slides = slider.querySelectorAll('[data-slide]');
+      slidesData.forEach((slide, i) => {
+        const el = slides[i];
+        if (!el) return;
+        const img = el.querySelector('.city-slider__img');
+        const label = el.querySelector('.city-slider__label');
+        if (img && slide.image) {
+          img.src = slide.image;
+          if (slide.alt) img.alt = slide.alt;
+        }
+        if (label && slide.label) label.textContent = slide.label;
+      });
+    });
+  }
+
   function applyAbout(content) {
     const about = content.pages?.about;
     if (!about) return;
@@ -655,21 +676,7 @@
     const quote = document.querySelector('.about__quote blockquote');
     if (quote) quote.textContent = about.quote;
 
-    const slider = document.querySelector('[data-city-slider]');
-    if (slider && about.slides?.length) {
-      const slides = slider.querySelectorAll('[data-slide]');
-      about.slides.forEach((slide, i) => {
-        const el = slides[i];
-        if (!el) return;
-        const img = el.querySelector('.city-slider__img');
-        const label = el.querySelector('.city-slider__label');
-        if (img && slide.image) {
-          img.src = slide.image;
-          if (slide.alt) img.alt = slide.alt;
-        }
-        if (label && slide.label) label.textContent = slide.label;
-      });
-    } else {
+    if (!document.querySelector('[data-city-slider]')) {
       const photo = document.querySelector('.about__community-photo');
       if (photo && about.image) {
         photo.src = about.image;
@@ -1072,6 +1079,7 @@
       applyPageHero(page, content.pages);
     }
 
+    applyCitySlides(content);
     if (page === 'about') applyAbout(content);
     if (page === 'contact') applyContact(content);
     if (page === 'events') renderEvents(content);

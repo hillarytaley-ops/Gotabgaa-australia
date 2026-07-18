@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-sub">
@@ -63,7 +63,41 @@
       <div class="booking-portal__grid" id="membershipLayout" hidden>
         <aside class="booking-portal__summary animate-on-scroll" data-animate="fade-right">
           <div class="booking-portal__media">
-            <img src="assets/hero/brisbane-team.png" alt="Gotabgaa Australia community" id="membershipImage">
+            <div class="city-slider city-slider--compact" data-city-slider aria-roledescription="carousel" aria-label="Gotabgaa cities across Australia">
+              <div class="city-slider__viewport">
+                <div class="city-slider__slide is-active" data-slide>
+                  <img src="assets/cities/brisbane.png" alt="Brisbane city skyline" class="city-slider__img" loading="eager" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Brisbane</span>
+                </div>
+                <div class="city-slider__slide" data-slide>
+                  <img src="assets/cities/sydney.png" alt="Sydney Opera House and harbour" class="city-slider__img" loading="lazy" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Sydney</span>
+                </div>
+                <div class="city-slider__slide" data-slide>
+                  <img src="assets/cities/adelaide.png" alt="Adelaide Oval and city skyline" class="city-slider__img" loading="lazy" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Adelaide</span>
+                </div>
+                <div class="city-slider__slide" data-slide>
+                  <img src="assets/cities/perth.png" alt="Perth skyline at sunset" class="city-slider__img" loading="lazy" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Perth</span>
+                </div>
+                <div class="city-slider__slide" data-slide>
+                  <img src="assets/cities/darwin.png" alt="Darwin skyline at sunset" class="city-slider__img" loading="lazy" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Darwin</span>
+                </div>
+                <div class="city-slider__slide" data-slide>
+                  <img src="assets/cities/melbourne.png" alt="Melbourne skyline across the Yarra" class="city-slider__img" loading="lazy" decoding="async">
+                  <span class="city-slider__label">Gotabgaa Melbourne</span>
+                </div>
+              </div>
+              <button type="button" class="city-slider__btn city-slider__btn--prev" data-city-prev aria-label="Previous city">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button type="button" class="city-slider__btn city-slider__btn--next" data-city-next aria-label="Next city">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+              <div class="city-slider__dots" data-city-dots role="tablist" aria-label="Choose city slide"></div>
+            </div>
           </div>
           <div class="booking-portal__body">
             <span class="section__tag">Member Benefits</span>
@@ -173,9 +207,9 @@
   </footer>
 
   <script src="js/site-config.js"></script>
-  <script src="js/content-loader.js?v=19"></script>
+  <script src="js/content-loader.js?v=20"></script>
   <script src="js/payment-instructions.js?v=19"></script>
-  <script src="js/join-membership.js?v=19"></script>
-  <script src="js/main.js?v=19" defer></script>
+  <script src="js/join-membership.js?v=20"></script>
+  <script src="js/main.js?v=20" defer></script>
 </body>
 </html>

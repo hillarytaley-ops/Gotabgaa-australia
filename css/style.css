@@ -2260,11 +2260,26 @@ body.page-sub .section {
   box-shadow: var(--shadow-lg);
 }
 
-.booking-portal__media img {
+.booking-portal__media > img {
   width: 100%;
   height: 220px;
   object-fit: cover;
   display: block;
+}
+
+.booking-portal__media .city-slider--compact {
+  aspect-ratio: 16 / 10;
+  border-radius: 0;
+}
+
+.booking-portal__media .city-slider--compact .city-slider__label {
+  font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+  padding: 40px 16px 32px;
+}
+
+.booking-portal__media .city-slider--compact .city-slider__btn {
+  width: 34px;
+  height: 34px;
 }
 
 .booking-portal__body {

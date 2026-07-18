@@ -65,7 +65,7 @@
       `).join('');
     }
 
-    if (m.image) {
+    if (m.image && !document.querySelector('#membershipPortal [data-city-slider]')) {
       const img = document.getElementById('membershipImage');
       if (img) {
         img.src = m.image;
