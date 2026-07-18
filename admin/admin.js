@@ -539,7 +539,8 @@
         ${field('Mission', 'aboutMission', a.mission, 'textarea')}
         ${field('Vision', 'aboutVision', a.vision, 'textarea')}
         ${field('Quote', 'aboutQuote', a.quote, 'textarea', { full: true })}
-        ${field('Image path', 'aboutImage', a.image)}
+        ${field('Fallback image path', 'aboutImage', a.image)}
+        ${field('City slides (one per line: image|label|alt)', 'aboutSlides', (a.slides || []).map(s => `${s.image}|${s.label || ''}|${s.alt || ''}`).join('\n'), 'textarea', { full: true })}
         ${field('Cities (comma-separated)', 'aboutCities', a.cities.join(', '))}
         ${field('CTA title', 'aboutCtaTitle', a.cta.title)}
         ${field('CTA description', 'aboutCtaDesc', a.cta.description, 'textarea')}
@@ -3269,6 +3270,11 @@
       a.vision = val('aboutVision');
       a.quote = val('aboutQuote');
       a.image = val('aboutImage');
+      a.slides = val('aboutSlides').split('\n').map(line => {
+        const parts = line.split('|').map(s => s.trim());
+        if (!parts[0]) return null;
+        return { image: parts[0], label: parts[1] || '', alt: parts[2] || '' };
+      }).filter(Boolean);
       a.cities = val('aboutCities').split(',').map(s => s.trim()).filter(Boolean);
       a.cta.title = val('aboutCtaTitle');
       a.cta.description = val('aboutCtaDesc');

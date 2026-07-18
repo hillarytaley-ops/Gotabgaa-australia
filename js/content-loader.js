@@ -655,9 +655,25 @@
     const quote = document.querySelector('.about__quote blockquote');
     if (quote) quote.textContent = about.quote;
 
-    const photo = document.querySelector('.about__community-photo');
-    if (photo && about.image) {
-      photo.src = about.image;
+    const slider = document.querySelector('[data-city-slider]');
+    if (slider && about.slides?.length) {
+      const slides = slider.querySelectorAll('[data-slide]');
+      about.slides.forEach((slide, i) => {
+        const el = slides[i];
+        if (!el) return;
+        const img = el.querySelector('.city-slider__img');
+        const label = el.querySelector('.city-slider__label');
+        if (img && slide.image) {
+          img.src = slide.image;
+          if (slide.alt) img.alt = slide.alt;
+        }
+        if (label && slide.label) label.textContent = slide.label;
+      });
+    } else {
+      const photo = document.querySelector('.about__community-photo');
+      if (photo && about.image) {
+        photo.src = about.image;
+      }
     }
 
     const aboutCta = document.querySelector('.about.section + .cta-banner');

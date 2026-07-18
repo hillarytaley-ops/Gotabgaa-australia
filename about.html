@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/about.html">
 </head>
@@ -85,19 +85,53 @@
     <div class="container about__grid">
       <div class="about__visual animate-on-scroll" data-animate="fade-right">
         <div class="about__image-frame">
-          <img src="assets/hero/brisbane-team.png" alt="Gotabgaa Australia community gathering in Brisbane" class="about__community-photo" loading="lazy" decoding="async">
+          <div class="city-slider" data-city-slider aria-roledescription="carousel" aria-label="Gotabgaa cities across Australia">
+            <div class="city-slider__viewport">
+              <div class="city-slider__slide is-active" data-slide>
+                <img src="assets/cities/brisbane.png" alt="Brisbane city skyline" class="city-slider__img" loading="eager" decoding="async">
+                <span class="city-slider__label">Gotabgaa Brisbane</span>
+              </div>
+              <div class="city-slider__slide" data-slide>
+                <img src="assets/cities/sydney.png" alt="Sydney Opera House and harbour" class="city-slider__img" loading="lazy" decoding="async">
+                <span class="city-slider__label">Gotabgaa Sydney</span>
+              </div>
+              <div class="city-slider__slide" data-slide>
+                <img src="assets/cities/adelaide.png" alt="Adelaide Oval and city skyline" class="city-slider__img" loading="lazy" decoding="async">
+                <span class="city-slider__label">Gotabgaa Adelaide</span>
+              </div>
+              <div class="city-slider__slide" data-slide>
+                <img src="assets/cities/perth.png" alt="Perth skyline at sunset" class="city-slider__img" loading="lazy" decoding="async">
+                <span class="city-slider__label">Gotabgaa Perth</span>
+              </div>
+              <div class="city-slider__slide" data-slide>
+                <img src="assets/cities/darwin.png" alt="Darwin skyline at sunset" class="city-slider__img" loading="lazy" decoding="async">
+                <span class="city-slider__label">Gotabgaa Darwin</span>
+              </div>
+              <div class="city-slider__slide" data-slide>
+                <img src="assets/cities/melbourne.png" alt="Melbourne skyline across the Yarra" class="city-slider__img" loading="lazy" decoding="async">
+                <span class="city-slider__label">Gotabgaa Melbourne</span>
+              </div>
+            </div>
+            <button type="button" class="city-slider__btn city-slider__btn--prev" data-city-prev aria-label="Previous city">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="city-slider__btn city-slider__btn--next" data-city-next aria-label="Next city">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div class="city-slider__dots" data-city-dots role="tablist" aria-label="Choose city slide"></div>
+          </div>
         </div>
       </div>
       <div class="about__content animate-on-scroll" data-animate="fade-left">
         <div class="about__regions">
           <h3>Our Reach Across Australia</h3>
           <div class="about__tags">
-            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="0">Sydney</span>
-            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="1">Melbourne</span>
-            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="2">Brisbane</span>
+            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="0">Brisbane</span>
+            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="1">Sydney</span>
+            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="2">Adelaide</span>
             <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="3">Perth</span>
-            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="4">Adelaide</span>
-            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="5">Canberra</span>
+            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="4">Darwin</span>
+            <span class="city-tag animate-on-scroll" data-animate="pop" data-delay="5">Melbourne</span>
           </div>
         </div>
         <div class="about__quote">
@@ -178,8 +212,8 @@
   </footer>
 
   <script src="js/site-config.js"></script>
-  <script src="js/content-loader.js?v=19"></script>
+  <script src="js/content-loader.js?v=20"></script>
   <script src="floating-social/floating-social.js" defer></script>
-  <script src="js/main.js?v=19" defer></script>
+  <script src="js/main.js?v=20" defer></script>
 </body>
 </html>

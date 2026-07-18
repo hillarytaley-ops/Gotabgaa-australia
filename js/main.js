@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPageHeroLogos();
   initAdminPortalLinks();
   initMemberPortalLinks();
+  initCitySlider();
   lockMobileViewport();
   window.addEventListener('resize', lockMobileViewport, { passive: true });
 });
@@ -52,6 +53,7 @@ document.addEventListener('cms-ready', () => {
   initScrollAnimations();
   initTiltCards();
   initHeroPhotoFit();
+  initCitySlider();
   lockMobileViewport();
 });
 
@@ -647,6 +649,85 @@ function lockMobileViewport() {
 }
 
 // 3D tilt on program & leader cards (desktop only)
+function initCitySlider() {
+  const root = document.querySelector('[data-city-slider]');
+  if (!root || root.dataset.sliderReady === '1') return;
+
+  const slides = Array.from(root.querySelectorAll('[data-slide]'));
+  if (slides.length < 2) return;
+
+  const prevBtn = root.querySelector('[data-city-prev]');
+  const nextBtn = root.querySelector('[data-city-next]');
+  const dotsWrap = root.querySelector('[data-city-dots]');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let index = Math.max(0, slides.findIndex(s => s.classList.contains('is-active')));
+  let timer = null;
+  const INTERVAL = 5000;
+
+  root.dataset.sliderReady = '1';
+
+  if (dotsWrap) {
+    dotsWrap.innerHTML = slides.map((_, i) =>
+      `<button type="button" class="city-slider__dot${i === index ? ' is-active' : ''}" role="tab" aria-label="Show slide ${i + 1}" aria-selected="${i === index ? 'true' : 'false'}" data-city-dot="${i}"></button>`
+    ).join('');
+  }
+
+  const dots = Array.from(root.querySelectorAll('[data-city-dot]'));
+
+  function goTo(next) {
+    const target = ((next % slides.length) + slides.length) % slides.length;
+    if (target === index) return;
+    slides[index].classList.remove('is-active');
+    if (dots[index]) {
+      dots[index].classList.remove('is-active');
+      dots[index].setAttribute('aria-selected', 'false');
+    }
+    index = target;
+    slides[index].classList.add('is-active');
+    if (dots[index]) {
+      dots[index].classList.add('is-active');
+      dots[index].setAttribute('aria-selected', 'true');
+    }
+  }
+
+  function startAuto() {
+    if (reduceMotion) return;
+    stopAuto();
+    timer = window.setInterval(() => goTo(index + 1), INTERVAL);
+  }
+
+  function stopAuto() {
+    if (timer) {
+      window.clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  prevBtn?.addEventListener('click', () => {
+    goTo(index - 1);
+    startAuto();
+  });
+  nextBtn?.addEventListener('click', () => {
+    goTo(index + 1);
+    startAuto();
+  });
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goTo(Number(dot.dataset.cityDot));
+      startAuto();
+    });
+  });
+
+  root.addEventListener('mouseenter', stopAuto);
+  root.addEventListener('mouseleave', startAuto);
+  root.addEventListener('focusin', stopAuto);
+  root.addEventListener('focusout', (e) => {
+    if (!root.contains(e.relatedTarget)) startAuto();
+  });
+
+  startAuto();
+}
+
 function initTiltCards() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (window.matchMedia('(max-width: 768px)').matches) return;

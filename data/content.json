@@ -122,9 +122,17 @@
       "lead": "We are an independent Australian Kalenjin community association dedicated to connecting, uplifting, and empowering individuals and families across the continent.",
       "mission": "Inspire, connect, and economically empower our members through education, networking, investment opportunities, and cultural awareness in Australia.",
       "vision": "Unite members and provide a platform where talent, leadership, culture, and innovation are nurtured — bridging Kenya and Australia.",
-      "cities": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra"],
+      "cities": ["Brisbane", "Sydney", "Adelaide", "Perth", "Darwin", "Melbourne"],
       "quote": "From the savannas of Kenya to the shores of Australia — our roots unite us, our dreams propel us forward.",
-      "image": "assets/hero/brisbane-team.png",
+      "image": "assets/cities/brisbane.png",
+      "slides": [
+        { "image": "assets/cities/brisbane.png", "label": "Gotabgaa Brisbane", "alt": "Brisbane city skyline" },
+        { "image": "assets/cities/sydney.png", "label": "Gotabgaa Sydney", "alt": "Sydney Opera House and harbour" },
+        { "image": "assets/cities/adelaide.png", "label": "Gotabgaa Adelaide", "alt": "Adelaide Oval and city skyline" },
+        { "image": "assets/cities/perth.png", "label": "Gotabgaa Perth", "alt": "Perth skyline at sunset" },
+        { "image": "assets/cities/darwin.png", "label": "Gotabgaa Darwin", "alt": "Darwin skyline at sunset" },
+        { "image": "assets/cities/melbourne.png", "label": "Gotabgaa Melbourne", "alt": "Melbourne skyline across the Yarra" }
+      ],
       "cta": { "title": "Ready to connect?", "description": "Join our community and be part of something meaningful.", "button": "Get in Touch", "buttonUrl": "contact.html" }
     },
     "programs": {
