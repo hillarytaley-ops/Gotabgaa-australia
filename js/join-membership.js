@@ -141,7 +141,10 @@
         });
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || data.detail || 'Registration failed');
+        if (!res.ok) {
+          const detail = data.detail && data.detail !== data.error ? ` (${data.detail})` : '';
+          throw new Error((data.error || 'Registration failed') + detail);
+        }
 
         success.textContent = data.message || 'Registration received!';
         success.hidden = false;
