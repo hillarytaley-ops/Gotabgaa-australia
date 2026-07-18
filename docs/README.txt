@@ -15,6 +15,31 @@ MEMBERSHIP PAYMENTS & TAX GUIDE
   PayID/EFT payment approach, GST & record-keeping overview for leadership.
   To re-print PDF: open the .html file in Chrome → Print → Save as PDF.
 
+COMMUNITY LEADERS INVITATION LETTER (July 2026)
+  PDF:  docs\Gotabgaa-Community-Leaders-Invitation-Letter.pdf
+  HTML: docs\Gotabgaa-Community-Leaders-Invitation-Letter.html
+  Invitation to Kalenjin association leaders — umbrella association dialogue.
+  Regenerate PDF: node scripts/generate-leaders-letter-pdf.mjs
+
+MEMBERS UPDATE LETTER (July 2026)
+  PDF:  docs\Gotabgaa-Members-Update-Letter.pdf
+  HTML: docs\Gotabgaa-Members-Update-Letter.html
+  Update to members confirming the leaders' invitation was sent, highlighting shared points.
+  Regenerate PDF: node scripts/generate-members-update-pdf.mjs
+
+MISSION & VISION STATEMENT (July 2026)
+  PDF:  docs\Gotabgaa-Australia-Mission-Vision.pdf
+  HTML: docs\Gotabgaa-Australia-Mission-Vision.html
+  National umbrella mission, vision, core pillars, strategic objectives, and programmes.
+  Regenerate PDF: node scripts/generate-mission-vision-pdf.mjs
+
+EMPOWERMENT FARE — E-FARE (July 2026)
+  PDF:  docs\Gotabgaa-Empowerment-Fare-E-Fare.pdf
+  HTML: docs\Gotabgaa-Empowerment-Fare-E-Fare.html
+  Interest-free community empowerment grants — formal proposal for Interim Leadership review & vote.
+  Includes repayment, recovery body escalation, and E-Fare membership suspension/termination.
+  Regenerate PDF: node scripts/generate-efare-pdf.mjs
+
 GOVERNANCE STRUCTURE (new — AGM, Board, Executive, Oversight Council)
   PDF:  docs\Gotabgaa-Australia-Governance-Structure.pdf
   HTML: docs\Gotabgaa-Australia-Governance-Structure.html

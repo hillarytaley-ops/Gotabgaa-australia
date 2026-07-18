@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation to Kalenjin Community Leaders | Gotabgaa Australia</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --tan: #b8864e;
+      --cream: #f8f4ee;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11.5pt;
+      line-height: 1.7;
+      color: var(--brown-900);
+      background: #fff;
+      margin: 0;
+    }
+    .doc { max-width: 780px; margin: 0 auto; padding: 48px 56px 64px; }
+    .letterhead {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .letterhead img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .letterhead-text {
+      text-align: center;
+    }
+    .letterhead-text h1 {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 1.55rem;
+      margin: 0 0 4px;
+      color: var(--brown-900);
+    }
+    .letterhead-text .tagline {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tan);
+      font-weight: 600;
+    }
+    .letterhead-text .from {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .values-banner {
+      background: linear-gradient(135deg, var(--brown-800), #2a1f17);
+      color: #fff;
+      text-align: center;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 28px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+    }
+    .meta {
+      margin-bottom: 24px;
+      font-size: 10.5pt;
+      color: var(--muted);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 4px 12px;
+    }
+    .meta-grid dt { font-weight: 600; color: var(--brown-800); }
+    .meta-grid dd { margin: 0; }
+    .subject {
+      font-weight: bold;
+      font-size: 11pt;
+      margin: 0 0 24px;
+      color: var(--brown-800);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .purpose-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+    }
+    .purpose-box strong {
+      display: block;
+      font-size: 10pt;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 6px;
+    }
+    .section {
+      margin-bottom: 22px;
+    }
+    .section-title {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--brown-800);
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num {
+      color: var(--tan);
+      margin-right: 6px;
+    }
+    .salutation { margin-bottom: 18px; }
+    p { margin: 0 0 14px; text-align: justify; }
+    .closing { margin-top: 28px; }
+    .signature {
+      margin-top: 36px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .signature strong { display: block; font-size: 11pt; color: var(--brown-900); }
+    .signature span { font-size: 10pt; color: var(--muted); }
+    .info-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--tan);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+    }
+    .info-box h4 {
+      font-size: 10pt;
+      color: var(--brown-800);
+      margin: 0 0 10px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .info-box ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+    .info-box li {
+      margin-bottom: 7px;
+      line-height: 1.55;
+    }
+    .info-box li:last-child { margin-bottom: 0; }
+    .theme-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .theme-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10pt;
+      line-height: 1.5;
+    }
+    .theme-item strong {
+      display: block;
+      color: var(--brown-800);
+      font-size: 9.5pt;
+      margin-bottom: 3px;
+    }
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 18px;
+      background: var(--brown-800);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font: 600 0.9rem "Segoe UI", sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .print-btn:hover { background: var(--tan); }
+    @media print {
+      .print-btn { display: none; }
+      .doc { padding: 36px 48px; max-width: none; }
+      body { font-size: 11pt; }
+      .section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+  <article class="doc">
+    <header class="letterhead">
+      <img src="../assets/logo-round.png" alt="Gotabgaa Australia logo">
+      <div class="letterhead-text">
+        <h1>Gotabgaa Australia</h1>
+        <p class="tagline">Unity • Heritage • Excellence</p>
+        <p class="from">From the Interim Leadership Team</p>
+      </div>
+    </header>
+
+    <div class="values-banner">
+      In the spirit of our community — <strong>love, peace, reconciliation, and unity</strong> — for the greater good and progress of our people across Australia
+    </div>
+
+    <dl class="meta meta-grid">
+      <dt>Date:</dt>
+      <dd>6 July 2026</dd>
+      <dt>To:</dt>
+      <dd>Leaders and Executive Committees of Kalenjin Community Associations across Australia</dd>
+      <dt>From:</dt>
+      <dd>Interim Leadership Team, Gotabgaa Australia</dd>
+    </dl>
+
+    <p class="subject">Re: A Warm Invitation to Collaborative Dialogue — Building a United Kalenjin Umbrella Association in Australia</p>
+
+    <div class="purpose-box">
+      <strong>Purpose of this letter</strong>
+      To respectfully invite you to a leaders’ dialogue, following the public participation meeting of 4 July 2026, where members asked us to reach out in friendship and seek unity together.
+    </div>
+
+    <p class="salutation">Dear Respected Leaders and Elders,</p>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">1.</span> Greetings and Background</h2>
+      <p>We write to you with warm greetings, goodwill, and deep respect. On behalf of the <strong>Interim Leadership Team of Gotabgaa Australia</strong>, we share the outcomes of our <strong>Public Participation Meeting held on Saturday, 4 July 2026</strong> — and extend a sincere invitation to walk this journey with us.</p>
+      <p>That gathering was held in a spirit of openness, listening, and shared responsibility. Members from across our communities — representing many states and associations — spoke thoughtfully about unity, representation, governance, and the future of our people in Australia. What emerged was a clear and heartfelt message: <strong>a large majority of members present requested that we formally invite leaders of Kalenjin community associations nationwide to join a structured, respectful dialogue on the formation of an umbrella association</strong>.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">2.</span> The Voice of Our Members</h2>
+      <p>Our members spoke with one voice on what matters most. We share their message with you in good faith, not as demands, but as a shared aspiration for our community.</p>
+
+      <div class="info-box">
+        <h4>Key themes raised at the public participation meeting</h4>
+        <div class="theme-grid">
+          <div class="theme-item">
+            <strong>Unity begins with leaders</strong>
+            Leaders should come together around one table for honest, good-faith dialogue — to build trust, not to assign blame.
+          </div>
+          <div class="theme-item">
+            <strong>Work together at the drawing board</strong>
+            We are still at the drawing board. All associations must be genuinely included in a consultative process before any major decisions — with transparency, public participation, and patience over haste.
+          </div>
+          <div class="theme-item">
+            <strong>Respect existing associations</strong>
+            An umbrella body should complement, not compete with or undermine, the work of state and local associations. Each association’s identity, history, and autonomy must be honoured.
+          </div>
+          <div class="theme-item">
+            <strong>Individual and collective participation</strong>
+            Members may participate on their own merit, while associations retain their own structures and leadership.
+          </div>
+          <div class="theme-item">
+            <strong>Merit-based, cooperative governance</strong>
+            A structure that encourages ideas on their merit, limits personality politics, and avoids the divisions of the past.
+          </div>
+          <div class="theme-item">
+            <strong>Inclusivity for all</strong>
+            A welcoming community for all Kalenjin members — youth and elders, all backgrounds — where everyone is heard and mentored.
+          </div>
+          <div class="theme-item">
+            <strong>Focus on community priorities</strong>
+            Advocacy, legal support, mental health, youth engagement, cultural preservation, investment welfare, sports, and pastoral knowledge exchange.
+          </div>
+          <div class="theme-item">
+            <strong>Accountability and clarity</strong>
+            Transparent governance, defined objectives, and responsible stewardship of community resources.
+          </div>
+          <div class="theme-item">
+            <strong>A moderated leaders’ summit</strong>
+            A meeting of association leaders — with agreed ground rules and neutral facilitation — as the most constructive next step.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">3.</span> A Note of Reconciliation</h2>
+      <p>It is in the spirit of <strong>love for our community, peace among our leaders, reconciliation where there has been distance, and unity for the greater good</strong> that we reach out to you today.</p>
+      <p>We acknowledge, with humility and sincerity, that <strong>our earlier interaction as leaders did not bear any fruits</strong>. We do not write now to reopen old wounds, revisit past disagreements, or question anyone’s sincerity or leadership. We write because our members have asked us, clearly and kindly, to try again — and because we believe our community is always stronger when leaders choose conversation over separation.</p>
+      <p>We fully understand the concerns you may hold. Many associations have served their members faithfully for years, often with limited resources and great personal sacrifice. Questions of governance, representation, identity, autonomy, and how an umbrella body relates to existing structures are legitimate and deserve careful, honest discussion — not rushed decisions. As our members reminded us: <em>true unity is not declared — it is built</em>, through consultation, transparency, and good intentions.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">4.</span> Our Assurance to You</h2>
+      <p>We wish to be clear and reassuring on what this invitation is — and what it is not.</p>
+
+      <div class="info-box">
+        <h4>What we are offering</h4>
+        <ul>
+          <li>Dialogue first — consultation before any major decision.</li>
+          <li>Full respect for each association’s name, history, and independence.</li>
+          <li>A national umbrella platform with unique and greater objectives — one that strengthens state association goals while advancing national progress for our community.</li>
+          <li>Openness to your conditions, concerns, and suggestions.</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h4>What we are not seeking</h4>
+        <ul>
+          <li>We are not asking any association to surrender its identity or autonomy.</li>
+          <li>Gotabgaa Australia does not seek to undermine, replace, or interfere with any association or its leadership.</li>
+          <li>We do not seek to impose decisions — we seek to build understanding together.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">5.</span> A Shared Vision We Invite You to Consider</h2>
+      <p><strong>Gotabgaa Australia is envisioned as an umbrella national body</strong> with unique and greater objectives — not to duplicate the work of state associations, but to <strong>strengthen their objectives and achieve national progress for our community</strong> across Australia.</p>
+      <p>We believe that individuals and leaders from different backgrounds can come together, contribute their ideas, and speak with one voice in pursuit of solutions that benefit everyone. At the national level, Gotabgaa would serve as a coordinating body that lifts what each state association does well, while pursuing broader goals that no single state can achieve alone. Together, we might build a shared platform that:
+
+      <div class="info-box">
+        <ul>
+          <li>Strengthens state association objectives while advancing national progress for our community;</li>
+          <li>Provides a united national voice and coordination across all states in Australia;</li>
+          <li>Supports coordination on investment welfare, culture, sports, youth mentorship, and community development;</li>
+          <li>Addresses advocacy, legal guidance, mental health support, and cultural preservation;</li>
+          <li>Honours the dignity and distinctiveness of each member association; and</li>
+          <li>Reflects the will of the people we all serve — in peace, love and unity.</li>
+        </ul>
+      </div>
+
+      <p>The Interim Leadership Team does not claim to speak for every Kalenjin person in Australia. We speak as servants of a process our members have entrusted to us: <strong>to bring leaders to the table and to seek a path forward that is inclusive, transparent, and worthy of our community</strong>.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">6.</span> Our Invitation and Proposed Way Forward</h2>
+      <p>In response to the meeting’s outcome, we would be honoured if you would agree to meet with us — formally or informally — at a time and in a manner that respects your schedules and concerns.</p>
+
+      <div class="info-box">
+        <h4>Members specifically requested the following</h4>
+        <ul>
+          <li>A roundtable or summit of association leaders, with neutral moderation and agreed ground rules;</li>
+          <li>Representation from each association’s leadership to meet with the interim team and chart a way forward together;</li>
+          <li>Written submissions ahead of a meeting, if that is your preference;</li>
+          <li>A jointly developed agenda focused on vision, mission, structure, and governance — before any further steps; and</li>
+          <li>A neutral venue and a process that values listening as much as speaking.</li>
+        </ul>
+      </div>
+
+      <p>Our request is simple in heart, though we know it is significant in substance: <strong>let us talk</strong>. Let us listen to one another with the maturity, patience, and goodwill that our community deserves. If there are conditions under which you would be willing to engage, we are ready to hear them with an open mind. If there are leaders you believe should be included, we warmly welcome your guidance.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">7.</span> Closing Words</h2>
+      <p>We remain committed to diplomacy, respect, and reconciliation. When Kalenjin leaders sit together in good faith — guided by love for our people and a shared desire for peace and progress — we are always stronger than when we stand apart.</p>
+      <p>We thank you sincerely for taking the time to read this letter and for considering our invitation. May our next steps be marked by unity, understanding, and the greater good of our community across Australia.</p>
+      <p><strong>Looking forward to hearing from you soon.</strong></p>
+    </section>
+
+    <div class="closing">
+      <p>With warm respect, peace, love, and unity in purpose,</p>
+    </div>
+
+    <div class="signature">
+      <strong>The Interim Leadership Team</strong>
+      <span>Gotabgaa Australia</span>
+    </div>
+
+  </article>
+</body>
+</html>

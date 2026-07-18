@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empowerment Fare (E-Fare) | Gotabgaa Australia</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --tan: #b8864e;
+      --cream: #f8f4ee;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11.5pt;
+      line-height: 1.7;
+      color: var(--brown-900);
+      background: #fff;
+      margin: 0;
+    }
+    .doc { max-width: 780px; margin: 0 auto; padding: 48px 56px 64px; }
+    .letterhead {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .letterhead img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+    .letterhead-text h1 {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 1.55rem;
+      margin: 0 0 4px;
+    }
+    .letterhead-text .tagline {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tan);
+      font-weight: 600;
+    }
+    .letterhead-text .from {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .values-banner {
+      background: linear-gradient(135deg, var(--brown-800), #2a1f17);
+      color: #fff;
+      text-align: center;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 28px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.88rem;
+    }
+    .meta {
+      margin-bottom: 8px;
+      font-size: 10.5pt;
+      color: var(--muted);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .doc-title {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--brown-800);
+      text-align: center;
+      margin: 20px 0 6px;
+    }
+    .doc-subtitle {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+      color: var(--tan);
+      text-align: center;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+    .doc-tagline {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10pt;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+      margin: 0 0 24px;
+    }
+    .contents-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10pt;
+    }
+    .contents-box h4 {
+      margin: 0 0 10px;
+      font-size: 10pt;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tan);
+    }
+    .contents-box ol {
+      margin: 0;
+      padding-left: 1.3rem;
+      columns: 2;
+      column-gap: 24px;
+    }
+    .contents-box li { margin-bottom: 4px; break-inside: avoid; }
+    .section { margin-bottom: 26px; }
+    .section-title {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--brown-800);
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num { color: var(--tan); margin-right: 6px; }
+    p { margin: 0 0 14px; text-align: justify; }
+    .highlight-box, .info-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--tan);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+    }
+    .highlight-box h4, .info-box h4 {
+      font-size: 10pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin: 0 0 8px;
+    }
+    .info-box h4 { color: var(--brown-800); text-transform: none; letter-spacing: 0; }
+    .highlight-box p { margin: 0; font-family: Georgia, serif; font-size: 11pt; }
+    .info-box ul, .info-box ol { margin: 0; padding-left: 1.25rem; }
+    .info-box li { margin-bottom: 7px; line-height: 1.55; }
+    .step-grid { display: grid; gap: 10px; margin-top: 12px; }
+    .step-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10pt;
+      line-height: 1.55;
+    }
+    .step-item .badge {
+      display: inline-block;
+      background: var(--tan);
+      color: #fff;
+      font-size: 8.5pt;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-right: 8px;
+    }
+    .signature { margin-top: 36px; font-family: "Segoe UI", system-ui, sans-serif; }
+    .signature strong { display: block; font-size: 11pt; }
+    .signature span { font-size: 10pt; color: var(--muted); }
+    .print-btn {
+      position: fixed; top: 16px; right: 16px;
+      padding: 10px 18px; background: var(--brown-800); color: #fff;
+      border: none; border-radius: 6px; font: 600 0.9rem "Segoe UI", sans-serif; cursor: pointer;
+    }
+    @media print {
+      .print-btn { display: none; }
+      .doc { padding: 36px 48px; max-width: none; }
+      .contents-box ol { columns: 1; }
+      .section,
+      .highlight-box,
+      .info-box,
+      .step-item {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .section-title {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+  <article class="doc">
+    <header class="letterhead">
+      <img src="../assets/logo-round.png" alt="Gotabgaa Australia logo">
+      <div class="letterhead-text">
+        <h1>Gotabgaa Australia</h1>
+        <p class="tagline">Unity • Heritage • Excellence</p>
+        <p class="from">A warm invitation to review and vote</p>
+      </div>
+    </header>
+
+    <div class="values-banner">
+      Together we grow — through <strong>trust, unity, and shared opportunity</strong>
+    </div>
+
+    <p class="meta"><strong>Date:</strong> July 2026 &nbsp;|&nbsp; <strong>Status:</strong> Proposal for Interim Leadership review and vote</p>
+    <p class="meta"><strong>To:</strong> All Members of the Interim Leadership Team</p>
+
+    <h2 class="doc-title">Empowerment Fare (E-Fare)</h2>
+    <p class="doc-subtitle">Interest-free support, shared by our community</p>
+    <p class="doc-tagline">When we pool our strength, we lift one another.</p>
+
+    <div class="contents-box">
+      <h4>Inside this proposal</h4>
+      <ol>
+        <li>What E-Fare is</li>
+        <li>Why it matters</li>
+        <li>How it works</li>
+        <li>Sharing fairly (2–3 members)</li>
+        <li>Your investment plan</li>
+        <li>Interest-free support</li>
+        <li>Paying back with care</li>
+        <li>Open and accountable</li>
+        <li>Who can take part</li>
+        <li>Our non-profit promise</li>
+        <li>Your review and vote</li>
+      </ol>
+    </div>
+
+    <div class="highlight-box">
+      <h4>Dear Interim Leaders</h4>
+      <p>Thank you for taking time to read this. We offer E-Fare for your open discussion, kind feedback, and a clear vote. Our hope is simple: a programme our community can trust — fair to those who receive help, protective of the shared fund, and true to Gotabgaa’s non-profit spirit.</p>
+    </div>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">1.</span> What Is E-Fare?</h2>
+      <p><strong>Empowerment Fare (E-Fare)</strong> is a warm, practical way for members of Gotabgaa Australia to support one another financially — without bank interest, and without leaving anyone behind.</p>
+      <p>Members contribute a modest fee into a shared pool. When the programme is ready, selected members may receive <strong>interest-free support</strong> to start a business, invest wisely, study, or take another approved step towards a stronger future. In time, they return what they borrowed so the next family of members can be lifted too.</p>
+      <p>It is the spirit of <em>kimnatet ak kibagenge</em> — unity and coming together — expressed in a simple, careful system.</p>
+
+      <div class="highlight-box">
+        <h4>In a nutshell</h4>
+        <p>Join with a modest fee. Receive support in small groups of <strong>2–3 members every six months</strong>. Return what you borrowed. Then another 2–3 members take their turn. Every dollar stays with the community. Gotabgaa does not profit.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">2.</span> Why E-Fare Matters</h2>
+      <p>Many of us arrived in Australia with talent, courage, and big dreams. Yet starting a business, buying tools, or building stability can be hard when formal lending feels expensive or out of reach.</p>
+      <p>E-Fare offers a friendlier path: community support rooted in dignity and trust. As a <strong>non-profit</strong>, Gotabgaa’s aim is not personal gain. It is to strengthen our people — in line with <strong>Empowerment and Growth</strong> and <strong>Investment Welfare</strong>.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">3.</span> How E-Fare Works</h2>
+      <p>Six clear steps. Easy to follow. Fair for everyone.</p>
+
+      <div class="step-grid">
+        <div class="step-item"><span class="badge">Step 1</span> <strong>Join.</strong> Register for E-Fare by paying a modest participation fee (amount to be agreed by leadership). This builds the shared fund and shows your commitment.</div>
+        <div class="step-item"><span class="badge">Step 2</span> <strong>Grow the fund.</strong> As more members join, the pool grows. We start granting support only when the fund is strong enough to do so safely.</div>
+        <div class="step-item"><span class="badge">Step 3</span> <strong>Apply with a plan.</strong> Only <strong>2–3 members</strong> receive support in each six-month cycle. Every applicant submits a clear <strong>Statement of Investment</strong> plus supporting evidence.</div>
+        <div class="step-item"><span class="badge">Step 4</span> <strong>Fair review.</strong> The E-Fare committee reviews plans and documents on merit. Incomplete applications, or ones without evidence, will not be approved.</div>
+        <div class="step-item"><span class="badge">Step 5</span> <strong>Use and repay.</strong> Those 2–3 members repay within the six-month module. <em>There is no interest.</em></div>
+        <div class="step-item"><span class="badge">Step 6</span> <strong>Pass it on.</strong> When amounts are returned, the next 2–3 members can be supported. The circle continues gently and continuously.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">4.</span> Sharing Fairly — Only 2–3 Members at a Time</h2>
+      <p>We will keep the number of people receiving support carefully limited. This protects the fund, builds confidence, and gives each borrower the care they deserve.</p>
+
+      <div class="info-box">
+        <h4>The continuous circle</h4>
+        <ul>
+          <li><strong>Six-month modules:</strong> Each round lasts six months.</li>
+          <li><strong>Small groups only:</strong> At the start of a module, <strong>strictly 2–3 members</strong> may receive funds.</li>
+          <li><strong>Return what you borrow:</strong> Those members are expected to repay in full by the end of the module.</li>
+          <li><strong>Next round opens:</strong> As money returns, the next 2–3 members may be supported.</li>
+          <li><strong>It keeps going:</strong> Module 1 (2–3 members) → repayment → Module 2 (next 2–3) → and so on.</li>
+          <li><strong>Friendly waiting list:</strong> Members not chosen this round stay on a clear queue for a later turn.</li>
+          <li><strong>No overcrowding:</strong> We do not start a new full group while the previous group is still fully unpaid — unless the committee records a clear, written exception.</li>
+        </ul>
+      </div>
+
+      <div class="highlight-box">
+        <h4>Why start small?</h4>
+        <p>Beginning with 2–3 members helps us learn, protect community money, and show that trust works. If leaders later agree by vote, we may grow the numbers thoughtfully.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">5.</span> Tell Us Your Plan — Statement of Investment</h2>
+      <p>We gladly support real plans. Before money is released, every applicant must explain clearly <strong>what they will invest in</strong> and provide evidence. The community trusts you; your plan helps us trust the purpose.</p>
+
+      <div class="info-box">
+        <h4>What you need to include</h4>
+        <ul>
+          <li><strong>Statement of Investment:</strong> A short written plan covering: what the money is for, expected benefit, a simple budget, and timeline.</li>
+          <li><strong>Evidence:</strong> Documents that support your plan. No statement, or no evidence, means the application cannot proceed.</li>
+          <li><strong>If it is a business:</strong> Please provide <strong>business registration</strong> (or proof that registration is underway), ABN where relevant, and related papers such as a brief plan, quotes, or lease/supplier documents as asked.</li>
+          <li><strong>If it is something else:</strong> Education, tools, or similar goals need matching evidence — for example enrolment, quotes, invoices, or licences.</li>
+          <li><strong>Extra help if needed:</strong> The committee may kindly ask for more documents, or decline applications that are unclear.</li>
+        </ul>
+      </div>
+
+      <p>This keeps E-Fare honest, protective of the fund, and focused on genuine empowerment.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">6.</span> Our Promise — Interest-Free Support</h2>
+      <p>E-Fare does <strong>not charge interest</strong>. That is a deliberate choice. We want empowerment to feel light on the shoulders, not heavy with debt.</p>
+      <p>Grant amounts and detailed rules will be published openly for all members, and refined with care as the programme grows.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">7.</span> Paying Back with Care</h2>
+      <p>Timely repayment keeps the door open for the next members. We ask every borrower to honour the trust they have been given — and we will meet genuine hardship with listening and kindness first.</p>
+
+      <div class="info-box">
+        <h4>Simple repayment terms</h4>
+        <ul>
+          <li><strong>Timeframe:</strong> Usually six months from when funds are received (unless another plan is agreed in writing).</li>
+          <li><strong>Instalments:</strong> Clear, scheduled repayments set out in each member’s agreement.</li>
+          <li><strong>Interest:</strong> None.</li>
+          <li><strong>Late admin fee:</strong> If repayment is overdue, a small fee of <strong>1% to 2%</strong> of the outstanding amount may apply — only to encourage fairness, cover light admin costs, and protect the fund. It is not for profit.</li>
+          <li><strong>Hardship:</strong> Please contact the committee early. We will seek a caring solution before any penalty.</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h4>If repayment is delayed too long</h4>
+        <ul>
+          <li><strong>Stage 1:</strong> Friendly reminders and the small admin fee if overdue.</li>
+          <li><strong>Stage 2:</strong> If delay continues, or repayment seems avoided after a fair chance to arrange a plan, we escalate.</li>
+          <li><strong>Stage 3:</strong> A designated <strong>recovery body</strong> (or recovery officer) helps recover funds fairly, respectfully, and on record.</li>
+          <li><strong>Stage 4:</strong> In serious cases, <strong>E-Fare membership may be suspended for a set period, or ended</strong> — while recovery of the money continues. This is a last resort to protect everyone who plays fairly.</li>
+        </ul>
+      </div>
+
+      <p>Firm where we must be. Friendly where we can be. Always fair.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">8.</span> Open and Accountable</h2>
+      <p>Because Gotabgaa is a non-profit serving members — not investors — E-Fare will run in the open:</p>
+
+      <div class="info-box">
+        <ul>
+          <li>A dedicated <strong>E-Fare committee</strong> with clear duties</li>
+          <li><strong>Published rules</strong> on joining, grant limits, fees, and repayment</li>
+          <li><strong>Regular updates</strong> to members on the fund, grants given, and repayments received</li>
+          <li><strong>Fair decisions</strong> based on purpose and readiness — not personal favour</li>
+          <li>Careful oversight under Gotabgaa’s constitution and Australian law</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">9.</span> Who Can Take Part?</h2>
+      <p>E-Fare welcomes <strong>Gotabgaa Australia members in good standing</strong> across NSW, SA, VIC, QLD, NT, TAS, ACT, and WA — whether you are new to the country, growing a trade, or investing in learning.</p>
+
+      <div class="info-box">
+        <h4>Examples of welcome purposes</h4>
+        <ul>
+          <li>Starting or growing a small business (stock, equipment, licensing)</li>
+          <li>Training and professional development</li>
+          <li>Tools, transport, or assets that help you earn</li>
+          <li>Community-minded enterprise</li>
+          <li>Other purposes the committee agrees support self-reliance and growth</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">10.</span> Our Non-Profit Promise</h2>
+      <p>Gotabgaa Australia will remain a <strong>non-profit</strong>. E-Fare is not a money-making scheme for anyone. Fees, repaid funds, and any small late fees return only to the empowerment fund and careful running of the programme.</p>
+      <p>Success is not measured in profit. It is measured in businesses started, families strengthened, and a community that chose to stand together.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">11.</span> Your Review and Vote</h2>
+      <p>Dear colleagues: please read this with an open heart, share your thoughts freely, and help us decide together.</p>
+
+      <div class="info-box">
+        <h4>We kindly ask each interim leader to</h4>
+        <ul>
+          <li><strong>Read</strong> the full proposal (including the 2–3 member circle, investment plans, repayment, and recovery)</li>
+          <li><strong>Discuss</strong> any questions or improvements in an Interim Leadership meeting</li>
+          <li><strong>Vote</strong> to: (a) Approve as presented; (b) Approve with amendments; or (c) Defer for more discussion</li>
+          <li><strong>Record</strong> the outcome clearly so next steps are transparent</li>
+        </ul>
+      </div>
+
+      <div class="highlight-box">
+        <h4>Suggested wording for the vote</h4>
+        <p>“That the Interim Leadership Team of Gotabgaa Australia adopts the Empowerment Fare (E-Fare) proposal — including six-month modules limited to 2–3 members at a time, with the next group supported only after repayments return; a mandatory Statement of Investment with evidence (including business registration for business plans); interest-free support; a 1%–2% late admin fee if overdue; recovery action where repayment is delayed too long or avoided; and the power to suspend or end E-Fare membership in such cases — with detailed operating rules to be finalised by the E-Fare committee.”</p>
+      </div>
+
+      <p>Thank you for walking this path with us. May our decision serve our people — in peace, love, and unity.</p>
+    </section>
+
+    <div class="signature">
+      <strong>Presented for Interim Leadership review and vote</strong>
+      <span>Gotabgaa Australia — Interim Leadership Team</span>
+    </div>
+  </article>
+</body>
+</html>

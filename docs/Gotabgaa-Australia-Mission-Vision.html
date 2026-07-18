@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission & Vision | Gotabgaa Australia</title>
+  <style>
+    :root {
+      --brown-900: #2a1f17;
+      --brown-800: #3d2e22;
+      --tan: #b8864e;
+      --cream: #f8f4ee;
+      --muted: #5c4332;
+      --border: #ddd5c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11.5pt;
+      line-height: 1.7;
+      color: var(--brown-900);
+      background: #fff;
+      margin: 0;
+    }
+    .doc { max-width: 780px; margin: 0 auto; padding: 48px 56px 64px; }
+    .letterhead {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid var(--brown-800);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .letterhead img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+    .letterhead-text h1 {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 1.55rem;
+      margin: 0 0 4px;
+    }
+    .letterhead-text .tagline {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tan);
+      font-weight: 600;
+    }
+    .letterhead-text .from {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .values-banner {
+      background: linear-gradient(135deg, var(--brown-800), #2a1f17);
+      color: #fff;
+      text-align: center;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 28px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.88rem;
+    }
+    .meta {
+      margin-bottom: 24px;
+      font-size: 10.5pt;
+      color: var(--muted);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .doc-title {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--brown-800);
+      text-align: center;
+      margin: 0 0 8px;
+    }
+    .doc-subtitle {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10pt;
+      color: var(--muted);
+      text-align: center;
+      margin: 0 0 28px;
+    }
+    .section { margin-bottom: 24px; }
+    .section-title {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--brown-800);
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num { color: var(--tan); margin-right: 6px; }
+    p { margin: 0 0 14px; text-align: justify; }
+    .vision-mission-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--tan);
+      border-radius: 8px;
+      padding: 20px 22px;
+      margin: 12px 0 18px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .vision-mission-box h3 {
+      font-size: 10pt;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin: 0 0 10px;
+    }
+    .vision-mission-box p {
+      font-size: 11pt;
+      line-height: 1.65;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    .pillar-grid { display: grid; gap: 12px; margin-top: 12px; }
+    .pillar-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+    }
+    .pillar-item strong {
+      display: block;
+      color: var(--brown-800);
+      font-size: 10.5pt;
+      margin-bottom: 6px;
+    }
+    .info-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--tan);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 10.5pt;
+    }
+    .info-box h4 {
+      font-size: 10pt;
+      color: var(--brown-800);
+      margin: 0 0 10px;
+    }
+    .info-box ul { margin: 0; padding-left: 1.2rem; }
+    .info-box li { margin-bottom: 7px; line-height: 1.55; }
+    .states-note {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 9.5pt;
+      color: var(--muted);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .signature {
+      margin-top: 36px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .signature strong { display: block; font-size: 11pt; }
+    .signature span { font-size: 10pt; color: var(--muted); }
+    .print-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 18px;
+      background: var(--brown-800);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font: 600 0.9rem "Segoe UI", sans-serif;
+      cursor: pointer;
+    }
+    @media print { .print-btn { display: none; } .doc { padding: 36px 48px; max-width: none; } }
+  </style>
+</head>
+<body>
+  <button type="button" class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+  <article class="doc">
+    <header class="letterhead">
+      <img src="../assets/logo-round.png" alt="Gotabgaa Australia logo">
+      <div class="letterhead-text">
+        <h1>Gotabgaa Australia</h1>
+        <p class="tagline">Unity • Heritage • Excellence</p>
+        <p class="from">National Umbrella Association — Draft for Community Review</p>
+      </div>
+    </header>
+
+    <div class="values-banner">
+      In the spirit of our community — <strong>love, peace, reconciliation, and unity</strong> — for the greater good and progress of our people across Australia
+    </div>
+
+    <p class="meta"><strong>Date:</strong> July 2026 &nbsp;|&nbsp; <strong>Status:</strong> Draft — subject to consultation and approval</p>
+
+    <h2 class="doc-title">Mission &amp; Vision Statement</h2>
+    <p class="doc-subtitle">A national framework for unity, heritage, and progress across all Australian states and territories</p>
+    <p class="states-note">Serving Kalenjin communities in NSW, SA, VIC, QLD, NT, TAS, ACT, and WA</p>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">1.</span> Our Vision</h2>
+      <div class="vision-mission-box">
+        <h3>Vision</h3>
+        <p>To be the premier unifying force for the Kalenjin community in Australia — fostering a <strong>resilient, culturally proud, and economically empowered diaspora</strong> that honours our roots while building a <strong>connected and prosperous future</strong> for present and future generations across every state and territory.</p>
+      </div>
+      <p>Our vision is of a united Kalenjin people in Australia who stand together in mutual respect, preserve what makes us who we are, and create lasting opportunities for our children and grandchildren — in peace, love, and unity.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">2.</span> Our Mission</h2>
+      <div class="vision-mission-box">
+        <h3>Mission</h3>
+        <p>To provide a <strong>national umbrella platform</strong> that promotes unity, collaboration, advocacy, cultural preservation, mentorship, investment welfare, and community empowerment among Kalenjin people and organisations across Australia — <strong>strengthening state association objectives while advancing national progress</strong> for our community.</p>
+      </div>
+      <p>Gotabgaa Australia exists to bring Kalenjin communities together at the national level — not to replace or compete with state associations, but to complement their work with unique and greater objectives that serve the whole diaspora.</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">3.</span> Core Pillars of Our Vision</h2>
+      <p>These five pillars guide everything we do and resonate with Kalenjin communities across all states and territories.</p>
+
+      <div class="pillar-grid">
+        <div class="pillar-item">
+          <strong>1. Unity — Kimnatet ak Kibagenge</strong>
+          Gotabgaa will foster mutual respect, inclusivity, collaboration, and a strong sense of belonging. By standing together, supporting one another, and embracing our diversity, we become stronger as a community — better equipped to preserve our heritage, empower our members, and create opportunities for future generations.
+        </div>
+        <div class="pillar-item">
+          <strong>2. Cultural Preservation</strong>
+          Creating spaces to celebrate Kalenjin traditions, language, and values — ensuring they are passed down to the next generation, even in a new environment. Through language literacy, traditional ceremonies, and cultural gatherings, we keep our identity alive and meaningful.
+        </div>
+        <div class="pillar-item">
+          <strong>3. Empowerment and Growth</strong>
+          Providing mentorship, educational resources, and networking opportunities that equip members to succeed in their professional and personal lives within Australia. Connecting established professionals with newcomers to support integration, career growth, and leadership development.
+        </div>
+        <div class="pillar-item">
+          <strong>4. National Connectivity — Gotab Gaa</strong>
+          Bridging the distance between states through digital platforms and annual gatherings that strengthen the <em>Gotab Gaa</em> spirit — the coming together of families and friends — nationally and globally. A central, easy-to-use hub for all Australian Kalenjins to connect, find resources, and stay informed, regardless of location.
+        </div>
+        <div class="pillar-item">
+          <strong>5. Emergency Response &amp; National Solidarity</strong>
+          Uniting all Australian states and territories to respond promptly, compassionately, and effectively to emergencies affecting members of the Kalenjin community — including bereavement, serious illness, accidents, natural disasters, and other humanitarian crises through coordinated nationwide solidarity.
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">4.</span> Strategic Objectives</h2>
+      <p>To fulfil our mission and vision, Gotabgaa Australia will pursue the following strategic objectives:</p>
+
+      <div class="info-box">
+        <ul>
+          <li>Strengthen unity and cooperation among Kalenjin organisations nationally;</li>
+          <li>Promote and preserve Kalenjin culture, language, and heritage for present and future generations;</li>
+          <li>Support youth empowerment, leadership development, and mentorship initiatives;</li>
+          <li>Encourage professional networking, investment welfare, and economic collaboration;</li>
+          <li>Advocate for community welfare, social cohesion, and mental health support;</li>
+          <li>Foster positive engagement with Australian institutions and multicultural communities;</li>
+          <li>Provide a coordinated national voice on matters affecting the Kalenjin community in Australia;</li>
+          <li>Coordinate compassionate, effective emergency and humanitarian response across all states and territories.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">5.</span> Key Programmes &amp; Initiatives</h2>
+      <p>Our mission will be delivered through practical programmes that serve members wherever they live in Australia.</p>
+
+      <div class="info-box">
+        <h4>Priority initiatives</h4>
+        <ul>
+          <li><strong>Unified Digital Hub</strong> — A central platform for connection, resources, and community news across all states and territories;</li>
+          <li><strong>Mentorship Programmes</strong> — Pairing established professionals with newcomers and youth for integration and career growth;</li>
+          <li><strong>Cultural Heritage Events</strong> — Biannual or annual gatherings featuring language literacy, traditional ceremonies, and social celebrations;</li>
+          <li><strong>Advocacy &amp; Representation</strong> — Representing Kalenjin community interests within the broader Australian multicultural society;</li>
+          <li><strong>Investment Welfare</strong> — Coordinated support for members in times of bereavement, illness, and hardship;</li>
+          <li><strong>Sports &amp; Youth Development</strong> — Building healthy, engaged communities through sport and youth leadership;</li>
+          <li><strong>Pastoral &amp; Knowledge Exchange</strong> — Linking Kalenjin and Australian pastoral communities for mutual learning and opportunity.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="section-num">6.</span> Our Commitment</h2>
+      <p>Gotabgaa Australia is still at the drawing board — and we are committed to building this vision together, with full consultation, transparency, and the genuine inclusion of all associations and members. True unity is not declared; it is built through good faith, patience, and shared purpose.</p>
+      <p>We invite every Kalenjin community across Australia to walk this journey with us — in peace, love, and unity — for the greater good of our people.</p>
+    </section>
+
+    <div class="signature">
+      <strong>The Interim Leadership Team</strong>
+      <span>Gotabgaa Australia</span>
+    </div>
+  </article>
+</body>
+</html>
