@@ -2,9 +2,10 @@ import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 import {
   findWelfareRegistration,
   getWelfareMeta,
-  verifyMainMember,
   getActiveCommunityAlerts
 } from './lib/welfare-member.js';
+import { resolveMemberFromRequest } from './lib/member-auth.js';
+import { normalizeMemberEmail } from './lib/member-registration.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -17,24 +18,17 @@ export default async function handler(req, res) {
     return;
   }
 
-  const email = String(req.query?.email || '').trim().toLowerCase();
-  const membershipId = String(req.query?.id || req.query?.membershipId || '')
-    .trim()
-    .toUpperCase();
-
-  if (!email || !membershipId) {
-    res.status(400).json({ error: 'Email and membership ID are required' });
-    return;
-  }
-
   const supabase = getSupabase();
 
   try {
-    const mainCheck = await verifyMainMember(supabase, email, membershipId);
-    if (!mainCheck.ok) {
-      res.status(403).json({ error: mainCheck.error });
+    const resolved = await resolveMemberFromRequest(req);
+    if (!resolved.ok) {
+      res.status(resolved.status).json({ error: resolved.error });
       return;
     }
+
+    const email = normalizeMemberEmail(resolved.member.email);
+    const membershipId = String(resolved.member.membershipId || '').trim().toUpperCase();
 
     const welfareRow = await findWelfareRegistration(supabase, email, membershipId);
     const welfare = welfareRow ? getWelfareMeta(welfareRow) : null;

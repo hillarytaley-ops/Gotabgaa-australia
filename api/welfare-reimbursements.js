@@ -8,6 +8,8 @@ import {
   REIMBURSEMENT_STATUSES
 } from './lib/welfare-member.js';
 import { getSupabase as getSb } from './lib/supabase.js';
+import { resolveMemberFromRequest } from './lib/member-auth.js';
+import { normalizeMemberEmail } from './lib/member-registration.js';
 
 async function loadAlertTemplate() {
   try {
@@ -29,15 +31,16 @@ export default async function handler(req, res) {
   const supabase = getSupabase();
 
   if (req.method === 'GET') {
-    const email = String(req.query?.email || '').trim().toLowerCase();
-    const membershipId = String(req.query?.id || '').trim().toUpperCase();
-
-    if (!email || !membershipId) {
-      res.status(400).json({ error: 'Email and membership ID are required' });
-      return;
-    }
-
     try {
+      const resolved = await resolveMemberFromRequest(req);
+      if (!resolved.ok) {
+        res.status(resolved.status).json({ error: resolved.error });
+        return;
+      }
+
+      const email = normalizeMemberEmail(resolved.member.email);
+      const membershipId = String(resolved.member.membershipId || '').trim().toUpperCase();
+
       const check = await verifyActiveWelfareMember(supabase, email, membershipId);
       if (!check.ok) {
         res.status(403).json({ error: check.error });
@@ -61,23 +64,27 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     const {
-      email,
-      membershipId,
       deceasedName,
       relationship,
       dateOfLoss,
       summary
     } = req.body || {};
 
-    const normalizedEmail = String(email || '').trim().toLowerCase();
-    const normalizedId = String(membershipId || '').trim().toUpperCase();
-
-    if (!normalizedEmail || !normalizedId || !deceasedName?.trim() || !relationship?.trim()) {
-      res.status(400).json({ error: 'Email, membership ID, deceased name, and relationship are required' });
-      return;
-    }
-
     try {
+      const resolved = await resolveMemberFromRequest(req);
+      if (!resolved.ok) {
+        res.status(resolved.status).json({ error: resolved.error });
+        return;
+      }
+
+      const normalizedEmail = normalizeMemberEmail(resolved.member.email);
+      const normalizedId = String(resolved.member.membershipId || '').trim().toUpperCase();
+
+      if (!normalizedEmail || !normalizedId || !deceasedName?.trim() || !relationship?.trim()) {
+        res.status(400).json({ error: 'Deceased name and relationship are required' });
+        return;
+      }
+
       const check = await verifyActiveWelfareMember(supabase, normalizedEmail, normalizedId);
       if (!check.ok) {
         res.status(403).json({ error: check.error });

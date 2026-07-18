@@ -73,24 +73,46 @@ export async function sendRegistrationConfirmation({ to, name, payment, amount, 
   });
 }
 
-export async function sendMembershipApproved({ to, name, membershipId, payment, amount, reference, paymentStatus }) {
+export async function sendMembershipApproved({
+  to,
+  name,
+  membershipId,
+  payment,
+  amount,
+  reference,
+  paymentStatus,
+  passwordSetupLink,
+  isResync
+}) {
   const paySection = paymentStatus === 'paid'
     ? '<p>Your payment is recorded. Welcome to the community!</p>'
-    : `<p>Your membership ID is <strong>${escapeHtml(membershipId)}</strong>. Sign in at login.html with your email and this ID.</p>
-       ${paymentBlock(payment, amount, reference)}`;
+    : `${paymentBlock(payment, amount, reference)}`;
+
+  const loginSection = passwordSetupLink
+    ? `<p><strong>Create your password</strong> to access the members dashboard:</p>
+       <p><a href="${escapeHtml(passwordSetupLink)}" style="display:inline-block;padding:12px 18px;background:#3d2b1f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Set password &amp; sign in</a></p>
+       <p style="color:#6b5b4f;font-size:14px">This secure link expires after a short time. If it expires, use “Forgot password” on the sign-in page.</p>`
+    : `<p>Visit <strong>login.html</strong> and use <em>Forgot password</em> with this email to create your password.</p>`;
 
   const html = `
     <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Membership approved</h2>
+      <h2 style="color:#3d2e22">${isResync ? 'Member login ready' : 'Membership approved'}</h2>
       <p>Hi ${escapeHtml(name)},</p>
-      <p>Your Gotabgaa Australia membership has been approved.</p>
+      <p>${isResync
+        ? 'Your Gotabgaa Australia member login has been set up (or refreshed).'
+        : 'Your Gotabgaa Australia membership has been approved.'}</p>
+      <p>Your membership ID is <strong>${escapeHtml(membershipId)}</strong> (keep this for your records).</p>
+      ${loginSection}
+      <p>After setting your password, sign in at <a href="https://gotabgaa-australia.vercel.app/login.html">the Sign In page</a> with your <strong>email and password</strong>.</p>
       ${paySection}
     </div>
   `;
 
   return sendEmail({
     to,
-    subject: 'Gotabgaa Australia — membership approved',
+    subject: isResync
+      ? 'Gotabgaa Australia — set your member password'
+      : 'Gotabgaa Australia — membership approved',
     html
   });
 }

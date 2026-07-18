@@ -1595,7 +1595,7 @@
               <div class="inbox-item__actions">
                 ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
                 ${payStatus !== 'paid' ? `<button type="button" class="btn btn--outline btn--sm membership-mark-paid" data-id="${escapeHtml(r.id)}">Mark as paid</button>` : ''}
-                ${meta.membershipId ? `<button type="button" class="btn btn--outline btn--sm membership-resync" data-id="${escapeHtml(r.id)}">Sync member login</button>` : ''}
+                ${meta.membershipId ? `<button type="button" class="btn btn--outline btn--sm membership-resync" data-id="${escapeHtml(r.id)}">Send password setup</button>` : ''}
                 ${meta.memberStatus === 'active' ? `<button type="button" class="btn btn--outline btn--sm membership-revoke" data-id="${escapeHtml(r.id)}">Deactivate member</button>` : ''}
                 <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
                   ${r.read ? 'Mark unread' : 'Mark read'}
@@ -1686,7 +1686,12 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Approval failed');
-            showStatus(`Member approved. ID: ${data.membershipId}`, 'success');
+            showStatus(
+              data.loginInviteSent
+                ? `Member approved. ID: ${data.membershipId}. Password setup email sent.`
+                : `Member approved. ID: ${data.membershipId}.${data.authError ? ` Login setup note: ${data.authError}` : ''}`,
+              data.authError && !data.loginInviteSent ? 'error' : 'success'
+            );
 
             const item = card.querySelector(`.membership-reg-item[data-id="${CSS.escape(btn.dataset.id)}"]`);
             if (item && data.membershipId) {
@@ -1737,7 +1742,12 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Could not sync member login');
-            showStatus(`Member login synced. ID: ${data.membershipId}`, 'success');
+            showStatus(
+              data.loginInviteSent
+                ? `Member login synced. ID: ${data.membershipId}. Password setup email sent.`
+                : `Member login synced. ID: ${data.membershipId}.${data.authError ? ` Note: ${data.authError}` : ''}`,
+              data.authError && !data.loginInviteSent ? 'error' : 'success'
+            );
             loadMembershipRegistrationsPanel();
           } catch (err) {
             if (isAuthError(err)) return;

@@ -88,6 +88,23 @@
     localStorage.removeItem(SESSION_KEY);
   }
 
+  async function getMemberAccessToken() {
+    if (isPreviewMode) return null;
+    if (!window.GaaAuth) return null;
+    try {
+      return await window.GaaAuth.getAccessToken();
+    } catch {
+      return null;
+    }
+  }
+
+  async function memberFetch(url, options = {}) {
+    const headers = { ...(options.headers || {}) };
+    const token = await getMemberAccessToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    return fetch(url, { ...options, headers });
+  }
+
   function getAdminToken() {
     try {
       return localStorage.getItem(ADMIN_TOKEN_KEY) || sessionStorage.getItem(ADMIN_TOKEN_KEY);
@@ -151,23 +168,21 @@
     return siteContent;
   }
 
-  async function verifyMember(email, membershipId) {
-    const params = new URLSearchParams({ email, id: membershipId });
-    const res = await fetch(`/api/member-status?${params}`);
+  async function verifyMemberSession() {
+    const res = await memberFetch('/api/member-status');
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'Could not verify membership');
     return data.member;
   }
 
-  async function fetchBookings(email, membershipId) {
-    const params = new URLSearchParams({ email, id: membershipId });
-    const res = await fetch(`/api/member-bookings?${params}`);
+  async function fetchBookings() {
+    const res = await memberFetch('/api/member-bookings');
     const data = await res.json().catch(() => ({}));
     if (!res.ok) return [];
     return data.bookings || [];
   }
 
-  async function fetchWelfareMember(email, membershipId) {
+  async function fetchWelfareMember() {
     if (isPreviewMode) {
       return {
         welfare: {
@@ -182,8 +197,7 @@
       };
     }
 
-    const params = new URLSearchParams({ email, id: membershipId });
-    const res = await fetch(`/api/welfare-member?${params}`);
+    const res = await memberFetch('/api/welfare-member');
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       return {
@@ -380,12 +394,10 @@
     }
 
     try {
-      const res = await fetch('/api/welfare-reimbursements', {
+      const res = await memberFetch('/api/welfare-reimbursements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: memberSession.email,
-          membershipId: memberSession.membershipId,
           deceasedName: document.getElementById('welfDeceasedName').value,
           relationship: document.getElementById('welfRelationship').value,
           dateOfLoss: document.getElementById('welfDateOfLoss').value,
@@ -400,7 +412,7 @@
       success.hidden = false;
       els.welfareReimbursementForm?.reset();
 
-      welfareData = await fetchWelfareMember(memberSession.email, memberSession.membershipId);
+      welfareData = await fetchWelfareMember();
       renderWelfareDashboard();
     } catch (err) {
       error.textContent = err.message;
@@ -586,7 +598,7 @@
 
     els.bookingsList.innerHTML = '<p class="members-empty">Loading bookings…</p>';
 
-    const bookings = await fetchBookings(memberSession.email, memberSession.membershipId);
+    const bookings = await fetchBookings();
     if (!bookings.length) {
       els.bookingsList.innerHTML = '<p class="members-empty">No bookings yet. <a href="book.html">Book an event</a>.</p>';
       return;
@@ -783,7 +795,7 @@
     renderExploreLinks(portal);
 
     if (memberSession?.email && memberSession?.membershipId) {
-      welfareData = await fetchWelfareMember(memberSession.email, memberSession.membershipId);
+      welfareData = await fetchWelfareMember();
     }
     renderMemberStats(memberSession, content);
     renderWelfareDashboard();
@@ -805,9 +817,14 @@
   async function init() {
     memberSession = loadSession();
 
-    els.signOut?.addEventListener('click', () => {
+    els.signOut?.addEventListener('click', async () => {
       clearSession();
       setPreviewBanner(false);
+      try {
+        if (window.GaaAuth) await window.GaaAuth.signOut();
+      } catch {
+        /* ignore */
+      }
       redirectToLogin();
     });
 
@@ -834,16 +851,24 @@
       if (ok) return;
     }
 
-    if (memberSession?.email && memberSession?.membershipId) {
-      try {
-        const member = await verifyMember(memberSession.email, memberSession.membershipId);
-        saveSession(member);
-        showDashboard();
-      } catch {
+    try {
+      const token = window.GaaAuth ? await window.GaaAuth.getAccessToken() : null;
+      if (!token) {
         clearSession();
         redirectToLogin();
+        return;
       }
-    } else {
+
+      const member = await verifyMemberSession();
+      saveSession(member);
+      showDashboard();
+    } catch {
+      clearSession();
+      try {
+        if (window.GaaAuth) await window.GaaAuth.signOut();
+      } catch {
+        /* ignore */
+      }
       redirectToLogin();
     }
   }

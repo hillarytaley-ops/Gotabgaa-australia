@@ -1,5 +1,6 @@
-import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
-import { findMemberByEmailAndId } from './lib/member-registration.js';
+import { isSupabaseConfigured, getSupabase } from './lib/supabase.js';
+import { resolveMemberFromRequest } from './lib/member-auth.js';
+import { normalizeMemberEmail } from './lib/member-registration.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -12,25 +13,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const email = String(req.query?.email || '').trim().toLowerCase();
-  const membershipId = String(req.query?.id || req.query?.membershipId || '')
-    .trim()
-    .toUpperCase();
-
-  if (!email || !membershipId) {
-    res.status(400).json({ error: 'Email and membership ID are required' });
-    return;
-  }
-
-  const supabase = getSupabase();
-
   try {
-    const member = await findMemberByEmailAndId(supabase, email, membershipId);
-    if (!member) {
-      res.status(404).json({ error: 'Member not found' });
+    const resolved = await resolveMemberFromRequest(req);
+    if (!resolved.ok) {
+      res.status(resolved.status).json({ error: resolved.error });
       return;
     }
 
+    const email = normalizeMemberEmail(resolved.member.email);
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('event_bookings')
       .select('id, event_id, event_title, tickets, notes, payment_status, payment_reference, fee_amount, fee_display, created_at, data')

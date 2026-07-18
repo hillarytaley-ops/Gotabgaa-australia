@@ -1,5 +1,5 @@
 /**
- * Unified sign-in — members dashboard + leadership admin
+ * Unified sign-in — Supabase Auth (members) + leadership admin
  */
 (function () {
   const SESSION_KEY = 'gaa_member_session';
@@ -7,32 +7,26 @@
   const REMEMBER_EMAIL_KEY = 'gaa_member_remember_email';
 
   const els = {
-    tabs: document.querySelectorAll('.auth-card__tab, .signin-hub__tab'),
-    panels: document.querySelectorAll('.auth-card__panel, .signin-hub__panel'),
+    tabs: document.querySelectorAll('.auth-card__tab'),
+    panels: document.querySelectorAll('.auth-card__panel'),
     memberForm: document.getElementById('memberLoginForm'),
     memberError: document.getElementById('memberLoginError'),
+    memberSuccess: document.getElementById('memberLoginSuccess'),
     memberBtn: document.getElementById('memberLoginBtn'),
     memberEmail: document.getElementById('memberEmail'),
-    memberId: document.getElementById('memberId'),
+    memberPassword: document.getElementById('memberPassword'),
     rememberEmail: document.getElementById('rememberMemberEmail'),
+    forgotBtn: document.getElementById('forgotPasswordBtn'),
+    toggleMemberPassword: document.getElementById('toggleMemberPassword'),
     adminForm: document.getElementById('adminLoginForm'),
     adminError: document.getElementById('adminLoginError'),
     adminBtn: document.getElementById('adminLoginBtn'),
     adminPassword: document.getElementById('adminPassword'),
-    togglePassword: document.getElementById('toggleAdminPassword')
+    toggleAdminPassword: document.getElementById('toggleAdminPassword')
   };
 
   function getParams() {
     return new URLSearchParams(window.location.search);
-  }
-
-  function loadMemberSession() {
-    try {
-      const raw = localStorage.getItem(SESSION_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
   }
 
   function saveMemberSession(member) {
@@ -51,20 +45,24 @@
     if (msg) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  function isPlaceholderMembershipId(id) {
-    const value = String(id || '').trim().toUpperCase();
-    return !value
-      || value === 'GAA-MEM-XXXXXXXX'
-      || /X{4,}/.test(value)
-      || value.length < 12;
+  function showSuccess(el, msg) {
+    if (!el) return;
+    el.textContent = msg || '';
+    el.hidden = !msg;
   }
 
-  async function verifyMember(email, membershipId) {
-    const params = new URLSearchParams({ email, id: membershipId });
-    const res = await fetch(`/api/member-status?${params}`);
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || 'Could not verify membership');
-    return data.member;
+  function bindPasswordToggle(button, input) {
+    if (!button || !input) return;
+    button.addEventListener('click', () => {
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      button.setAttribute('aria-pressed', showing ? 'false' : 'true');
+      button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      const showLabel = button.querySelector('[data-show]');
+      const hideLabel = button.querySelector('[data-hide]');
+      if (showLabel) showLabel.hidden = !showing;
+      if (hideLabel) hideLabel.hidden = showing;
+    });
   }
 
   function switchTab(tab) {
@@ -81,6 +79,7 @@
     });
     showError(els.memberError, '');
     showError(els.adminError, '');
+    showSuccess(els.memberSuccess, '');
 
     window.setTimeout(() => {
       if (isLeadership) els.adminPassword?.focus();
@@ -121,19 +120,13 @@
     }
   }
 
-  function initPasswordToggle() {
-    if (!els.togglePassword || !els.adminPassword) return;
-
-    els.togglePassword.addEventListener('click', () => {
-      const showing = els.adminPassword.type === 'text';
-      els.adminPassword.type = showing ? 'password' : 'text';
-      els.togglePassword.setAttribute('aria-pressed', showing ? 'false' : 'true');
-      els.togglePassword.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
-      const showLabel = els.togglePassword.querySelector('[data-show]');
-      const hideLabel = els.togglePassword.querySelector('[data-hide]');
-      if (showLabel) showLabel.hidden = !showing;
-      if (hideLabel) hideLabel.hidden = showing;
+  async function fetchMemberProfile(accessToken) {
+    const res = await fetch('/api/member-status', {
+      headers: { Authorization: `Bearer ${accessToken}` }
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Could not load membership profile');
+    return data.member;
   }
 
   async function redirectIfAlreadySignedIn() {
@@ -151,45 +144,39 @@
       return true;
     }
 
-    if (isLeadership) {
+    if (isLeadership) return false;
+
+    if (!window.GaaAuth) return false;
+
+    try {
+      const session = await window.GaaAuth.getSession();
+      if (!session?.access_token) return false;
+      const member = await fetchMemberProfile(session.access_token);
+      saveMemberSession(member);
+      window.location.replace('members.html');
+      return true;
+    } catch {
+      try { await window.GaaAuth.signOut(); } catch { /* ignore */ }
+      localStorage.removeItem(SESSION_KEY);
       return false;
     }
-
-    const session = loadMemberSession();
-    if (session?.email && session?.membershipId) {
-      try {
-        await verifyMember(session.email, session.membershipId);
-        window.location.replace('members.html');
-        return true;
-      } catch {
-        localStorage.removeItem(SESSION_KEY);
-      }
-    }
-
-    return false;
   }
 
   async function handleMemberLogin(e) {
     e.preventDefault();
     showError(els.memberError, '');
+    showSuccess(els.memberSuccess, '');
 
     const email = els.memberEmail?.value.trim().toLowerCase();
-    const membershipId = els.memberId?.value.trim().toUpperCase();
+    const password = els.memberPassword?.value || '';
 
-    if (!email || !membershipId) {
-      showError(els.memberError, 'Please enter your email and membership ID.');
+    if (!email || !password) {
+      showError(els.memberError, 'Please enter your email and password.');
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(els.memberError, 'Please enter a valid email address.');
-      els.memberEmail?.focus();
-      return;
-    }
-
-    if (isPlaceholderMembershipId(membershipId)) {
-      showError(els.memberError, 'Enter your real membership ID from admin approval — not the placeholder text.');
-      els.memberId?.focus();
+    if (!window.GaaAuth) {
+      showError(els.memberError, 'Sign-in is not ready. Refresh the page and try again.');
       return;
     }
 
@@ -197,19 +184,60 @@
     els.memberBtn.textContent = 'Signing in…';
 
     try {
-      const member = await verifyMember(email, membershipId);
+      const { data, error } = await window.GaaAuth.signInWithPassword(email, password);
+      if (error) throw error;
+      if (!data?.session?.access_token) throw new Error('Sign in succeeded but no session was created.');
+
+      const member = await fetchMemberProfile(data.session.access_token);
       if (member.memberStatus === 'inactive') {
+        await window.GaaAuth.signOut();
         showError(els.memberError, 'Your membership is inactive. Contact Gotabgaa Australia if you believe this is an error.');
         return;
       }
+
       persistRememberedEmail(email);
       saveMemberSession(member);
       window.location.href = 'members.html';
     } catch (err) {
-      showError(els.memberError, err.message || 'Could not sign in. Check your email and membership ID.');
+      const msg = String(err.message || '');
+      if (/invalid login credentials/i.test(msg)) {
+        showError(els.memberError, 'Incorrect email or password. Use Forgot password if you still need to set one up.');
+      } else if (/Auth is not configured|SUPABASE_ANON/i.test(msg)) {
+        showError(els.memberError, 'Member sign-in is not configured yet. Ask an admin to add SUPABASE_ANON_KEY in Vercel.');
+      } else {
+        showError(els.memberError, msg || 'Could not sign in.');
+      }
     } finally {
       els.memberBtn.disabled = false;
       els.memberBtn.textContent = 'Sign in';
+    }
+  }
+
+  async function handleForgotPassword() {
+    showError(els.memberError, '');
+    showSuccess(els.memberSuccess, '');
+
+    const email = els.memberEmail?.value.trim().toLowerCase();
+    if (!email) {
+      showError(els.memberError, 'Enter your email address first, then click Forgot password.');
+      els.memberEmail?.focus();
+      return;
+    }
+
+    if (!window.GaaAuth) {
+      showError(els.memberError, 'Sign-in is not ready. Refresh the page and try again.');
+      return;
+    }
+
+    els.forgotBtn.disabled = true;
+    try {
+      const { error } = await window.GaaAuth.resetPasswordForEmail(email);
+      if (error) throw error;
+      showSuccess(els.memberSuccess, 'If that email has a member account, we sent a password reset link. Check your inbox.');
+    } catch (err) {
+      showError(els.memberError, err.message || 'Could not send reset email.');
+    } finally {
+      els.forgotBtn.disabled = false;
     }
   }
 
@@ -235,12 +263,8 @@
       });
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || `Sign in failed (${res.status})`);
-      }
-      if (!data.token) {
-        throw new Error('Sign in succeeded but no token returned.');
-      }
+      if (!res.ok) throw new Error(data.error || `Sign in failed (${res.status})`);
+      if (!data.token) throw new Error('Sign in succeeded but no token returned.');
 
       saveAdminToken(data.token);
 
@@ -258,37 +282,30 @@
   }
 
   async function init() {
+    if (getParams().get('password') === 'updated') {
+      showSuccess(els.memberSuccess, 'Password updated. Sign in with your email and new password.');
+    }
+
     if (await redirectIfAlreadySignedIn()) return;
 
     initTabFromUrl();
     restoreRememberedEmail();
-    initPasswordToggle();
+    bindPasswordToggle(els.toggleMemberPassword, els.memberPassword);
+    bindPasswordToggle(els.toggleAdminPassword, els.adminPassword);
 
     els.tabs.forEach(btn => {
       btn.addEventListener('click', () => {
         switchTab(btn.dataset.tab);
         const url = new URL(window.location.href);
         url.searchParams.set('tab', btn.dataset.tab);
-        if (btn.dataset.tab === 'leadership') {
-          url.searchParams.delete('return');
-        }
+        if (btn.dataset.tab === 'leadership') url.searchParams.delete('return');
         window.history.replaceState(null, '', url.pathname + url.search);
       });
     });
 
     els.memberForm?.addEventListener('submit', handleMemberLogin);
     els.adminForm?.addEventListener('submit', handleAdminLogin);
-
-    if (els.memberId) {
-      els.memberId.addEventListener('input', () => {
-        const start = els.memberId.selectionStart;
-        const end = els.memberId.selectionEnd;
-        els.memberId.value = els.memberId.value.toUpperCase();
-        if (typeof start === 'number' && typeof end === 'number') {
-          els.memberId.setSelectionRange(start, end);
-        }
-      });
-    }
+    els.forgotBtn?.addEventListener('click', handleForgotPassword);
   }
 
   if (document.readyState === 'loading') {

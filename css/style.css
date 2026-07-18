@@ -5104,14 +5104,51 @@ body.modal-open {
   line-height: 1.4;
 }
 
+.auth-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 0;
+}
+
 .auth-form__remember {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin: 4px 0 0;
+  margin: 0;
   font-size: 0.88rem;
   color: var(--text-muted);
   cursor: pointer;
+}
+
+.auth-form__link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--brown-700);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.auth-form__link-btn:hover {
+  color: var(--tan);
+}
+
+.auth-form__success {
+  margin: 0.85rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: #edf7ed;
+  border: 1px solid #c8e6c9;
+  color: #1b5e20;
+  font-size: 0.92rem;
+  font-weight: 500;
 }
 
 .auth-form__remember input {

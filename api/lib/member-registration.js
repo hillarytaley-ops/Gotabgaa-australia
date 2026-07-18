@@ -149,6 +149,51 @@ export async function syncMemberMetaEverywhere(supabase, id, meta) {
   }
 }
 
+export function serializeMemberProfile(row) {
+  const meta = getMemberMeta(row);
+  return {
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    stateChapter: row.state_chapter,
+    membershipType: row.membership_type,
+    membershipId: meta.membershipId,
+    memberStatus: meta.memberStatus || 'active',
+    paymentStatus: meta.paymentStatus,
+    paymentReference: meta.paymentReference,
+    feeDisplay: row.fee_display,
+    feeAmount: row.fee_amount,
+    joinedAt: row.created_at,
+    authUserId: row?.data?._authUserId || row?.auth_user_id || null
+  };
+}
+
+export async function findActiveMemberByEmail(supabase, email) {
+  const normalizedEmail = normalizeMemberEmail(email);
+  if (!normalizedEmail) return null;
+
+  for (const fields of MEMBER_ROW_FIELDS) {
+    const rows = await selectRows(
+      supabase,
+      fields,
+      q => q.ilike('email', normalizedEmail)
+    );
+    if (!rows) continue;
+
+    const matches = rows.filter(row => emailsMatch(row.email, normalizedEmail));
+    const active = matches.find(row => {
+      const meta = getMemberMeta(row);
+      return meta.membershipId && meta.memberStatus !== 'inactive' && meta.memberStatus !== 'pending';
+    });
+    if (active) return active;
+
+    const withId = matches.find(row => getMemberMeta(row).membershipId);
+    if (withId) return withId;
+  }
+
+  return null;
+}
+
 export async function findMemberByEmailAndId(supabase, email, membershipId) {
   const normalizedEmail = normalizeMemberEmail(email);
   const normalizedId = normalizeMembershipId(membershipId);

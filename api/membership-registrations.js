@@ -4,6 +4,44 @@ import { generateMembershipId } from './lib/member-id.js';
 import { getMemberMeta, isSchemaColumnError, appendMemberMetaToNotes, syncMemberMetaEverywhere, getPaymentReferenceFromRow } from './lib/member-registration.js';
 import { loadPaymentConfig, buildMembershipReference } from './lib/payment.js';
 import { sendMembershipApproved, sendPaymentReceipt } from './lib/email.js';
+import {
+  ensureMemberAuthUser,
+  createPasswordSetupLink,
+  banMemberAuthUser,
+  getStoredAuthUserId
+} from './lib/member-auth.js';
+
+async function provisionMemberLogin(supabase, row, membershipId) {
+  const authUser = await ensureMemberAuthUser(supabase, {
+    email: row.email,
+    name: row.name,
+    membershipId,
+    authUserId: getStoredAuthUserId(row)
+  });
+
+  const nextData = {
+    ...(row.data || {}),
+    _membershipId: membershipId,
+    _memberStatus: 'active',
+    _authUserId: authUser.id
+  };
+
+  await updateRegistration(supabase, row.id, {
+    data: nextData
+  });
+
+  // Best-effort column write if migrate-member-auth.sql was applied
+  const { error: authColError } = await supabase
+    .from('membership_registrations')
+    .update({ auth_user_id: authUser.id })
+    .eq('id', row.id);
+  if (authColError && !isSchemaColumnError(authColError)) {
+    console.warn('[member-auth] could not store auth_user_id column', authColError.message);
+  }
+
+  const { actionLink } = await createPasswordSetupLink(supabase, row.email);
+  return { authUserId: authUser.id, passwordSetupLink: actionLink };
+}
 
 const SELECT_FIELDS = [
   'id, name, email, phone, state_chapter, membership_type, address, date_of_birth, referral_source, notes, fee_amount, fee_currency, fee_display, payment_status, payment_method, membership_id, member_status, created_at, read, data',
@@ -268,6 +306,16 @@ export default async function handler(req, res) {
           memberStatus: 'active'
         });
 
+        let loginInvite = null;
+        let authError = null;
+        try {
+          const refreshed = { ...row, data: { ...(row.data || {}), paymentReference: reference, _membershipId: membershipId, _memberStatus: 'active' } };
+          loginInvite = await provisionMemberLogin(supabase, refreshed, membershipId);
+        } catch (err) {
+          authError = err.message || 'Could not create member login account';
+          console.error('[membership-approve] auth provision failed', err);
+        }
+
         await sendMembershipApproved({
           to: row.email,
           name: row.name,
@@ -275,18 +323,35 @@ export default async function handler(req, res) {
           payment: paymentConfig,
           amount: row.fee_display || '',
           reference,
-          paymentStatus: currentPayment === 'paid' ? 'paid' : 'pending'
+          paymentStatus: currentPayment === 'paid' ? 'paid' : 'pending',
+          passwordSetupLink: loginInvite?.passwordSetupLink || null
         });
 
-        res.status(200).json({ ok: true, membershipId, memberStatus: 'active', paymentReference: reference });
+        res.status(200).json({
+          ok: true,
+          membershipId,
+          memberStatus: 'active',
+          paymentReference: reference,
+          authUserId: loginInvite?.authUserId || null,
+          loginInviteSent: Boolean(loginInvite?.passwordSetupLink),
+          authError
+        });
         return;
       }
 
       if (action === 'revoke') {
+        const rows = await selectRegistrations(supabase);
+        const row = rows.find(r => r.id === id);
         await updateRegistration(supabase, id, {
           member_status: 'inactive',
           read: true
         });
+        try {
+          const authUserId = getStoredAuthUserId(row);
+          if (authUserId) await banMemberAuthUser(supabase, authUserId);
+        } catch (err) {
+          console.error('[membership-revoke] ban auth user failed', err);
+        }
         res.status(200).json({ ok: true, memberStatus: 'inactive' });
         return;
       }
@@ -314,7 +379,37 @@ export default async function handler(req, res) {
           memberStatus
         });
 
-        res.status(200).json({ ok: true, membershipId, memberStatus });
+        let loginInvite = null;
+        let authError = null;
+        if (memberStatus === 'active') {
+          try {
+            loginInvite = await provisionMemberLogin(supabase, row, membershipId);
+            const paymentConfig = await loadPaymentConfig();
+            await sendMembershipApproved({
+              to: row.email,
+              name: row.name,
+              membershipId,
+              payment: paymentConfig,
+              amount: row.fee_display || '',
+              reference: getPaymentReferenceFromRow(row) || '',
+              paymentStatus: row.payment_status || 'pending',
+              passwordSetupLink: loginInvite?.passwordSetupLink || null,
+              isResync: true
+            });
+          } catch (err) {
+            authError = err.message || 'Could not sync member login';
+            console.error('[membership-resync] auth provision failed', err);
+          }
+        }
+
+        res.status(200).json({
+          ok: true,
+          membershipId,
+          memberStatus,
+          authUserId: loginInvite?.authUserId || null,
+          loginInviteSent: Boolean(loginInvite?.passwordSetupLink),
+          authError
+        });
         return;
       }
 

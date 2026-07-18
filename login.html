@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/style.css?v=22">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/login.html">
 </head>
@@ -60,22 +60,31 @@
         <div class="auth-card__body">
           <div class="auth-card__panel is-active" id="panelMember" role="tabpanel" aria-labelledby="tabMember">
             <h2 class="auth-card__panel-title">Member sign in</h2>
-            <p class="auth-card__hint">Use the email from your registration and the membership ID emailed after approval.</p>
+            <p class="auth-card__hint">Use the email from your registration and the password you set after approval.</p>
             <form id="memberLoginForm" class="auth-form" novalidate>
               <div class="form__group">
                 <label for="memberEmail">Email address</label>
                 <input type="email" id="memberEmail" name="email" required autocomplete="username" inputmode="email" placeholder="you@example.com">
               </div>
               <div class="form__group">
-                <label for="memberId">Membership ID</label>
-                <input type="text" id="memberId" name="membershipId" required autocomplete="off" placeholder="GAA-MEM-XXXXXXXX" spellcheck="false" autocapitalize="characters">
-                <p class="auth-form__help">Issued by Gotabgaa Australia after your registration is approved.</p>
+                <label for="memberPassword">Password</label>
+                <div class="auth-form__password">
+                  <input type="password" id="memberPassword" name="password" required autocomplete="current-password" placeholder="Enter your password" minlength="6">
+                  <button type="button" class="auth-form__toggle-pass" id="toggleMemberPassword" aria-label="Show password" aria-pressed="false">
+                    <span class="auth-form__toggle-pass-text" data-show>Show</span>
+                    <span class="auth-form__toggle-pass-text" data-hide hidden>Hide</span>
+                  </button>
+                </div>
               </div>
-              <label class="auth-form__remember">
-                <input type="checkbox" id="rememberMemberEmail" name="rememberEmail">
-                <span>Remember my email on this device</span>
-              </label>
+              <div class="auth-form__row">
+                <label class="auth-form__remember">
+                  <input type="checkbox" id="rememberMemberEmail" name="rememberEmail">
+                  <span>Remember my email</span>
+                </label>
+                <button type="button" class="auth-form__link-btn" id="forgotPasswordBtn">Forgot password?</button>
+              </div>
               <p class="form__error auth-form__error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
+              <p class="auth-form__success" id="memberLoginSuccess" hidden role="status" aria-live="polite"></p>
               <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="memberLoginBtn">Sign in</button>
             </form>
             <p class="auth-card__footer">Not a member yet? <a href="join.html">Register here</a></p>
@@ -116,8 +125,10 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
+  <script src="js/supabase-browser.js?v=22"></script>
   <script src="js/content-loader.js?v=20"></script>
   <script src="js/main.js?v=20"></script>
-  <script src="js/login.js?v=21"></script>
+  <script src="js/login.js?v=22"></script>
 </body>
 </html>
