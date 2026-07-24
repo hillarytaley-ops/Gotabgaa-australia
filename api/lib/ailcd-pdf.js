@@ -169,8 +169,8 @@ function addRegisterFooters(doc) {
 }
 
 function drawIndexTable(doc, applications, startY) {
-  const headers = ['#', 'Applicant', 'Reference', 'Position', 'State', 'Status'];
-  const colWidths = [8, 42, 28, 48, 14, 28];
+  const headers = ['#', 'Applicant', 'Phone', 'Reference', 'Position', 'State', 'Status'];
+  const colWidths = [8, 34, 26, 24, 42, 14, 26];
   const rowH = 7.5;
   let y = startY;
 
@@ -203,9 +203,12 @@ function drawIndexTable(doc, applications, startY) {
     doc.setLineWidth(0.2);
     doc.rect(PAGE.margin, y, colWidths.reduce((a, b) => a + b, 0), rowH, 'FD');
 
+    const phone = displayText(app.phone || app.data?.personal?.mobile) || '—';
+
     const cells = [
       String(index + 1),
       app.full_name || '—',
+      phone,
       app.reference_code || '—',
       positionSummary(app),
       app.state || app.data?.personal?.stateTerritory || '—',
