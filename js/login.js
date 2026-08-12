@@ -22,7 +22,10 @@
     adminError: document.getElementById('adminLoginError'),
     adminBtn: document.getElementById('adminLoginBtn'),
     adminPassword: document.getElementById('adminPassword'),
-    toggleAdminPassword: document.getElementById('toggleAdminPassword')
+    toggleAdminPassword: document.getElementById('toggleAdminPassword'),
+    forgotAdminBtn: document.getElementById('forgotAdminPasswordBtn'),
+    adminPasswordHelp: document.getElementById('adminPasswordHelp'),
+    switchToMemberForgot: document.getElementById('switchToMemberForgot')
   };
 
   function getParams() {
@@ -80,11 +83,18 @@
     showError(els.memberError, '');
     showError(els.adminError, '');
     showSuccess(els.memberSuccess, '');
+    setAdminPasswordHelp(false);
 
     window.setTimeout(() => {
       if (isLeadership) els.adminPassword?.focus();
       else els.memberEmail?.focus();
     }, 0);
+  }
+
+  function setAdminPasswordHelp(open) {
+    if (!els.adminPasswordHelp || !els.forgotAdminBtn) return;
+    els.adminPasswordHelp.hidden = !open;
+    els.forgotAdminBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
   function initTabFromUrl() {
@@ -306,6 +316,20 @@
     els.memberForm?.addEventListener('submit', handleMemberLogin);
     els.adminForm?.addEventListener('submit', handleAdminLogin);
     els.forgotBtn?.addEventListener('click', handleForgotPassword);
+    els.forgotAdminBtn?.addEventListener('click', () => {
+      const open = els.adminPasswordHelp?.hidden !== false;
+      setAdminPasswordHelp(open);
+      if (open) {
+        els.adminPasswordHelp?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+    els.switchToMemberForgot?.addEventListener('click', () => {
+      switchTab('member');
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', 'member');
+      window.history.replaceState(null, '', url.pathname + url.search);
+      els.memberEmail?.focus();
+    });
   }
 
   if (document.readyState === 'loading') {

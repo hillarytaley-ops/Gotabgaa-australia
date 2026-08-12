@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=24">
+  <link rel="stylesheet" href="css/style.css?v=26">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/login.html">
 </head>
@@ -87,7 +87,7 @@
               <p class="auth-form__success" id="memberLoginSuccess" hidden role="status" aria-live="polite"></p>
               <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="memberLoginBtn">Sign in</button>
             </form>
-            <p class="auth-card__footer">Not a member yet? <a href="join.html">Register here</a></p>
+            <p class="auth-card__footer auth-card__footer--cta">Not a member yet? <a href="join.html">Register here</a></p>
           </div>
 
           <div class="auth-card__panel" id="panelLeadership" role="tabpanel" aria-labelledby="tabLeadership" hidden>
@@ -103,6 +103,21 @@
                     <span class="auth-form__toggle-pass-text" data-hide hidden>Hide</span>
                   </button>
                 </div>
+              </div>
+              <div class="auth-form__row auth-form__row--end">
+                <button type="button" class="auth-form__link-btn" id="forgotAdminPasswordBtn" aria-expanded="false" aria-controls="adminPasswordHelp">Forgot password?</button>
+              </div>
+              <div class="auth-help" id="adminPasswordHelp" hidden>
+                <h3 class="auth-help__title">Reset leadership password</h3>
+                <p>Leadership sign-in uses one shared admin password (not your personal member login).</p>
+                <ol class="auth-help__list">
+                  <li>Open <strong>Vercel</strong> → your Gotabgaa project → <strong>Settings → Environment Variables</strong>.</li>
+                  <li>Find <code>ADMIN_PASSWORD</code>, set a new strong password, and save.</li>
+                  <li><strong>Redeploy</strong> the site so the new password applies.</li>
+                  <li>Return here and sign in with the new password.</li>
+                </ol>
+                <p>If you are not the person who manages Vercel, email <a href="mailto:info@gotabgaaaustralia.org?subject=Leadership%20password%20reset%20request">info@gotabgaaaustralia.org</a> or <a href="contact.html">contact us</a> and ask an authorised admin to update it.</p>
+                <p class="auth-help__note">Member password reset is on the <button type="button" class="auth-form__link-btn" id="switchToMemberForgot">Member</button> tab (Forgot password?).</p>
               </div>
               <p class="form__error auth-form__error" id="adminLoginError" hidden role="alert" aria-live="polite"></p>
               <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="adminLoginBtn">Sign in</button>
@@ -129,6 +144,6 @@
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=25"></script>
   <script src="js/main.js?v=25"></script>
-  <script src="js/login.js?v=24"></script>
+  <script src="js/login.js?v=25"></script>
 </body>
 </html>
