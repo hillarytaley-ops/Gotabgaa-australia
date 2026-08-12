@@ -305,9 +305,17 @@
 
     els.forgotBtn.disabled = true;
     try {
-      const { error } = await window.GaaAuth.resetPasswordForEmail(email);
-      if (error) throw error;
-      showSuccess(els.memberSuccess, 'If that email has a member account, we sent a password reset link. Check your inbox.');
+      const res = await fetch('/api/password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not send reset email.');
+      showSuccess(
+        els.memberSuccess,
+        data.message || 'If that email has an account, we sent a password link. Check inbox and spam.'
+      );
     } catch (err) {
       showError(els.memberError, err.message || 'Could not send reset email.');
     } finally {

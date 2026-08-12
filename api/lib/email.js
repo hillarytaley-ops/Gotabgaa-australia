@@ -153,6 +153,25 @@ export async function sendPaymentReceipt({ to, name, type, payment, amount, refe
   });
 }
 
+export async function sendPasswordReset({ to, name, resetLink }) {
+  const html = `
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
+      <h2 style="color:#3d2e22">Reset your password</h2>
+      <p>Hi ${escapeHtml(name || 'there')},</p>
+      <p>Use this link to set a new password for your Gotabgaa Australia account:</p>
+      <p><a href="${escapeHtml(resetLink)}" style="display:inline-block;padding:12px 18px;background:#3d2b1f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Set password &amp; sign in</a></p>
+      <p style="color:#6b5b4f;font-size:14px">This link expires after a short time. If you did not request it, you can ignore this email.</p>
+      <p>After setting your password, sign in at <a href="${escapeHtml(siteUrl())}/login.html">the Sign In page</a>.</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Gotabgaa Australia — reset your password',
+    html
+  });
+}
+
 export async function sendBookingConfirmation({ to, name, eventTitle, payment, amount, reference, tickets }) {
   const html = `
     <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
