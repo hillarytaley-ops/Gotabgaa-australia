@@ -73,7 +73,16 @@ function initSiteConfig() {
   const social = cfg.social || {};
   document.querySelectorAll('[data-social]').forEach(link => {
     const key = link.getAttribute('data-social');
-    if (social[key]) link.href = social[key];
+    const url = social[key];
+    if (url) {
+      link.href = url;
+      link.hidden = false;
+      if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
+    } else {
+      link.removeAttribute('href');
+      link.hidden = true;
+      if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = true;
+    }
   });
 
   if (cfg.contactEmail) {

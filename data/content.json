@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-08-12T00:00:00.000Z"
+    "updatedAt": "2026-08-12T12:00:00.000Z"
   },
   "site": {
     "siteUrl": "https://gotabgaa-australia.vercel.app",
@@ -11,11 +11,11 @@
     "copyrightYear": 2026,
     "affiliationText": "Connecting Kalenjin communities across Australia",
     "social": {
-      "facebook": "https://www.facebook.com/gotabgaainternational",
-      "tiktok": "https://www.tiktok.com/@gotabgaainternational",
-      "instagram": "https://www.instagram.com/gotabgaainternational",
+      "facebook": "",
+      "tiktok": "",
+      "instagram": "",
       "whatsapp": "mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry",
-      "youtube": "https://www.youtube.com/@gotabgaainternational"
+      "youtube": ""
     }
   },
   "contact": {
@@ -166,7 +166,7 @@
       "hero": {
         "tag": "Our Team",
         "title": "Gotabgaa Leadership",
-        "description": "Dedicated volunteers leading Gotabgaa Australia with passion and integrity.",
+        "description": "Interim leadership roles for Gotabgaa Australia. Names and photos will be published when confirmed.",
         "backgroundImage": "assets/hero/page/stage-address.png"
       }
     },
@@ -505,11 +505,11 @@
     }
   ],
   "leadership": [
-    { "id": "ldr-president", "name": "President", "role": "Board President", "initials": "CR", "photo": "" },
-    { "id": "ldr-vp", "name": "Vice President", "role": "Board Vice President", "initials": "VP", "photo": "" },
-    { "id": "ldr-secretary", "name": "Secretary General", "role": "Administration", "initials": "SG", "photo": "" },
-    { "id": "ldr-coordinator", "name": "National Coordinator", "role": "Programs & Events", "initials": "NC", "photo": "" },
-    { "id": "ldr-treasurer", "name": "Treasurer", "role": "Finance", "initials": "TR", "photo": "" }
+    { "id": "ldr-chair", "name": "To be announced", "role": "Interim Chairperson", "initials": "IC", "photo": "" },
+    { "id": "ldr-deputy", "name": "To be announced", "role": "Interim Deputy Chairperson", "initials": "ID", "photo": "" },
+    { "id": "ldr-secretary", "name": "To be announced", "role": "Interim Secretary", "initials": "IS", "photo": "" },
+    { "id": "ldr-coordinator", "name": "To be announced", "role": "Interim National Coordinator", "initials": "IN", "photo": "" },
+    { "id": "ldr-treasurer", "name": "To be announced", "role": "Interim Treasurer", "initials": "IT", "photo": "" }
   ],
   "gallery": [
     { "id": "gal-u1", "eventId": "evt-cultural-fete-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
@@ -638,9 +638,9 @@
         "title": "Kokwet Sports Day 2025 Highlights",
         "date": "June 2025",
         "summary": "Relive the football finals, athletics races, and family games from last year's Kokwet Sports Day in Sydney.",
-        "videoUrl": "https://www.youtube.com/@gotabgaainternational",
+        "videoUrl": "",
         "thumbnail": "assets/hero/kokwet-sports-day.png",
-        "published": true
+        "published": false
       }
     ],
     "events": [
@@ -674,7 +674,7 @@
         "id": "sport-news-1",
         "title": "Sports committee seeking team captains",
         "date": "June 2026",
-        "summary": "Gotabgaa Australia is recruiting volunteer captains for football and athletics ahead of Kokwet Sports Day.",
+        "summary": "Gotabgaa Australia is recruiting volunteer captains for football and athletics for upcoming sports days.",
         "link": "contact.html",
         "image": "assets/hero/kokwet-sports-day.png",
         "published": true
@@ -688,9 +688,9 @@
         "title": "Member Spotlight: Building in Australia",
         "date": "May 2026",
         "summary": "Entrepreneurs from our community share how they started businesses and give back to Gotabgaa Australia.",
-        "videoUrl": "https://www.youtube.com/@gotabgaainternational",
+        "videoUrl": "",
         "thumbnail": "assets/hero/page/stage-address.png",
-        "published": true
+        "published": false
       }
     ],
     "adverts": [
@@ -702,7 +702,7 @@
         "link": "contact.html",
         "contactEmail": "info@gotabgaaaustralia.org",
         "category": "Services",
-        "published": true
+        "published": false
       }
     ],
     "investments": [

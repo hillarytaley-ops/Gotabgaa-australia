@@ -42,7 +42,16 @@
 
     document.querySelectorAll('[data-social]').forEach(link => {
       const key = link.getAttribute('data-social');
-      if (site.social?.[key]) link.href = site.social[key];
+      const url = site.social?.[key];
+      if (url) {
+        link.href = url;
+        link.hidden = false;
+        if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
+      } else {
+        link.removeAttribute('href');
+        link.hidden = true;
+        if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = true;
+      }
     });
 
     document.querySelectorAll('[data-contact-email]').forEach(el => {

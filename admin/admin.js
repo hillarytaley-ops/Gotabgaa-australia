@@ -453,6 +453,48 @@
         <span>Leaders</span>
       </div>
     `;
+
+    loadOpsStatus();
+  }
+
+  async function loadOpsStatus() {
+    const loading = document.getElementById('opsStatusLoading');
+    const body = document.getElementById('opsStatusBody');
+    if (!loading || !body) return;
+
+    if (!getToken()) {
+      loading.textContent = 'Sign in to check email configuration.';
+      body.hidden = true;
+      return;
+    }
+
+    try {
+      const res = await authFetch('/api/admin-status');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        loading.textContent = data.error || 'Could not load email status.';
+        body.hidden = true;
+        return;
+      }
+
+      loading.hidden = true;
+      body.hidden = false;
+      const emailOk = data.emailConfigured;
+      const authOk = data.memberAuthConfigured;
+      const tips = (data.tips || []).map(t => `<li>${escapeHtml(t)}</li>`).join('');
+      body.innerHTML = `
+        <ul class="help-list" style="margin:0 0 12px">
+          <li><strong>Password email:</strong> ${emailOk ? 'Ready' : 'Not configured'}${data.usingResendDevSender && emailOk ? ' (test sender — verify your domain for member emails)' : ''}</li>
+          <li><strong>Member login (Supabase Auth):</strong> ${authOk ? 'Ready' : 'Missing SUPABASE_ANON_KEY / URL'}</li>
+          <li><strong>Site URL:</strong> ${escapeHtml(data.siteUrl || '—')}</li>
+        </ul>
+        ${tips ? `<ol class="help-list">${tips}</ol>` : ''}
+        <p class="form-hint" style="margin-top:12px">Full guide: <code>docs/Resend-Email-Setup.txt</code></p>
+      `;
+    } catch {
+      loading.textContent = 'Could not load email status.';
+      body.hidden = true;
+    }
   }
 
   function defaultPayment() {
