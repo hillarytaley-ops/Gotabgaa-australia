@@ -375,7 +375,10 @@
     };
 
     header.addEventListener('click', e => {
-      if (e.target.closest('button, a, select, input, textarea, label')) return;
+      if (e.target.closest('button, a, select, input, textarea, label')) {
+        e.stopPropagation();
+        return;
+      }
       toggle();
     });
     header.addEventListener('keydown', e => {
@@ -731,20 +734,28 @@
     `;
   }
 
+  function ensureLeadershipList() {
+    if (!Array.isArray(content.leadership)) content.leadership = [];
+    return content.leadership;
+  }
+
   function renderLeadershipPanel() {
+    const leaders = ensureLeadershipList();
     return `
       <div class="card">
-        <div class="list-item__header"><h3>Leadership team</h3>
+        <h3>Leadership team</h3>
+        <div class="list-item__actions" style="margin:0 0 12px">
           <button type="button" class="btn btn--outline btn--sm" id="addLeader">+ Add Leader</button>
         </div>
-        <div id="leadersList">${content.leadership.map((l, i) => leaderItemHtml(l, i)).join('')}</div>
+        <div id="leadersList">${leaders.map((l, i) => leaderItemHtml(l, i)).join('')}</div>
       </div>
     `;
   }
 
   function leaderItemHtml(l, i) {
+    const openAttr = openLeaderIndex === i ? ' open' : '';
     return `
-      <details class="list-item list-item--accordion" data-leader-index="${i}">
+      <details class="list-item list-item--accordion" data-leader-index="${i}"${openAttr}>
         <summary class="list-item__header">
           <h4>${escapeHtml(l.name)}</h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-leader="${i}">Remove</button>
@@ -761,7 +772,33 @@
     `;
   }
 
+  function addLeaderItem() {
+    collectFromForm();
+    const leaders = ensureLeadershipList();
+    leaders.unshift({
+      id: `ldr-${Date.now()}`,
+      name: 'New Leader',
+      role: '',
+      initials: 'NL',
+      photo: ''
+    });
+    openLeaderIndex = 0;
+    renderSection('leadership');
+    openLeaderIndex = null;
+    document.querySelector('[data-leader-index="0"]')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function removeLeaderItem(index) {
+    collectFromForm();
+    const leaders = ensureLeadershipList();
+    if (!Number.isInteger(index) || index < 0 || index >= leaders.length) return;
+    leaders.splice(index, 1);
+    openLeaderIndex = null;
+    renderSection('leadership');
+  }
+
   let openGalleryAlbums = new Set();
+  let openLeaderIndex = null;
 
   function renderGalleryPanel() {
     const upcoming = content.events.filter(e => e.status === 'upcoming');
@@ -3226,25 +3263,6 @@
       });
     }
 
-    if (section === 'leadership') {
-      document.getElementById('addLeader')?.addEventListener('click', () => {
-        content.leadership.push({
-          id: `ldr-${Date.now()}`,
-          name: 'New Leader',
-          role: '',
-          initials: 'NL',
-          photo: ''
-        });
-        renderSection('leadership');
-      });
-      document.querySelectorAll('[data-remove-leader]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          content.leadership.splice(+btn.dataset.removeLeader, 1);
-          renderSection('leadership');
-        });
-      });
-    }
-
     if (section === 'gallery') {
       document.querySelectorAll('.gallery-admin-album').forEach(details => {
         details.addEventListener('toggle', () => {
@@ -3960,6 +3978,22 @@
   });
 
   document.getElementById('contentArea')?.addEventListener('click', e => {
+    const addLeaderBtn = e.target.closest('#addLeader');
+    if (addLeaderBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      addLeaderItem();
+      return;
+    }
+
+    const removeLeaderBtn = e.target.closest('[data-remove-leader]');
+    if (removeLeaderBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      removeLeaderItem(+removeLeaderBtn.dataset.removeLeader);
+      return;
+    }
+
     const hubBtn = e.target.closest('[data-hub-tab]');
     if (hubBtn?.closest('[data-hub-section]')) {
       collectFromForm();
