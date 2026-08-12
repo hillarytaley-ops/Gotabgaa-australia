@@ -44,6 +44,16 @@ export async function resolveMemberFromRequest(req) {
 
     const row = await findActiveMemberByEmail(supabase, user.email);
     if (!row) {
+      if (isAllowlistedAdminEmail(user.email)) {
+        return {
+          ok: true,
+          user,
+          row: null,
+          member: buildAllowlistedAdminProfile(user),
+          accessToken: token,
+          allowlistedAdminOnly: true
+        };
+      }
       return {
         ok: false,
         status: 403,
@@ -226,19 +236,44 @@ export function getStoredAuthUserId(row) {
   return row?.data?._authUserId || row?.auth_user_id || null;
 }
 
+/** Founder / bootstrap admins (also add more via Vercel ADMIN_EMAILS). */
+const BOOTSTRAP_ADMIN_EMAILS = ['hillarytaley@gmail.com'];
+
 export function getAdminEmailAllowlist() {
-  return String(process.env.ADMIN_EMAILS || '')
+  const fromEnv = String(process.env.ADMIN_EMAILS || '')
     .split(',')
     .map(e => normalizeMemberEmail(e))
     .filter(Boolean);
+  return [...new Set([...BOOTSTRAP_ADMIN_EMAILS.map(normalizeMemberEmail), ...fromEnv])];
+}
+
+export function isAllowlistedAdminEmail(email) {
+  const normalized = normalizeMemberEmail(email);
+  return Boolean(normalized && getAdminEmailAllowlist().includes(normalized));
 }
 
 export function memberHasAdminAccess(row, user = null) {
   if (row?.data?._adminAccess === true) return true;
   if (user?.app_metadata?.admin === true || user?.app_metadata?.role === 'admin') return true;
   const email = normalizeMemberEmail(row?.email || user?.email);
-  if (email && getAdminEmailAllowlist().includes(email)) return true;
+  if (email && isAllowlistedAdminEmail(email)) return true;
   return false;
+}
+
+/** Synthetic profile when an allowlisted admin has no membership row yet. */
+export function buildAllowlistedAdminProfile(user) {
+  const email = normalizeMemberEmail(user?.email);
+  const name = user?.user_metadata?.name || email?.split('@')[0] || 'Admin';
+  return {
+    id: user?.id || null,
+    name,
+    email,
+    membershipId: user?.user_metadata?.membership_id || 'ADMIN',
+    memberStatus: 'active',
+    paymentStatus: 'n/a',
+    paymentReference: null,
+    adminAccess: true
+  };
 }
 
 export async function syncAuthAdminRole(supabase, authUserId, adminAccess, membershipId = '') {

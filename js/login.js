@@ -103,6 +103,11 @@
         ? `Welcome, ${member.name}. You can open the members area or the leadership admin dashboard.`
         : 'You have access to both areas. Pick a dashboard to continue.';
     }
+    const adminOnly = member?.membershipId === 'ADMIN';
+    if (els.goMembersDash) {
+      els.goMembersDash.disabled = adminOnly;
+      els.goMembersDash.hidden = adminOnly;
+    }
     showError(els.roleSelectError, '');
     try { sessionStorage.setItem(PENDING_ADMIN_KEY, '1'); } catch { /* ignore */ }
   }
@@ -156,9 +161,10 @@
     pendingAccessToken = accessToken;
     saveMemberSession(member);
     const dest = preferredDestination(member);
+    const adminOnly = member?.membershipId === 'ADMIN' || member?.allowlistedAdminOnly;
 
     if (member.adminAccess) {
-      if (dest === 'admin') {
+      if (dest === 'admin' || adminOnly) {
         openAdminDashboard();
         return;
       }
