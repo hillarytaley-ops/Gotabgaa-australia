@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-06-21T00:00:00.000Z"
+    "updatedAt": "2026-08-12T00:00:00.000Z"
   },
   "site": {
     "siteUrl": "https://gotabgaa-australia.vercel.app",
@@ -151,14 +151,14 @@
         "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
       },
       "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
-      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the Gotabgaa Australia calendar for the year ahead." },
-      "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal — online payments will be added in a future update." },
+      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the Gotabgaa Australia calendar for 2026 — including gatherings already held and those still ahead." },
+      "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal. Paid events use PayID or bank transfer with a unique payment reference." },
       "pastHeader": { "tag": "Archive", "title": "Past Events", "description": "Highlights from recent gatherings across Australia." },
       "impact": [
         { "number": 24, "label": "Events Hosted", "animate": true },
         { "number": 1200, "label": "Members Attended", "animate": true },
         { "number": 6, "label": "Cities Visited", "animate": true },
-        { "number": 5, "label": "Upcoming This Year", "animate": true }
+        { "number": 2, "label": "Upcoming This Year", "animate": true }
       ],
       "cta": { "title": "Want to host an event?", "description": "Gotabgaa Australia members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
     },
@@ -200,7 +200,7 @@
       "hero": {
         "tag": "Event Booking",
         "title": "Reserve Your Place",
-        "description": "Register for upcoming Gotabgaa Australia events. Secure online payments will be added in a future update.",
+        "description": "Register for upcoming Gotabgaa Australia events. Paid events are settled by PayID or bank transfer after you book.",
         "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
       }
     },
@@ -235,7 +235,7 @@
         "description": "How we collect, use, and protect your information.",
         "backgroundImage": "assets/hero/page/women-traditional.png"
       },
-      "lastUpdated": "June 2026"
+      "lastUpdated": "August 2026"
     },
     "terms": {
       "hero": {
@@ -244,7 +244,7 @@
         "description": "Terms for using this website and engaging with our community.",
         "backgroundImage": "assets/hero/page/women-traditional.png"
       },
-      "lastUpdated": "June 2026"
+      "lastUpdated": "August 2026"
     },
     "welfare": {
       "hero": {
@@ -326,16 +326,16 @@
       "location": "South Bank Parklands, Brisbane, QLD",
       "meta": "Brisbane, QLD · 2:00 PM",
       "image": "assets/hero/brisbane-team.png",
-      "status": "upcoming",
+      "status": "past",
       "category": "community",
       "summary": "Connect with Brisbane members and welcome new families to Gotabgaa Australia.",
-      "description": "Monthly community meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs. Light refreshments provided.",
-      "bookingEnabled": true,
-      "bookingLabel": "Book Now",
+      "description": "Community meetup for Brisbane members and families. Networking, welcome for new arrivals, and planning for upcoming programs.",
+      "bookingEnabled": false,
+      "bookingLabel": "",
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
-      "registerUrl": "book.html?id=evt-brisbane-meetup",
-      "registerLabel": "Book Now"
+      "registerUrl": "",
+      "registerLabel": ""
     },
     {
       "id": "evt-youth-workshop",
@@ -366,16 +366,16 @@
       "location": "Olympic Park, Sydney, NSW",
       "meta": "Sydney, NSW · 8:00 AM",
       "image": "assets/hero/kokwet-sports-day.png",
-      "status": "upcoming",
+      "status": "past",
       "category": "sports",
       "summary": "Football, athletics, and family games across community teams.",
-      "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate members compete. Bring your family — picnic areas and refreshments on site.",
-      "bookingEnabled": true,
-      "bookingLabel": "Book Now",
+      "description": "Annual sports day featuring football, athletics, and family games. Teams from Sydney, Melbourne, and interstate members compete.",
+      "bookingEnabled": false,
+      "bookingLabel": "",
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
-      "registerUrl": "book.html?id=evt-kokwet-sports",
-      "registerLabel": "Book Now"
+      "registerUrl": "",
+      "registerLabel": ""
     },
     {
       "id": "evt-wa-gathering",
@@ -386,16 +386,16 @@
       "location": "Kings Park, Perth, WA",
       "meta": "Perth, WA · 11:00 AM",
       "image": "assets/hero/kitwek-wa.png",
-      "status": "upcoming",
+      "status": "past",
       "category": "community",
       "summary": "Western Australia community gathering with performances and shared lunch.",
-      "description": "Western Australia community gathering with cultural performances, community updates, and a shared lunch. Opportunity to meet the WA leadership team and learn about local initiatives.",
-      "bookingEnabled": true,
-      "bookingLabel": "Book Now",
+      "description": "Western Australia community gathering with cultural performances, community updates, and a shared lunch.",
+      "bookingEnabled": false,
+      "bookingLabel": "",
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
-      "registerUrl": "book.html?id=evt-wa-gathering",
-      "registerLabel": "Book Now"
+      "registerUrl": "",
+      "registerLabel": ""
     },
     {
       "id": "evt-agm-2026",
@@ -651,9 +651,9 @@
         "datePill": "14 Jun 2026",
         "location": "Olympic Park, Sydney, NSW",
         "summary": "Annual football, athletics, and family games — teams from across Australia.",
-        "status": "upcoming",
-        "link": "book.html?id=evt-kokwet-sports",
-        "linkLabel": "Register",
+        "status": "past",
+        "link": "events.html",
+        "linkLabel": "View events",
         "image": "assets/hero/kokwet-sports-day.png"
       },
       {
@@ -732,13 +732,13 @@
   "submissions": [],
   "memberPortal": {
     "welcomeTitle": "Welcome to the Members Dashboard",
-    "welcomeMessage": "Access Gotabgaa Australia news, event updates, photo albums, and governance portals — exclusively for registered members.",
+    "welcomeMessage": "Access Gotabgaa Australia news, event updates, photo albums, and membership details — exclusively for registered members.",
     "feeds": [
       {
         "id": "feed-welcome",
         "category": "news",
         "title": "Members dashboard is live",
-        "body": "Registered members can now sign in with their membership ID and email to access news feeds, event bookings, photo downloads, and election portals when active.",
+        "body": "Registered members can now sign in with email and password to access news feeds, event bookings, photo downloads, and membership details. Nominations and elections will appear here when a vote is announced.",
         "publishedAt": "2026-06-21",
         "link": ""
       }
@@ -764,7 +764,7 @@
       "nominationTitle": "Nomination Portal",
       "nominationPeriod": "",
       "nominationMessage": "Submit your nomination for Gotabgaa Australia leadership positions during the nomination period.",
-      "nominationClosedMessage": "Nominations are currently closed. You will be notified when the next nomination period opens.",
+      "nominationClosedMessage": "Nominations are not open. There is no nomination portal at this time. Leadership will announce dates and a link here when a nomination period is scheduled.",
       "nominationUrl": "",
       "nominationButtonLabel": "Open nomination portal",
       "nominationPositions": [
@@ -778,7 +778,7 @@
       "electionTitle": "Election Portal",
       "electionPeriod": "",
       "electionMessage": "Cast your vote for Gotabgaa Australia leadership during the election period.",
-      "electionClosedMessage": "Elections are currently closed. Check back during the election period.",
+      "electionClosedMessage": "Elections are not open. There is no voting portal at this time. Leadership will announce dates and a link here when an election is scheduled.",
       "electionUrl": "",
       "electionButtonLabel": "Open election portal",
       "electionPositions": [

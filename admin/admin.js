@@ -1136,7 +1136,7 @@
   function defaultMemberPortal() {
     return {
       welcomeTitle: 'Welcome to the Members Dashboard',
-      welcomeMessage: 'Access Gotabgaa Australia news, event updates, photo albums, and governance portals.',
+      welcomeMessage: 'Access Gotabgaa Australia news, event updates, photo albums, and membership details.',
       feeds: [],
       eventsIntro: 'View upcoming Gotabgaa Australia events and manage your bookings.',
       photosIntro: 'Download photos from community events. Albums match events on the public gallery.',
@@ -1147,7 +1147,7 @@
         nominationTitle: 'Nomination Portal',
         nominationPeriod: '',
         nominationMessage: 'Submit your nomination for Gotabgaa Australia leadership positions during the nomination period.',
-        nominationClosedMessage: 'Nominations are currently closed. You will be notified when the next nomination period opens.',
+        nominationClosedMessage: 'Nominations are not open. There is no nomination portal at this time. Leadership will announce dates and a link here when a nomination period is scheduled.',
         nominationUrl: '',
         nominationButtonLabel: 'Open nomination portal',
         nominationPositions: defaultGovernancePositions(),
@@ -1155,7 +1155,7 @@
         electionTitle: 'Election Portal',
         electionPeriod: '',
         electionMessage: 'Cast your vote for Gotabgaa Australia leadership during the election period.',
-        electionClosedMessage: 'Elections are currently closed. Check back during the election period.',
+        electionClosedMessage: 'Elections are not open. There is no voting portal at this time. Leadership will announce dates and a link here when an election is scheduled.',
         electionUrl: '',
         electionButtonLabel: 'Open election portal',
         electionPositions: defaultGovernancePositions()
@@ -3109,7 +3109,7 @@
           description: '',
           bookingEnabled: true,
           bookingLabel: 'Book Now',
-          ticketPriceNote: 'Free registration — secure payment coming soon',
+          ticketPriceNote: 'Free registration — no payment required',
           bookingUrl: `book.html?id=${id}`,
           registerUrl: `book.html?id=${id}`,
           registerLabel: 'Book Now'

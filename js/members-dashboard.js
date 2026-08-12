@@ -685,11 +685,11 @@
       const positions = isNom ? elections.nominationPositions : elections.electionPositions;
       const defaultTitle = isNom ? 'Nomination Portal' : 'Election Portal';
       const defaultClosed = isNom
-        ? 'Nominations are currently closed. You will be notified when the next nomination period opens.'
-        : 'Elections are currently closed. Check back during the election period.';
+        ? 'Nominations are not open. There is no nomination portal at this time. Leadership will announce dates and a link here when a nomination period is scheduled.'
+        : 'Elections are not open. There is no voting portal at this time. Leadership will announce dates and a link here when an election is scheduled.';
       const defaultButton = isNom ? 'Open nomination portal' : 'Open election portal';
       const positionsHeading = isNom ? 'Positions open for nomination' : 'Positions open for election';
-      const positionsHtml = (positions || []).length
+      const positionsHtml = open && (positions || []).length
         ? `
           <div class="members-governance-positions">
             <h4>${positionsHeading}</h4>
@@ -715,7 +715,7 @@
             ${positionsHtml}
             ${url
               ? `<a href="${escapeHtml(url)}" class="btn btn--primary" target="_blank" rel="noopener">${escapeHtml(buttonLabel || defaultButton)}</a>`
-              : '<p class="members-empty">Portal link will be posted here when available.</p>'}
+              : '<p class="members-empty">The portal link will be posted here when leadership publishes it.</p>'}
           </div>
         `;
       }
@@ -727,6 +727,18 @@
           <p>${escapeHtml(closedMessage || defaultClosed)}</p>
         </div>
       `;
+    }
+
+    const nomOpen = Boolean(elections.nominationOpen);
+    const eleOpen = Boolean(elections.electionOpen);
+    if (!nomOpen && !eleOpen) {
+      els.governanceCards.innerHTML = `
+        <div class="members-card members-card--muted" style="grid-column:1 / -1">
+          <h3>Nominations and elections</h3>
+          <p>No nomination or election is running. There is no portal URL at this time. Leadership will announce dates and a link here when a vote is scheduled.</p>
+        </div>
+      `;
+      return;
     }
 
     els.governanceCards.innerHTML = [
