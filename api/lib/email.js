@@ -1,4 +1,16 @@
-const FROM = process.env.EMAIL_FROM || 'Gotabgaa Australia <onboarding@resend.dev>';
+const TEST_FROM = 'Gotabgaa Australia <onboarding@resend.dev>';
+const FROM = process.env.EMAIL_FROM || TEST_FROM;
+
+function isUnverifiedDomainError(message) {
+  return /associated domain with your API key is not verified|domain is not verified|create a new API key with full access/i.test(String(message || ''));
+}
+
+function friendlyEmailError(message) {
+  if (isUnverifiedDomainError(message)) {
+    return 'Resend cannot send from your domain yet. In Resend create a Full access API key (not domain-restricted). In Vercel set EMAIL_FROM to Gotabgaa Australia <onboarding@resend.dev> until gotabgaaaustralia.org is Verified, then redeploy.';
+  }
+  return message;
+}
 
 function escapeHtml(str) {
   return String(str ?? '')
@@ -16,6 +28,25 @@ export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
+async function postResendEmail(key, from, { to, subject, html, text }) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from,
+      to: Array.isArray(to) ? to : [to],
+      subject,
+      html,
+      text: text || html.replace(/<[^>]+>/g, ' ')
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  return { res, data };
+}
+
 export async function sendEmail({ to, subject, html, text }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
@@ -29,24 +60,17 @@ export async function sendEmail({ to, subject, html, text }) {
     return { ok: false, skipped: true, reason: 'Missing recipient email' };
   }
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${key}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: FROM,
-      to: Array.isArray(to) ? to : [to],
-      subject,
-      html,
-      text: text || html.replace(/<[^>]+>/g, ' ')
-    })
-  });
+  const payload = { to, subject, html, text };
+  let { res, data } = await postResendEmail(key, FROM, payload);
 
-  const data = await res.json().catch(() => ({}));
+  const firstError = data.message || data.error || (!res.ok ? `Email failed (${res.status})` : '');
+  if (!res.ok && FROM !== TEST_FROM && isUnverifiedDomainError(firstError)) {
+    ({ res, data } = await postResendEmail(key, TEST_FROM, payload));
+  }
+
   if (!res.ok) {
-    return { ok: false, error: data.message || data.error || `Email failed (${res.status})` };
+    const err = data.message || data.error || firstError || `Email failed (${res.status})`;
+    return { ok: false, error: friendlyEmailError(err) };
   }
 
   return { ok: true, id: data.id };

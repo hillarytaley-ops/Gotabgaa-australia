@@ -80,6 +80,18 @@ STEP 6 — Test
 ----------------------------------------------------------------------
 TROUBLESHOOTING
 ----------------------------------------------------------------------
+  "The associated domain with your API key is not verified..."
+    → EMAIL_FROM uses a domain that is not Verified yet, OR the API key
+      is restricted to that domain.
+    Fix:
+      1. Resend → API Keys → Create API Key → permission: Full access
+         (do not pick a single domain until it is Verified).
+      2. Until DNS is Verified, set Vercel:
+         EMAIL_FROM = Gotabgaa Australia <onboarding@resend.dev>
+      3. Paste the new key into Vercel RESEND_API_KEY.
+      4. Redeploy.
+      Test sender can only deliver to the email on your Resend account.
+
   "Email NOT sent: RESEND_API_KEY is not set..."
     → Variable missing, wrong environment (Production vs Preview),
       or no redeploy after adding it.
