@@ -1,14 +1,17 @@
 /**
- * Unified sign-in — Supabase Auth (members) + leadership admin
+ * Unified sign-in — one email/password for members.
+ * Leadership admin access is granted in the admin Membership panel;
+ * those users choose Members or Admin after signing in.
  */
 (function () {
   const SESSION_KEY = 'gaa_member_session';
   const ADMIN_TOKEN_KEY = 'gaa_admin_token';
   const REMEMBER_EMAIL_KEY = 'gaa_member_remember_email';
+  const PENDING_ADMIN_KEY = 'gaa_pending_admin_choice';
 
   const els = {
-    tabs: document.querySelectorAll('.auth-card__tab'),
-    panels: document.querySelectorAll('.auth-card__panel'),
+    panelSignIn: document.getElementById('panelSignIn'),
+    panelRoleSelect: document.getElementById('panelRoleSelect'),
     memberForm: document.getElementById('memberLoginForm'),
     memberError: document.getElementById('memberLoginError'),
     memberSuccess: document.getElementById('memberLoginSuccess'),
@@ -18,15 +21,15 @@
     rememberEmail: document.getElementById('rememberMemberEmail'),
     forgotBtn: document.getElementById('forgotPasswordBtn'),
     toggleMemberPassword: document.getElementById('toggleMemberPassword'),
-    adminForm: document.getElementById('adminLoginForm'),
-    adminError: document.getElementById('adminLoginError'),
-    adminBtn: document.getElementById('adminLoginBtn'),
-    adminPassword: document.getElementById('adminPassword'),
-    toggleAdminPassword: document.getElementById('toggleAdminPassword'),
-    forgotAdminBtn: document.getElementById('forgotAdminPasswordBtn'),
-    adminPasswordHelp: document.getElementById('adminPasswordHelp'),
-    switchToMemberForgot: document.getElementById('switchToMemberForgot')
+    roleSelectHint: document.getElementById('roleSelectHint'),
+    roleSelectError: document.getElementById('roleSelectError'),
+    goMembersDash: document.getElementById('goMembersDash'),
+    goAdminDash: document.getElementById('goAdminDash'),
+    roleSelectBack: document.getElementById('roleSelectBack')
   };
+
+  let pendingMember = null;
+  let pendingAccessToken = null;
 
   function getParams() {
     return new URLSearchParams(window.location.search);
@@ -39,6 +42,11 @@
   function saveAdminToken(token) {
     localStorage.setItem(ADMIN_TOKEN_KEY, token);
     sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+  }
+
+  function clearAdminToken() {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
   }
 
   function showError(el, msg) {
@@ -68,42 +76,97 @@
     });
   }
 
-  function switchTab(tab) {
-    const isLeadership = tab === 'leadership';
-    els.tabs.forEach(btn => {
-      const active = btn.dataset.tab === tab;
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-    els.panels.forEach(panel => {
-      const show = panel.id === (isLeadership ? 'panelLeadership' : 'panelMember');
-      panel.hidden = !show;
-      panel.classList.toggle('is-active', show);
-    });
-    showError(els.memberError, '');
-    showError(els.adminError, '');
-    showSuccess(els.memberSuccess, '');
-    setAdminPasswordHelp(false);
-
-    window.setTimeout(() => {
-      if (isLeadership) els.adminPassword?.focus();
-      else els.memberEmail?.focus();
-    }, 0);
+  function showSignInPanel() {
+    if (els.panelSignIn) {
+      els.panelSignIn.hidden = false;
+      els.panelSignIn.classList.add('is-active');
+    }
+    if (els.panelRoleSelect) {
+      els.panelRoleSelect.hidden = true;
+      els.panelRoleSelect.classList.remove('is-active');
+    }
+    showError(els.roleSelectError, '');
   }
 
-  function setAdminPasswordHelp(open) {
-    if (!els.adminPasswordHelp || !els.forgotAdminBtn) return;
-    els.adminPasswordHelp.hidden = !open;
-    els.forgotAdminBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  function showRoleChooser(member) {
+    pendingMember = member;
+    if (els.panelSignIn) {
+      els.panelSignIn.hidden = true;
+      els.panelSignIn.classList.remove('is-active');
+    }
+    if (els.panelRoleSelect) {
+      els.panelRoleSelect.hidden = false;
+      els.panelRoleSelect.classList.add('is-active');
+    }
+    if (els.roleSelectHint) {
+      els.roleSelectHint.textContent = member?.name
+        ? `Welcome, ${member.name}. You can open the members area or the leadership admin dashboard.`
+        : 'You have access to both areas. Pick a dashboard to continue.';
+    }
+    showError(els.roleSelectError, '');
+    try { sessionStorage.setItem(PENDING_ADMIN_KEY, '1'); } catch { /* ignore */ }
   }
 
-  function initTabFromUrl() {
-    const tab = getParams().get('tab');
-    if (tab === 'leadership' || tab === 'admin') {
-      switchTab('leadership');
+  function preferredDestination(member) {
+    const params = getParams();
+    const wantAdmin = params.get('tab') === 'leadership'
+      || params.get('tab') === 'admin'
+      || params.get('dest') === 'admin';
+    if (wantAdmin && member?.adminAccess) return 'admin';
+    if (params.get('preview') === '1') return 'members-preview';
+    return 'members';
+  }
+
+  function goMembers(preview) {
+    window.location.href = preview ? 'members.html?preview=1' : 'members.html';
+  }
+
+  async function openAdminDashboard() {
+    showError(els.roleSelectError, '');
+    if (!pendingAccessToken && window.GaaAuth) {
+      const session = await window.GaaAuth.getSession();
+      pendingAccessToken = session?.access_token || null;
+    }
+    if (!pendingAccessToken) {
+      showError(els.roleSelectError, 'Your session expired. Sign in again.');
+      showSignInPanel();
       return;
     }
-    switchTab('member');
+
+    if (els.goAdminDash) els.goAdminDash.disabled = true;
+
+    try {
+      const res = await fetch('/api/admin-session', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${pendingAccessToken}` }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not open admin dashboard');
+      if (!data.token) throw new Error('Admin session was not created.');
+      saveAdminToken(data.token);
+      try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
+      window.location.href = 'admin/';
+    } catch (err) {
+      showError(els.roleSelectError, err.message || 'Could not open admin dashboard.');
+      if (els.goAdminDash) els.goAdminDash.disabled = false;
+    }
+  }
+
+  function continueAfterLogin(member, accessToken) {
+    pendingAccessToken = accessToken;
+    saveMemberSession(member);
+    const dest = preferredDestination(member);
+
+    if (member.adminAccess) {
+      if (dest === 'admin') {
+        openAdminDashboard();
+        return;
+      }
+      showRoleChooser(member);
+      return;
+    }
+
+    goMembers(dest === 'members-preview');
   }
 
   function restoreRememberedEmail() {
@@ -140,22 +203,6 @@
   }
 
   async function redirectIfAlreadySignedIn() {
-    const params = getParams();
-    const tab = params.get('tab');
-    const isLeadership = tab === 'leadership' || tab === 'admin';
-    const token = localStorage.getItem(ADMIN_TOKEN_KEY) || sessionStorage.getItem(ADMIN_TOKEN_KEY);
-
-    if (isLeadership && token) {
-      if (params.get('preview') === '1') {
-        window.location.replace('members.html?preview=1');
-      } else {
-        window.location.replace('admin/');
-      }
-      return true;
-    }
-
-    if (isLeadership) return false;
-
     if (!window.GaaAuth) return false;
 
     try {
@@ -163,7 +210,19 @@
       if (!session?.access_token) return false;
       const member = await fetchMemberProfile(session.access_token);
       saveMemberSession(member);
-      window.location.replace('members.html');
+      pendingAccessToken = session.access_token;
+
+      const dest = preferredDestination(member);
+      if (member.adminAccess && dest === 'admin') {
+        openAdminDashboard();
+        return true;
+      }
+      if (member.adminAccess && dest !== 'members-preview') {
+        showRoleChooser(member);
+        return true;
+      }
+
+      window.location.replace(dest === 'members-preview' ? 'members.html?preview=1' : 'members.html');
       return true;
     } catch {
       try { await window.GaaAuth.signOut(); } catch { /* ignore */ }
@@ -206,8 +265,7 @@
       }
 
       persistRememberedEmail(email);
-      saveMemberSession(member);
-      window.location.href = 'members.html';
+      continueAfterLogin(member, data.session.access_token);
     } catch (err) {
       const msg = String(err.message || '');
       if (/invalid login credentials/i.test(msg)) {
@@ -251,44 +309,16 @@
     }
   }
 
-  async function handleAdminLogin(e) {
-    e.preventDefault();
-    showError(els.adminError, '');
-
-    const password = els.adminPassword?.value;
-    if (!password?.trim()) {
-      showError(els.adminError, 'Please enter your password.');
-      els.adminPassword?.focus();
-      return;
-    }
-
-    els.adminBtn.disabled = true;
-    els.adminBtn.textContent = 'Signing in…';
-
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: password.trim() })
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || `Sign in failed (${res.status})`);
-      if (!data.token) throw new Error('Sign in succeeded but no token returned.');
-
-      saveAdminToken(data.token);
-
-      if (getParams().get('preview') === '1') {
-        window.location.href = 'members.html?preview=1';
-        return;
-      }
-      window.location.href = 'admin/';
-    } catch (err) {
-      showError(els.adminError, err.message || 'Could not sign in. Check your password and try again.');
-    } finally {
-      els.adminBtn.disabled = false;
-      els.adminBtn.textContent = 'Sign in';
-    }
+  async function handleRoleBack() {
+    try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
+    clearAdminToken();
+    localStorage.removeItem(SESSION_KEY);
+    pendingMember = null;
+    pendingAccessToken = null;
+    try { await window.GaaAuth?.signOut(); } catch { /* ignore */ }
+    showSignInPanel();
+    els.memberPassword && (els.memberPassword.value = '');
+    els.memberEmail?.focus();
   }
 
   async function init() {
@@ -298,38 +328,18 @@
 
     if (await redirectIfAlreadySignedIn()) return;
 
-    initTabFromUrl();
+    showSignInPanel();
     restoreRememberedEmail();
     bindPasswordToggle(els.toggleMemberPassword, els.memberPassword);
-    bindPasswordToggle(els.toggleAdminPassword, els.adminPassword);
-
-    els.tabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        switchTab(btn.dataset.tab);
-        const url = new URL(window.location.href);
-        url.searchParams.set('tab', btn.dataset.tab);
-        if (btn.dataset.tab === 'leadership') url.searchParams.delete('return');
-        window.history.replaceState(null, '', url.pathname + url.search);
-      });
-    });
 
     els.memberForm?.addEventListener('submit', handleMemberLogin);
-    els.adminForm?.addEventListener('submit', handleAdminLogin);
     els.forgotBtn?.addEventListener('click', handleForgotPassword);
-    els.forgotAdminBtn?.addEventListener('click', () => {
-      const open = els.adminPasswordHelp?.hidden !== false;
-      setAdminPasswordHelp(open);
-      if (open) {
-        els.adminPasswordHelp?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+    els.goMembersDash?.addEventListener('click', () => {
+      try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
+      goMembers(getParams().get('preview') === '1');
     });
-    els.switchToMemberForgot?.addEventListener('click', () => {
-      switchTab('member');
-      const url = new URL(window.location.href);
-      url.searchParams.set('tab', 'member');
-      window.history.replaceState(null, '', url.pathname + url.search);
-      els.memberEmail?.focus();
-    });
+    els.goAdminDash?.addEventListener('click', openAdminDashboard);
+    els.roleSelectBack?.addEventListener('click', handleRoleBack);
   }
 
   if (document.readyState === 'loading') {

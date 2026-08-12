@@ -67,7 +67,8 @@ export function getMemberMeta(row) {
     membershipId: row?.membership_id || data._membershipId || notesMeta?.membershipId || null,
     memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending',
     paymentStatus: row?.payment_status || 'pending',
-    paymentReference: getPaymentReferenceFromRow(row)
+    paymentReference: getPaymentReferenceFromRow(row),
+    adminAccess: data._adminAccess === true
   };
 }
 
@@ -164,7 +165,8 @@ export function serializeMemberProfile(row) {
     feeDisplay: row.fee_display,
     feeAmount: row.fee_amount,
     joinedAt: row.created_at,
-    authUserId: row?.data?._authUserId || row?.auth_user_id || null
+    authUserId: row?.data?._authUserId || row?.auth_user_id || null,
+    adminAccess: meta.adminAccess === true
   };
 }
 

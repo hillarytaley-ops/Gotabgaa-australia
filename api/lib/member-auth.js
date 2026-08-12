@@ -1,9 +1,9 @@
 import { getSupabase } from './supabase.js';
 import {
+  findActiveMemberByEmail,
   findMemberByEmailAndId,
   getMemberMeta,
   normalizeMemberEmail,
-  findActiveMemberByEmail,
   serializeMemberProfile
 } from './member-registration.js';
 
@@ -67,11 +67,13 @@ export async function resolveMemberFromRequest(req) {
       };
     }
 
+    const member = serializeMemberProfile(row);
+    member.adminAccess = memberHasAdminAccess(row, user);
     return {
       ok: true,
       user,
       row,
-      member: serializeMemberProfile(row),
+      member,
       accessToken: token
     };
   }
@@ -108,11 +110,13 @@ export async function resolveMemberFromRequest(req) {
     };
   }
 
+  const member = serializeMemberProfile(row);
+  member.adminAccess = memberHasAdminAccess(row, null);
   return {
     ok: true,
     user: null,
     row,
-    member: serializeMemberProfile(row),
+    member,
     legacy: true
   };
 }
@@ -220,4 +224,41 @@ export async function banMemberAuthUser(supabase, authUserId) {
 
 export function getStoredAuthUserId(row) {
   return row?.data?._authUserId || row?.auth_user_id || null;
+}
+
+export function getAdminEmailAllowlist() {
+  return String(process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map(e => normalizeMemberEmail(e))
+    .filter(Boolean);
+}
+
+export function memberHasAdminAccess(row, user = null) {
+  if (row?.data?._adminAccess === true) return true;
+  if (user?.app_metadata?.admin === true || user?.app_metadata?.role === 'admin') return true;
+  const email = normalizeMemberEmail(row?.email || user?.email);
+  if (email && getAdminEmailAllowlist().includes(email)) return true;
+  return false;
+}
+
+export async function syncAuthAdminRole(supabase, authUserId, adminAccess, membershipId = '') {
+  if (!supabase || !authUserId) return;
+  const { data: existing } = await supabase.auth.admin.getUserById(authUserId);
+  const user = existing?.user;
+  if (!user) return;
+
+  const role = adminAccess ? 'admin' : 'member';
+  const { error } = await supabase.auth.admin.updateUserById(authUserId, {
+    user_metadata: {
+      ...(user.user_metadata || {}),
+      membership_id: membershipId || user.user_metadata?.membership_id || ''
+    },
+    app_metadata: {
+      ...(user.app_metadata || {}),
+      role,
+      admin: adminAccess === true,
+      membership_id: membershipId || user.app_metadata?.membership_id || ''
+    }
+  });
+  if (error) throw error;
 }

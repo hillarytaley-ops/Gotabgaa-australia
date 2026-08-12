@@ -13,18 +13,20 @@
 <body>
   <div id="loginScreen" class="login-screen">
     <div class="login-screen__wrap">
-      <a href="../login.html?tab=leadership" class="login-screen__home">← Unified sign in</a>
+      <a href="../login.html" class="login-screen__home">← Unified sign in</a>
       <form class="login-card" id="loginForm">
       <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
       <h1>Gotabgaa Australia</h1>
       <p class="login-card__sub">Admin Dashboard</p>
-      <label for="password">Password</label>
+      <button type="button" class="btn btn--primary" id="continueMemberAdminBtn" style="width:100%;margin-bottom:12px" hidden>Continue with my member sign-in</button>
+      <p class="login-card__hint" id="memberAdminHint" hidden style="margin-top:0">You are already signed in as a member with admin access.</p>
+      <label for="password">Bootstrap password</label>
       <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter admin password">
       <p class="login-card__status" id="loginStatus" hidden aria-live="polite"></p>
       <p class="login-card__error" id="loginError" hidden role="alert"></p>
-      <button type="submit" class="btn btn--primary" id="loginSubmitBtn">Sign In</button>
+      <button type="submit" class="btn btn--primary" id="loginSubmitBtn">Sign In with password</button>
       <button type="button" class="btn btn--outline" id="previewBtn" style="margin-top:10px;width:100%">Open Preview (no password)</button>
-      <p class="login-card__hint">Use the password from Vercel env var <strong>ADMIN_PASSWORD</strong> (not ADMIN_SECRET).</p>
+      <p class="login-card__hint">Preferred: sign in at <a href="../login.html">login.html</a>, then choose Leadership admin. Bootstrap password uses Vercel <strong>ADMIN_PASSWORD</strong>.</p>
       </form>
     </div>
   </div>
@@ -125,6 +127,10 @@
           </div>
         </nav>
         <div class="sidebar__footer">
+          <a href="../members.html" class="sidebar__footer-link" title="Open members dashboard">
+            <span class="nav-item__icon nav-item__icon--external" aria-hidden="true"></span>
+            Members dashboard
+          </a>
           <a href="../index.html" target="_blank" rel="noopener" class="sidebar__footer-link">
             <span class="nav-item__icon nav-item__icon--external" aria-hidden="true"></span>
             View live site
@@ -236,6 +242,8 @@
     </main>
   </div>
 
-  <script src="admin.js?v=25"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
+  <script src="../js/supabase-browser.js?v=24"></script>
+  <script src="admin.js?v=27"></script>
 </body>
 </html>

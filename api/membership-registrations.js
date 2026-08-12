@@ -8,7 +8,8 @@ import {
   ensureMemberAuthUser,
   createPasswordSetupLink,
   banMemberAuthUser,
-  getStoredAuthUserId
+  getStoredAuthUserId,
+  syncAuthAdminRole
 } from './lib/member-auth.js';
 
 async function provisionMemberLogin(supabase, row, membershipId) {
@@ -339,6 +340,55 @@ export default async function handler(req, res) {
           emailError: emailResult?.error || emailResult?.reason || null,
           authError
         });
+        return;
+      }
+
+      if (action === 'setAdminAccess') {
+        const rows = await selectRegistrations(supabase);
+        const row = rows.find(r => r.id === id);
+        if (!row) {
+          res.status(404).json({ error: 'Registration not found' });
+          return;
+        }
+
+        const meta = getMemberMeta(row);
+        if (!meta.membershipId || meta.memberStatus === 'inactive' || meta.memberStatus === 'pending') {
+          res.status(400).json({
+            error: 'Approve the member and keep them active before granting leadership admin access.'
+          });
+          return;
+        }
+
+        const adminAccess = req.body?.adminAccess === true;
+        const nextData = { ...(row.data || {}), _adminAccess: adminAccess };
+        await updateRegistration(supabase, id, {
+          read: true,
+          data: nextData
+        });
+
+        let authError = null;
+        try {
+          let authUserId = getStoredAuthUserId(row);
+          if (!authUserId && adminAccess) {
+            const authUser = await ensureMemberAuthUser(supabase, {
+              email: row.email,
+              name: row.name,
+              membershipId: meta.membershipId,
+              authUserId: null
+            });
+            authUserId = authUser.id;
+            nextData._authUserId = authUserId;
+            await updateRegistration(supabase, id, { data: nextData });
+          }
+          if (authUserId) {
+            await syncAuthAdminRole(supabase, authUserId, adminAccess, meta.membershipId);
+          }
+        } catch (err) {
+          authError = err.message || 'Could not sync admin role on login account';
+          console.error('[membership-setAdminAccess] auth sync failed', err);
+        }
+
+        res.status(200).json({ ok: true, adminAccess, authError });
         return;
       }
 

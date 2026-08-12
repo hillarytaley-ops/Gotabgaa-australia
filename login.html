@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sign in to Gotabgaa Australia — members dashboard or leadership admin access.">
+  <meta name="description" content="Sign in to Gotabgaa Australia — member and leadership access with one account.">
   <title>Sign In | Gotabgaa Australia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=26">
+  <link rel="stylesheet" href="css/style.css?v=27">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaa-australia.vercel.app/login.html">
 </head>
@@ -49,17 +49,12 @@
           <img src="assets/logo-round.png" alt="" class="auth-card__logo logo-circle" width="72" height="72">
           <p class="auth-card__org">Gotabgaa Australia</p>
           <h1 class="auth-card__title">Sign in</h1>
-          <p class="auth-card__subtitle">Access your member dashboard or leadership admin portal.</p>
-        </div>
-
-        <div class="auth-card__tabs" role="tablist" aria-label="Sign in type">
-          <button type="button" class="auth-card__tab is-active" role="tab" id="tabMember" aria-selected="true" aria-controls="panelMember" data-tab="member">Member</button>
-          <button type="button" class="auth-card__tab" role="tab" id="tabLeadership" aria-selected="false" aria-controls="panelLeadership" data-tab="leadership">Leadership</button>
+          <p class="auth-card__subtitle">One account for members. Leadership volunteers with admin access can open both dashboards after signing in.</p>
         </div>
 
         <div class="auth-card__body">
-          <div class="auth-card__panel is-active" id="panelMember" role="tabpanel" aria-labelledby="tabMember">
-            <h2 class="auth-card__panel-title">Member sign in</h2>
+          <div class="auth-card__panel is-active" id="panelSignIn">
+            <h2 class="auth-card__panel-title">Email &amp; password</h2>
             <p class="auth-card__hint">Use the email from your registration and the password you set after approval.</p>
             <form id="memberLoginForm" class="auth-form" novalidate>
               <div class="form__group">
@@ -90,39 +85,21 @@
             <p class="auth-card__footer auth-card__footer--cta">Not a member yet? <a href="join.html">Register here</a></p>
           </div>
 
-          <div class="auth-card__panel" id="panelLeadership" role="tabpanel" aria-labelledby="tabLeadership" hidden>
-            <h2 class="auth-card__panel-title">Leadership sign in</h2>
-            <p class="auth-card__hint">For authorised Gotabgaa Australia executive volunteers and web administrators.</p>
-            <form id="adminLoginForm" class="auth-form" novalidate>
-              <div class="form__group">
-                <label for="adminPassword">Password</label>
-                <div class="auth-form__password">
-                  <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Enter your password">
-                  <button type="button" class="auth-form__toggle-pass" id="toggleAdminPassword" aria-label="Show password" aria-pressed="false">
-                    <span class="auth-form__toggle-pass-text" data-show>Show</span>
-                    <span class="auth-form__toggle-pass-text" data-hide hidden>Hide</span>
-                  </button>
-                </div>
-              </div>
-              <div class="auth-form__row auth-form__row--end">
-                <button type="button" class="auth-form__link-btn" id="forgotAdminPasswordBtn" aria-expanded="false" aria-controls="adminPasswordHelp">Forgot password?</button>
-              </div>
-              <div class="auth-help" id="adminPasswordHelp" hidden>
-                <h3 class="auth-help__title">Reset leadership password</h3>
-                <p>Leadership sign-in uses one shared admin password (not your personal member login).</p>
-                <ol class="auth-help__list">
-                  <li>Open <strong>Vercel</strong> → your Gotabgaa project → <strong>Settings → Environment Variables</strong>.</li>
-                  <li>Find <code>ADMIN_PASSWORD</code>, set a new strong password, and save.</li>
-                  <li><strong>Redeploy</strong> the site so the new password applies.</li>
-                  <li>Return here and sign in with the new password.</li>
-                </ol>
-                <p>If you are not the person who manages Vercel, email <a href="mailto:info@gotabgaaaustralia.org?subject=Leadership%20password%20reset%20request">info@gotabgaaaustralia.org</a> or <a href="contact.html">contact us</a> and ask an authorised admin to update it.</p>
-                <p class="auth-help__note">Member password reset is on the <button type="button" class="auth-form__link-btn" id="switchToMemberForgot">Member</button> tab (Forgot password?).</p>
-              </div>
-              <p class="form__error auth-form__error" id="adminLoginError" hidden role="alert" aria-live="polite"></p>
-              <button type="submit" class="btn btn--primary btn--block auth-form__submit" id="adminLoginBtn">Sign in</button>
-            </form>
-            <p class="auth-card__footer">Need access? <a href="contact.html">Contact us</a> or email <a href="mailto:info@gotabgaaaustralia.org">info@gotabgaaaustralia.org</a></p>
+          <div class="auth-card__panel" id="panelRoleSelect" hidden>
+            <h2 class="auth-card__panel-title">Choose where to go</h2>
+            <p class="auth-card__hint" id="roleSelectHint">You have access to both areas. Pick a dashboard to continue.</p>
+            <div class="auth-role-grid" role="group" aria-label="Choose dashboard">
+              <button type="button" class="auth-role-card" id="goMembersDash">
+                <span class="auth-role-card__label">Members</span>
+                <span class="auth-role-card__desc">News, bookings, membership, welfare, and photos</span>
+              </button>
+              <button type="button" class="auth-role-card" id="goAdminDash">
+                <span class="auth-role-card__label">Leadership admin</span>
+                <span class="auth-role-card__desc">Website content, members, events, and EOI</span>
+              </button>
+            </div>
+            <p class="form__error auth-form__error" id="roleSelectError" hidden role="alert" aria-live="polite"></p>
+            <button type="button" class="auth-form__link-btn" id="roleSelectBack" style="margin-top:1rem">Sign out / use another account</button>
           </div>
         </div>
       </div>
@@ -144,6 +121,6 @@
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=25"></script>
   <script src="js/main.js?v=25"></script>
-  <script src="js/login.js?v=25"></script>
+  <script src="js/login.js?v=28"></script>
 </body>
 </html>

@@ -22,6 +22,8 @@
     publishBtn: document.getElementById('publishBtn'),
     exportBtn: document.getElementById('exportBtn'),
     previewBtn: document.getElementById('previewBtn'),
+    continueMemberAdminBtn: document.getElementById('continueMemberAdminBtn'),
+    memberAdminHint: document.getElementById('memberAdminHint'),
     statusBar: document.getElementById('statusBar'),
     sectionTitle: document.getElementById('sectionTitle'),
     lastUpdated: document.getElementById('lastUpdated'),
@@ -1010,7 +1012,8 @@
     }
     return {
       membershipId: row?.membership_id || data._membershipId || notesMeta?.membershipId || null,
-      memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending'
+      memberStatus: row?.member_status || data._memberStatus || notesMeta?.memberStatus || 'pending',
+      adminAccess: data._adminAccess === true
     };
   }
 
@@ -1041,7 +1044,7 @@
 
     return `
       <div class="card card--notice">
-        <p><strong>Public portal:</strong> Members register at <a href="../join.html" target="_blank" rel="noopener">join.html</a>. Approved members sign in at <a href="../login.html" target="_blank" rel="noopener">login.html</a> with their membership ID. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview dashboard</a></p>
+        <p><strong>Public portal:</strong> Everyone signs in at <a href="../login.html" target="_blank" rel="noopener">login.html</a> with email and password. Grant <strong>admin access</strong> below so a member can also open this leadership dashboard. <a href="../members.html?preview=1" target="_blank" rel="noopener" class="btn btn--outline btn--sm" style="margin-left:8px">Preview member dashboard</a></p>
       </div>
       <div class="card" id="membershipRegistrationsCard">
         <h3>Member registrations</h3>
@@ -1641,6 +1644,7 @@
                 <p><strong>Phone:</strong> ${escapeHtml(r.phone || '—')}</p>
                 ${renderMembershipIdField(meta.membershipId)}
                 <p><strong>Member status:</strong> <span class="membership-reg-status membership-reg-status--${escapeHtml(meta.memberStatus)}">${escapeHtml(meta.memberStatus)}</span></p>
+                <p><strong>Leadership admin:</strong> ${meta.adminAccess ? '<span class="membership-reg-status membership-reg-status--active">Yes</span>' : 'No'}</p>
                 <p><strong>State / territory:</strong> ${escapeHtml(r.state_chapter || '—')}</p>
                 <p><strong>Membership type:</strong> ${escapeHtml(r.membership_type || '—')}</p>
                 <p><strong>Address:</strong> ${escapeHtml(r.address || '—')}</p>
@@ -1655,6 +1659,9 @@
                 ${!meta.membershipId ? `<button type="button" class="btn btn--primary btn--sm membership-approve" data-id="${escapeHtml(r.id)}">Approve &amp; issue ID</button>` : ''}
                 ${payStatus !== 'paid' ? `<button type="button" class="btn btn--outline btn--sm membership-mark-paid" data-id="${escapeHtml(r.id)}">Mark as paid</button>` : ''}
                 ${meta.membershipId ? `<button type="button" class="btn btn--outline btn--sm membership-resync" data-id="${escapeHtml(r.id)}">Send password setup</button>` : ''}
+                ${meta.membershipId && meta.memberStatus === 'active'
+                  ? `<button type="button" class="btn btn--outline btn--sm membership-admin-access" data-id="${escapeHtml(r.id)}" data-admin="${meta.adminAccess ? '0' : '1'}">${meta.adminAccess ? 'Revoke admin access' : 'Grant admin access'}</button>`
+                  : ''}
                 ${meta.memberStatus === 'active' ? `<button type="button" class="btn btn--outline btn--sm membership-revoke" data-id="${escapeHtml(r.id)}">Deactivate member</button>` : ''}
                 <button type="button" class="btn btn--outline btn--sm membership-mark-read" data-id="${escapeHtml(r.id)}" data-read="${r.read ? '0' : '1'}">
                   ${r.read ? 'Mark unread' : 'Mark read'}
@@ -1781,6 +1788,37 @@
           } catch (err) {
             if (isAuthError(err)) return;
             showStatus(err.message, 'error');
+          }
+        });
+      });
+
+      card.querySelectorAll('.membership-admin-access').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const grant = btn.dataset.admin === '1';
+          const msg = grant
+            ? 'Grant leadership admin access? This member will be able to open the admin dashboard after signing in with their email and password.'
+            : 'Revoke leadership admin access for this member?';
+          if (!confirm(msg)) return;
+          btn.disabled = true;
+          try {
+            const res = await authFetch('/api/membership-registrations', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: btn.dataset.id, action: 'setAdminAccess', adminAccess: grant })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Could not update admin access');
+            showStatus(
+              grant
+                ? (data.authError ? `Admin access granted, but login sync had an issue: ${data.authError}` : 'Admin access granted. They can choose Admin after signing in.')
+                : 'Admin access revoked.',
+              data.authError ? 'error' : 'success'
+            );
+            loadMembershipRegistrationsPanel();
+          } catch (err) {
+            if (isAuthError(err)) return;
+            showStatus(err.message, 'error');
+            btn.disabled = false;
           }
         });
       });
@@ -3855,6 +3893,34 @@
 
   els.logoutBtn.addEventListener('click', () => showLogin());
   els.previewBtn?.addEventListener('click', enterPreview);
+  els.continueMemberAdminBtn?.addEventListener('click', async () => {
+    clearLoginMessages();
+    const btn = els.continueMemberAdminBtn;
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Opening…';
+    }
+    try {
+      if (!window.GaaAuth) throw new Error('Member sign-in is not ready. Refresh and try again.');
+      const session = await window.GaaAuth.getSession();
+      if (!session?.access_token) throw new Error('No member session found. Sign in at login.html first.');
+      const res = await fetch('/api/admin-session', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not open admin session');
+      setToken(data.token);
+      sessionStorage.removeItem(PREVIEW_KEY);
+      window.location.reload();
+    } catch (err) {
+      showLoginError(err.message || 'Could not continue with member sign-in');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Continue with my member sign-in';
+      }
+    }
+  });
   els.publishBtn.addEventListener('click', publish);
   els.exportBtn.addEventListener('click', exportJson);
 
@@ -3951,9 +4017,30 @@
     if (window.innerWidth > 900) closeAdminSidebar();
   });
 
+  async function offerMemberAdminContinue() {
+    const btn = els.continueMemberAdminBtn;
+    const hint = els.memberAdminHint;
+    if (!btn || !window.GaaAuth) return;
+    try {
+      const session = await window.GaaAuth.getSession();
+      if (!session?.access_token) return;
+      const res = await fetch('/api/admin-session', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
+      if (!res.ok) return;
+      btn.hidden = false;
+      if (hint) hint.hidden = false;
+    } catch {
+      /* ignore */
+    }
+  }
+
   if (getToken()) {
     bootAuthenticated();
   } else if (new URLSearchParams(location.search).get('preview') === '1') {
     enterPreview().then(() => openSectionFromHash());
+  } else {
+    offerMemberAdminContinue();
   }
 })();

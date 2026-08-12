@@ -124,7 +124,7 @@
   async function enterDeveloperPreview() {
     const token = getAdminToken();
     if (!token) {
-      window.location.replace('login.html?tab=leadership&return=members&preview=1');
+      window.location.replace('login.html?return=members&preview=1');
       return false;
     }
 
@@ -785,6 +785,23 @@
     els.memberBadge.textContent = memberSession.membershipId;
     if (els.memberAvatar) {
       els.memberAvatar.textContent = getInitials(memberSession.name);
+    }
+
+    const actions = document.querySelector('.members-hero__actions');
+    if (actions) {
+      let adminLink = document.getElementById('memberOpenAdmin');
+      if (memberSession.adminAccess) {
+        if (!adminLink) {
+          adminLink = document.createElement('a');
+          adminLink.id = 'memberOpenAdmin';
+          adminLink.className = 'btn btn--outline btn--sm';
+          adminLink.href = 'login.html?dest=admin';
+          adminLink.textContent = 'Leadership admin';
+          actions.insertBefore(adminLink, els.signOut || null);
+        }
+      } else if (adminLink) {
+        adminLink.remove();
+      }
     }
 
     renderWelfareDashboard();
