@@ -3458,6 +3458,19 @@ body.modal-open {
   color: #fff;
 }
 
+.footer__social-link.is-disabled,
+.footer__social-link:not([href]) {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.92;
+}
+
+.footer__social-link.is-disabled:hover,
+.footer__social-link:not([href]):hover {
+  transform: none;
+  filter: none;
+}
+
 .footer__social-link[aria-label="Facebook"] {
   background: #1877f2;
   box-shadow: 0 2px 10px rgba(24, 119, 242, 0.4);

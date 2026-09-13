@@ -66,36 +66,61 @@ document.addEventListener('gallery-ready', () => {
   initScrollAnimations();
 });
 
+function applySocialLinks(social) {
+  const keys = ['facebook', 'tiktok', 'instagram', 'whatsapp', 'youtube'];
+  const labels = {
+    facebook: 'Facebook',
+    tiktok: 'TikTok',
+    instagram: 'Instagram',
+    whatsapp: 'WhatsApp',
+    youtube: 'YouTube'
+  };
+  const normalized = {};
+  keys.forEach(key => {
+    normalized[key] = String(social?.[key] || '').trim();
+  });
+  const hasAny = keys.some(key => normalized[key]);
+
+  document.querySelectorAll('[data-social]').forEach(link => {
+    const key = link.getAttribute('data-social');
+    const url = normalized[key];
+    const name = labels[key] || key;
+    link.hidden = false;
+    if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
+
+    if (url) {
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.classList.remove('is-disabled');
+      link.removeAttribute('aria-disabled');
+      link.setAttribute('aria-label', name);
+      link.title = name;
+    } else {
+      // Decorative only until Gotabgaa Australia opens its own accounts
+      link.removeAttribute('href');
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+      link.classList.add('is-disabled');
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('aria-label', `${name} — coming soon`);
+      link.title = 'Coming soon';
+      link.addEventListener('click', e => e.preventDefault());
+    }
+  });
+
+  document.querySelectorAll('.footer__social-label').forEach(el => {
+    el.textContent = hasAny ? 'Follow Us' : 'Coming soon';
+  });
+
+  return normalized;
+}
+
 function initSiteConfig() {
   const cfg = window.SITE_CONFIG;
   if (!cfg) return;
 
-  const defaults = {
-    facebook: 'https://www.facebook.com/gotabgaainternational',
-    tiktok: 'https://www.tiktok.com/@gotabgaainternational',
-    instagram: 'https://www.instagram.com/gotabgaainternational',
-    whatsapp: 'mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry',
-    youtube: 'https://www.youtube.com/@gotabgaainternational'
-  };
-  const social = { ...defaults, ...(cfg.social || {}) };
-  Object.keys(social).forEach(key => {
-    if (!String(social[key] || '').trim()) social[key] = defaults[key] || '';
-  });
-  cfg.social = social;
-
-  document.querySelectorAll('[data-social]').forEach(link => {
-    const key = link.getAttribute('data-social');
-    const url = social[key];
-    if (url) {
-      link.href = url;
-      link.hidden = false;
-      if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
-    } else {
-      link.removeAttribute('href');
-      link.hidden = true;
-      if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = true;
-    }
-  });
+  cfg.social = applySocialLinks(cfg.social || {});
 
   if (cfg.contactEmail) {
     document.querySelectorAll('[data-contact-email]').forEach(el => {

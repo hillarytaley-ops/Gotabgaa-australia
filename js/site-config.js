@@ -1,17 +1,17 @@
 /**
  * Site-wide settings — update social URLs and contact details here.
  * Footer and floating social widget read from this file at runtime.
- * Replace International URLs with Gotabgaa Australia accounts when ready.
+ * Leave social URLs empty until Gotabgaa Australia accounts are live.
  */
 window.SITE_CONFIG = {
   siteUrl: 'https://gotabgaaaustralia.org',
   siteName: 'Gotabgaa Australia',
   contactEmail: 'info@gotabgaaaustralia.org',
   social: {
-    facebook: 'https://www.facebook.com/gotabgaainternational',
-    tiktok: 'https://www.tiktok.com/@gotabgaainternational',
-    instagram: 'https://www.instagram.com/gotabgaainternational',
-    whatsapp: 'mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry',
-    youtube: 'https://www.youtube.com/@gotabgaainternational'
+    facebook: '',
+    tiktok: '',
+    instagram: '',
+    whatsapp: '',
+    youtube: ''
   }
 };

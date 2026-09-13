@@ -31,17 +31,51 @@
       .replace(/"/g, '&quot;');
   }
 
-  const DEFAULT_SOCIAL = {
-    facebook: 'https://www.facebook.com/gotabgaainternational',
-    tiktok: 'https://www.tiktok.com/@gotabgaainternational',
-    instagram: 'https://www.instagram.com/gotabgaainternational',
-    whatsapp: 'mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry',
-    youtube: 'https://www.youtube.com/@gotabgaainternational'
-  };
-
   function resolveSocialUrl(social, key) {
-    const url = String(social?.[key] || '').trim();
-    return url || DEFAULT_SOCIAL[key] || '';
+    return String(social?.[key] || '').trim();
+  }
+
+  function applySocialLinks(social) {
+    const labels = {
+      facebook: 'Facebook',
+      tiktok: 'TikTok',
+      instagram: 'Instagram',
+      whatsapp: 'WhatsApp',
+      youtube: 'YouTube'
+    };
+    const keys = Object.keys(labels);
+    const hasAny = keys.some(key => social[key]);
+
+    document.querySelectorAll('[data-social]').forEach(link => {
+      const key = link.getAttribute('data-social');
+      const url = social[key];
+      const name = labels[key] || key;
+      link.hidden = false;
+      if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
+
+      if (url) {
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.classList.remove('is-disabled');
+        link.removeAttribute('aria-disabled');
+        link.setAttribute('aria-label', name);
+        link.title = name;
+      } else {
+        link.removeAttribute('href');
+        link.removeAttribute('target');
+        link.removeAttribute('rel');
+        link.classList.add('is-disabled');
+        link.setAttribute('aria-disabled', 'true');
+        link.setAttribute('aria-label', `${name} — coming soon`);
+        link.title = 'Coming soon';
+        link.addEventListener('click', e => e.preventDefault());
+      }
+    });
+
+    document.querySelectorAll('.footer__social-label').forEach(el => {
+      el.textContent = hasAny ? 'Follow Us' : 'Coming soon';
+    });
   }
 
   function applySiteConfig(site) {
@@ -60,19 +94,7 @@
       social
     };
 
-    document.querySelectorAll('[data-social]').forEach(link => {
-      const key = link.getAttribute('data-social');
-      const url = social[key];
-      if (url) {
-        link.href = url;
-        link.hidden = false;
-        if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = false;
-      } else {
-        link.removeAttribute('href');
-        link.hidden = true;
-        if (link.parentElement?.tagName === 'LI') link.parentElement.hidden = true;
-      }
-    });
+    applySocialLinks(social);
 
     document.querySelectorAll('[data-contact-email]').forEach(el => {
       if (el.tagName === 'A') el.href = `mailto:${site.contactEmail}`;
