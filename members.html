@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-members-app">
@@ -22,13 +22,30 @@
         </div>
       </a>
       <nav class="members-app__nav" id="memberTabs" aria-label="Dashboard sections">
-        <button type="button" class="members-app__nav-btn members-tabs__btn is-active" data-tab="feeds">Dashboard</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="events">My Events</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="membership">Membership</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="governance">Elections</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="photos">Photos</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="welfare" id="welfareTabBtn">Welfare</button>
-        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="explore">Explore</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn is-active" data-tab="dashboard">
+          <span class="members-app__nav-ico members-app__nav-ico--dash" aria-hidden="true"></span> Dashboard
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="events">
+          <span class="members-app__nav-ico members-app__nav-ico--events" aria-hidden="true"></span> My Events
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="membership">
+          <span class="members-app__nav-ico members-app__nav-ico--member" aria-hidden="true"></span> Membership
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="governance">
+          <span class="members-app__nav-ico members-app__nav-ico--vote" aria-hidden="true"></span> Elections
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="feed">
+          <span class="members-app__nav-ico members-app__nav-ico--feed" aria-hidden="true"></span> Feed
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="photos">
+          <span class="members-app__nav-ico members-app__nav-ico--photos" aria-hidden="true"></span> Photos
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="explore">
+          <span class="members-app__nav-ico members-app__nav-ico--res" aria-hidden="true"></span> Resources
+        </button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="welfare" id="welfareTabBtn">
+          <span class="members-app__nav-ico members-app__nav-ico--welfare" aria-hidden="true"></span> Welfare
+        </button>
       </nav>
       <div class="members-app__side-foot">
         <button type="button" class="members-app__signout" id="memberSignOut">Sign out</button>
@@ -42,55 +59,92 @@
       </div>
 
       <div class="members-app__topbar">
-        <div style="display:flex;align-items:center;gap:10px">
+        <div class="members-app__topbar-left">
           <button type="button" class="members-app__menu-toggle" id="membersNavToggle" aria-label="Open menu">Menu</button>
-          <h1>Dashboard</h1>
+          <h1 id="membersPageTitle">Dashboard</h1>
         </div>
         <div class="members-app__status">
-          <span class="members-app__badge" id="memberBadge">MEMBER</span>
+          <span class="members-app__badge members-app__badge--active" id="memberBadge">ACTIVE</span>
           <span class="members-app__avatar" id="memberAvatar" aria-hidden="true">GA</span>
         </div>
       </div>
 
       <div class="members-dashboard" id="memberDashboard" hidden>
-        <div class="members-stats" id="memberStats" aria-label="Quick overview" hidden></div>
-
-        <div class="members-panel is-active" data-panel="feeds" id="panelFeeds">
-          <div class="members-app__grid" id="memberHero">
-            <div class="members-app__card">
-              <p class="members-hero__eyebrow" style="margin:0 0 6px;color:#6b5b4f;font-size:0.85rem;font-weight:600">Members area</p>
-              <h2 id="memberWelcomeTitle">Welcome back</h2>
-              <p id="memberWelcomeMessage"></p>
+        <!-- Home (Taunet-style) -->
+        <div class="members-panel is-active" data-panel="dashboard" id="panelDashboard">
+          <div class="members-app__grid">
+            <section class="members-app__card members-welcome-card">
+              <p class="members-app__eyebrow">Welcome</p>
+              <h2 id="memberWelcomeTitle">Hello</h2>
+              <div class="members-welcome-meta" id="memberWelcomeMeta"></div>
+              <div class="members-welcome-note" id="memberWelcomeNote"></div>
               <div id="memberOpenAdminSlot"></div>
-            </div>
-            <div class="members-app__card">
-              <h2 style="font-size:1.05rem;margin-bottom:12px">Quick actions</h2>
+            </section>
+
+            <section class="members-app__card">
+              <p class="members-app__eyebrow">Quick actions</p>
               <div class="members-app__quick">
                 <button type="button" class="members-app__quick-primary members-tabs__btn" data-tab="events">Check Events</button>
-                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="feeds">Feed</button>
+                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="feed">Feed</button>
                 <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="photos">Photos</button>
+                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="explore">Resources</button>
                 <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="welfare">Welfare Support</button>
               </div>
-            </div>
+            </section>
           </div>
-          <div class="members-app__card" style="margin-top:14px">
-            <div class="members-feed-filters" id="feedFilters">
-              <button type="button" class="members-feed-filters__btn is-active" data-feed="all">All</button>
-              <button type="button" class="members-feed-filters__btn" data-feed="news">News</button>
-              <button type="button" class="members-feed-filters__btn" data-feed="sports">Sports</button>
-              <button type="button" class="members-feed-filters__btn" data-feed="business">Business</button>
-              <button type="button" class="members-feed-filters__btn" data-feed="social">Social</button>
+
+          <section class="members-app__card members-home-block">
+            <p class="members-app__eyebrow">Community feed</p>
+            <p class="members-home-block__text">Share community updates, news, and announcements. Browse posts by category in the Feed.</p>
+            <button type="button" class="members-app__quick-primary members-tabs__btn" data-tab="feed" style="width:auto;display:inline-flex;padding:11px 18px">Open Feed</button>
+          </section>
+
+          <section class="members-app__card members-home-block">
+            <p class="members-app__eyebrow">Announcements</p>
+            <div id="homeAnnouncements" class="members-announcements">Loading announcements…</div>
+          </section>
+
+          <section class="members-app__card members-home-block">
+            <p class="members-app__eyebrow">Community events</p>
+            <p class="members-home-block__text">Scroll sideways to see each flyer. Use the tabs to switch Upcoming, Live, Recent, and Past.</p>
+            <div class="members-event-tabs" id="homeEventTabs" role="tablist" aria-label="Home event filters">
+              <button type="button" class="members-event-tabs__btn is-active" data-home-event-filter="upcoming">Upcoming</button>
+              <button type="button" class="members-event-tabs__btn" data-home-event-filter="live">Live</button>
+              <button type="button" class="members-event-tabs__btn" data-home-event-filter="recent">Recent</button>
+              <button type="button" class="members-event-tabs__btn" data-home-event-filter="past">Past</button>
             </div>
-            <div class="members-feed-list" id="feedList"></div>
-          </div>
+            <div id="homeEventsList" class="members-event-cards members-event-cards--scroll"></div>
+            <p class="members-panel__footer-link"><button type="button" class="members-text-link members-tabs__btn" data-tab="events">View all my events →</button></p>
+          </section>
+
+          <section class="members-app__card members-home-block">
+            <p class="members-app__eyebrow">My event bookings</p>
+            <div class="members-booking-note" id="homeBookingsNote">
+              Book from Events, then return here for your receipt and ticket details. PayID details appear when payment is pending.
+            </div>
+            <div id="homeBookingsList" class="members-booking-cards"></div>
+            <p class="members-panel__footer-link"><a href="events.html">View all events →</a></p>
+          </section>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="membership" id="panelMembership" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="feed" id="panelFeed" hidden>
+          <p class="members-app__eyebrow">Community feed</p>
+          <div class="members-feed-filters" id="feedFilters">
+            <button type="button" class="members-feed-filters__btn is-active" data-feed="all">All</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="news">News</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="sports">Sports</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="business">Business</button>
+            <button type="button" class="members-feed-filters__btn" data-feed="social">Social</button>
+          </div>
+          <div class="members-feed-list" id="feedList"></div>
+        </div>
+
+        <div class="members-panel members-app__card" data-panel="membership" id="panelMembership" hidden>
           <div class="members-card" id="membershipCard"></div>
           <div id="memberPaymentInstructions" class="payment-instructions-wrap" hidden></div>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="events" id="panelEvents" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="events" id="panelEvents" hidden>
           <p class="members-panel__intro" id="eventsIntro"></p>
           <div class="members-event-tabs" id="memberEventTabs" role="tablist" aria-label="Event filters">
             <button type="button" class="members-event-tabs__btn is-active" data-event-filter="upcoming">Upcoming</button>
@@ -102,16 +156,16 @@
           <p class="members-panel__footer-link"><a href="events.html">View all public events →</a></p>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="photos" id="panelPhotos" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="photos" id="panelPhotos" hidden>
           <p class="members-panel__intro" id="photosIntro"></p>
           <div id="photoAlbums"></div>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="governance" id="panelGovernance" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="governance" id="panelGovernance" hidden>
           <div class="members-grid members-grid--2" id="governanceCards"></div>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="welfare" id="panelWelfare" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="welfare" id="panelWelfare" hidden>
           <div id="welfareMemberStatus" class="members-card"></div>
           <div id="welfareCommunityAlerts" class="members-card members-card--alert" hidden></div>
           <div class="members-grid members-grid--2">
@@ -147,7 +201,7 @@
           </div>
         </div>
 
-        <div class="members-panel members-app__card" data-panel="explore" id="panelExplore" hidden style="margin-top:14px">
+        <div class="members-panel members-app__card" data-panel="explore" id="panelExplore" hidden>
           <p class="members-panel__intro" id="exploreIntro"></p>
           <div class="members-quicklinks" id="exploreLinks"></div>
         </div>
@@ -159,7 +213,7 @@
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=26"></script>
   <script src="js/payment-instructions.js?v=24"></script>
-  <script src="js/members-dashboard.js?v=34"></script>
+  <script src="js/members-dashboard.js?v=35"></script>
   <script>
     (function () {
       const app = document.getElementById('membersApp');

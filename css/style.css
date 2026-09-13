@@ -8372,6 +8372,249 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 .members-app__nav-btn.is-active {
   background: rgba(212,165,116,0.22);
   color: #fff;
+  box-shadow: inset 3px 0 0 #e08a2f;
+}
+
+.members-app__nav-ico {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  display: inline-block;
+  position: relative;
+  opacity: 0.9;
+}
+
+.members-app__nav-ico--dash {
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  box-shadow: inset 5px 0 0 currentColor;
+}
+
+.members-app__nav-ico--events::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+.members-app__nav-ico--events::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 3px;
+  height: 1.5px;
+  background: currentColor;
+}
+
+.members-app__nav-ico--member {
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.members-app__nav-ico--vote {
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+.members-app__nav-ico--vote::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(40deg);
+}
+
+.members-app__nav-ico--feed {
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+.members-app__nav-ico--feed::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.members-app__nav-ico--photos {
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+.members-app__nav-ico--photos::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+
+.members-app__nav-ico--res {
+  border: 1.5px solid currentColor;
+  border-radius: 2px 2px 0 0;
+  height: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.members-app__nav-ico--welfare {
+  border: 1.5px solid currentColor;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  width: 0.85rem;
+  height: 0.85rem;
+  margin: 0.1rem 0.1rem 0 0;
+}
+
+.members-app__topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.members-app__badge--active {
+  background: #e8f6ee;
+  color: #1f7a45;
+}
+
+.members-app__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a7a6c;
+}
+
+.members-welcome-card h2 {
+  font-size: 1.45rem;
+  margin-bottom: 12px;
+}
+
+.members-welcome-meta {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.92rem;
+  color: #5c4c40;
+}
+
+.members-welcome-meta p {
+  margin: 0;
+}
+
+.members-welcome-meta span:first-child {
+  color: #8a7a6c;
+}
+
+.members-welcome-meta__welfare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.members-welcome-note {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(192, 120, 48, 0.12);
+  color: #3d2b1f;
+}
+
+.members-welcome-note p {
+  margin: 0 0 8px;
+}
+
+.members-home-block {
+  margin-top: 14px;
+}
+
+.members-home-block__text {
+  margin: 0 0 12px;
+  color: #6b5b4f;
+  font-size: 0.92rem;
+}
+
+.members-text-link {
+  border: 0;
+  background: none;
+  color: #8f4e16;
+  font: inherit;
+  font-weight: 650;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.members-text-link:hover {
+  text-decoration: underline;
+}
+
+.members-announcements {
+  display: grid;
+  gap: 12px;
+}
+
+.members-announcement {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(42,31,23,0.08);
+}
+
+.members-announcement:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.members-announcement h3 {
+  margin: 0 0 6px;
+  font-size: 1.02rem;
+}
+
+.members-announcement p {
+  margin: 0;
+  color: #6b5b4f;
+  font-size: 0.9rem;
+}
+
+.members-announcement__meta {
+  font-size: 0.78rem;
+  color: #8a7a6c;
+  margin-bottom: 4px;
+}
+
+.members-booking-note {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(180, 120, 90, 0.12);
+  color: #5c4c40;
+  font-size: 0.9rem;
+}
+
+.members-event-cards--scroll {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.members-event-cards--scroll .members-event-card {
+  flex: 0 0 min(320px, 82vw);
+  scroll-snap-align: start;
+}
+
+.members-event-tabs__btn.is-active {
+  background: linear-gradient(135deg, #c9792b, #8f4e16);
+  border-color: transparent;
+  color: #fff;
 }
 
 .members-app__side-foot {

@@ -17,10 +17,14 @@
     previewBanner: document.getElementById('memberPreviewBanner'),
     signOut: document.getElementById('memberSignOut'),
     welcomeTitle: document.getElementById('memberWelcomeTitle'),
-    welcomeMessage: document.getElementById('memberWelcomeMessage'),
+    welcomeMeta: document.getElementById('memberWelcomeMeta'),
+    welcomeNote: document.getElementById('memberWelcomeNote'),
+    pageTitle: document.getElementById('membersPageTitle'),
     memberBadge: document.getElementById('memberBadge'),
     memberAvatar: document.getElementById('memberAvatar'),
-    memberStats: document.getElementById('memberStats'),
+    homeAnnouncements: document.getElementById('homeAnnouncements'),
+    homeEventsList: document.getElementById('homeEventsList'),
+    homeBookingsList: document.getElementById('homeBookingsList'),
     feedList: document.getElementById('feedList'),
     feedFilters: document.getElementById('feedFilters'),
     membershipCard: document.getElementById('membershipCard'),
@@ -40,6 +44,17 @@
     welfareReimbursementFormCard: document.getElementById('welfareReimbursementFormCard'),
     welfareReimbursementForm: document.getElementById('welfareReimbursementForm'),
     welfareReimbursementList: document.getElementById('welfareReimbursementList')
+  };
+
+  const TAB_TITLES = {
+    dashboard: 'Dashboard',
+    events: 'My Events',
+    membership: 'Membership',
+    governance: 'Elections',
+    feed: 'Feed',
+    photos: 'Photos',
+    explore: 'Resources',
+    welfare: 'Welfare'
   };
 
   const REIMBURSEMENT_LABELS = {
@@ -452,35 +467,8 @@
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  function renderMemberStats(member, content) {
-    if (!els.memberStats) return;
-    const upcoming = (content.events || []).filter(e => e.status === 'upcoming' && e.showOnSite !== false).length;
-    const payStatus = member.paymentStatus || 'pending';
-    const memberStatus = member.memberStatus || 'pending';
-    const welfareLabel = getWelfareStatusLabel();
-
-    els.memberStats.innerHTML = `
-      <div class="members-stat members-stat--events">
-        <span class="members-stat__icon" aria-hidden="true"></span>
-        <strong>${upcoming}</strong>
-        <span>Upcoming events</span>
-      </div>
-      <div class="members-stat members-stat--status">
-        <span class="members-stat__icon" aria-hidden="true"></span>
-        <strong>${escapeHtml(memberStatus)}</strong>
-        <span>Member status</span>
-      </div>
-      <div class="members-stat members-stat--payment">
-        <span class="members-stat__icon" aria-hidden="true"></span>
-        <strong>${escapeHtml(payStatus)}</strong>
-        <span>Payment</span>
-      </div>
-      <div class="members-stat members-stat--welfare">
-        <span class="members-stat__icon" aria-hidden="true"></span>
-        <strong>${escapeHtml(welfareLabel)}</strong>
-        <span>Social welfare</span>
-      </div>
-    `;
+  function renderMemberStats() {
+    /* Stats strip replaced by Taunet-style welcome card */
   }
 
   function getWelfareStatusLabel() {
@@ -490,6 +478,101 @@
     if (welfareData.welfare.welfareStatus === 'active') return 'Active';
     if (welfareData.welfare.welfareStatus === 'inactive') return 'Inactive';
     return 'Pending';
+  }
+
+  function renderWelcomeCard(member, portal) {
+    if (els.welcomeTitle) {
+      els.welcomeTitle.textContent = portal?.welcomeTitle || `Hello, ${member.name || 'Member'}`;
+    }
+
+    const welfareLabel = getWelfareStatusLabel();
+    const welfareActive = welfareLabel === 'Active';
+    if (els.welcomeMeta) {
+      els.welcomeMeta.innerHTML = `
+        <p><span>Membership</span> <strong>${escapeHtml(member.membershipType || 'Member')}</strong>
+          · Renews <strong>${escapeHtml(member.renewalDate || member.feeDisplay || '—')}</strong></p>
+        <p><span>Membership ID</span> <strong><code>${escapeHtml(member.membershipId || '—')}</code></strong></p>
+        <p class="members-welcome-meta__welfare">
+          <span>Welfare</span>
+          <strong>${escapeHtml(welfareData?.welfare?.packageTitle || 'Social welfare')}</strong>
+          <span class="members-status ${welfareActive ? 'is-active' : 'is-pending'}">${escapeHtml(welfareLabel)}</span>
+        </p>
+      `;
+    }
+
+    if (els.welcomeNote) {
+      if (welfareActive) {
+        els.welcomeNote.innerHTML = `
+          <p>You are enrolled in Gotabgaa Australia social welfare. We are glad you are here.</p>
+          <button type="button" class="members-text-link members-tabs__btn" data-tab="welfare">Open your Welfare tab</button>
+        `;
+        els.welcomeNote.hidden = false;
+      } else if (!welfareData?.welfare) {
+        els.welcomeNote.innerHTML = `
+          <p>${escapeHtml(portal?.welcomeMessage || 'Your member updates, events, and community resources in one place.')}</p>
+          <button type="button" class="members-text-link members-tabs__btn" data-tab="welfare">Explore Welfare</button>
+        `;
+        els.welcomeNote.hidden = false;
+      } else {
+        els.welcomeNote.innerHTML = `<p>${escapeHtml(portal?.welcomeMessage || 'Your member dashboard is ready.')}</p>`;
+        els.welcomeNote.hidden = false;
+      }
+    }
+  }
+
+  function renderAnnouncements(portal, content) {
+    if (!els.homeAnnouncements) return;
+    const fromPortal = portal?.announcements || [];
+    const fromFeeds = (portal?.feeds || [])
+      .filter(f => f.category === 'news' || f.pinned)
+      .slice(0, 3)
+      .map(f => ({ title: f.title, body: f.body, publishedAt: f.publishedAt }));
+    const items = fromPortal.length ? fromPortal : fromFeeds;
+
+    if (!items.length) {
+      const fallback = content?.announcements || content?.home?.announcements;
+      if (Array.isArray(fallback) && fallback.length) {
+        els.homeAnnouncements.innerHTML = fallback.slice(0, 4).map(a => `
+          <article class="members-announcement">
+            <h3>${escapeHtml(a.title || 'Announcement')}</h3>
+            <p>${escapeHtml(a.body || a.text || '')}</p>
+          </article>
+        `).join('');
+        return;
+      }
+      els.homeAnnouncements.innerHTML = '<p class="members-empty">No announcements right now. Leadership updates will appear here.</p>';
+      return;
+    }
+
+    els.homeAnnouncements.innerHTML = items.slice(0, 5).map(a => `
+      <article class="members-announcement">
+        <div class="members-announcement__meta">
+          <time>${formatDate(a.publishedAt || a.date)}</time>
+        </div>
+        <h3>${escapeHtml(a.title)}</h3>
+        <p>${escapeHtml(a.body || a.text || '').replace(/\n/g, '<br>')}</p>
+      </article>
+    `).join('');
+  }
+
+  function classifyEventBucket(evt) {
+    const status = String(evt.status || '').toLowerCase();
+    if (status === 'live') return 'live';
+    if (status === 'upcoming') return 'upcoming';
+    if (status === 'recent') return 'recent';
+    if (status === 'past') {
+      const when = new Date(evt.endDate || evt.date || evt.startDate || 0).getTime();
+      const days = (Date.now() - when) / (1000 * 60 * 60 * 24);
+      if (!Number.isNaN(days) && days >= 0 && days <= 45) return 'recent';
+      return 'past';
+    }
+    return status || 'upcoming';
+  }
+
+  function eventsInBucket(content, bucket) {
+    return (content.events || [])
+      .filter(e => e.showOnSite !== false)
+      .filter(e => classifyEventBucket(e) === bucket);
   }
 
   function renderFeeds(portal) {
@@ -644,45 +727,67 @@
     els.eventsList.innerHTML = events.map(renderEventCard).join('');
   }
 
-  function bindEventTabs(content) {
-    const tabs = document.getElementById('memberEventTabs');
-    if (!tabs || tabs.dataset.bound === '1') return;
-    tabs.dataset.bound = '1';
-    tabs.addEventListener('click', e => {
-      const btn = e.target.closest('[data-event-filter]');
-      if (!btn) return;
-      renderEvents(content, btn.dataset.eventFilter);
+  function renderHomeEvents(content, filter = 'upcoming') {
+    if (!els.homeEventsList) return;
+    const buckets = ['upcoming', 'live', 'recent', 'past'];
+    document.querySelectorAll('#homeEventTabs [data-home-event-filter]').forEach(btn => {
+      const key = btn.dataset.homeEventFilter;
+      const count = eventsInBucket(content, key).length;
+      const label = key.charAt(0).toUpperCase() + key.slice(1);
+      btn.textContent = `${label} (${count})`;
+      btn.classList.toggle('is-active', key === filter);
     });
-    document.addEventListener('click', async e => {
-      const copyBtn = e.target.closest('[data-copy-link]');
-      if (!copyBtn) return;
-      try {
-        await navigator.clipboard.writeText(copyBtn.dataset.copyLink);
-        copyBtn.textContent = 'Copied';
-        setTimeout(() => { copyBtn.textContent = 'Copy link'; }, 1500);
-      } catch {
-        copyBtn.textContent = 'Failed';
-      }
-    });
+
+    const events = eventsInBucket(content, filter);
+    if (!events.length) {
+      els.homeEventsList.innerHTML = `<p class="members-empty">No ${filter} events listed.</p>`;
+      return;
+    }
+    els.homeEventsList.innerHTML = events.map(renderEventCard).join('');
   }
 
-  async function renderBookings() {
-    if (!memberSession) return;
-
-    if (isPreviewMode) {
-      els.bookingsList.innerHTML = '<p class="members-empty">No sample bookings in preview mode. Real members see their event bookings here.</p>';
-      return;
+  function bindEventTabs(content) {
+    const tabs = document.getElementById('memberEventTabs');
+    if (tabs && tabs.dataset.bound !== '1') {
+      tabs.dataset.bound = '1';
+      tabs.addEventListener('click', e => {
+        const btn = e.target.closest('[data-event-filter]');
+        if (!btn) return;
+        renderEvents(content, btn.dataset.eventFilter);
+      });
     }
 
-    els.bookingsList.innerHTML = '<p class="members-empty">Loading bookings…</p>';
+    const homeTabs = document.getElementById('homeEventTabs');
+    if (homeTabs && homeTabs.dataset.bound !== '1') {
+      homeTabs.dataset.bound = '1';
+      homeTabs.addEventListener('click', e => {
+        const btn = e.target.closest('[data-home-event-filter]');
+        if (!btn) return;
+        renderHomeEvents(content, btn.dataset.homeEventFilter);
+      });
+    }
 
-    const bookings = await fetchBookings();
+    if (document.documentElement.dataset.copyBound !== '1') {
+      document.documentElement.dataset.copyBound = '1';
+      document.addEventListener('click', async e => {
+        const copyBtn = e.target.closest('[data-copy-link]');
+        if (!copyBtn) return;
+        try {
+          await navigator.clipboard.writeText(copyBtn.dataset.copyLink);
+          copyBtn.textContent = 'Copied';
+          setTimeout(() => { copyBtn.textContent = 'Copy link'; }, 1500);
+        } catch {
+          copyBtn.textContent = 'Failed';
+        }
+      });
+    }
+  }
+
+  function bookingsHtml(bookings) {
     if (!bookings.length) {
-      els.bookingsList.innerHTML = '<p class="members-empty">No bookings yet. <a href="book.html">Book an event</a>.</p>';
-      return;
+      return '<p class="members-empty">No event bookings yet. Book from Events, then return here for your receipt and ticket.</p>';
     }
-
-    els.bookingsList.innerHTML = bookings.map(b => {
+    return bookings.map(b => {
       const payStatus = b.payment_status || (Number(b.fee_amount) > 0 ? 'pending' : 'n/a');
       const ref = b.payment_reference || b.data?.paymentReference || '';
       return `
@@ -692,7 +797,26 @@
         ${payStatus !== 'n/a' ? `<p class="members-event-item__meta">Payment: ${escapeHtml(payStatus)}${ref ? ` · Ref: <code>${escapeHtml(ref)}</code>` : ''}</p>` : ''}
         ${b.notes ? `<p>${escapeHtml(b.notes)}</p>` : ''}
       </div>
-    `}).join('');
+    `;
+    }).join('');
+  }
+
+  async function renderBookings() {
+    if (!memberSession) return;
+
+    const targets = [els.bookingsList, els.homeBookingsList].filter(Boolean);
+
+    if (isPreviewMode) {
+      const html = '<p class="members-empty">No sample bookings in preview mode. Real members see their event bookings here.</p>';
+      targets.forEach(el => { el.innerHTML = html; });
+      return;
+    }
+
+    targets.forEach(el => { el.innerHTML = '<p class="members-empty">Loading bookings…</p>'; });
+
+    const bookings = await fetchBookings();
+    const html = bookingsHtml(bookings);
+    targets.forEach(el => { el.innerHTML = html; });
   }
 
   function renderPhotos(content) {
@@ -854,18 +978,13 @@
     const content = await fetchContent();
     const portal = content.memberPortal || {};
 
-    const firstName = memberSession.name.split(' ')[0];
-    const hour = new Date().getHours();
-    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const statusLabel = memberSession.memberStatus === 'active' || memberSession.reviewPass
+      ? 'ACTIVE'
+      : String(memberSession.memberStatus || 'MEMBER').toUpperCase();
+    if (els.memberBadge) els.memberBadge.textContent = statusLabel;
+    if (els.memberAvatar) els.memberAvatar.textContent = getInitials(memberSession.name);
 
-    els.welcomeTitle.textContent = portal.welcomeTitle || `${greeting}, ${firstName}`;
-    els.welcomeMessage.textContent = portal.welcomeMessage || 'Your member updates, events, and community resources in one place.';
-    els.memberBadge.textContent = memberSession.membershipId;
-    if (els.memberAvatar) {
-      els.memberAvatar.textContent = getInitials(memberSession.name);
-    }
-
-    const actions = document.getElementById('memberOpenAdminSlot') || document.querySelector('.members-hero__actions');
+    const actions = document.getElementById('memberOpenAdminSlot');
     if (actions) {
       let adminLink = document.getElementById('memberOpenAdmin');
       if (memberSession.adminAccess) {
@@ -890,8 +1009,6 @@
       }
     }
 
-    renderWelfareDashboard();
-
     if (els.eventsIntro) {
       els.eventsIntro.textContent = portal.eventsIntro || 'View upcoming Gotabgaa Australia events and manage your bookings.';
     }
@@ -902,32 +1019,37 @@
       els.exploreIntro.textContent = portal.exploreIntro || 'Quick links to public Gotabgaa Australia pages and resources.';
     }
 
+    if (memberSession?.email && memberSession?.membershipId) {
+      welfareData = await fetchWelfareMember();
+    }
+
+    renderWelcomeCard(memberSession, portal);
+    renderAnnouncements(portal, content);
     renderFeeds(portal);
     renderMembershipCard(memberSession);
     bindEventTabs(content);
     renderEvents(content, 'upcoming');
+    renderHomeEvents(content, 'upcoming');
     renderPhotos(content);
     renderGovernance(portal);
     renderExploreLinks(portal);
-
-    if (memberSession?.email && memberSession?.membershipId) {
-      welfareData = await fetchWelfareMember();
-    }
-    renderMemberStats(memberSession, content);
     renderWelfareDashboard();
 
     await renderBookings();
   }
 
   function switchTab(tab) {
-    document.querySelectorAll('.members-tabs__btn').forEach(btn => {
-      btn.classList.toggle('is-active', btn.dataset.tab === tab);
+    const next = TAB_TITLES[tab] ? tab : 'dashboard';
+    document.querySelectorAll('#memberTabs .members-tabs__btn').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.tab === next);
     });
     document.querySelectorAll('.members-panel').forEach(panel => {
-      const active = panel.dataset.panel === tab;
+      const active = panel.dataset.panel === next;
       panel.hidden = !active;
       panel.classList.toggle('is-active', active);
     });
+    if (els.pageTitle) els.pageTitle.textContent = TAB_TITLES[next] || 'Dashboard';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function init() {
@@ -944,8 +1066,8 @@
       redirectToLogin();
     });
 
-    els.tabs?.addEventListener('click', e => {
-      const btn = e.target.closest('.members-tabs__btn');
+    document.getElementById('membersApp')?.addEventListener('click', e => {
+      const btn = e.target.closest('.members-tabs__btn[data-tab]');
       if (!btn) return;
       switchTab(btn.dataset.tab);
     });
