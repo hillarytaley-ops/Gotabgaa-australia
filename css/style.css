@@ -8287,6 +8287,12 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   margin-bottom: 4px;
 }
 
+.auth-glass__role-desc {
+  display: block;
+  font-size: 0.86rem;
+  color: rgba(255,255,255,0.78);
+}
+
 .auth-glass__admin-stack {
   display: grid;
   gap: 12px;
