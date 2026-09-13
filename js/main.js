@@ -70,7 +70,19 @@ function initSiteConfig() {
   const cfg = window.SITE_CONFIG;
   if (!cfg) return;
 
-  const social = cfg.social || {};
+  const defaults = {
+    facebook: 'https://www.facebook.com/gotabgaainternational',
+    tiktok: 'https://www.tiktok.com/@gotabgaainternational',
+    instagram: 'https://www.instagram.com/gotabgaainternational',
+    whatsapp: 'mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry',
+    youtube: 'https://www.youtube.com/@gotabgaainternational'
+  };
+  const social = { ...defaults, ...(cfg.social || {}) };
+  Object.keys(social).forEach(key => {
+    if (!String(social[key] || '').trim()) social[key] = defaults[key] || '';
+  });
+  cfg.social = social;
+
   document.querySelectorAll('[data-social]').forEach(link => {
     const key = link.getAttribute('data-social');
     const url = social[key];

@@ -31,18 +31,38 @@
       .replace(/"/g, '&quot;');
   }
 
+  const DEFAULT_SOCIAL = {
+    facebook: 'https://www.facebook.com/gotabgaainternational',
+    tiktok: 'https://www.tiktok.com/@gotabgaainternational',
+    instagram: 'https://www.instagram.com/gotabgaainternational',
+    whatsapp: 'mailto:info@gotabgaaaustralia.org?subject=Gotabgaa%20Australia%20inquiry',
+    youtube: 'https://www.youtube.com/@gotabgaainternational'
+  };
+
+  function resolveSocialUrl(social, key) {
+    const url = String(social?.[key] || '').trim();
+    return url || DEFAULT_SOCIAL[key] || '';
+  }
+
   function applySiteConfig(site) {
     if (!site) return;
+    const social = {
+      facebook: resolveSocialUrl(site.social, 'facebook'),
+      tiktok: resolveSocialUrl(site.social, 'tiktok'),
+      instagram: resolveSocialUrl(site.social, 'instagram'),
+      whatsapp: resolveSocialUrl(site.social, 'whatsapp'),
+      youtube: resolveSocialUrl(site.social, 'youtube')
+    };
     window.SITE_CONFIG = {
       siteUrl: site.siteUrl,
       siteName: site.siteName,
       contactEmail: site.contactEmail,
-      social: { ...site.social }
+      social
     };
 
     document.querySelectorAll('[data-social]').forEach(link => {
       const key = link.getAttribute('data-social');
-      const url = site.social?.[key];
+      const url = social[key];
       if (url) {
         link.href = url;
         link.hidden = false;
