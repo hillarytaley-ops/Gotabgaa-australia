@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sign in to Gotabgaa Australia — member and leadership access with one account.">
-  <title>Sign In | Gotabgaa Australia</title>
+  <title>Sign in | Gotabgaa Australia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/style.css?v=35">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaaaustralia.org/login.html">
 </head>
@@ -17,23 +17,26 @@
     <div class="auth-glass__bg" style="background-image:url('assets/hero/page/community-gathering.png')" aria-hidden="true"></div>
     <div class="auth-glass__veil" aria-hidden="true"></div>
 
-    <div class="auth-glass__card">
-      <div class="auth-glass__top">
-        <a href="index.html" class="auth-glass__logo-link" aria-label="Gotabgaa Australia home">
-          <img src="assets/logo-round.png" alt="" width="40" height="40">
-        </a>
-        <nav class="auth-glass__tabs" aria-label="Account options">
-          <button type="button" class="auth-glass__tab is-active" id="tabSignIn" data-auth-tab="signin" aria-current="page">Sign in</button>
-          <a href="join.html" class="auth-glass__tab">Join</a>
-          <button type="button" class="auth-glass__tab" id="tabAdmin" data-auth-tab="admin">Admin</button>
-        </nav>
+    <div class="auth-glass__card" id="authCard">
+      <a href="index.html" class="auth-glass__logo-link" aria-label="Gotabgaa Australia home">
+        <img src="assets/logo-round.png" alt="" width="40" height="40">
+      </a>
+
+      <div class="auth-glass__tabs" role="tablist" aria-label="Account options">
+        <button type="button" class="auth-glass__tab is-active" role="tab" aria-selected="true" id="tabSignIn" data-auth-tab="signin">Sign in</button>
+        <button type="button" class="auth-glass__tab" role="tab" aria-selected="false" id="tabJoin" data-auth-tab="join">Join</button>
+        <button type="button" class="auth-glass__tab" role="tab" aria-selected="false" id="tabAdmin" data-auth-tab="admin">Admin</button>
       </div>
 
-      <div id="panelSignIn" class="auth-glass__panel is-active">
-        <h1 class="auth-glass__title">Welcome back</h1>
-        <p class="auth-glass__lead" id="signInLead">Sign in with the email from your Gotabgaa Australia registration. First time? Use <strong>Reset or set password</strong> below.</p>
+      <!-- Sign in -->
+      <div id="panelSignIn" class="auth-glass__panel is-active" role="tabpanel" data-auth-panel="signin" aria-labelledby="tabSignIn">
+        <h1 class="auth-glass__title">Welcome Back</h1>
+        <p class="auth-glass__lead" id="signInLead">Sign in with the email from your Gotabgaa Australia registration. Use Forgot password if you have not chosen a password yet.</p>
 
         <form id="memberLoginForm" class="auth-glass__form" novalidate>
+          <p class="auth-glass__error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
+          <p class="auth-glass__success" id="memberLoginSuccess" hidden role="status" aria-live="polite"></p>
+
           <div class="auth-glass__field">
             <label for="memberEmail">Email address</label>
             <input type="email" id="memberEmail" name="email" required autocomplete="username" inputmode="email" placeholder="you@example.com">
@@ -41,60 +44,105 @@
           <div class="auth-glass__field">
             <label for="memberPassword">Password</label>
             <div class="auth-glass__password">
-              <input type="password" id="memberPassword" name="password" required autocomplete="current-password" placeholder="Enter your password" minlength="6">
-              <button type="button" class="auth-glass__eye" id="toggleMemberPassword" aria-label="Show password" aria-pressed="false">Show</button>
+              <input type="password" id="memberPassword" name="password" required autocomplete="current-password" placeholder="Your password" minlength="6">
+              <button type="button" class="auth-glass__eye" id="toggleMemberPassword" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="icon-eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
             </div>
           </div>
-          <div class="auth-glass__row">
-            <label class="auth-glass__remember">
-              <input type="checkbox" id="rememberMemberEmail" name="rememberEmail">
-              <span>Remember my email</span>
-            </label>
-          </div>
-          <p class="auth-glass__error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
-          <p class="auth-glass__success" id="memberLoginSuccess" hidden role="status" aria-live="polite"></p>
-          <button type="submit" class="auth-glass__submit" id="memberLoginBtn">Sign in</button>
-          <button type="button" class="auth-glass__link auth-glass__forgot" id="forgotPasswordBtn">Reset or set password</button>
-        </form>
 
-        <p class="auth-glass__footer">
-          Don't have an account?
-          <a href="join.html">Join Gotabgaa Australia</a>
-          · <a href="contact.html">Contact</a>
-          · <a href="index.html">Back to website</a>
-        </p>
+          <p class="auth-glass__forgot-row">
+            <button type="button" class="auth-glass__link" id="forgotPasswordBtn">Forgot password?</button>
+          </p>
+
+          <button type="submit" class="auth-glass__submit" id="memberLoginBtn">Sign in</button>
+
+          <p class="auth-glass__footer">
+            Don't have an account?
+            <button type="button" class="auth-glass__inline" data-auth-tab="join">Join Gotabgaa Australia</button>
+            <span aria-hidden="true"> · </span>
+            <a href="contact.html">IT help</a>
+            <span aria-hidden="true"> · </span>
+            <a href="index.html">Back to website</a>
+          </p>
+        </form>
       </div>
 
-      <div id="panelAdmin" class="auth-glass__panel" hidden>
-        <h1 class="auth-glass__title">Leadership admin</h1>
-        <p class="auth-glass__lead">One account for members and leadership. Sign in with your member email, then open the admin dashboard.</p>
+      <!-- Join -->
+      <div id="panelJoin" class="auth-glass__panel" role="tabpanel" data-auth-panel="join" aria-labelledby="tabJoin" hidden>
+        <h1 class="auth-glass__title">Join our community</h1>
+        <p class="auth-glass__lead">Already registered? <button type="button" class="auth-glass__inline" data-auth-tab="signin">Sign in</button> with that email. Join is for new members — complete your application and payment details next.</p>
 
-        <div class="auth-glass__admin-stack">
-          <button type="button" class="auth-glass__submit" id="adminUseMemberSignInBtn">Sign in with email &amp; password</button>
-          <button type="button" class="auth-glass__submit auth-glass__submit--secondary" id="continueMemberAdminBtn" hidden>Continue with my member sign-in</button>
-          <p class="auth-glass__hint" id="memberAdminHint" hidden>You already have a member session with admin access.</p>
-
-          <details class="auth-glass__details" id="bootstrapDetails">
-            <summary>Bootstrap password (emergency)</summary>
-            <form id="adminBootstrapForm" class="auth-glass__form" novalidate>
-              <div class="auth-glass__field">
-                <label for="adminBootstrapPassword">Admin password</label>
-                <input type="password" id="adminBootstrapPassword" name="adminPassword" autocomplete="current-password" placeholder="Vercel ADMIN_PASSWORD">
-              </div>
-              <p class="auth-glass__error" id="adminBootstrapError" hidden role="alert"></p>
-              <button type="submit" class="auth-glass__submit" id="adminBootstrapBtn">Sign in with bootstrap password</button>
-            </form>
-          </details>
-
-          <button type="button" class="auth-glass__link auth-glass__forgot" id="adminPreviewBtn">Open admin preview (no password)</button>
+        <div class="auth-glass__join-fee" aria-label="Membership fee">
+          <div class="auth-glass__join-fee-row">
+            <span>Membership</span>
+            <strong>$50 <span class="auth-glass__join-period">AUD / year</span></strong>
+          </div>
+          <p>Access events, programs, and community updates across Australia. Pay via PayID or bank transfer after registering.</p>
         </div>
 
+        <a class="auth-glass__submit" href="join.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Continue to membership form</a>
+
         <p class="auth-glass__footer">
-          Preferred path uses your member login.
+          <button type="button" class="auth-glass__inline" data-auth-tab="signin">Back to sign in</button>
+          <span aria-hidden="true"> · </span>
+          <a href="contact.html">IT help</a>
+          <span aria-hidden="true"> · </span>
           <a href="index.html">Back to website</a>
         </p>
       </div>
 
+      <!-- Admin (Taunet-style: email + password) -->
+      <div id="panelAdmin" class="auth-glass__panel" role="tabpanel" data-auth-panel="admin" aria-labelledby="tabAdmin" hidden>
+        <h1 class="auth-glass__title">Admin</h1>
+        <p class="auth-glass__lead">Sign in with your leadership email and password. If you were invited, create your password first, then sign in here.</p>
+
+        <form id="adminAuthForm" class="auth-glass__form" novalidate>
+          <p class="auth-glass__error" id="adminAuthError" hidden role="alert" aria-live="polite"></p>
+          <p class="auth-glass__success" id="adminAuthSuccess" hidden role="status" aria-live="polite"></p>
+
+          <div class="auth-glass__field">
+            <label for="adminEmail">Email</label>
+            <input type="email" id="adminEmail" name="email" required autocomplete="username" inputmode="email" placeholder="you@example.com">
+          </div>
+          <div class="auth-glass__field">
+            <label for="adminPassword">Password</label>
+            <div class="auth-glass__password">
+              <input type="password" id="adminPassword" name="password" required autocomplete="current-password" placeholder="Your account password" minlength="6">
+              <button type="button" class="auth-glass__eye" id="toggleAdminPassword" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="icon-eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="auth-glass__forgot-row">
+            <button type="button" class="auth-glass__link" id="adminForgotPasswordBtn">Forgot password?</button>
+          </p>
+
+          <button type="submit" class="auth-glass__submit" id="adminAuthBtn">Enter admin portal</button>
+
+          <details class="auth-glass__details" id="bootstrapDetails">
+            <summary>Bootstrap password (emergency)</summary>
+            <div class="auth-glass__field" style="margin-top:12px">
+              <label for="adminBootstrapPassword">Admin password</label>
+              <input type="password" id="adminBootstrapPassword" name="adminPassword" autocomplete="current-password" placeholder="Vercel ADMIN_PASSWORD">
+            </div>
+            <p class="auth-glass__error" id="adminBootstrapError" hidden role="alert"></p>
+            <button type="button" class="auth-glass__submit auth-glass__submit--secondary" id="adminBootstrapBtn">Sign in with bootstrap password</button>
+            <button type="button" class="auth-glass__link" id="adminPreviewBtn" style="margin-top:10px">Open admin preview</button>
+          </details>
+
+          <p class="auth-glass__footer">
+            <a href="index.html">Back to website</a>
+            <span aria-hidden="true"> · </span>
+            <a href="contact.html">IT help</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- Role chooser (after dual-access sign-in) -->
       <div id="panelRoleSelect" class="auth-glass__panel" hidden>
         <h1 class="auth-glass__title">Choose where to go</h1>
         <p class="auth-glass__lead" id="roleSelectHint">You have access to both areas. Pick a dashboard to continue.</p>
@@ -114,9 +162,11 @@
     </div>
   </main>
 
+  <a href="contact.html" class="auth-glass__help-fab">IT Help</a>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/site-config.js?v=26"></script>
-  <script src="js/login.js?v=39"></script>
+  <script src="js/login.js?v=40"></script>
 </body>
 </html>

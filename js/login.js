@@ -11,9 +11,11 @@
 
   const els = {
     panelSignIn: document.getElementById('panelSignIn'),
+    panelJoin: document.getElementById('panelJoin'),
     panelAdmin: document.getElementById('panelAdmin'),
     panelRoleSelect: document.getElementById('panelRoleSelect'),
     tabSignIn: document.getElementById('tabSignIn'),
+    tabJoin: document.getElementById('tabJoin'),
     tabAdmin: document.getElementById('tabAdmin'),
     signInLead: document.getElementById('signInLead'),
     memberForm: document.getElementById('memberLoginForm'),
@@ -22,7 +24,6 @@
     memberBtn: document.getElementById('memberLoginBtn'),
     memberEmail: document.getElementById('memberEmail'),
     memberPassword: document.getElementById('memberPassword'),
-    rememberEmail: document.getElementById('rememberMemberEmail'),
     forgotBtn: document.getElementById('forgotPasswordBtn'),
     toggleMemberPassword: document.getElementById('toggleMemberPassword'),
     roleSelectHint: document.getElementById('roleSelectHint'),
@@ -30,15 +31,18 @@
     goMembersDash: document.getElementById('goMembersDash'),
     goAdminDash: document.getElementById('goAdminDash'),
     roleSelectBack: document.getElementById('roleSelectBack'),
-    adminUseMemberSignInBtn: document.getElementById('adminUseMemberSignInBtn'),
-    continueMemberAdminBtn: document.getElementById('continueMemberAdminBtn'),
-    memberAdminHint: document.getElementById('memberAdminHint'),
-    adminBootstrapForm: document.getElementById('adminBootstrapForm'),
+    adminAuthForm: document.getElementById('adminAuthForm'),
+    adminEmail: document.getElementById('adminEmail'),
+    adminPassword: document.getElementById('adminPassword'),
+    adminAuthError: document.getElementById('adminAuthError'),
+    adminAuthSuccess: document.getElementById('adminAuthSuccess'),
+    adminAuthBtn: document.getElementById('adminAuthBtn'),
+    adminForgotBtn: document.getElementById('adminForgotPasswordBtn'),
+    toggleAdminPassword: document.getElementById('toggleAdminPassword'),
     adminBootstrapPassword: document.getElementById('adminBootstrapPassword'),
     adminBootstrapError: document.getElementById('adminBootstrapError'),
     adminBootstrapBtn: document.getElementById('adminBootstrapBtn'),
-    adminPreviewBtn: document.getElementById('adminPreviewBtn'),
-    bootstrapDetails: document.getElementById('bootstrapDetails')
+    adminPreviewBtn: document.getElementById('adminPreviewBtn')
   };
 
   let pendingMember = null;
@@ -98,62 +102,84 @@
       input.type = showing ? 'password' : 'text';
       button.setAttribute('aria-pressed', showing ? 'false' : 'true');
       button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
-      const showLabel = button.querySelector('[data-show]');
-      const hideLabel = button.querySelector('[data-hide]');
-      if (showLabel && hideLabel) {
-        showLabel.hidden = !showing;
-        hideLabel.hidden = showing;
-      } else {
-        button.textContent = showing ? 'Show' : 'Hide';
+      const eye = button.querySelector('.icon-eye');
+      const eyeOff = button.querySelector('.icon-eye-off');
+      if (eye && eyeOff) {
+        eye.hidden = !showing;
+        eyeOff.hidden = showing;
       }
     });
   }
 
   function setAuthTab(which) {
-    const isAdmin = which === 'admin';
-    els.tabSignIn?.classList.toggle('is-active', !isAdmin);
-    els.tabAdmin?.classList.toggle('is-active', isAdmin);
-    if (els.tabSignIn) {
-      if (!isAdmin) els.tabSignIn.setAttribute('aria-current', 'page');
-      else els.tabSignIn.removeAttribute('aria-current');
-    }
-    if (els.tabAdmin) {
-      if (isAdmin) els.tabAdmin.setAttribute('aria-current', 'page');
-      else els.tabAdmin.removeAttribute('aria-current');
-    }
+    const tabs = [
+      { el: els.tabSignIn, key: 'signin' },
+      { el: els.tabJoin, key: 'join' },
+      { el: els.tabAdmin, key: 'admin' }
+    ];
+    tabs.forEach(({ el, key }) => {
+      if (!el) return;
+      const on = key === which;
+      el.classList.toggle('is-active', on);
+      el.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
   }
 
   function hideAllAuthPanels() {
-    [els.panelSignIn, els.panelAdmin, els.panelRoleSelect].forEach(panel => {
+    [els.panelSignIn, els.panelJoin, els.panelAdmin, els.panelRoleSelect].forEach(panel => {
       if (!panel) return;
       panel.hidden = true;
       panel.classList.remove('is-active');
     });
   }
 
-  function showSignInPanel(opts = {}) {
+  function showAuthPanel(which, opts = {}) {
     hideAllAuthPanels();
-    setAuthTab('signin');
-    if (els.panelSignIn) {
-      els.panelSignIn.hidden = false;
-      els.panelSignIn.classList.add('is-active');
+    const map = {
+      signin: els.panelSignIn,
+      join: els.panelJoin,
+      admin: els.panelAdmin
+    };
+    const panel = map[which] || els.panelSignIn;
+    setAuthTab(which === 'join' || which === 'admin' ? which : 'signin');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.add('is-active');
     }
-    if (opts.forAdmin && els.signInLead) {
-      els.signInLead.innerHTML = 'Sign in with your member email to open <strong>Leadership admin</strong>. First time? Use <strong>Reset or set password</strong> below.';
-    } else if (els.signInLead) {
-      els.signInLead.innerHTML = 'Sign in with the email from your Gotabgaa Australia registration. First time? Use <strong>Reset or set password</strong> below.';
+    if (which === 'signin' && els.signInLead) {
+      els.signInLead.textContent = opts.forAdmin
+        ? 'Sign in with your member email to open Leadership admin. Use Forgot password if you have not chosen a password yet.'
+        : 'Sign in with the email from your Gotabgaa Australia registration. Use Forgot password if you have not chosen a password yet.';
     }
+    const url = new URL(window.location.href);
+    if (which === 'admin') {
+      url.searchParams.set('tab', 'admin');
+      url.searchParams.set('dest', 'admin');
+    } else if (which === 'join') {
+      url.searchParams.set('tab', 'join');
+      url.searchParams.delete('dest');
+    } else {
+      url.searchParams.set('tab', 'signin');
+      if (!opts.keepDest) url.searchParams.delete('dest');
+    }
+    window.history.replaceState({}, '', url);
+    document.title = (which === 'join' ? 'Join' : which === 'admin' ? 'Admin' : 'Sign in') + ' | Gotabgaa Australia';
+  }
+
+  function showSignInPanel(opts = {}) {
+    showAuthPanel('signin', opts);
     showError(els.roleSelectError, '');
   }
 
+  function showJoinPanel() {
+    showAuthPanel('join');
+  }
+
   function showAdminPanel() {
-    hideAllAuthPanels();
-    setAuthTab('admin');
-    if (els.panelAdmin) {
-      els.panelAdmin.hidden = false;
-      els.panelAdmin.classList.add('is-active');
+    showAuthPanel('admin');
+    if (els.memberEmail?.value && els.adminEmail && !els.adminEmail.value) {
+      els.adminEmail.value = els.memberEmail.value;
     }
-    offerMemberAdminContinue();
   }
 
   function showRoleChooser(member) {
@@ -198,7 +224,7 @@
   async function openAdminDashboard() {
     const errEl = (els.panelRoleSelect && !els.panelRoleSelect.hidden)
       ? els.roleSelectError
-      : els.adminBootstrapError;
+      : (els.panelAdmin && !els.panelAdmin.hidden ? els.adminAuthError : els.memberError);
     showError(errEl, '');
     if (!pendingAccessToken && window.GaaAuth) {
       const session = await window.GaaAuth.getSession();
@@ -206,12 +232,12 @@
     }
     if (!pendingAccessToken) {
       showError(errEl, 'Your session expired. Sign in again.');
-      showSignInPanel({ forAdmin: true });
+      showAdminPanel();
       return;
     }
 
     if (els.goAdminDash) els.goAdminDash.disabled = true;
-    if (els.continueMemberAdminBtn) els.continueMemberAdminBtn.disabled = true;
+    if (els.adminAuthBtn) els.adminAuthBtn.disabled = true;
 
     try {
       const res = await fetch('/api/admin-session', {
@@ -227,28 +253,26 @@
     } catch (err) {
       showError(errEl, friendlyClientError(err, 'Could not open admin dashboard.'));
       if (els.goAdminDash) els.goAdminDash.disabled = false;
-      if (els.continueMemberAdminBtn) {
-        els.continueMemberAdminBtn.disabled = false;
-        els.continueMemberAdminBtn.textContent = 'Continue with my member sign-in';
-      }
+      if (els.adminAuthBtn) els.adminAuthBtn.disabled = false;
     }
   }
 
-  function continueAfterLogin(member, accessToken) {
+  function continueAfterLogin(member, accessToken, opts = {}) {
     pendingAccessToken = accessToken;
     saveMemberSession(member);
     const dest = preferredDestination(member);
+    const errEl = opts.fromAdmin ? els.adminAuthError : els.memberError;
 
     if (dest === 'admin' && !member.adminAccess) {
       showError(
-        els.memberError,
-        'Signed in, but this account does not have leadership admin access yet. Ask an admin to grant access, or use Members dashboard.'
+        errEl,
+        'Signed in, but this email is not on the leadership admin list. Ask an admin to grant access, then try again.'
       );
       return;
     }
 
     if (member.adminAccess) {
-      if (dest === 'admin') {
+      if (dest === 'admin' || opts.fromAdmin) {
         openAdminDashboard();
         return;
       }
@@ -262,9 +286,9 @@
   function restoreRememberedEmail() {
     try {
       const saved = localStorage.getItem(REMEMBER_EMAIL_KEY);
-      if (saved && els.memberEmail) {
-        els.memberEmail.value = saved;
-        if (els.rememberEmail) els.rememberEmail.checked = true;
+      if (saved) {
+        if (els.memberEmail) els.memberEmail.value = saved;
+        if (els.adminEmail) els.adminEmail.value = saved;
       }
     } catch {
       /* ignore */
@@ -273,11 +297,7 @@
 
   function persistRememberedEmail(email) {
     try {
-      if (els.rememberEmail?.checked && email) {
-        localStorage.setItem(REMEMBER_EMAIL_KEY, email);
-      } else {
-        localStorage.removeItem(REMEMBER_EMAIL_KEY);
-      }
+      if (email) localStorage.setItem(REMEMBER_EMAIL_KEY, email);
     } catch {
       /* ignore */
     }
@@ -359,7 +379,7 @@
     } catch (err) {
       const msg = String(err.message || '');
       if (/invalid login credentials/i.test(msg)) {
-        showError(els.memberError, 'Incorrect email or password. Use Reset or set password if you still need to set one up.');
+        showError(els.memberError, 'Incorrect email or password. Use Forgot password if you still need to set one up.');
       } else if (/Auth is not configured|SUPABASE_ANON/i.test(msg)) {
         showError(els.memberError, 'Member sign-in is not configured yet. Ask an admin to add SUPABASE_ANON_KEY in Vercel.');
       } else {
@@ -371,11 +391,12 @@
     }
   }
 
-  function renderSetupLink(message, setupLink, emailSent) {
-    if (!els.memberSuccess || !setupLink) return;
-    showSuccess(els.memberSuccess, '');
-    els.memberSuccess.hidden = false;
-    els.memberSuccess.innerHTML = `
+  function renderSetupLink(message, setupLink, emailSent, targetEl) {
+    const el = targetEl || els.memberSuccess;
+    if (!el || !setupLink) return;
+    showSuccess(el, '');
+    el.hidden = false;
+    el.innerHTML = `
       <span>${escapeHtml(message || 'Use this link to set your password.')}</span>
       <p style="margin:12px 0 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
         <a href="${escapeHtml(setupLink)}" class="auth-glass__submit" style="display:inline-block;width:auto;padding:10px 16px;text-decoration:none;text-align:center">Set password now →</a>
@@ -386,8 +407,8 @@
     document.getElementById('copySetupLinkBtn')?.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(setupLink);
-        els.memberSuccess.hidden = false;
-        els.memberSuccess.innerHTML = `
+        el.hidden = false;
+        el.innerHTML = `
           <span>Link copied — open it or paste into a browser.</span>
           <p style="margin:12px 0 0">
             <a href="${escapeHtml(setupLink)}" class="auth-glass__submit" style="display:inline-block;width:auto;padding:10px 16px;text-decoration:none;text-align:center">Set password now →</a>
@@ -399,22 +420,28 @@
     });
   }
 
-  async function handleForgotPassword(e) {
+  async function handleForgotPassword(e, source = 'member') {
     e?.preventDefault?.();
     e?.stopPropagation?.();
-    showError(els.memberError, '');
-    showSuccess(els.memberSuccess, '');
+    const isAdmin = source === 'admin';
+    const errEl = isAdmin ? els.adminAuthError : els.memberError;
+    const okEl = isAdmin ? els.adminAuthSuccess : els.memberSuccess;
+    const emailEl = isAdmin ? els.adminEmail : els.memberEmail;
+    const btn = isAdmin ? els.adminForgotBtn : els.forgotBtn;
 
-    const email = els.memberEmail?.value.trim().toLowerCase();
+    showError(errEl, '');
+    showSuccess(okEl, '');
+
+    const email = emailEl?.value.trim().toLowerCase();
     if (!email) {
-      showError(els.memberError, 'Enter your email address first, then click Reset or set password.');
-      els.memberEmail?.focus();
+      showError(errEl, 'Enter your email address first, then click Forgot password.');
+      emailEl?.focus();
       return;
     }
 
-    if (els.forgotBtn) {
-      els.forgotBtn.disabled = true;
-      els.forgotBtn.textContent = 'Sending link…';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
     }
     try {
       const res = await fetch('/api/password-reset', {
@@ -426,71 +453,75 @@
       if (!res.ok) throw new Error(data.error || 'Could not send reset email.');
 
       if (data.setupLink) {
-        renderSetupLink(data.message, data.setupLink, data.emailSent);
+        renderSetupLink(data.message, data.setupLink, data.emailSent, okEl);
         return;
       }
 
       showSuccess(
-        els.memberSuccess,
+        okEl,
         data.message || 'If that email has an account, we sent a password link. Check inbox and spam.'
       );
     } catch (err) {
-      showError(els.memberError, friendlyClientError(err, 'Could not send reset email.'));
+      showError(errEl, friendlyClientError(err, 'Could not send reset email.'));
     } finally {
-      if (els.forgotBtn) {
-        els.forgotBtn.disabled = false;
-        els.forgotBtn.textContent = 'Reset or set password';
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Forgot password?';
       }
     }
   }
 
-  async function offerMemberAdminContinue() {
-    const btn = els.continueMemberAdminBtn;
-    const hint = els.memberAdminHint;
-    if (!btn) return;
-    btn.hidden = true;
-    if (hint) hint.hidden = true;
-    if (!window.GaaAuth) return;
-    try {
-      const session = await window.GaaAuth.getSession();
-      if (!session?.access_token) return;
-      const res = await fetch('/api/admin-session', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-      if (!res.ok) return;
-      pendingAccessToken = session.access_token;
-      btn.hidden = false;
-      if (hint) hint.hidden = false;
-    } catch {
-      /* ignore */
-    }
-  }
+  async function handleAdminAuth(e) {
+    e.preventDefault();
+    showError(els.adminAuthError, '');
+    showSuccess(els.adminAuthSuccess, '');
 
-  async function handleContinueMemberAdmin() {
-    showError(els.adminBootstrapError, '');
-    if (els.continueMemberAdminBtn) {
-      els.continueMemberAdminBtn.disabled = true;
-      els.continueMemberAdminBtn.textContent = 'Opening…';
+    const email = els.adminEmail?.value.trim().toLowerCase();
+    const password = els.adminPassword?.value || '';
+    if (!email || !password) {
+      showError(els.adminAuthError, 'Please enter your email and password.');
+      return;
     }
+    if (!window.GaaAuth) {
+      showError(els.adminAuthError, 'Sign-in is not ready. Refresh the page and try again.');
+      return;
+    }
+
+    if (els.adminAuthBtn) {
+      els.adminAuthBtn.disabled = true;
+      els.adminAuthBtn.textContent = 'Signing in…';
+    }
+
     try {
-      if (!pendingAccessToken && window.GaaAuth) {
-        const session = await window.GaaAuth.getSession();
-        pendingAccessToken = session?.access_token || null;
-      }
-      if (!pendingAccessToken) throw new Error('No member session found. Sign in with email & password first.');
-      await openAdminDashboard();
+      const { data, error } = await window.GaaAuth.signInWithPassword(email, password);
+      if (error) throw error;
+      if (!data?.session?.access_token) throw new Error('Sign in succeeded but no session was created.');
+
+      const member = await fetchMemberProfile(data.session.access_token);
+      persistRememberedEmail(email);
+      const url = new URL(window.location.href);
+      url.searchParams.set('dest', 'admin');
+      window.history.replaceState({}, '', url);
+      continueAfterLogin(member, data.session.access_token, { fromAdmin: true });
     } catch (err) {
-      showError(els.adminBootstrapError, friendlyClientError(err, 'Could not open admin.'));
-      if (els.continueMemberAdminBtn) {
-        els.continueMemberAdminBtn.disabled = false;
-        els.continueMemberAdminBtn.textContent = 'Continue with my member sign-in';
+      const msg = String(err.message || '');
+      if (/invalid login credentials/i.test(msg)) {
+        showError(
+          els.adminAuthError,
+          'Invalid email or password. Use the eye icon to check what was typed. If it still fails, use Forgot password.'
+        );
+      } else {
+        showError(els.adminAuthError, friendlyClientError(err, 'Could not sign in.'));
+      }
+    } finally {
+      if (els.adminAuthBtn) {
+        els.adminAuthBtn.disabled = false;
+        els.adminAuthBtn.textContent = 'Enter admin portal';
       }
     }
   }
 
-  async function handleBootstrapLogin(e) {
-    e?.preventDefault?.();
+  async function handleBootstrapLogin() {
     showError(els.adminBootstrapError, '');
     const password = els.adminBootstrapPassword?.value || '';
     if (!password.trim()) {
@@ -508,9 +539,7 @@
         body: JSON.stringify({ password: password.trim() })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || data.detail || 'Bootstrap sign in failed');
-      }
+      if (!res.ok) throw new Error(data.error || data.detail || 'Bootstrap sign in failed');
       if (!data.token) throw new Error('Login succeeded but no token returned.');
       saveAdminToken(data.token);
       window.location.href = 'admin/';
@@ -523,11 +552,13 @@
     }
   }
 
-  function wantAdminFromUrl() {
+  function tabFromUrl() {
     const params = getParams();
-    return params.get('dest') === 'admin'
-      || params.get('tab') === 'admin'
-      || params.get('tab') === 'leadership';
+    let tab = String(params.get('tab') || '').toLowerCase();
+    if (tab === 'committee' || tab === 'leadership') tab = 'admin';
+    if (params.get('dest') === 'admin') tab = 'admin';
+    if (tab === 'join' || tab === 'admin' || tab === 'signin') return tab;
+    return 'signin';
   }
 
   async function handleRoleBack() {
@@ -537,41 +568,39 @@
     pendingMember = null;
     pendingAccessToken = null;
     try { await window.GaaAuth?.signOut(); } catch { /* ignore */ }
-    showSignInPanel({ forAdmin: wantAdminFromUrl() });
+    showSignInPanel();
     els.memberPassword && (els.memberPassword.value = '');
     els.memberEmail?.focus();
   }
 
   async function init() {
-    // Bind UI handlers first — never wait on Auth/session before Forgot password works.
-    const startOnAdmin = wantAdminFromUrl();
-    if (startOnAdmin) showAdminPanel();
+    const startTab = tabFromUrl();
+    if (startTab === 'admin') showAdminPanel();
+    else if (startTab === 'join') showJoinPanel();
     else showSignInPanel();
+
     restoreRememberedEmail();
     bindPasswordToggle(els.toggleMemberPassword, els.memberPassword);
+    bindPasswordToggle(els.toggleAdminPassword, els.adminPassword);
 
-    els.tabSignIn?.addEventListener('click', () => showSignInPanel());
-    els.tabAdmin?.addEventListener('click', () => {
-      const url = new URL(window.location.href);
-      url.searchParams.set('dest', 'admin');
-      window.history.replaceState({}, '', url);
-      showAdminPanel();
+    document.querySelectorAll('[data-auth-tab]').forEach(el => {
+      el.addEventListener('click', () => {
+        const tab = el.getAttribute('data-auth-tab');
+        if (tab === 'join') showJoinPanel();
+        else if (tab === 'admin') showAdminPanel();
+        else showSignInPanel();
+      });
     });
-    els.adminUseMemberSignInBtn?.addEventListener('click', () => {
-      const url = new URL(window.location.href);
-      url.searchParams.set('dest', 'admin');
-      window.history.replaceState({}, '', url);
-      showSignInPanel({ forAdmin: true });
-      els.memberEmail?.focus();
-    });
-    els.continueMemberAdminBtn?.addEventListener('click', handleContinueMemberAdmin);
-    els.adminBootstrapForm?.addEventListener('submit', handleBootstrapLogin);
+
+    els.adminAuthForm?.addEventListener('submit', handleAdminAuth);
+    els.adminForgotBtn?.addEventListener('click', e => handleForgotPassword(e, 'admin'));
+    els.adminBootstrapBtn?.addEventListener('click', handleBootstrapLogin);
     els.adminPreviewBtn?.addEventListener('click', () => {
       window.location.href = 'admin/?preview=1';
     });
 
     els.memberForm?.addEventListener('submit', handleMemberLogin);
-    els.forgotBtn?.addEventListener('click', handleForgotPassword);
+    els.forgotBtn?.addEventListener('click', e => handleForgotPassword(e, 'member'));
     els.goMembersDash?.addEventListener('click', () => {
       try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
       goMembers(getParams().get('preview') === '1');
@@ -581,16 +610,16 @@
 
     if (getParams().get('password') === 'updated') {
       showSuccess(els.memberSuccess, 'Password updated. Sign in with your email and new password.');
-      showSignInPanel({ forAdmin: startOnAdmin });
+      showSignInPanel();
     }
 
     const notice = getParams().get('notice');
     if (notice) {
-      showError(els.adminBootstrapError, notice);
+      showError(els.adminAuthError, notice);
       showAdminPanel();
     }
 
-    if (getParams().get('preview') === '1' && startOnAdmin) {
+    if (getParams().get('preview') === '1' && startTab === 'admin') {
       window.location.href = 'admin/?preview=1';
       return;
     }
@@ -598,10 +627,8 @@
     try {
       await redirectIfAlreadySignedIn();
     } catch {
-      /* stay on sign-in form */
+      /* stay on form */
     }
-
-    if (startOnAdmin) offerMemberAdminContinue();
   }
 
   if (document.readyState === 'loading') {
