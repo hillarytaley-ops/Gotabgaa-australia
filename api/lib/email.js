@@ -21,7 +21,7 @@ function escapeHtml(str) {
 }
 
 function siteUrl() {
-  return String(process.env.SITE_URL || 'https://gotabgaa-australia.vercel.app').replace(/\/$/, '');
+  return String(process.env.SITE_URL || 'https://gotabgaaaustralia.org').replace(/\/$/, '');
 }
 
 export function isEmailConfigured() {

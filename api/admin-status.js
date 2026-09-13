@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   const emailFrom = process.env.EMAIL_FROM || '';
-  const siteUrl = process.env.SITE_URL || 'https://gotabgaa-australia.vercel.app';
+  const siteUrl = process.env.SITE_URL || 'https://gotabgaaaustralia.org';
   const usingDevFrom = !emailFrom || /onboarding@resend\.dev/i.test(emailFrom);
 
   res.status(200).json({
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       : [
         'Add RESEND_API_KEY in Vercel → Settings → Environment Variables.',
         'Set EMAIL_FROM (for testing: Gotabgaa Australia <onboarding@resend.dev>).',
-        'Confirm SITE_URL=https://gotabgaa-australia.vercel.app',
+        'Confirm SITE_URL=https://gotabgaaaustralia.org',
         'Redeploy, then Approve a member or click Send password setup.'
       ]
   });

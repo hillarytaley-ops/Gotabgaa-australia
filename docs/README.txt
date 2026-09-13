@@ -1,6 +1,11 @@
 Gotabgaa Australia — Local Documents Folder
 ============================================
 
+GOTABGAA AUSTRALIA — GO LIVE (custom domain)
+  TXT:  docs\Go-Live-Checklist.txt
+  Point gotabgaaaustralia.org (Hostinger) to Vercel, set SITE_URL,
+  Supabase Auth redirects, and Resend domain verification.
+
 GST REGISTRATION & PAYID READINESS GUIDE (new)
   PDF:  docs\Gotabgaa-Australia-GST-PayID-Readiness-Guide.pdf
   HTML: docs\Gotabgaa-Australia-GST-PayID-Readiness-Guide.html

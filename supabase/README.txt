@@ -16,16 +16,16 @@ STEP 3 — Member Auth (email + password login)
 
 STEP 4 — Supabase Auth URL settings
   Authentication → URL Configuration
-  Site URL: https://gotabgaa-australia.vercel.app
+  Site URL: https://gotabgaaaustralia.org
   Redirect URLs (add both):
-    https://gotabgaa-australia.vercel.app/set-password.html
+    https://gotabgaaaustralia.org/set-password.html
     http://localhost:3000/set-password.html   (optional, for local)
 
 STEP 5 — Vercel environment variables
   SUPABASE_URL
   SUPABASE_SERVICE_ROLE_KEY
   SUPABASE_ANON_KEY          ← required for member email/password sign-in
-  SITE_URL                   ← https://gotabgaa-australia.vercel.app
+  SITE_URL                   ← https://gotabgaaaustralia.org
   ADMIN_PASSWORD
   ADMIN_SECRET
   RESEND_API_KEY             ← recommended so approval emails send password links

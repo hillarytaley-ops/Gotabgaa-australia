@@ -4,7 +4,7 @@
  * Replace International URLs with Gotabgaa Australia accounts when ready.
  */
 window.SITE_CONFIG = {
-  siteUrl: 'https://gotabgaa-australia.vercel.app',
+  siteUrl: 'https://gotabgaaaustralia.org',
   siteName: 'Gotabgaa Australia',
   contactEmail: 'info@gotabgaaaustralia.org',
   social: {

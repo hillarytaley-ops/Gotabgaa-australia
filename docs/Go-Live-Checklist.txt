@@ -1,0 +1,121 @@
+GOTABGAA AUSTRALIA — GO LIVE CHECKLIST
+======================================
+Custom domain: https://gotabgaaaustralia.org
+Hosting: Vercel (GitHub auto-deploy)
+Registrar: Hostinger
+
+Hostinger “Active” only means you own the domain.
+You still must point DNS to Vercel and finish the steps below.
+
+
+STEP 1 — Add the domain in Vercel
+---------------------------------
+1. Open https://vercel.com → Gotabgaa Australia project
+2. Settings → Domains
+3. Add: gotabgaaaustralia.org
+4. Add: www.gotabgaaaustralia.org
+5. Prefer redirect: www → apex (or apex → www — pick one)
+6. Copy the DNS records Vercel shows (usually):
+
+   Type   Name   Value
+   A      @      76.76.21.21
+   CNAME  www    cname.vercel-dns.com
+
+   If Vercel shows different values, use those.
+
+
+STEP 2 — Point Hostinger DNS to Vercel
+--------------------------------------
+1. Hostinger → Domains → gotabgaaaustralia.org → DNS / DNS Zone
+2. Remove or replace any old A / CNAME records that conflict
+   with the website (do NOT delete Resend email DNS records
+   such as send / resend._domainkey if you already added them)
+3. Add the Vercel records from Step 1
+4. Save
+5. Wait until Vercel Domains shows Valid Configuration + SSL
+
+
+STEP 3 — Vercel environment variables (Production)
+--------------------------------------------------
+Set / update, then Redeploy:
+
+  SITE_URL=https://gotabgaaaustralia.org
+  EMAIL_FROM=Gotabgaa Australia <noreply@gotabgaaaustralia.org>
+    (only after Resend domain is Verified — otherwise keep
+     Gotabgaa Australia <onboarding@resend.dev> for testing)
+
+Also confirm these already exist:
+  ADMIN_PASSWORD
+  ADMIN_SECRET
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+  SUPABASE_ANON_KEY
+  RESEND_API_KEY   (Full access key, not domain-restricted until verified)
+  ADMIN_EMAILS=hillarytaley@gmail.com   (optional)
+
+
+STEP 4 — Supabase Auth URLs
+---------------------------
+Supabase → Authentication → URL Configuration:
+
+  Site URL:
+    https://gotabgaaaustralia.org
+
+  Redirect URLs (add all):
+    https://gotabgaaaustralia.org/set-password.html
+    https://gotabgaaaustralia.org/login.html
+    https://gotabgaaaustralia.org/**
+    https://gotabgaa-australia.vercel.app/set-password.html
+    https://gotabgaa-australia.vercel.app/**
+
+
+STEP 5 — Resend (member / password emails)
+------------------------------------------
+1. Resend → Domains → gotabgaaaustralia.org
+2. Enable Sending ON; Enable Receiving OFF
+   (Receiving can break Hostinger mailbox MX records)
+3. Add the Pending DKIM / send MX / send TXT records in Hostinger DNS
+4. Wait until status = Verified
+5. Then set EMAIL_FROM to noreply@gotabgaaaustralia.org and redeploy
+6. Test: Admin → Membership → Send password setup
+
+
+STEP 6 — Publish CMS content for the live domain
+------------------------------------------------
+1. Sign in at https://gotabgaaaustralia.org/admin/
+2. Site & PayID → Site URL = https://gotabgaaaustralia.org
+3. Publish Changes
+4. Fill PayID / ABN / bank details when ready (can go live without them
+   if payment instructions stay “contact us / TBA”)
+
+
+STEP 7 — Smoke test
+-------------------
+Open https://gotabgaaaustralia.org and check:
+  [ ] Home loads with HTTPS padlock
+  [ ] www redirects correctly
+  [ ] Join / Contact forms work
+  [ ] Sign in / Forgot password (after Resend verified)
+  [ ] Admin dashboard
+  [ ] Members dashboard (after password set)
+  [ ] Footer social icons
+
+
+OPTIONAL — Keep vercel.app
+--------------------------
+Leave https://gotabgaa-australia.vercel.app working as a backup URL.
+It will still deploy from GitHub.
+
+
+NOT REQUIRED FOR FIRST GO-LIVE
+------------------------------
+- Perfect PayID details (can add later)
+- Australia-only social accounts (International links are fine for launch)
+- Hostinger web hosting (site stays on Vercel)
+
+
+QUICK “DONE” DEFINITION
+-----------------------
+Domain resolves with SSL, SITE_URL uses gotabgaaaustralia.org,
+admin works, and password emails send to real member addresses
+(Resend Verified).

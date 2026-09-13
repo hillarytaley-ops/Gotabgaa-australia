@@ -1,7 +1,7 @@
 Gotabgaa Australia — Admin Dashboard Setup
 ============================================
 
-URL:  /admin/  (e.g. https://gotabgaa-australia.vercel.app/admin/)
+URL:  /admin/  (e.g. https://gotabgaaaustralia.org/admin/)
 
 WHAT IT MANAGES
   Site settings (email, social, tagline)

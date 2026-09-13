@@ -195,7 +195,7 @@ These can be stored in the admin dashboard payment settings (future update).
 12. SECURITY & GOVERNANCE REMINDERS
 --------------------------------------------------------------------------------
   - Never use a personal bank account for association fees
-  - Publish bank details only on official gotabgaa-australia.vercel.app pages
+  - Publish bank details only on official gotabgaaaustralia.org pages
   - Keep a ledger: ID, name, amount, date, method, who confirmed
   - Reconcile bank statement monthly against admin CSV export
   - Separate membership fees from donations in records where required
