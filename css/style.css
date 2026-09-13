@@ -3706,46 +3706,55 @@ body.modal-open {
     padding-right: 18px;
     padding-top: 0;
     padding-bottom: var(--hero-band-bottom);
+    background: transparent;
+    align-items: stretch;
   }
 
   .hero__overlay {
-    background:
-      linear-gradient(to bottom, rgba(42, 31, 23, 0.45) 0%, rgba(42, 31, 23, 0.12) 8%, transparent 14%),
-      linear-gradient(to top, rgba(42, 31, 23, 0.5) 0%, rgba(42, 31, 23, 0.14) 8%, transparent 14%);
+    /* Soft bottom fade only — no mid-page brown “card” */
+    background: linear-gradient(
+      to top,
+      rgba(18, 12, 8, 0.72) 0%,
+      rgba(18, 12, 8, 0.35) 28%,
+      rgba(18, 12, 8, 0.08) 55%,
+      transparent 78%
+    );
   }
 
   .hero__content {
-    position: absolute;
-    top: var(--hero-band-top);
-    left: 18px;
-    right: 18px;
-    bottom: var(--hero-band-bottom);
+    position: absolute !important;
+    top: auto !important;
+    left: 18px !important;
+    right: 18px !important;
+    bottom: calc(var(--hero-band-bottom) + 18px) !important;
+    height: auto !important;
     z-index: 3;
     grid-column: unset;
     grid-row: unset;
     max-width: none;
     width: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 0 20px;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
     text-align: center;
     box-sizing: border-box;
+    align-self: auto !important;
+    transform: none !important;
     pointer-events: none;
   }
 
   .hero__text {
-    flex: 0 0 auto;
+    display: block;
     width: 100%;
-    margin-top: auto;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
     pointer-events: auto;
   }
 
@@ -3753,8 +3762,8 @@ body.modal-open {
     font-size: 0.65rem;
     padding: 4px 10px;
     margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.45);
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.55);
     color: var(--white);
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75);
   }
@@ -6741,8 +6750,9 @@ body.modal-open {
   }
 
   .hero__content {
-    left: 12px;
-    right: 12px;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(var(--hero-band-bottom) + 14px) !important;
   }
 
   .container {
