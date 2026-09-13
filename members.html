@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=31">
+  <link rel="stylesheet" href="css/style.css?v=33">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-members-app">
@@ -92,16 +92,14 @@
 
         <div class="members-panel members-app__card" data-panel="events" id="panelEvents" hidden style="margin-top:14px">
           <p class="members-panel__intro" id="eventsIntro"></p>
-          <div class="members-grid members-grid--2">
-            <div class="members-card">
-              <h3>Upcoming events</h3>
-              <div id="eventsList"></div>
-            </div>
-            <div class="members-card">
-              <h3>Your bookings</h3>
-              <div id="bookingsList"></div>
-            </div>
+          <div class="members-event-tabs" id="memberEventTabs" role="tablist" aria-label="Event filters">
+            <button type="button" class="members-event-tabs__btn is-active" data-event-filter="upcoming">Upcoming</button>
+            <button type="button" class="members-event-tabs__btn" data-event-filter="past">Past</button>
+            <button type="button" class="members-event-tabs__btn" data-event-filter="bookings">My bookings</button>
           </div>
+          <div id="eventsList" class="members-event-cards"></div>
+          <div id="bookingsList" class="members-booking-cards" hidden></div>
+          <p class="members-panel__footer-link"><a href="events.html">View all public events →</a></p>
         </div>
 
         <div class="members-panel members-app__card" data-panel="photos" id="panelPhotos" hidden style="margin-top:14px">
@@ -161,7 +159,7 @@
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=26"></script>
   <script src="js/payment-instructions.js?v=24"></script>
-  <script src="js/members-dashboard.js?v=31"></script>
+  <script src="js/members-dashboard.js?v=33"></script>
   <script>
     (function () {
       const app = document.getElementById('membersApp');

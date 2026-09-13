@@ -433,7 +433,7 @@
 
     const heroSub = document.querySelector('.dashboard-hero__sub');
     if (heroSub) {
-      heroSub.textContent = `Managing ${siteName} — content, members, events, and PayID settings.`;
+      heroSub.textContent = `Your committee home — counts, alerts, and shortcuts for ${siteName}.`;
     }
 
     els.statsGrid.innerHTML = `
@@ -460,6 +460,90 @@
     `;
 
     loadOpsStatus();
+    loadDashboardAlerts();
+  }
+
+  async function loadDashboardAlerts() {
+    const alertsEl = document.getElementById('dashboardAlerts');
+    const recentEl = document.getElementById('dashboardRecentInbox');
+    if (!alertsEl && !recentEl) return;
+
+    if (isPreviewMode || !getToken()) {
+      if (alertsEl) {
+        alertsEl.innerHTML = `
+          <div class="dash-alert dash-alert--muted">
+            <div><strong>Sign in</strong> to see live enquiry and membership alerts.</div>
+          </div>`;
+      }
+      if (recentEl) recentEl.innerHTML = '<p class="form-hint">Sign in to load recent enquiries.</p>';
+      return;
+    }
+
+    if (alertsEl) alertsEl.innerHTML = '<div class="dash-alert dash-alert--muted"><div>Loading alerts…</div></div>';
+    if (recentEl) recentEl.innerHTML = '<p class="form-hint">Loading…</p>';
+
+    let submissions = [];
+    let pendingMembers = 0;
+    try {
+      submissions = await loadSubmissions();
+    } catch {
+      submissions = [];
+    }
+    try {
+      const res = await authFetch('/api/membership-registrations');
+      const data = await res.json().catch(() => ({}));
+      const rows = data.registrations || data.rows || [];
+      pendingMembers = rows.filter(r => {
+        const status = r.member_status || r.data?._memberStatus || 'pending';
+        return status === 'pending' || !r.membership_id;
+      }).length;
+    } catch {
+      pendingMembers = 0;
+    }
+
+    const unread = submissions.filter(s => !s.read).length;
+    const recent = submissions.slice(0, 4);
+
+    if (alertsEl) {
+      const cards = [];
+      cards.push(`
+        <div class="dash-alert">
+          <div>
+            <strong>${unread}</strong> unread enquir${unread === 1 ? 'y' : 'ies'}
+            <span>Contact inbox needs review</span>
+          </div>
+          <button type="button" class="btn btn--primary btn--sm" data-goto="inbox">Review now</button>
+        </div>`);
+      cards.push(`
+        <div class="dash-alert dash-alert--membership">
+          <div>
+            <strong>${pendingMembers}</strong> pending membership${pendingMembers === 1 ? '' : 's'}
+            <span>Approve or follow up registrations</span>
+          </div>
+          <button type="button" class="btn btn--outline btn--sm" data-goto="membership">Open membership</button>
+        </div>`);
+      alertsEl.innerHTML = cards.join('');
+    }
+
+    if (recentEl) {
+      if (!recent.length) {
+        recentEl.innerHTML = '<p class="form-hint">No enquiries yet. Contact form messages appear here.</p>';
+      } else {
+        recentEl.innerHTML = `
+          <ul class="dash-recent-list">
+            ${recent.map(s => `
+              <li class="dash-recent-item ${s.read ? 'is-read' : ''}">
+                <div class="dash-recent-item__top">
+                  <strong>${escapeHtml(s.name || 'Anonymous')}</strong>
+                  <span>${s.read ? 'read' : 'new'} · ${escapeHtml(s.subject || 'general')}</span>
+                </div>
+                <p>${escapeHtml(String(s.message || '').slice(0, 140))}${String(s.message || '').length > 140 ? '…' : ''}</p>
+                <time>${new Date(s.created_at).toLocaleString()}</time>
+              </li>
+            `).join('')}
+          </ul>`;
+      }
+    }
   }
 
   async function loadOpsStatus() {

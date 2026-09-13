@@ -569,23 +569,96 @@
     }
   }
 
-  function renderEvents(content) {
-    const events = (content.events || []).filter(e => e.showOnSite !== false);
-    if (!events.length) {
-      els.eventsList.innerHTML = '<p class="members-empty">No upcoming events listed.</p>';
+  function eventShareUrl(evt) {
+    const base = (window.SITE_CONFIG?.siteUrl || window.location.origin).replace(/\/$/, '');
+    return `${base}/book.html?id=${encodeURIComponent(evt.id)}`;
+  }
+
+  function renderEventCard(evt) {
+    const bookUrl = evt.bookingEnabled === false && evt.status === 'past'
+      ? (evt.registerUrl || 'gallery.html')
+      : `book.html?id=${encodeURIComponent(evt.id)}`;
+    const cta = evt.status === 'past'
+      ? (evt.registerLabel || 'See photos')
+      : (evt.bookingLabel || evt.registerLabel || 'RSVP / Book');
+    const share = eventShareUrl(evt);
+    const img = evt.image || 'assets/hero/page/community-gathering.png';
+    return `
+      <article class="members-event-card">
+        <div class="members-event-card__media">
+          <img src="${escapeHtml(img)}" alt="" loading="lazy">
+          <span class="members-event-card__pill">${escapeHtml(evt.datePill || evt.date || evt.status || 'Event')}</span>
+        </div>
+        <div class="members-event-card__body">
+          <h3>${escapeHtml(evt.title)}</h3>
+          <p class="members-event-card__meta">${escapeHtml(evt.time || '')}${evt.location ? ` · ${escapeHtml(evt.location)}` : ''}</p>
+          ${evt.summary ? `<p class="members-event-card__summary">${escapeHtml(evt.summary)}</p>` : ''}
+          <div class="members-event-card__actions">
+            <a href="${escapeHtml(bookUrl)}" class="members-event-card__cta">${escapeHtml(cta)}</a>
+            <div class="members-event-card__share">
+              <a href="https://wa.me/?text=${encodeURIComponent(evt.title + ' — ' + share)}" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp">WA</a>
+              <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(share)}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">FB</a>
+              <a href="mailto:?subject=${encodeURIComponent(evt.title)}&body=${encodeURIComponent(share)}" aria-label="Share by email">Email</a>
+              <button type="button" class="members-event-card__copy" data-copy-link="${escapeHtml(share)}">Copy link</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderEvents(content, filter = 'upcoming') {
+    if (!els.eventsList) return;
+    const all = (content.events || []).filter(e => e.showOnSite !== false);
+    const events = all.filter(e => (filter === 'past' ? e.status === 'past' : e.status === 'upcoming'));
+
+    if (els.bookingsList) els.bookingsList.hidden = filter !== 'bookings';
+    els.eventsList.hidden = filter === 'bookings';
+
+    if (filter === 'bookings') {
+      renderBookings();
       return;
     }
 
-    els.eventsList.innerHTML = events.map(evt => `
-      <div class="members-event-item">
-        <div class="members-event-item__date">${escapeHtml(evt.datePill || evt.date || 'Event')}</div>
-        <div class="members-event-item__content">
-          <h4>${escapeHtml(evt.title)}</h4>
-          <p class="members-event-item__meta">${escapeHtml(evt.time || '')}${evt.location ? ` · ${escapeHtml(evt.location)}` : ''}</p>
-          <a href="book.html?id=${encodeURIComponent(evt.id)}" class="btn btn--outline btn--sm">Book / register</a>
-        </div>
-      </div>
-    `).join('');
+    document.querySelectorAll('#memberEventTabs [data-event-filter]').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.eventFilter === filter);
+      if (btn.dataset.eventFilter === 'bookings') {
+        btn.textContent = 'My bookings';
+        return;
+      }
+      const count = all.filter(e => e.status === btn.dataset.eventFilter).length;
+      const label = btn.dataset.eventFilter === 'past' ? 'Past' : 'Upcoming';
+      btn.textContent = `${label} (${count})`;
+    });
+
+    if (!events.length) {
+      els.eventsList.innerHTML = `<p class="members-empty">No ${filter} events listed.</p>`;
+      return;
+    }
+
+    els.eventsList.innerHTML = events.map(renderEventCard).join('');
+  }
+
+  function bindEventTabs(content) {
+    const tabs = document.getElementById('memberEventTabs');
+    if (!tabs || tabs.dataset.bound === '1') return;
+    tabs.dataset.bound = '1';
+    tabs.addEventListener('click', e => {
+      const btn = e.target.closest('[data-event-filter]');
+      if (!btn) return;
+      renderEvents(content, btn.dataset.eventFilter);
+    });
+    document.addEventListener('click', async e => {
+      const copyBtn = e.target.closest('[data-copy-link]');
+      if (!copyBtn) return;
+      try {
+        await navigator.clipboard.writeText(copyBtn.dataset.copyLink);
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = 'Copy link'; }, 1500);
+      } catch {
+        copyBtn.textContent = 'Failed';
+      }
+    });
   }
 
   async function renderBookings() {
@@ -826,7 +899,8 @@
 
     renderFeeds(portal);
     renderMembershipCard(memberSession);
-    renderEvents(content);
+    bindEventTabs(content);
+    renderEvents(content, 'upcoming');
     renderPhotos(content);
     renderGovernance(portal);
     renderExploreLinks(portal);

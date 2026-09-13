@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=25">
+  <link rel="stylesheet" href="admin.css?v=26">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -172,6 +172,7 @@
               <p class="dashboard-hero__sub">Your leadership overview — counts, alerts, and shortcuts for Gotabgaa Australia.</p>
             </div>
           </div>
+          <div class="dashboard-alerts" id="dashboardAlerts" aria-live="polite"></div>
           <div class="stats-grid stats-grid--tn" id="statsGrid"></div>
           <div class="dashboard-split">
             <div class="card card--elevated">
@@ -190,6 +191,12 @@
               </div>
             </div>
             <div class="card card--elevated" id="opsStatusCard">
+              <div class="dashboard-card-head">
+                <h3>Recent enquiries</h3>
+                <button type="button" class="btn btn--outline btn--sm" data-goto="inbox">View all</button>
+              </div>
+              <div id="dashboardRecentInbox"><p class="form-hint">Loading…</p></div>
+              <hr class="dashboard-divider">
               <h3>Email &amp; member login</h3>
               <p class="form-hint" id="opsStatusLoading">Checking configuration…</p>
               <div id="opsStatusBody" hidden></div>
@@ -227,6 +234,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=29"></script>
+  <script src="admin.js?v=30"></script>
 </body>
 </html>
