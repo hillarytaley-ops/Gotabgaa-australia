@@ -8027,14 +8027,15 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(8px) saturate(1.05);
-  transform: scale(1.06);
+  background-repeat: no-repeat;
+  filter: none;
+  transform: none;
 }
 
 .auth-glass__veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(26,18,12,0.72) 0%, rgba(42,31,23,0.78) 55%, rgba(20,14,10,0.88) 100%);
+  background: rgba(20, 14, 10, 0.28);
 }
 
 .auth-glass__card {
@@ -8044,11 +8045,11 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   max-width: 440px;
   padding: 22px 24px 28px;
   border-radius: 22px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(32, 22, 16, 0.78);
   border: 1px solid rgba(255,255,255,0.22);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .auth-glass__top {
