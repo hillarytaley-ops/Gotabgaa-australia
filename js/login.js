@@ -71,8 +71,12 @@
       button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
       const showLabel = button.querySelector('[data-show]');
       const hideLabel = button.querySelector('[data-hide]');
-      if (showLabel) showLabel.hidden = !showing;
-      if (hideLabel) hideLabel.hidden = showing;
+      if (showLabel && hideLabel) {
+        showLabel.hidden = !showing;
+        hideLabel.hidden = showing;
+      } else {
+        button.textContent = showing ? 'Show' : 'Hide';
+      }
     });
   }
 

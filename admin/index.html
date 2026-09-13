@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=24">
+  <link rel="stylesheet" href="admin.css?v=25">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -36,7 +36,10 @@
       <div class="sidebar__header">
         <div class="sidebar__brand">
           <img src="../assets/logo-round.png" alt="" width="40" height="40">
-          <span>Gotabgaa Admin</span>
+          <div>
+            <strong style="display:block;font-size:0.92rem;line-height:1.2">Committee admin</strong>
+            <span style="display:block;font-size:0.72rem;opacity:0.75;font-weight:500">Gotabgaa Australia</span>
+          </div>
         </div>
         <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebarDrawer">
           <span></span><span></span><span></span>
@@ -162,62 +165,42 @@
 
       <div class="content" id="contentArea">
         <section class="panel" data-panel="dashboard">
-          <div class="dashboard-hero" id="dashboardHero">
-            <div class="dashboard-hero__glow" aria-hidden="true"></div>
+          <div class="dashboard-hero dashboard-hero--tn" id="dashboardHero">
             <div class="dashboard-hero__content">
-              <p class="dashboard-hero__eyebrow">Leadership portal</p>
+              <p class="dashboard-hero__eyebrow">Committee home</p>
               <h3 id="dashboardWelcome">Welcome back</h3>
-              <p class="dashboard-hero__sub">Manage content, members, events, and payments for Gotabgaa Australia.</p>
-            </div>
-            <div class="dashboard-hero__logo">
-              <img src="../assets/logo-round.png" alt="" width="72" height="72">
+              <p class="dashboard-hero__sub">Your leadership overview — counts, alerts, and shortcuts for Gotabgaa Australia.</p>
             </div>
           </div>
-          <div class="stats-grid" id="statsGrid"></div>
-          <div class="card card--elevated" id="opsStatusCard">
-            <h3>Email &amp; member login</h3>
-            <p class="form-hint" id="opsStatusLoading">Checking configuration…</p>
-            <div id="opsStatusBody" hidden></div>
-          </div>
-          <div class="card card--elevated">
-            <h3>Quick actions</h3>
-            <div class="quick-actions">
-              <button type="button" class="quick-action" data-goto="events">
-                <span class="quick-action__icon quick-action__icon--events" aria-hidden="true"></span>
-                <span class="quick-action__label">Manage Events</span>
-              </button>
-              <button type="button" class="quick-action" data-goto="gallery">
-                <span class="quick-action__icon quick-action__icon--gallery" aria-hidden="true"></span>
-                <span class="quick-action__label">Update Gallery</span>
-              </button>
-              <button type="button" class="quick-action" data-goto="leadership">
-                <span class="quick-action__icon quick-action__icon--leadership" aria-hidden="true"></span>
-                <span class="quick-action__label">Edit Leadership</span>
-              </button>
-              <button type="button" class="quick-action" data-goto="membership">
-                <span class="quick-action__icon quick-action__icon--membership" aria-hidden="true"></span>
-                <span class="quick-action__label">Membership</span>
-              </button>
-              <button type="button" class="quick-action" data-goto="memberPortal">
-                <span class="quick-action__icon quick-action__icon--portal" aria-hidden="true"></span>
-                <span class="quick-action__label">Member Portal</span>
-              </button>
-              <button type="button" class="quick-action" data-goto="site">
-                <span class="quick-action__icon quick-action__icon--site" aria-hidden="true"></span>
-                <span class="quick-action__label">Site &amp; PayID</span>
-              </button>
-              <button type="button" class="quick-action quick-action--muted" id="seedSupabaseBtn">
-                <span class="quick-action__icon quick-action__icon--sync" aria-hidden="true"></span>
-                <span class="quick-action__label">Load into Supabase</span>
-              </button>
+          <div class="stats-grid stats-grid--tn" id="statsGrid"></div>
+          <div class="dashboard-split">
+            <div class="card card--elevated">
+              <h3>Quick actions</h3>
+              <div class="quick-actions quick-actions--tn">
+                <button type="button" class="quick-action" data-goto="inbox">Review enquiries</button>
+                <button type="button" class="quick-action" data-goto="membership">Membership</button>
+                <button type="button" class="quick-action" data-goto="events">Manage events</button>
+                <button type="button" class="quick-action" data-goto="gallery">Update gallery</button>
+                <button type="button" class="quick-action" data-goto="leadership">Edit leadership</button>
+                <button type="button" class="quick-action" data-goto="memberPortal">Member portal</button>
+                <button type="button" class="quick-action" data-goto="ailcd">Leadership EOI</button>
+                <button type="button" class="quick-action" data-goto="welfare">Welfare</button>
+                <button type="button" class="quick-action" data-goto="site">Site &amp; PayID</button>
+                <button type="button" class="quick-action quick-action--muted" id="seedSupabaseBtn">Load into Supabase</button>
+              </div>
+            </div>
+            <div class="card card--elevated" id="opsStatusCard">
+              <h3>Email &amp; member login</h3>
+              <p class="form-hint" id="opsStatusLoading">Checking configuration…</p>
+              <div id="opsStatusBody" hidden></div>
             </div>
           </div>
           <div class="card card--tip">
             <h3>How publishing works</h3>
             <ol class="help-list">
-              <li>Edit content in any section below.</li>
-              <li>Click <strong>Publish Changes</strong> to push to GitHub (triggers Vercel redeploy).</li>
-              <li>Or use <strong>Export JSON</strong> to download and commit <code>data/content.json</code> manually.</li>
+              <li>Edit content in any section.</li>
+              <li>Click <strong>Publish Changes</strong> to push live.</li>
+              <li>Or use <strong>Export JSON</strong> for a backup of <code>data/content.json</code>.</li>
             </ol>
           </div>
         </section>
@@ -244,6 +227,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=28"></script>
+  <script src="admin.js?v=29"></script>
 </body>
 </html>

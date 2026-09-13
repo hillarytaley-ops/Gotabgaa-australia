@@ -2012,3 +2012,101 @@ details.list-item[open] > summary {
   background: rgba(61, 43, 31, 0.25);
   border-radius: 999px;
 }
+
+/* Taunet-like overview */
+.dashboard-hero--tn {
+  background: linear-gradient(135deg, #f6ebe0 0%, #fff8f0 100%);
+  border: 1px solid rgba(184,134,75,0.28);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+
+.dashboard-hero--tn .dashboard-hero__eyebrow {
+  color: #8a5a28;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.dashboard-hero--tn h3 {
+  font-family: var(--font-body);
+  font-size: 1.55rem;
+  margin: 4px 0 6px;
+}
+
+.stats-grid--tn {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stats-grid--tn .stat-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(42,31,23,0.08);
+  box-shadow: 0 8px 20px rgba(42,31,23,0.05);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-grid--tn .stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+}
+
+.stats-grid--tn .stat-card--upcoming::before { background: #d4822a; }
+.stats-grid--tn .stat-card--past::before { background: #8b5a3c; }
+.stats-grid--tn .stat-card--programs::before { background: #4a7c9b; }
+.stats-grid--tn .stat-card--leaders::before { background: #3d7a55; }
+
+.stats-grid--tn .stat-card strong {
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1.1;
+  margin: 8px 0 4px;
+}
+
+.dashboard-split {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.quick-actions--tn {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quick-actions--tn .quick-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(61,43,31,0.12);
+  background: #faf7f2;
+  font-weight: 600;
+  color: var(--brown-800);
+}
+
+.quick-actions--tn .quick-action:hover {
+  background: #fff;
+  border-color: rgba(184,134,75,0.45);
+}
+
+.quick-actions--tn .quick-action__icon { display: none; }
+
+@media (max-width: 900px) {
+  .stats-grid--tn { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-split { grid-template-columns: 1fr; }
+}

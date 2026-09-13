@@ -787,17 +787,25 @@
       els.memberAvatar.textContent = getInitials(memberSession.name);
     }
 
-    const actions = document.querySelector('.members-hero__actions');
+    const actions = document.getElementById('memberOpenAdminSlot') || document.querySelector('.members-hero__actions');
     if (actions) {
       let adminLink = document.getElementById('memberOpenAdmin');
       if (memberSession.adminAccess) {
         if (!adminLink) {
           adminLink = document.createElement('a');
           adminLink.id = 'memberOpenAdmin';
-          adminLink.className = 'btn btn--outline btn--sm';
+          adminLink.className = 'members-app__quick-outline';
           adminLink.href = 'login.html?dest=admin';
           adminLink.textContent = 'Leadership admin';
-          actions.insertBefore(adminLink, els.signOut || null);
+          adminLink.style.display = 'inline-block';
+          adminLink.style.marginTop = '12px';
+          adminLink.style.padding = '10px 14px';
+          adminLink.style.borderRadius = '12px';
+          adminLink.style.border = '1px solid rgba(61,43,31,0.18)';
+          adminLink.style.textDecoration = 'none';
+          adminLink.style.fontWeight = '600';
+          adminLink.style.color = '#3d2b1f';
+          actions.appendChild(adminLink);
         }
       } else if (adminLink) {
         adminLink.remove();

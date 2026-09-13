@@ -7,126 +7,90 @@
   <title>Members Dashboard | Gotabgaa Australia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=24">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=31">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
-<body class="page-sub page-members">
-  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
-
-  <header class="header" id="header">
-    <nav class="nav container">
-      <a href="index.html" class="nav__brand">
-        <img src="assets/logo-round.png" alt="Gotabgaa Australia" class="nav__logo logo-circle">
-        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+<body class="page-members-app">
+  <div class="members-app" id="membersApp">
+    <aside class="members-app__sidebar" id="membersSidebar">
+      <a href="index.html" class="members-app__brand">
+        <img src="assets/logo-round.png" alt="">
+        <div>
+          <strong>GOTABGAA</strong>
+          <span>Australia members</span>
+        </div>
       </a>
-      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav__menu" id="navMenu">
-        <li><a href="index.html" class="nav__link">Home</a></li>
-        <li><a href="about.html" class="nav__link">About</a></li>
-        <li><a href="programs.html" class="nav__link">Programs</a></li>
-                <li><a href="welfare.html" class="nav__link">Welfare</a></li>
-        <li><a href="sports.html" class="nav__link">Sports</a></li>
-        <li><a href="business.html" class="nav__link">Business</a></li>
-        <li><a href="events.html" class="nav__link">Events</a></li>
-        <li><a href="leadership.html" class="nav__link">Leadership</a></li>
-        <li><a href="gallery.html" class="nav__link">Gallery</a></li>
-        <li><a href="contact.html" class="nav__link">Contact</a></li>
-        <li><a href="join.html" class="btn btn--primary nav__cta">Join Us</a></li>
-      </ul>
-    </nav>
-  </header>
+      <nav class="members-app__nav" id="memberTabs" aria-label="Dashboard sections">
+        <button type="button" class="members-app__nav-btn members-tabs__btn is-active" data-tab="feeds">Dashboard</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="events">My Events</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="membership">Membership</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="governance">Elections</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="photos">Photos</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="welfare" id="welfareTabBtn">Welfare</button>
+        <button type="button" class="members-app__nav-btn members-tabs__btn" data-tab="explore">Explore</button>
+      </nav>
+      <div class="members-app__side-foot">
+        <button type="button" class="members-app__signout" id="memberSignOut">Sign out</button>
+      </div>
+    </aside>
 
-  <section class="page-hero page-hero--compact">
-    <div class="tribal-border tribal-border--top" aria-hidden="true">
-      <div class="tribal-border__track"></div>
-    </div>
-    <div class="container">
-      <span class="section__tag">Members Only</span>
-      <h1 class="page-hero__title">Members Dashboard</h1>
-      <p class="page-hero__desc">News, events, photos, and community updates for registered Gotabgaa Australia members.</p>
-    </div>
-    <div class="tribal-border tribal-border--bottom" aria-hidden="true">
-      <div class="tribal-border__track tribal-border__track--reverse"></div>
-    </div>
-  </section>
+    <div class="members-app__main">
+      <div class="members-preview-banner" id="memberPreviewBanner" hidden>
+        <strong>Developer preview</strong> — sample member view for admins.
+        <a href="admin/">Return to admin</a> · <a href="login.html">Sign in</a>
+      </div>
 
-  <section class="members-portal section">
-    <div class="container">
+      <div class="members-app__topbar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button type="button" class="members-app__menu-toggle" id="membersNavToggle" aria-label="Open menu">Menu</button>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="members-app__status">
+          <span class="members-app__badge" id="memberBadge">MEMBER</span>
+          <span class="members-app__avatar" id="memberAvatar" aria-hidden="true">GA</span>
+        </div>
+      </div>
 
       <div class="members-dashboard" id="memberDashboard" hidden>
-        <div class="members-preview-banner" id="memberPreviewBanner" hidden>
-          <strong>Developer preview</strong> — sample member view for admins. Bookings and membership data are placeholders.
-          <a href="admin/">Return to admin</a> · <a href="login.html">Sign in</a>
-        </div>
-        <div class="members-hero" id="memberHero">
-          <div class="members-hero__glow" aria-hidden="true"></div>
-          <div class="members-hero__main">
-            <div class="members-hero__avatar" id="memberAvatar" aria-hidden="true">GA</div>
-            <div class="members-hero__text">
-              <p class="members-hero__eyebrow">Members area</p>
-              <h2 id="memberWelcomeTitle">Welcome back</h2>
-              <p id="memberWelcomeMessage"></p>
-            </div>
-          </div>
-          <div class="members-hero__actions">
-            <span class="members-badge" id="memberBadge"></span>
-            <button type="button" class="btn btn--outline btn--sm members-hero__signout" id="memberSignOut">Sign out</button>
-          </div>
-        </div>
-
-        <div class="members-stats" id="memberStats" aria-label="Quick overview"></div>
-
-        <nav class="members-tabs" id="memberTabs" aria-label="Dashboard sections">
-          <button type="button" class="members-tabs__btn is-active" data-tab="feeds">
-            <span class="members-tab-icon members-tab-icon--feeds" aria-hidden="true"></span>
-            <span>News &amp; Feeds</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="membership">
-            <span class="members-tab-icon members-tab-icon--membership" aria-hidden="true"></span>
-            <span>My Membership</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="events">
-            <span class="members-tab-icon members-tab-icon--events" aria-hidden="true"></span>
-            <span>Events &amp; Bookings</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="photos">
-            <span class="members-tab-icon members-tab-icon--photos" aria-hidden="true"></span>
-            <span>Event Photos</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="governance">
-            <span class="members-tab-icon members-tab-icon--governance" aria-hidden="true"></span>
-            <span>Governance</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="welfare" id="welfareTabBtn">
-            <span class="members-tab-icon members-tab-icon--welfare" aria-hidden="true"></span>
-            <span>Social Welfare</span>
-          </button>
-          <button type="button" class="members-tabs__btn" data-tab="explore">
-            <span class="members-tab-icon members-tab-icon--explore" aria-hidden="true"></span>
-            <span>Explore Site</span>
-          </button>
-        </nav>
+        <div class="members-stats" id="memberStats" aria-label="Quick overview" hidden></div>
 
         <div class="members-panel is-active" data-panel="feeds" id="panelFeeds">
-          <div class="members-feed-filters" id="feedFilters">
-            <button type="button" class="members-feed-filters__btn is-active" data-feed="all">All</button>
-            <button type="button" class="members-feed-filters__btn" data-feed="news">News</button>
-            <button type="button" class="members-feed-filters__btn" data-feed="sports">Sports</button>
-            <button type="button" class="members-feed-filters__btn" data-feed="business">Business</button>
-            <button type="button" class="members-feed-filters__btn" data-feed="social">Social</button>
+          <div class="members-app__grid" id="memberHero">
+            <div class="members-app__card">
+              <p class="members-hero__eyebrow" style="margin:0 0 6px;color:#6b5b4f;font-size:0.85rem;font-weight:600">Members area</p>
+              <h2 id="memberWelcomeTitle">Welcome back</h2>
+              <p id="memberWelcomeMessage"></p>
+              <div id="memberOpenAdminSlot"></div>
+            </div>
+            <div class="members-app__card">
+              <h2 style="font-size:1.05rem;margin-bottom:12px">Quick actions</h2>
+              <div class="members-app__quick">
+                <button type="button" class="members-app__quick-primary members-tabs__btn" data-tab="events">Check Events</button>
+                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="feeds">Feed</button>
+                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="photos">Photos</button>
+                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="welfare">Welfare Support</button>
+              </div>
+            </div>
           </div>
-          <div class="members-feed-list" id="feedList"></div>
+          <div class="members-app__card" style="margin-top:14px">
+            <div class="members-feed-filters" id="feedFilters">
+              <button type="button" class="members-feed-filters__btn is-active" data-feed="all">All</button>
+              <button type="button" class="members-feed-filters__btn" data-feed="news">News</button>
+              <button type="button" class="members-feed-filters__btn" data-feed="sports">Sports</button>
+              <button type="button" class="members-feed-filters__btn" data-feed="business">Business</button>
+              <button type="button" class="members-feed-filters__btn" data-feed="social">Social</button>
+            </div>
+            <div class="members-feed-list" id="feedList"></div>
+          </div>
         </div>
 
-        <div class="members-panel" data-panel="membership" id="panelMembership" hidden>
+        <div class="members-panel members-app__card" data-panel="membership" id="panelMembership" hidden style="margin-top:14px">
           <div class="members-card" id="membershipCard"></div>
           <div id="memberPaymentInstructions" class="payment-instructions-wrap" hidden></div>
         </div>
 
-        <div class="members-panel" data-panel="events" id="panelEvents" hidden>
+        <div class="members-panel members-app__card" data-panel="events" id="panelEvents" hidden style="margin-top:14px">
           <p class="members-panel__intro" id="eventsIntro"></p>
           <div class="members-grid members-grid--2">
             <div class="members-card">
@@ -140,16 +104,16 @@
           </div>
         </div>
 
-        <div class="members-panel" data-panel="photos" id="panelPhotos" hidden>
+        <div class="members-panel members-app__card" data-panel="photos" id="panelPhotos" hidden style="margin-top:14px">
           <p class="members-panel__intro" id="photosIntro"></p>
           <div id="photoAlbums"></div>
         </div>
 
-        <div class="members-panel" data-panel="governance" id="panelGovernance" hidden>
+        <div class="members-panel members-app__card" data-panel="governance" id="panelGovernance" hidden style="margin-top:14px">
           <div class="members-grid members-grid--2" id="governanceCards"></div>
         </div>
 
-        <div class="members-panel" data-panel="welfare" id="panelWelfare" hidden>
+        <div class="members-panel members-app__card" data-panel="welfare" id="panelWelfare" hidden style="margin-top:14px">
           <div id="welfareMemberStatus" class="members-card"></div>
           <div id="welfareCommunityAlerts" class="members-card members-card--alert" hidden></div>
           <div class="members-grid members-grid--2">
@@ -185,55 +149,28 @@
           </div>
         </div>
 
-        <div class="members-panel" data-panel="explore" id="panelExplore" hidden>
+        <div class="members-panel members-app__card" data-panel="explore" id="panelExplore" hidden style="margin-top:14px">
           <p class="members-panel__intro" id="exploreIntro"></p>
           <div class="members-quicklinks" id="exploreLinks"></div>
         </div>
       </div>
-
     </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container footer__grid">
-      <div class="footer__brand">
-        <img src="assets/logo-round.png" alt="" class="footer__logo logo-circle">
-        <p>Gotabgaa Australia</p>
-        <p class="footer__tagline">Unity • Heritage • Excellence</p>
-      </div>
-      <div class="footer__nav footer__nav--members">
-        <div class="footer__links">
-          <h4>Members</h4>
-          <ul>
-            <li><a href="members.html">Dashboard</a></li>
-            <li><a href="join.html">Join</a></li>
-            <li><a href="book.html">Book events</a></li>
-          </ul>
-        </div>
-        <div class="footer__links">
-          <h4>Explore</h4>
-          <ul>
-            <li><a href="about.html">About</a></li>
-            <li><a href="programs.html">Programs</a></li>
-                        <li><a href="welfare.html">Welfare</a></li>
-            <li><a href="sports.html">Sports</a></li>
-            <li><a href="business.html">Business</a></li>
-            <li><a href="events.html">Events</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="footer__bottom container">
-      <p>&copy; <span data-copyright-year>2026</span> Gotabgaa Australia. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=26"></script>
   <script src="js/payment-instructions.js?v=24"></script>
-  <script src="js/main.js?v=26"></script>
-  <script src="js/members-dashboard.js?v=28"></script>
+  <script src="js/members-dashboard.js?v=31"></script>
+  <script>
+    (function () {
+      const app = document.getElementById('membersApp');
+      const toggle = document.getElementById('membersNavToggle');
+      toggle?.addEventListener('click', () => app?.classList.toggle('is-nav-open'));
+      document.getElementById('memberTabs')?.addEventListener('click', () => {
+        app?.classList.remove('is-nav-open');
+      });
+    })();
+  </script>
 </body>
 </html>
