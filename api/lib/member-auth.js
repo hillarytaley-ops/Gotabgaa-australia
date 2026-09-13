@@ -50,8 +50,7 @@ export async function resolveMemberFromRequest(req) {
           user,
           row: null,
           member: buildAllowlistedAdminProfile(user),
-          accessToken: token,
-          allowlistedAdminOnly: true
+          accessToken: token
         };
       }
       return {
@@ -263,16 +262,25 @@ export function memberHasAdminAccess(row, user = null) {
 /** Synthetic profile when an allowlisted admin has no membership row yet. */
 export function buildAllowlistedAdminProfile(user) {
   const email = normalizeMemberEmail(user?.email);
-  const name = user?.user_metadata?.name || email?.split('@')[0] || 'Admin';
+  const name = user?.user_metadata?.name
+    || (email === 'hillarytaley@gmail.com' ? 'Hillary Taley' : email?.split('@')[0])
+    || 'Admin';
   return {
     id: user?.id || null,
     name,
     email,
-    membershipId: user?.user_metadata?.membership_id || 'ADMIN',
+    phone: '',
+    stateChapter: 'National',
+    membershipType: 'Leadership review',
+    membershipId: 'GAA-REVIEW',
     memberStatus: 'active',
     paymentStatus: 'n/a',
     paymentReference: null,
-    adminAccess: true
+    feeDisplay: 'Review access',
+    joinedAt: new Date().toISOString(),
+    adminAccess: true,
+    reviewPass: true,
+    allowlistedAdminOnly: false
   };
 }
 

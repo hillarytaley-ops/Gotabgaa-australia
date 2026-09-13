@@ -529,7 +529,10 @@
   function renderMembershipCard(member) {
     const statusClass = member.memberStatus === 'active' ? 'is-active' : 'is-pending';
     const payStatus = member.paymentStatus || 'pending';
-    const payClass = payStatus === 'paid' ? 'is-active' : 'is-pending';
+    const payClass = payStatus === 'paid' || payStatus === 'n/a' ? 'is-active' : 'is-pending';
+    const reviewNote = member.reviewPass
+      ? '<p class="members-panel__intro" style="margin-top:12px">Leadership <strong>review pass</strong> — you can use the members dashboard and open Leadership admin.</p>'
+      : '';
     els.membershipCard.innerHTML = `
       <div class="members-profile">
         <div class="members-profile__avatar">${escapeHtml(getInitials(member.name))}</div>
@@ -537,7 +540,7 @@
           <h3>${escapeHtml(member.name)}</h3>
           <p class="members-profile__meta">${escapeHtml(member.membershipType || 'Member')} · ${escapeHtml(member.stateChapter || 'Australia')}</p>
         </div>
-        <span class="members-status ${statusClass} members-profile__status">${escapeHtml(member.memberStatus || 'pending')}</span>
+        <span class="members-status ${statusClass} members-profile__status">${escapeHtml(member.reviewPass ? 'review' : (member.memberStatus || 'pending'))}</span>
       </div>
       <dl class="members-dl members-dl--grid">
         <div><dt>Membership ID</dt><dd><code>${escapeHtml(member.membershipId)}</code></dd></div>
@@ -547,7 +550,9 @@
         <div><dt>Payment</dt><dd><span class="members-status ${payClass}">${escapeHtml(payStatus)}</span></dd></div>
         <div><dt>Fee</dt><dd>${escapeHtml(member.feeDisplay || '—')}</dd></div>
         <div><dt>Registered</dt><dd>${formatDate(member.joinedAt)}</dd></div>
+        <div><dt>Admin access</dt><dd>${member.adminAccess ? 'Yes' : 'No'}</dd></div>
       </dl>
+      ${reviewNote}
     `;
 
     const payWrap = els.memberPaymentInstructions;

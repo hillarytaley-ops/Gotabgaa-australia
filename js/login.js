@@ -107,10 +107,14 @@
         ? `Welcome, ${member.name}. You can open the members area or the leadership admin dashboard.`
         : 'You have access to both areas. Pick a dashboard to continue.';
     }
-    const adminOnly = member?.membershipId === 'ADMIN';
+    // Review-pass / dual-role users keep both choices visible
     if (els.goMembersDash) {
-      els.goMembersDash.disabled = adminOnly;
-      els.goMembersDash.hidden = adminOnly;
+      els.goMembersDash.disabled = false;
+      els.goMembersDash.hidden = false;
+    }
+    if (els.goAdminDash) {
+      els.goAdminDash.disabled = false;
+      els.goAdminDash.hidden = !member?.adminAccess;
     }
     showError(els.roleSelectError, '');
     try { sessionStorage.setItem(PENDING_ADMIN_KEY, '1'); } catch { /* ignore */ }
@@ -165,13 +169,13 @@
     pendingAccessToken = accessToken;
     saveMemberSession(member);
     const dest = preferredDestination(member);
-    const adminOnly = member?.membershipId === 'ADMIN' || member?.allowlistedAdminOnly;
 
     if (member.adminAccess) {
-      if (dest === 'admin' || adminOnly) {
+      if (dest === 'admin') {
         openAdminDashboard();
         return;
       }
+      // Dual access (including founder review pass): choose Members or Admin
       showRoleChooser(member);
       return;
     }
