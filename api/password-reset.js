@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
   const email = normalizeMemberEmail(req.body?.email);
   if (!email) {
-    res.status(400).json({ error: 'Enter your email address first, then click Forgot password.' });
+    res.status(400).json({ error: 'Enter your email address first, then click Reset or set password.' });
     return;
   }
 

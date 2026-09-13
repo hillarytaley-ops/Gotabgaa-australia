@@ -291,7 +291,7 @@
     } catch (err) {
       const msg = String(err.message || '');
       if (/invalid login credentials/i.test(msg)) {
-        showError(els.memberError, 'Incorrect email or password. Use Forgot password if you still need to set one up.');
+        showError(els.memberError, 'Incorrect email or password. Use Reset or set password if you still need to set one up.');
       } else if (/Auth is not configured|SUPABASE_ANON/i.test(msg)) {
         showError(els.memberError, 'Member sign-in is not configured yet. Ask an admin to add SUPABASE_ANON_KEY in Vercel.');
       } else {
@@ -303,23 +303,51 @@
     }
   }
 
-  async function handleForgotPassword() {
+  function renderSetupLink(message, setupLink, emailSent) {
+    if (!els.memberSuccess || !setupLink) return;
+    showSuccess(els.memberSuccess, '');
+    els.memberSuccess.hidden = false;
+    els.memberSuccess.innerHTML = `
+      <span>${escapeHtml(message || 'Use this link to set your password.')}</span>
+      <p style="margin:12px 0 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <a href="${escapeHtml(setupLink)}" class="auth-glass__submit" style="display:inline-block;width:auto;padding:10px 16px;text-decoration:none;text-align:center">Set password now →</a>
+        <button type="button" class="auth-glass__link" id="copySetupLinkBtn">Copy link</button>
+      </p>
+      ${emailSent ? '<p style="margin:8px 0 0;opacity:.85">We also emailed this link — check inbox and spam.</p>' : ''}
+    `;
+    document.getElementById('copySetupLinkBtn')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(setupLink);
+        els.memberSuccess.hidden = false;
+        els.memberSuccess.innerHTML = `
+          <span>Link copied — open it or paste into a browser.</span>
+          <p style="margin:12px 0 0">
+            <a href="${escapeHtml(setupLink)}" class="auth-glass__submit" style="display:inline-block;width:auto;padding:10px 16px;text-decoration:none;text-align:center">Set password now →</a>
+          </p>
+        `;
+      } catch {
+        window.prompt('Copy this link:', setupLink);
+      }
+    });
+  }
+
+  async function handleForgotPassword(e) {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     showError(els.memberError, '');
     showSuccess(els.memberSuccess, '');
 
     const email = els.memberEmail?.value.trim().toLowerCase();
     if (!email) {
-      showError(els.memberError, 'Enter your email address first, then click Forgot password.');
+      showError(els.memberError, 'Enter your email address first, then click Reset or set password.');
       els.memberEmail?.focus();
       return;
     }
 
-    if (!window.GaaAuth) {
-      showError(els.memberError, 'Sign-in is not ready. Refresh the page and try again.');
-      return;
+    if (els.forgotBtn) {
+      els.forgotBtn.disabled = true;
+      els.forgotBtn.textContent = 'Sending link…';
     }
-
-    els.forgotBtn.disabled = true;
     try {
       const res = await fetch('/api/password-reset', {
         method: 'POST',
@@ -330,16 +358,7 @@
       if (!res.ok) throw new Error(data.error || 'Could not send reset email.');
 
       if (data.setupLink) {
-        showSuccess(els.memberSuccess, '');
-        if (els.memberSuccess) {
-          els.memberSuccess.hidden = false;
-          els.memberSuccess.innerHTML = `
-            <span>${escapeHtml(data.message || 'Use this link to set your password.')}</span>
-            <p style="margin:10px 0 0">
-              <a href="${escapeHtml(data.setupLink)}" class="auth-glass__link" style="font-size:1rem">Set password now →</a>
-            </p>
-          `;
-        }
+        renderSetupLink(data.message, data.setupLink, data.emailSent);
         return;
       }
 
@@ -350,7 +369,10 @@
     } catch (err) {
       showError(els.memberError, err.message || 'Could not send reset email.');
     } finally {
-      els.forgotBtn.disabled = false;
+      if (els.forgotBtn) {
+        els.forgotBtn.disabled = false;
+        els.forgotBtn.textContent = 'Reset or set password';
+      }
     }
   }
 
@@ -367,12 +389,7 @@
   }
 
   async function init() {
-    if (getParams().get('password') === 'updated') {
-      showSuccess(els.memberSuccess, 'Password updated. Sign in with your email and new password.');
-    }
-
-    if (await redirectIfAlreadySignedIn()) return;
-
+    // Bind UI handlers first — never wait on Auth/session before Forgot password works.
     showSignInPanel();
     restoreRememberedEmail();
     bindPasswordToggle(els.toggleMemberPassword, els.memberPassword);
@@ -385,6 +402,16 @@
     });
     els.goAdminDash?.addEventListener('click', openAdminDashboard);
     els.roleSelectBack?.addEventListener('click', handleRoleBack);
+
+    if (getParams().get('password') === 'updated') {
+      showSuccess(els.memberSuccess, 'Password updated. Sign in with your email and new password.');
+    }
+
+    try {
+      await redirectIfAlreadySignedIn();
+    } catch {
+      /* stay on sign-in form */
+    }
   }
 
   if (document.readyState === 'loading') {

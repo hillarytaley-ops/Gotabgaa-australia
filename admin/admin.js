@@ -100,15 +100,43 @@
       return `${prefix}.${idPart} Password setup email sent to the member.`;
     }
     if (data.emailSkipped || data.emailError) {
-      return `${prefix}.${idPart} Email NOT sent: ${data.emailError || 'email not configured'}. Add RESEND_API_KEY in Vercel, redeploy, then click Send password setup.`;
+      return `${prefix}.${idPart} Email NOT sent: ${data.emailError || 'email not configured'}. Use the copyable link below, or fix Resend (Full access key + EMAIL_FROM=onboarding@resend.dev until the domain is Verified).`;
     }
     if (data.authError) {
       return `${prefix}.${idPart} Login setup issue: ${data.authError}`;
     }
-    if (data.passwordLinkReady) {
-      return `${prefix}.${idPart} Password link created, but email status unknown.`;
+    if (data.passwordLinkReady || data.passwordSetupLink) {
+      return `${prefix}.${idPart} Password link ready.`;
     }
     return `${prefix}.${idPart}`;
+  }
+
+  function showPasswordSetupResult(prefix, data) {
+    const base = formatMemberEmailStatus(prefix, data);
+    const link = data.passwordSetupLink || '';
+    if (!link) {
+      showStatus(base, data.emailSent ? 'success' : 'error');
+      return;
+    }
+
+    els.statusBar.hidden = false;
+    els.statusBar.className = 'status-bar' + (data.emailSent ? ' is-success' : ' is-error');
+    els.statusBar.innerHTML = `
+      <p style="margin:0">${escapeHtml(base)}</p>
+      <p class="form-hint" style="margin:8px 0">If the member did not get email, open or copy this link and send it to them (expires soon):</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px">
+        <a class="btn btn--primary btn--sm" href="${escapeHtml(link)}" target="_blank" rel="noopener">Open set-password link</a>
+        <button type="button" class="btn btn--outline btn--sm" id="copyPasswordSetupLinkBtn">Copy link</button>
+      </div>
+    `;
+    document.getElementById('copyPasswordSetupLinkBtn')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(link);
+        showStatus('Password setup link copied. Paste it to the member.', 'success');
+      } catch {
+        window.prompt('Copy this password setup link:', link);
+      }
+    });
   }
 
   function showStatus(msg, type = '') {
@@ -1873,7 +1901,7 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Approval failed');
-            showStatus(formatMemberEmailStatus('Member approved', data), data.emailSent ? 'success' : 'error');
+            showPasswordSetupResult('Member approved', data);
 
             const item = card.querySelector(`.membership-reg-item[data-id="${CSS.escape(btn.dataset.id)}"]`);
             if (item && data.membershipId) {
@@ -1955,7 +1983,7 @@
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || 'Could not sync member login');
-            showStatus(formatMemberEmailStatus('Password setup', data), data.emailSent ? 'success' : 'error');
+            showPasswordSetupResult('Password setup', data);
             loadMembershipRegistrationsPanel();
           } catch (err) {
             if (isAuthError(err)) return;

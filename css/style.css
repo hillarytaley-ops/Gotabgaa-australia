@@ -8177,6 +8177,24 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   cursor: pointer;
   text-decoration: none;
   padding: 0;
+  pointer-events: auto;
+}
+
+.auth-glass__forgot {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  border: 1px solid rgba(240, 177, 90, 0.45);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-glass__forgot:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .auth-glass__link:hover,

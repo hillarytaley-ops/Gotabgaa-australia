@@ -47,7 +47,7 @@ async function postResendEmail(key, from, { to, subject, html, text }) {
   return { res, data };
 }
 
-export async function sendEmail({ to, subject, html, text }) {
+export async function sendEmail({ to, subject, html, text, preferReliableSender = false }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
     return {
@@ -61,10 +61,19 @@ export async function sendEmail({ to, subject, html, text }) {
   }
 
   const payload = { to, subject, html, text };
-  let { res, data } = await postResendEmail(key, FROM, payload);
+  // Password / login emails: send via Resend test address so a Failed custom domain
+  // (gotabgaaaustralia.org not Verified) does not block resets.
+  const primaryFrom = preferReliableSender ? TEST_FROM : FROM;
 
+  let { res, data } = await postResendEmail(key, primaryFrom, payload);
   const firstError = data.message || data.error || (!res.ok ? `Email failed (${res.status})` : '');
-  if (!res.ok && FROM !== TEST_FROM && isUnverifiedDomainError(firstError)) {
+
+  if (
+    !res.ok &&
+    !preferReliableSender &&
+    FROM !== TEST_FROM &&
+    isUnverifiedDomainError(firstError)
+  ) {
     ({ res, data } = await postResendEmail(key, TEST_FROM, payload));
   }
 
@@ -152,7 +161,8 @@ export async function sendMembershipApproved({
     subject: isResync
       ? 'Gotabgaa Australia — set your member password'
       : 'Gotabgaa Australia — membership approved',
-    html
+    html,
+    preferReliableSender: true
   });
 }
 
@@ -192,7 +202,8 @@ export async function sendPasswordReset({ to, name, resetLink }) {
   return sendEmail({
     to,
     subject: 'Gotabgaa Australia — reset your password',
-    html
+    html,
+    preferReliableSender: true
   });
 }
 

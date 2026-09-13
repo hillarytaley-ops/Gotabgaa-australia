@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaaaustralia.org/login.html">
 </head>
@@ -31,7 +31,7 @@
 
       <div id="panelSignIn" class="auth-glass__panel is-active">
         <h1 class="auth-glass__title">Welcome back</h1>
-        <p class="auth-glass__lead">Sign in with the email from your Gotabgaa Australia registration. Use Forgot password if you still need to set one.</p>
+        <p class="auth-glass__lead">Sign in with the email from your Gotabgaa Australia registration. First time? Use <strong>Reset or set password</strong> below.</p>
 
         <form id="memberLoginForm" class="auth-glass__form" novalidate>
           <div class="auth-glass__field">
@@ -50,11 +50,11 @@
               <input type="checkbox" id="rememberMemberEmail" name="rememberEmail">
               <span>Remember my email</span>
             </label>
-            <button type="button" class="auth-glass__link" id="forgotPasswordBtn">Forgot password?</button>
           </div>
           <p class="auth-glass__error" id="memberLoginError" hidden role="alert" aria-live="polite"></p>
           <p class="auth-glass__success" id="memberLoginSuccess" hidden role="status" aria-live="polite"></p>
           <button type="submit" class="auth-glass__submit" id="memberLoginBtn">Sign in</button>
+          <button type="button" class="auth-glass__link auth-glass__forgot" id="forgotPasswordBtn">Reset or set password</button>
         </form>
 
         <p class="auth-glass__footer">
@@ -87,6 +87,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/site-config.js?v=26"></script>
-  <script src="js/login.js?v=35"></script>
+  <script src="js/login.js?v=37"></script>
 </body>
 </html>
