@@ -49,6 +49,14 @@
     sessionStorage.removeItem(ADMIN_TOKEN_KEY);
   }
 
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function showError(el, msg) {
     if (!el) return;
     el.textContent = msg;
@@ -320,6 +328,21 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not send reset email.');
+
+      if (data.setupLink) {
+        showSuccess(els.memberSuccess, '');
+        if (els.memberSuccess) {
+          els.memberSuccess.hidden = false;
+          els.memberSuccess.innerHTML = `
+            <span>${escapeHtml(data.message || 'Use this link to set your password.')}</span>
+            <p style="margin:10px 0 0">
+              <a href="${escapeHtml(data.setupLink)}" class="auth-glass__link" style="font-size:1rem">Set password now →</a>
+            </p>
+          `;
+        }
+        return;
+      }
+
       showSuccess(
         els.memberSuccess,
         data.message || 'If that email has an account, we sent a password link. Check inbox and spam.'

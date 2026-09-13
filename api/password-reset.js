@@ -1,6 +1,7 @@
 /**
  * Send a password reset / first-password link via Resend.
- * Supabase Auth's built-in emails are not used (they often never arrive).
+ * Allowlisted founder emails can also receive an on-screen setup link
+ * when Resend is not ready yet.
  */
 import { sendPasswordReset, isEmailConfigured } from './lib/email.js';
 import {
@@ -14,10 +15,11 @@ import {
 import { findActiveMemberByEmail, normalizeMemberEmail } from './lib/member-registration.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
-function genericOk(res) {
+function genericOk(res, extra = {}) {
   res.status(200).json({
     ok: true,
-    message: 'If that email has an account, we sent a password link. Check inbox and spam.'
+    message: 'If that email has an account, we sent a password link. Check inbox and spam.',
+    ...extra
   });
 }
 
@@ -38,7 +40,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (!isEmailConfigured()) {
+  const allowlisted = isAllowlistedAdminEmail(email);
+
+  if (!isEmailConfigured() && !allowlisted) {
     res.status(503).json({
       error: 'Password emails are not configured. Add RESEND_API_KEY in Vercel, then redeploy.'
     });
@@ -48,17 +52,16 @@ export default async function handler(req, res) {
   try {
     const supabase = getSupabase();
     const row = await findActiveMemberByEmail(supabase, email);
-    const allowlisted = isAllowlistedAdminEmail(email);
 
     if (!row && !allowlisted) {
       genericOk(res);
       return;
     }
 
-    const name = row?.name || email.split('@')[0];
+    const name = row?.name || (email === 'hillarytaley@gmail.com' ? 'Hillary Taley' : email.split('@')[0]);
     const membershipId = row
       ? (row.membership_id || row.data?._membershipId || '')
-      : 'ADMIN';
+      : 'GAA-REVIEW';
 
     const authUser = await ensureMemberAuthUser(supabase, {
       email,
@@ -68,12 +71,40 @@ export default async function handler(req, res) {
     });
 
     if (allowlisted || (row && memberHasAdminAccess(row, authUser))) {
-      await syncAuthAdminRole(supabase, authUser.id, true, membershipId || 'ADMIN');
+      await syncAuthAdminRole(supabase, authUser.id, true, membershipId || 'GAA-REVIEW');
     }
 
     const { actionLink } = await createPasswordSetupLink(supabase, email);
     if (!actionLink) {
       res.status(500).json({ error: 'Could not create a password link. Try again in a few minutes.' });
+      return;
+    }
+
+    // Founder / allowlisted: always return an on-screen link so password can be set without email.
+    if (allowlisted) {
+      let emailSent = false;
+      let emailError = null;
+      if (isEmailConfigured()) {
+        const sent = await sendPasswordReset({
+          to: email,
+          name,
+          resetLink: actionLink
+        });
+        emailSent = sent.ok === true;
+        if (!sent.ok) emailError = sent.error || sent.reason || 'Email could not be sent';
+      } else {
+        emailError = 'RESEND_API_KEY is not set';
+      }
+
+      res.status(200).json({
+        ok: true,
+        emailSent,
+        emailError,
+        setupLink: actionLink,
+        message: emailSent
+          ? 'We emailed a password link, and also show it below in case mail is delayed.'
+          : 'Email is not delivering yet. Use the Set password link below for your review account.'
+      });
       return;
     }
 
