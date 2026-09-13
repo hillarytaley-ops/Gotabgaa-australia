@@ -23,6 +23,16 @@ function genericOk(res, extra = {}) {
   });
 }
 
+function formatPasswordResetError(error) {
+  const msg = String(error?.message || error || '');
+  const cause = String(error?.cause?.message || error?.cause?.code || error?.cause || '');
+  const combined = `${msg} ${cause}`;
+  if (/fetch failed|Failed to fetch|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|getaddrinfo/i.test(combined)) {
+    return 'Cannot reach Supabase from the server (TypeError: fetch failed). Open supabase.com → your project → Settings → API, copy the Project URL into Vercel SUPABASE_URL (project must not be paused/deleted), update SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY, then Redeploy.';
+  }
+  return msg || 'Could not send the password email.';
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -125,6 +135,6 @@ export default async function handler(req, res) {
     genericOk(res);
   } catch (error) {
     console.error('[password-reset]', error);
-    res.status(500).json({ error: error.message || 'Could not send the password email.' });
+    res.status(500).json({ error: formatPasswordResetError(error) });
   }
 }

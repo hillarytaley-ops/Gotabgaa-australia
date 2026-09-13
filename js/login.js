@@ -57,6 +57,14 @@
       .replace(/"/g, '&quot;');
   }
 
+  function friendlyClientError(err, fallback) {
+    const raw = String(err?.message || err || '');
+    if (/fetch failed|Failed to fetch|NetworkError|Load failed|ENOTFOUND|ECONNREFUSED/i.test(raw)) {
+      return 'Cannot reach the member login service (Supabase). In Vercel, check SUPABASE_URL — the project must still exist at that address — then Redeploy.';
+    }
+    return raw || fallback;
+  }
+
   function showError(el, msg) {
     if (!el) return;
     el.textContent = msg;
@@ -295,7 +303,7 @@
       } else if (/Auth is not configured|SUPABASE_ANON/i.test(msg)) {
         showError(els.memberError, 'Member sign-in is not configured yet. Ask an admin to add SUPABASE_ANON_KEY in Vercel.');
       } else {
-        showError(els.memberError, msg || 'Could not sign in.');
+        showError(els.memberError, friendlyClientError(err, 'Could not sign in.'));
       }
     } finally {
       els.memberBtn.disabled = false;
@@ -367,7 +375,7 @@
         data.message || 'If that email has an account, we sent a password link. Check inbox and spam.'
       );
     } catch (err) {
-      showError(els.memberError, err.message || 'Could not send reset email.');
+      showError(els.memberError, friendlyClientError(err, 'Could not send reset email.'));
     } finally {
       if (els.forgotBtn) {
         els.forgotBtn.disabled = false;
