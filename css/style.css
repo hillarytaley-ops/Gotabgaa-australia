@@ -4833,20 +4833,30 @@ body.modal-open {
 
 @media (min-width: 769px) {
   .nav__toggle {
-    display: none;
+    display: none !important;
   }
 
+  /* Keep links optically centered in the header (do not reset to static) */
   .nav__menu {
-    position: static;
-    transform: none;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    flex-direction: row;
-    align-items: center;
-    background: transparent;
-    box-shadow: none;
-    padding: 0;
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: max-content !important;
+    max-width: min(980px, calc(100% - 180px)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 }
 
