@@ -163,6 +163,7 @@ function initScrollProgress() {
 function initNavigation() {
   const toggle = document.getElementById('navToggle');
   const menu = document.getElementById('navMenu');
+  const drawer = document.getElementById('navDrawer') || menu;
   const links = document.querySelectorAll('.nav__link');
 
   function closeFloatingSocial() {
@@ -171,32 +172,29 @@ function initNavigation() {
     }
   }
 
-  if (toggle && menu) {
+  function setNavOpen(open) {
+    if (drawer) drawer.classList.toggle('open', open);
+    if (menu && menu !== drawer) menu.classList.toggle('open', open);
+    toggle?.classList.toggle('active', open);
+    document.body.classList.toggle('nav-menu-open', open);
+  }
+
+  if (toggle && drawer) {
     toggle.addEventListener('click', e => {
       e.stopPropagation();
-      const willOpen = !menu.classList.contains('open');
+      const willOpen = !drawer.classList.contains('open');
       closeFloatingSocial();
-      menu.classList.toggle('open');
-      toggle.classList.toggle('active');
-      document.body.classList.toggle('nav-menu-open', willOpen);
+      setNavOpen(willOpen);
     });
 
-    links.forEach(link => {
-      link.addEventListener('click', () => {
-        closeFloatingSocial();
-        menu.classList.remove('open');
-        toggle.classList.remove('active');
-        document.body.classList.remove('nav-menu-open');
-      });
-    });
+    const closeNav = () => {
+      closeFloatingSocial();
+      setNavOpen(false);
+    };
 
-    menu.querySelectorAll('.nav__cta').forEach(link => {
-      link.addEventListener('click', () => {
-        closeFloatingSocial();
-        menu.classList.remove('open');
-        toggle.classList.remove('active');
-        document.body.classList.remove('nav-menu-open');
-      });
+    links.forEach(link => link.addEventListener('click', closeNav));
+    document.querySelectorAll('#navActions .nav__cta, #navMenu .nav__cta').forEach(link => {
+      link.addEventListener('click', closeNav);
     });
   }
 
@@ -563,6 +561,13 @@ function dedupeSignInLinks() {
     if (keep) keep.setAttribute('data-signin-link', '');
   }
 
+  const actions = document.getElementById('navActions');
+  if (actions) {
+    const links = [...actions.querySelectorAll('a[href*="login"], [data-signin-link], [data-member-link]')];
+    links.slice(1).forEach(link => link.remove());
+    if (links[0]) links[0].setAttribute('data-signin-link', '');
+  }
+
   document.querySelectorAll('.footer__links ul').forEach(ul => {
     const loginItems = [...ul.querySelectorAll('li')].filter(li =>
       li.querySelector('a[href*="login"], [data-signin-footer-link], [data-member-footer-link]')
@@ -587,18 +592,25 @@ function initSignInLinks() {
   const onMembersPage = currentPage === 'members.html' || currentPage === 'members';
 
   const menu = document.getElementById('navMenu');
-  if (menu && !hasSignInAnchor(menu) && !onLoginPage) {
-    const joinItem = menu.querySelector('a.nav__cta[href*="join"]')?.closest('li');
-    const li = document.createElement('li');
+  const actions = document.getElementById('navActions');
+  if ((actions || menu) && !hasSignInAnchor(actions || menu) && !onLoginPage) {
     const a = document.createElement('a');
     a.href = 'login.html';
     a.className = 'btn btn--outline nav__cta nav__cta--member';
     a.textContent = 'Sign In';
     a.setAttribute('data-signin-link', '');
     if (onMembersPage) a.setAttribute('aria-label', 'Sign in to members dashboard');
-    li.appendChild(a);
-    if (joinItem) joinItem.before(li);
-    else menu.appendChild(li);
+    if (actions) {
+      const joinLink = actions.querySelector('a.nav__cta[href*="join"]');
+      if (joinLink) actions.insertBefore(a, joinLink);
+      else actions.appendChild(a);
+    } else {
+      const li = document.createElement('li');
+      li.appendChild(a);
+      const joinItem = menu.querySelector('a.nav__cta[href*="join"]')?.closest('li');
+      if (joinItem) joinItem.before(li);
+      else menu.appendChild(li);
+    }
   }
 
   document.querySelectorAll('.footer__nav .footer__links').forEach(col => {

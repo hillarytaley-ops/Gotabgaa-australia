@@ -116,8 +116,10 @@
     }
 
     function closeNavMenu() {
+      const drawer = document.getElementById('navDrawer');
       const menu = document.getElementById('navMenu');
       const navToggle = document.getElementById('navToggle');
+      if (drawer) drawer.classList.remove('open');
       if (menu) menu.classList.remove('open');
       if (navToggle) navToggle.classList.remove('active');
       document.body.classList.remove('nav-menu-open');
