@@ -3953,19 +3953,11 @@
   }
 
   function showLogin(message) {
-    if (els.loginScreen) {
-      els.loginScreen.hidden = false;
-      els.loginScreen.classList.remove('is-hidden');
-      els.loginScreen.removeAttribute('hidden');
-    }
-    if (els.app) {
-      els.app.hidden = true;
-      els.app.classList.remove('is-visible');
-      els.app.setAttribute('hidden', '');
-    }
     setToken(null);
     setPreviewMode(false);
-    if (message) showLoginError(message);
+    // Unified auth lives on login.html — send expired sessions there.
+    const q = message ? `?dest=admin&notice=${encodeURIComponent(message)}` : '?dest=admin';
+    window.location.replace(`../login.html${q}`);
   }
 
   async function bootAuthenticated() {
@@ -4187,6 +4179,6 @@
   } else if (new URLSearchParams(location.search).get('preview') === '1') {
     enterPreview().then(() => openSectionFromHash());
   } else {
-    offerMemberAdminContinue();
+    window.location.replace('../login.html?dest=admin');
   }
 })();

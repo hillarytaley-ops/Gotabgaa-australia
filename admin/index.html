@@ -13,21 +13,27 @@
 <body>
   <div id="loginScreen" class="login-screen">
     <div class="login-screen__wrap">
-      <a href="../login.html" class="login-screen__home">← Unified sign in</a>
-      <form class="login-card" id="loginForm">
-      <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
-      <h1>Gotabgaa Australia</h1>
-      <p class="login-card__sub">Admin Dashboard</p>
-      <button type="button" class="btn btn--primary" id="continueMemberAdminBtn" style="width:100%;margin-bottom:12px" hidden>Continue with my member sign-in</button>
-      <p class="login-card__hint" id="memberAdminHint" hidden style="margin-top:0">You are already signed in as a member with admin access.</p>
-      <label for="password">Bootstrap password</label>
-      <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter admin password">
-      <p class="login-card__status" id="loginStatus" hidden aria-live="polite"></p>
-      <p class="login-card__error" id="loginError" hidden role="alert"></p>
-      <button type="submit" class="btn btn--primary" id="loginSubmitBtn">Sign In with password</button>
-      <button type="button" class="btn btn--outline" id="previewBtn" style="margin-top:10px;width:100%">Open Preview (no password)</button>
-      <p class="login-card__hint">Preferred: sign in at <a href="../login.html">login.html</a>, then choose Leadership admin. Bootstrap password uses Vercel <strong>ADMIN_PASSWORD</strong>.</p>
-      </form>
+      <div class="login-card" style="text-align:center">
+        <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
+        <h1>Gotabgaa Australia</h1>
+        <p class="login-card__sub">Admin Dashboard</p>
+        <p class="login-card__hint" id="loginRedirectHint">Opening unified sign in…</p>
+        <p class="login-card__error" id="loginError" hidden role="alert"></p>
+        <p class="login-card__status" id="loginStatus" hidden aria-live="polite"></p>
+        <a class="btn btn--primary" href="../login.html?dest=admin" style="display:inline-flex;margin-top:12px">Go to unified sign in</a>
+        <p class="login-card__hint" style="margin-top:14px">
+          <a href="../login.html?dest=admin&amp;preview=1">Admin preview</a>
+          · Member and leadership share one login.
+        </p>
+        <!-- Kept for admin.js compatibility; hidden — bootstrap lives on login.html -->
+        <form id="loginForm" hidden aria-hidden="true">
+          <input type="password" id="password" name="password" autocomplete="current-password">
+          <button type="submit" id="loginSubmitBtn">Sign In with password</button>
+          <button type="button" id="previewBtn">Open Preview</button>
+          <button type="button" id="continueMemberAdminBtn" hidden>Continue</button>
+          <p id="memberAdminHint" hidden></p>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -234,6 +240,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=31"></script>
+  <script src="admin.js?v=32"></script>
 </body>
 </html>

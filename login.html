@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://gotabgaaaustralia.org/login.html">
 </head>
@@ -23,15 +23,15 @@
           <img src="assets/logo-round.png" alt="" width="40" height="40">
         </a>
         <nav class="auth-glass__tabs" aria-label="Account options">
-          <a href="login.html" class="auth-glass__tab is-active" aria-current="page">Sign in</a>
+          <button type="button" class="auth-glass__tab is-active" id="tabSignIn" data-auth-tab="signin" aria-current="page">Sign in</button>
           <a href="join.html" class="auth-glass__tab">Join</a>
-          <a href="admin/" class="auth-glass__tab">Admin</a>
+          <button type="button" class="auth-glass__tab" id="tabAdmin" data-auth-tab="admin">Admin</button>
         </nav>
       </div>
 
       <div id="panelSignIn" class="auth-glass__panel is-active">
         <h1 class="auth-glass__title">Welcome back</h1>
-        <p class="auth-glass__lead">Sign in with the email from your Gotabgaa Australia registration. First time? Use <strong>Reset or set password</strong> below.</p>
+        <p class="auth-glass__lead" id="signInLead">Sign in with the email from your Gotabgaa Australia registration. First time? Use <strong>Reset or set password</strong> below.</p>
 
         <form id="memberLoginForm" class="auth-glass__form" novalidate>
           <div class="auth-glass__field">
@@ -65,6 +65,36 @@
         </p>
       </div>
 
+      <div id="panelAdmin" class="auth-glass__panel" hidden>
+        <h1 class="auth-glass__title">Leadership admin</h1>
+        <p class="auth-glass__lead">One account for members and leadership. Sign in with your member email, then open the admin dashboard.</p>
+
+        <div class="auth-glass__admin-stack">
+          <button type="button" class="auth-glass__submit" id="adminUseMemberSignInBtn">Sign in with email &amp; password</button>
+          <button type="button" class="auth-glass__submit auth-glass__submit--secondary" id="continueMemberAdminBtn" hidden>Continue with my member sign-in</button>
+          <p class="auth-glass__hint" id="memberAdminHint" hidden>You already have a member session with admin access.</p>
+
+          <details class="auth-glass__details" id="bootstrapDetails">
+            <summary>Bootstrap password (emergency)</summary>
+            <form id="adminBootstrapForm" class="auth-glass__form" novalidate>
+              <div class="auth-glass__field">
+                <label for="adminBootstrapPassword">Admin password</label>
+                <input type="password" id="adminBootstrapPassword" name="adminPassword" autocomplete="current-password" placeholder="Vercel ADMIN_PASSWORD">
+              </div>
+              <p class="auth-glass__error" id="adminBootstrapError" hidden role="alert"></p>
+              <button type="submit" class="auth-glass__submit" id="adminBootstrapBtn">Sign in with bootstrap password</button>
+            </form>
+          </details>
+
+          <button type="button" class="auth-glass__link auth-glass__forgot" id="adminPreviewBtn">Open admin preview (no password)</button>
+        </div>
+
+        <p class="auth-glass__footer">
+          Preferred path uses your member login.
+          <a href="index.html">Back to website</a>
+        </p>
+      </div>
+
       <div id="panelRoleSelect" class="auth-glass__panel" hidden>
         <h1 class="auth-glass__title">Choose where to go</h1>
         <p class="auth-glass__lead" id="roleSelectHint">You have access to both areas. Pick a dashboard to continue.</p>
@@ -87,6 +117,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/site-config.js?v=26"></script>
-  <script src="js/login.js?v=38"></script>
+  <script src="js/login.js?v=39"></script>
 </body>
 </html>
