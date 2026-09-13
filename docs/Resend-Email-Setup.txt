@@ -28,18 +28,20 @@ STEP 3 — Domain (recommended for real members)
     You can only send TO the email address on your Resend account.
     Use EMAIL_FROM = Gotabgaa Australia <onboarding@resend.dev>
 
-  Option B — Production (members get real emails)
-    Resend → Domains → Add domain
-      e.g. gotabgaaaustralia.org
-    Add the DNS records Resend shows (at your domain registrar).
-    Wait until status = Verified (not Failed).
-    If status is Failed: fix DKIM / send records in Hostinger, click Restart
-    in Resend, or keep EMAIL_FROM on onboarding@resend.dev for now.
-    Password / approval emails always try the Resend test sender first so a
-    Failed domain does not block resets.
-    When Verified, use:
+  Option B — Production (members get real emails / inbox delivery)
+    Resend → Domains → gotabgaaaustralia.org must be Verified (DKIM + SPF).
+    In Vercel set:
       EMAIL_FROM = Gotabgaa Australia <noreply@gotabgaaaustralia.org>
-      (or another address on that verified domain)
+    Optional:
+      EMAIL_REPLY_TO = info@gotabgaaaustralia.org
+    Then Redeploy.
+
+    Do NOT keep EMAIL_FROM on onboarding@resend.dev for real members —
+    Gmail often puts Resend test-sender mail in Spam.
+
+  If domain is not Verified yet:
+    Fix DNS in Hostinger, click Restart in Resend, wait for Verified.
+    Temporary fallback only: EMAIL_FROM = Gotabgaa Australia <onboarding@resend.dev>
 
 ----------------------------------------------------------------------
 STEP 4 — Add Vercel environment variables

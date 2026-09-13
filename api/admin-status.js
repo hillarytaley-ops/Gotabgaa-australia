@@ -34,8 +34,8 @@ export default async function handler(req, res) {
     ),
     tips: isEmailConfigured()
       ? (usingDevFrom
-        ? ['RESEND_API_KEY is set, but EMAIL_FROM still uses the Resend test sender. Verify gotabgaaaustralia.org (or your domain) in Resend, then set EMAIL_FROM to noreply@your-domain and redeploy.']
-        : ['Password / approval emails should send. Test with Admin → Membership → Send password setup.'])
+        ? ['EMAIL_FROM still uses onboarding@resend.dev — Gmail often puts those in Spam. Set EMAIL_FROM to Gotabgaa Australia <noreply@gotabgaaaustralia.org> (domain must be Verified in Resend), then Redeploy.']
+        : ['Sending from your verified domain. Password emails should land in the inbox (not Spam).'])
       : [
         'Add RESEND_API_KEY in Vercel → Settings → Environment Variables.',
         'Set EMAIL_FROM (for testing: Gotabgaa Australia <onboarding@resend.dev>).',

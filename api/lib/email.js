@@ -1,5 +1,6 @@
 const TEST_FROM = 'Gotabgaa Australia <onboarding@resend.dev>';
 const FROM = process.env.EMAIL_FROM || TEST_FROM;
+const REPLY_TO = process.env.EMAIL_REPLY_TO || 'info@gotabgaaaustralia.org';
 
 function isUnverifiedDomainError(message) {
   return /associated domain with your API key is not verified|domain is not verified|create a new API key with full access/i.test(String(message || ''));
@@ -7,7 +8,7 @@ function isUnverifiedDomainError(message) {
 
 function friendlyEmailError(message) {
   if (isUnverifiedDomainError(message)) {
-    return 'Resend cannot send from your domain yet. In Resend create a Full access API key (not domain-restricted). In Vercel set EMAIL_FROM to Gotabgaa Australia <onboarding@resend.dev> until gotabgaaaustralia.org is Verified, then redeploy.';
+    return 'Resend cannot send from your domain yet. Confirm gotabgaaaustralia.org is Verified in Resend, set EMAIL_FROM to Gotabgaa Australia <noreply@gotabgaaaustralia.org> in Vercel, then redeploy.';
   }
   return message;
 }
@@ -21,33 +22,43 @@ function escapeHtml(str) {
 }
 
 function siteUrl() {
-  return String(process.env.SITE_URL || 'https://gotabgaaaustralia.org').replace(/\/$/, '');
+  return String(process.env.SITE_URL || 'https://www.gotabgaaaustralia.org').replace(/\/$/, '');
 }
 
 export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
+export function isUsingCustomFromDomain() {
+  return Boolean(FROM) && !/onboarding@resend\.dev/i.test(FROM);
+}
+
 async function postResendEmail(key, from, { to, subject, html, text }) {
+  const body = {
+    from,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    html,
+    text: text || html.replace(/<[^>]+>/g, ' ')
+  };
+  // Custom-domain From improves inbox placement; Reply-To helps Gmail trust the brand.
+  if (REPLY_TO && !/onboarding@resend\.dev/i.test(from)) {
+    body.reply_to = REPLY_TO;
+  }
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      from,
-      to: Array.isArray(to) ? to : [to],
-      subject,
-      html,
-      text: text || html.replace(/<[^>]+>/g, ' ')
-    })
+    body: JSON.stringify(body)
   });
   const data = await res.json().catch(() => ({}));
   return { res, data };
 }
 
-export async function sendEmail({ to, subject, html, text, preferReliableSender = false }) {
+export async function sendEmail({ to, subject, html, text }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
     return {
@@ -61,19 +72,11 @@ export async function sendEmail({ to, subject, html, text, preferReliableSender 
   }
 
   const payload = { to, subject, html, text };
-  // Password / login emails: send via Resend test address so a Failed custom domain
-  // (gotabgaaaustralia.org not Verified) does not block resets.
-  const primaryFrom = preferReliableSender ? TEST_FROM : FROM;
-
-  let { res, data } = await postResendEmail(key, primaryFrom, payload);
+  // Prefer branded domain From (inbox). Fall back to Resend test sender only if domain is not verified.
+  let { res, data } = await postResendEmail(key, FROM, payload);
   const firstError = data.message || data.error || (!res.ok ? `Email failed (${res.status})` : '');
 
-  if (
-    !res.ok &&
-    !preferReliableSender &&
-    FROM !== TEST_FROM &&
-    isUnverifiedDomainError(firstError)
-  ) {
+  if (!res.ok && FROM !== TEST_FROM && isUnverifiedDomainError(firstError)) {
     ({ res, data } = await postResendEmail(key, TEST_FROM, payload));
   }
 
@@ -82,7 +85,7 @@ export async function sendEmail({ to, subject, html, text, preferReliableSender 
     return { ok: false, error: friendlyEmailError(err) };
   }
 
-  return { ok: true, id: data.id };
+  return { ok: true, id: data.id, from: FROM };
 }
 
 function paymentBlock(payment, amount, reference) {
@@ -161,8 +164,7 @@ export async function sendMembershipApproved({
     subject: isResync
       ? 'Gotabgaa Australia — set your member password'
       : 'Gotabgaa Australia — membership approved',
-    html,
-    preferReliableSender: true
+    html
   });
 }
 
@@ -202,8 +204,7 @@ export async function sendPasswordReset({ to, name, resetLink }) {
   return sendEmail({
     to,
     subject: 'Gotabgaa Australia — reset your password',
-    html,
-    preferReliableSender: true
+    html
   });
 }
 
