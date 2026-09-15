@@ -1,5 +1,5 @@
 /* ============================================
-   Gotabgaa Australia ÃÂ¢ÃÂÃÂ Modern Theme
+   Gotabgaa Australia ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Modern Theme
    Deep Brown Palette inspired by chapter logo
    ============================================ */
 
@@ -255,7 +255,7 @@ a:hover {
   object-fit: contain;
 }
 
-/* Circular logo ÃÂ¢ÃÂÃÂ clips white square background */
+/* Circular logo ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ clips white square background */
 .logo-circle {
   border-radius: 50%;
   object-fit: cover;
@@ -522,7 +522,7 @@ a:hover {
   inset: 0;
 }
 
-/* Full image always visible ÃÂ¢ÃÂÃÂ sized to the visible hero band (not behind header) */
+/* Full image always visible ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ sized to the visible hero band (not behind header) */
 .hero__slide__photo {
   position: absolute;
   inset: 0;
@@ -776,7 +776,7 @@ a:hover {
   to { transform: rotate(360deg); }
 }
 
-/* Steady flat 360ÃÂÃÂ° logo spin */
+/* Steady flat 360ÃÂÃÂÃÂÃÂ° logo spin */
 .logo-spinner {
   width: 58%;
   height: 58%;
@@ -1062,7 +1062,7 @@ body.page-sub .section {
   color: var(--tan);
 }
 
-/* Home ÃÂ¢ÃÂÃÂ About preview */
+/* Home ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ About preview */
 .about-preview__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1611,7 +1611,7 @@ body.page-sub .section {
   display: block;
 }
 
-/* About page ÃÂ¢ÃÂÃÂ city reach slider */
+/* About page ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ city reach slider */
 .city-slider {
   position: relative;
   width: 100%;
@@ -2598,7 +2598,7 @@ body.page-sub .section {
   margin-top: 10px;
 }
 
-/* Standalone form pages ÃÂ¢ÃÂÃÂ no site navigation */
+/* Standalone form pages ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ no site navigation */
 body.page-form-only {
   --header-height: 132px;
 }
@@ -3812,7 +3812,7 @@ body.modal-open {
   }
 
   .hero__overlay {
-    /* Soft bottom fade only ÃÂ¢ÃÂÃÂ no mid-page brown ÃÂ¢ÃÂÃÂcardÃÂ¢ÃÂÃÂ */
+    /* Soft bottom fade only ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ no mid-page brown ÃÂÃÂ¢ÃÂÃÂÃÂÃÂcardÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */
     background: linear-gradient(
       to top,
       rgba(18, 12, 8, 0.72) 0%,
@@ -3948,7 +3948,7 @@ body.modal-open {
     width: min(148px, 46vw);
   }
 
-  /* All 10 slides cycle ÃÂ¢ÃÂÃÂ fade only on mobile */
+  /* All 10 slides cycle ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ fade only on mobile */
   .hero__slide {
     animation-duration: 56s;
   }
@@ -4294,7 +4294,7 @@ body.modal-open {
   }
 }
 
-/* Floating orbs in hero ÃÂ¢ÃÂÃÂ hidden when photo slideshow is active */
+/* Floating orbs in hero ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ hidden when photo slideshow is active */
 .hero__orbs {
   display: none;
 }
@@ -4451,7 +4451,7 @@ body.modal-open {
   border-color: var(--green-accent) !important;
 }
 
-/* Nav hamburger ÃÂ¢ÃÂÃÂ X */
+/* Nav hamburger ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ X */
 .nav__toggle.active span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -4519,7 +4519,7 @@ body.modal-open {
   50% { background-position: 100% 50%; }
 }
 
-/* Program cards ÃÂ¢ÃÂÃÂ enhanced hover (tilt applied via JS on desktop) */
+/* Program cards ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ enhanced hover (tilt applied via JS on desktop) */
 .program-card {
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
   will-change: transform;
@@ -4959,7 +4959,7 @@ body.modal-open {
   }
 }
 
-/* Mobile menu ÃÂ¢ÃÂÃÂ phones and small tablets only (max-width: 768px) */
+/* Mobile menu ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ phones and small tablets only (max-width: 768px) */
 
 @media (prefers-reduced-motion: reduce) {
   .animate-on-load,
@@ -5552,7 +5552,7 @@ body.modal-open {
   }
 }
 
-/* Members page footer ÃÂ¢ÃÂÃÂ center brand + link columns */
+/* Members page footer ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ center brand + link columns */
 .page-members .footer__grid {
   flex-direction: column;
   align-items: center;
@@ -6356,7 +6356,7 @@ body.modal-open {
 }
 
 .members-quicklink__icon::before {
-  content: 'ÃÂ¢ÃÂÃÂ';
+  content: 'ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ';
   position: absolute;
   inset: 0;
   display: flex;
@@ -7215,7 +7215,7 @@ body.page-sub .section {
   position: relative;
 }
 
-/* Page heroes ÃÂ¢ÃÂÃÂ richer depth on every sub-page */
+/* Page heroes ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ richer depth on every sub-page */
 .page-hero {
   background:
     radial-gradient(ellipse 70% 80% at 50% 120%, rgba(184, 134, 75, 0.18), transparent 55%),
@@ -7240,7 +7240,7 @@ body.page-sub .section {
   color: rgba(250, 247, 242, 0.82);
 }
 
-/* Section headings ÃÂ¢ÃÂÃÂ gold accent underline */
+/* Section headings ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ gold accent underline */
 .story-section__title,
 .section__title {
   position: relative;
@@ -7273,7 +7273,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   border: 1px solid rgba(184, 134, 75, 0.2);
 }
 
-/* Buttons ÃÂ¢ÃÂÃÂ warmer gradient primary */
+/* Buttons ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ warmer gradient primary */
 .btn--primary {
   background: linear-gradient(135deg, var(--brown-800) 0%, var(--brown-700) 100%);
   box-shadow: 0 4px 16px rgba(61, 43, 31, 0.22);
@@ -7602,7 +7602,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 /* ============================================
-   Community hub pages ÃÂ¢ÃÂÃÂ welfare, sports, business
+   Community hub pages ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ welfare, sports, business
    ============================================ */
 
 .hub-intro {
@@ -7883,7 +7883,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   }
 }
 
-/* Welfare membership ÃÂ¢ÃÂÃÂ packages, portal, dashboard */
+/* Welfare membership ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ packages, portal, dashboard */
 .welfare-packages__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
@@ -7952,7 +7952,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .welfare-package-card__benefits li::before {
-  content: 'ÃÂ¢ÃÂÃÂ';
+  content: 'ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ';
   position: absolute;
   left: 0;
   color: var(--tan);
@@ -8015,7 +8015,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .welfare-portal__signin-features li::before {
-  content: 'ÃÂ¢ÃÂÃÂ¢';
+  content: 'ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¢';
   position: absolute;
   left: 0;
   color: var(--tan-light);
@@ -9127,7 +9127,21 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   .members-event-cards { grid-template-columns: 1fr; }
 }
 
-/* Meet & Greet feedback ÃÂ plain tick boxes only */
+/* Meet & Greet feedback ÃÂÃÂ plain tick boxes only */
+.feedback-flyer {
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+.feedback-flyer img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1.5px solid var(--cream-dark);
+  box-shadow: 0 12px 32px rgba(42, 31, 23, 0.12);
+}
+
 .feedback-form {
   padding: 28px 24px;
 }
