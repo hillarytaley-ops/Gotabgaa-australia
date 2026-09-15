@@ -29,3 +29,8 @@ alter table public.meet_greet_feedback enable row level security;
 
 alter table public.meet_greet_feedback add column if not exists name text;
 alter table public.meet_greet_feedback add column if not exists email text;
+
+-- One submission per email (case-insensitive)
+create unique index if not exists meet_greet_feedback_email_unique_idx
+  on public.meet_greet_feedback (lower(email))
+  where email is not null and length(trim(email)) > 0;

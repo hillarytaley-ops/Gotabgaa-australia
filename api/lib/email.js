@@ -226,3 +226,25 @@ export async function sendBookingConfirmation({ to, name, eventTitle, payment, a
     html
   });
 }
+
+export async function sendMeetGreetFeedbackThanks({ to, name }) {
+  const firstName = String(name || 'Friend').trim() || 'Friend';
+  const html = `
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
+      <h2 style="color:#3d2e22">Kongoi Bik Chok</h2>
+      <p>Hi ${escapeHtml(firstName)},</p>
+      <p>Thank you for taking part in the Meet &amp; Greet feedback review with Gotabgaa Australia.</p>
+      <p>Your answers help us plan the next gathering for our community.</p>
+      <p>We are grateful for your time and participation.</p>
+      <p style="margin-top:24px">Unity · Heritage · Excellence<br>Gotabgaa Australia</p>
+      <p style="color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Kongoi Bik Chok — thank you for your Meet & Greet feedback',
+    html
+  });
+}
+

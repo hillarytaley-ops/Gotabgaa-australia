@@ -164,6 +164,10 @@ create index if not exists meet_greet_feedback_created_at_idx
 alter table public.meet_greet_feedback add column if not exists name text;
 alter table public.meet_greet_feedback add column if not exists email text;
 
+create unique index if not exists meet_greet_feedback_email_unique_idx
+  on public.meet_greet_feedback (lower(email))
+  where email is not null and length(trim(email)) > 0;
+
 -- Row Level Security
 alter table public.site_content enable row level security;
 alter table public.contact_submissions enable row level security;

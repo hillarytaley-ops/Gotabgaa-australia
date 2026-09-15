@@ -1,4 +1,9 @@
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
+import { sendMeetGreetFeedbackThanks } from './lib/email.js';
+
+function normalizeEmail(value) {
+  return String(value || '').trim().toLowerCase();
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,9 +31,31 @@ export default async function handler(req, res) {
   }
 
   const name = String(answers.name || req.body?.name || '').trim() || null;
-  const email = String(answers.email || req.body?.email || '').trim() || null;
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: 'Please enter a valid email, or leave it blank' });
+  const email = normalizeEmail(answers.email || req.body?.email);
+  if (!email) {
+    res.status(400).json({ error: 'Email is required' });
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: 'Please enter a valid email address' });
+    return;
+  }
+
+  const supabase = getSupabase();
+
+  const { data: existing, error: lookupError } = await supabase
+    .from('meet_greet_feedback')
+    .select('id')
+    .ilike('email', email)
+    .limit(1);
+
+  if (lookupError) {
+    res.status(500).json({ error: 'Failed to check previous submissions', detail: lookupError.message });
+    return;
+  }
+
+  if (existing?.length) {
+    res.status(409).json({ error: 'This email has already submitted Meet & Greet feedback. Thank you.' });
     return;
   }
 
@@ -44,16 +71,29 @@ export default async function handler(req, res) {
     zoom: String(answers.zoom || '').trim() || null,
     come_again: String(answers.come_again || '').trim(),
     next_steps: Array.isArray(answers.next) ? answers.next.map(String) : [],
-    answers
+    answers: { ...answers, email, name }
   };
 
-  const supabase = getSupabase();
   const { error } = await supabase.from('meet_greet_feedback').insert(row);
 
   if (error) {
+    if (/duplicate|unique|23505/i.test(String(error.message))) {
+      res.status(409).json({ error: 'This email has already submitted Meet & Greet feedback. Thank you.' });
+      return;
+    }
     res.status(500).json({ error: 'Failed to save feedback', detail: error.message });
     return;
   }
 
-  res.status(200).json({ ok: true });
+  const emailResult = await sendMeetGreetFeedbackThanks({
+    to: email,
+    name: name || 'Friend'
+  });
+
+  res.status(200).json({
+    ok: true,
+    emailSent: Boolean(emailResult?.ok),
+    emailSkipped: Boolean(emailResult?.skipped),
+    emailError: emailResult?.ok ? undefined : (emailResult?.error || emailResult?.reason)
+  });
 }

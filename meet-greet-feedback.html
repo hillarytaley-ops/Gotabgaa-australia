@@ -61,7 +61,10 @@
     <div class="container" style="max-width: 640px;">
       <form class="contact__form feedback-form" id="meetGreetFeedbackForm" novalidate>
         <div class="form__success" id="feedbackSuccess" hidden role="status">
-          Kongoi bik chok. Thank you — your feedback helps Gotabgaa Australia.
+          Kongoi bik chok. Thank you — your feedback helps Gotabgaa Australia. A thank-you email is on its way.
+        </div>
+        <div class="form__success" id="feedbackAlreadyDone" hidden role="status">
+          You have already submitted Meet &amp; Greet feedback. Kongoi bik chok — thank you for taking part.
         </div>
         <p class="form__error" id="feedbackError" hidden role="alert"></p>
 
@@ -76,8 +79,9 @@
           <input type="text" id="feedbackName" name="name" autocomplete="name" placeholder="Your name">
         </div>
         <div class="form__group">
-          <label for="feedbackEmail">Email <span class="feedback-optional">(optional)</span></label>
-          <input type="email" id="feedbackEmail" name="email" autocomplete="email" placeholder="you@example.com">
+          <label for="feedbackEmail">Email <span class="feedback-req">*</span></label>
+          <input type="email" id="feedbackEmail" name="email" autocomplete="email" required placeholder="you@example.com">
+          <p class="form-hint">Required — we send a thank-you note, and each email can only submit once.</p>
         </div>
 
         <fieldset class="feedback-q" data-single>
@@ -226,7 +230,7 @@
   <script src="js/site-config.js?v=2"></script>
   <script src="js/content-loader.js?v=27"></script>
   <script src="floating-social/floating-social.js?v=2" defer></script>
-  <script src="js/meet-greet-feedback.js?v=2" defer></script>
+  <script src="js/meet-greet-feedback.js?v=3" defer></script>
   <script src="js/main.js?v=28" defer></script>
 </body>
 </html>
