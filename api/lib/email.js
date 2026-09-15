@@ -229,14 +229,19 @@ export async function sendBookingConfirmation({ to, name, eventTitle, payment, a
 
 export async function sendMeetGreetFeedbackThanks({ to, name }) {
   const firstName = String(name || 'Friend').trim() || 'Friend';
+  const logoUrl = `${siteUrl()}/assets/logo-round.png`;
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Kongoi Bik Chok</h2>
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
+      <div style="text-align:center;margin:0 0 24px">
+        <img src="${escapeHtml(logoUrl)}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
+        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
+      </div>
+      <h2 style="color:#3d2e22;margin:0 0 16px;font-size:22px">Kongoi Bik Chok</h2>
       <p>Hi ${escapeHtml(firstName)},</p>
       <p>Thank you for taking part in the Meet &amp; Greet feedback review with Gotabgaa Australia.</p>
       <p>Your answers help us plan the next gathering for our community.</p>
       <p>We are grateful for your time and participation.</p>
-      <p style="margin-top:24px">Unity · Heritage · Excellence<br>Gotabgaa Australia</p>
+      <p style="margin-top:28px">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
       <p style="color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
     </div>
   `;
