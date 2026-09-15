@@ -84,9 +84,7 @@ function buildMeetGreetFeedbackForm() {
       'Investment & economic empowerment',
       'Identity, culture & heritage',
       'Spirit of togetherness',
-      'Political awareness & civic discussion',
-      'Hearing Bishop Kosgei',
-      'Hearing other members'
+      'Political awareness & civic discussion'
     ])
     .setRequired(false);
 
