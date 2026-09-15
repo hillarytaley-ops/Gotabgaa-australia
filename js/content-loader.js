@@ -19,6 +19,43 @@
     family: '<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>'
   };
 
+  /** Placeholder / non-Gotabgaa sample events that must never show. */
+  const REMOVED_EVENT_IDS = new Set(['evt-cultural-fete-2026']);
+
+  function isRemovedPlaceholderEvent(e) {
+    if (!e) return true;
+    if (REMOVED_EVENT_IDS.has(e.id)) return true;
+    const title = String(e.title || '');
+    // Never a Gotabgaa event — sample placeholder left in early CMS data
+    if (/annual\s+cultural\s+fete/i.test(title)) return true;
+    if (/riverstage\s+park/i.test(String(e.location || ''))) return true;
+    return false;
+  }
+
+  function sanitizeSiteContent(content) {
+    if (!content || typeof content !== 'object') return content;
+    const events = Array.isArray(content.events) ? content.events : [];
+    content.events = events
+      .filter((e) => !isRemovedPlaceholderEvent(e))
+      .map((e) => {
+        // Never advertise sample/placeholder workshops as bookable upcoming
+        if (e.id === 'evt-youth-workshop' && e.status === 'upcoming') {
+          return { ...e, status: 'past', bookingEnabled: false, registerUrl: '' };
+        }
+        return e;
+      });
+    const featured = content.events.find((e) => e.id === content.featuredEventId);
+    if (!featured || featured.status !== 'upcoming') {
+      content.featuredEventId = '';
+    }
+    if (Array.isArray(content.yearCalendar)) {
+      content.yearCalendar = content.yearCalendar.filter(
+        (row) => !/cultural fete/i.test(String(row?.title || ''))
+      );
+    }
+    return content;
+  }
+
   function getPath(obj, path) {
     return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), obj);
   }
@@ -257,20 +294,26 @@
     const grid = document.getElementById('homeEventsGrid');
     if (!grid || !content.events) return;
 
-    const featured = content.events.find(e => e.id === content.featuredEventId);
-    const upcoming = content.events.filter(e => e.status === 'upcoming' && e.id !== featured?.id);
-    const homeEvents = [];
-    if (featured) homeEvents.push(featured);
-    homeEvents.push(...upcoming);
-    const shown = homeEvents.slice(0, 2);
+    const upcoming = content.events.filter(e => e.status === 'upcoming');
+    const shown = upcoming.slice(0, 2);
     grid.innerHTML = shown.length
       ? shown.map(e => renderHomeEventCard(e)).join('')
       : '<p class="home-events__empty">No upcoming events at the moment. Check back soon!</p>';
   }
 
   function renderFeaturedEvent(event) {
+    const section = document.getElementById('eventsFeaturedSection')
+      || document.querySelector('.events-featured');
     const card = document.querySelector('.events-featured__card');
-    if (!card || !event) return;
+    if (!card) return;
+
+    if (!event || event.status !== 'upcoming') {
+      if (section) section.hidden = true;
+      window.CMS_FEATURED_EVENT = null;
+      return;
+    }
+
+    if (section) section.hidden = false;
 
     const img = card.querySelector('.events-featured__media img');
     const status = card.querySelector('.events-featured__status');
@@ -278,12 +321,13 @@
     const desc = card.querySelector('.events-featured__desc');
     const metaItems = card.querySelectorAll('.events-featured__meta li span');
     const bookBtn = document.getElementById('featuredBookBtn');
+    const detailsBtn = card.querySelector('.events-featured__details-btn');
 
     if (img) {
       img.src = event.image;
       img.alt = event.title;
     }
-    if (status) status.textContent = event.status === 'upcoming' ? 'Upcoming' : 'Past';
+    if (status) status.textContent = 'Upcoming';
     if (title) title.textContent = event.title;
     if (desc) desc.textContent = event.summary || event.description;
 
@@ -294,7 +338,7 @@
     }
 
     if (bookBtn) {
-      if (event.status === 'upcoming' && event.bookingEnabled !== false) {
+      if (event.bookingEnabled !== false) {
         bookBtn.href = getEventBookingUrl(event);
         bookBtn.textContent = event.bookingLabel || 'Book Now';
         bookBtn.hidden = false;
@@ -305,6 +349,10 @@
       } else {
         bookBtn.hidden = true;
       }
+    }
+    if (detailsBtn) {
+      detailsBtn.hidden = false;
+      detailsBtn.setAttribute('data-event-open', event.id);
     }
   }
 
@@ -347,9 +395,9 @@
       if (desc) desc.textContent = h.description;
     }
 
-    const featured = content.events.find(e => e.id === content.featuredEventId)
-      || upcoming[0]
-      || content.events[0];
+    const featured = content.events.find(
+      e => e.id === content.featuredEventId && e.status === 'upcoming'
+    ) || upcoming[0] || null;
     renderFeaturedEvent(featured);
     window.CMS_FEATURED_EVENT = featured;
 
@@ -1171,7 +1219,7 @@
         }
       }
 
-      hydrate(content);
+      hydrate(sanitizeSiteContent(content));
     } catch (err) {
       console.warn('CMS content not loaded:', err.message);
       document.dispatchEvent(new CustomEvent('cms-ready', { detail: null }));

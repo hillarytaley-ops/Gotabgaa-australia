@@ -294,9 +294,9 @@
     { "month": "Jun", "title": "Kokwet Sports Day", "detail": "Sydney · 14 June 2026" },
     { "month": "Jul", "title": "Brisbane Community Meetup", "detail": "Brisbane · 18 July 2026" },
     { "month": "Aug", "title": "Youth Mentorship Workshop", "detail": "Melbourne · 22 August 2026" },
-    { "month": "Sep", "title": "Annual Cultural Fete", "detail": "Brisbane · 12 September 2026" }
+    { "month": "Sep", "title": "Meet & Greet (Kosgei)", "detail": "Online Zoom · 13 September 2026" }
   ],
-  "featuredEventId": "evt-meet-greet-kosgei-2026",
+  "featuredEventId": "",
   "events": [
     {
       "id": "evt-meet-greet-kosgei-2026",
@@ -317,26 +317,6 @@
       "ticketAmount": 0,
       "registerUrl": "meet-greet-feedback.html",
       "registerLabel": "Share Feedback"
-    },
-    {
-      "id": "evt-cultural-fete-2026",
-      "title": "Annual Cultural Fete 2026",
-      "date": "Saturday, 12 September 2026",
-      "datePill": "12 Sep 2026",
-      "time": "10:00 AM – 6:00 PM AEST",
-      "location": "Riverstage Park, Brisbane, QLD",
-      "meta": "Brisbane, QLD · 10:00 AM",
-      "image": "assets/hero/taunet-cultural-dance.png",
-      "status": "upcoming",
-      "category": "cultural",
-      "summary": "Flagship heritage celebration with music, dance, and cuisine for all ages.",
-      "description": "Our flagship celebration of Kalenjin heritage — traditional music, dance, storytelling, cuisine, and games for all generations. Food vendors, children's activities, and live performances throughout the day.",
-      "bookingEnabled": true,
-      "bookingLabel": "Book Now",
-      "ticketPriceNote": "Free registration — no payment required",
-      "ticketAmount": 0,
-      "registerUrl": "book.html?id=evt-cultural-fete-2026",
-      "registerLabel": "Book Now"
     },
     {
       "id": "evt-brisbane-meetup",
@@ -367,16 +347,16 @@
       "location": "Melbourne CBD, VIC",
       "meta": "Melbourne, VIC · 9:30 AM",
       "image": "assets/hero/chairman-taunet.png",
-      "status": "upcoming",
+      "status": "past",
       "category": "community",
       "summary": "Career guidance and mentorship for students and young professionals.",
       "description": "Career guidance and mentorship for young members navigating education and employment in Australia. Guest speakers from our professional network share insights on study pathways, CV writing, and workplace culture.",
-      "bookingEnabled": true,
-      "bookingLabel": "Book Now",
+      "bookingEnabled": false,
+      "bookingLabel": "",
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
-      "registerUrl": "book.html?id=evt-youth-workshop",
-      "registerLabel": "Book Now"
+      "registerUrl": "",
+      "registerLabel": ""
     },
     {
       "id": "evt-kokwet-sports",
@@ -534,8 +514,8 @@
   ],
   "gallery": [
     { "id": "gal-mg1", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/events/meet-greet-kosgei-2026.jpg", "alt": "Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei — Gotabgaa Australia first event", "caption": "First event — Meet & Greet poster", "wide": true },
-    { "id": "gal-u1", "eventId": "evt-cultural-fete-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
-    { "id": "gal-u2", "eventId": "evt-cultural-fete-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
+    { "id": "gal-u1", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
+    { "id": "gal-u2", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
     { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane community team", "wide": false },
     { "id": "gal-u4", "eventId": "evt-brisbane-meetup", "image": "assets/hero/charmen-gifting.png", "alt": "Community gifting ceremony", "caption": "Community gifting", "wide": false },
     { "id": "gal-u5", "eventId": "evt-kokwet-sports", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet sports day", "wide": true },
@@ -685,7 +665,7 @@
         "datePill": "Aug 2026",
         "location": "Melbourne, VIC",
         "summary": "Victoria vs New South Wales friendly match — open to registered players and supporters.",
-        "status": "upcoming",
+        "status": "past",
         "link": "contact.html",
         "linkLabel": "Express interest",
         "image": "assets/hero/page/kokwet-sports-day.png"

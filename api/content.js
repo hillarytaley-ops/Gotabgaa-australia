@@ -105,8 +105,26 @@ function mergeWithLocalDefaults(liveContent) {
   merged.events = prependMissing(local.events, liveContent.events, 'id');
   merged.gallery = prependMissing(local.gallery, liveContent.gallery, 'id');
   merged.timeline = prependMissing(local.timeline, liveContent.timeline, 'title');
-  if (local.featuredEventId && (merged.events || []).some(e => e.id === local.featuredEventId)) {
+  if (local.featuredEventId !== undefined) {
+    // Empty string clears a stale live featured event (e.g. removed placeholder fete)
     merged.featuredEventId = local.featuredEventId;
+  }
+
+  // Drop known non-Gotabgaa placeholder events even if still present in live CMS
+  const REMOVED = new Set(['evt-cultural-fete-2026']);
+  merged.events = (merged.events || []).filter((e) => {
+    if (!e) return false;
+    if (REMOVED.has(e.id)) return false;
+    if (/annual\s+cultural\s+fete/i.test(String(e.title || ''))) return false;
+    if (/riverstage\s+park/i.test(String(e.location || ''))) return false;
+    return true;
+  });
+  if (
+    merged.featuredEventId &&
+    (REMOVED.has(merged.featuredEventId) ||
+      !(merged.events || []).some((e) => e.id === merged.featuredEventId))
+  ) {
+    merged.featuredEventId = '';
   }
 
   return merged;
