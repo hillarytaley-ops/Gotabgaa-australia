@@ -110,6 +110,25 @@ function mergeWithLocalDefaults(liveContent) {
     merged.featuredEventId = local.featuredEventId;
   }
 
+  // Prefer local status/booking for known events (repo is source of truth for calendar)
+  const localById = new Map((local.events || []).map((e) => [e.id, e]));
+  merged.events = (merged.events || []).map((e) => {
+    const loc = localById.get(e?.id);
+    if (!loc) return e;
+    if (loc.status === 'past') {
+      return {
+        ...e,
+        ...loc,
+        status: 'past',
+        bookingEnabled: false,
+        bookingLabel: loc.bookingLabel || '',
+        registerUrl: loc.registerUrl || '',
+        registerLabel: loc.registerLabel || ''
+      };
+    }
+    return { ...e, ...loc };
+  });
+
   // Drop known non-Gotabgaa placeholder events even if still present in live CMS
   const REMOVED = new Set(['evt-cultural-fete-2026']);
   merged.events = (merged.events || []).filter((e) => {
@@ -122,7 +141,7 @@ function mergeWithLocalDefaults(liveContent) {
   if (
     merged.featuredEventId &&
     (REMOVED.has(merged.featuredEventId) ||
-      !(merged.events || []).some((e) => e.id === merged.featuredEventId))
+      !(merged.events || []).some((e) => e.id === merged.featuredEventId && e.status === 'upcoming'))
   ) {
     merged.featuredEventId = '';
   }

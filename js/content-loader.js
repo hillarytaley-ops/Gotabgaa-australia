@@ -22,6 +22,18 @@
   /** Placeholder / non-Gotabgaa sample events that must never show. */
   const REMOVED_EVENT_IDS = new Set(['evt-cultural-fete-2026']);
 
+  /** Sample calendar rows shipped in the repo — treat as past until a real event is published. */
+  const FORCE_PAST_EVENT_IDS = new Set([
+    'evt-meet-greet-kosgei-2026',
+    'evt-brisbane-meetup',
+    'evt-youth-workshop',
+    'evt-kokwet-sports',
+    'evt-wa-gathering',
+    'evt-agm-2026',
+    'evt-heritage-2025',
+    'evt-bbq-2025'
+  ]);
+
   function isRemovedPlaceholderEvent(e) {
     if (!e) return true;
     if (REMOVED_EVENT_IDS.has(e.id)) return true;
@@ -38,9 +50,8 @@
     content.events = events
       .filter((e) => !isRemovedPlaceholderEvent(e))
       .map((e) => {
-        // Never advertise sample/placeholder workshops as bookable upcoming
-        if (e.id === 'evt-youth-workshop' && e.status === 'upcoming') {
-          return { ...e, status: 'past', bookingEnabled: false, registerUrl: '' };
+        if (FORCE_PAST_EVENT_IDS.has(e.id)) {
+          return { ...e, status: 'past', bookingEnabled: false };
         }
         return e;
       });
