@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=26">
+  <link rel="stylesheet" href="admin.css?v=27">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -133,6 +133,10 @@
               <span class="nav-item__icon nav-item__icon--inbox" aria-hidden="true"></span>
               <span class="nav-item__label">Contact Inbox</span>
             </button>
+            <button type="button" class="nav-item" data-section="meetGreetFeedback">
+              <span class="nav-item__icon nav-item__icon--inbox" aria-hidden="true"></span>
+              <span class="nav-item__label">Meet &amp; Greet Feedback</span>
+            </button>
           </div>
         </nav>
         <div class="sidebar__footer">
@@ -185,6 +189,7 @@
               <h3>Quick actions</h3>
               <div class="quick-actions quick-actions--tn">
                 <button type="button" class="quick-action" data-goto="inbox">Review enquiries</button>
+                <button type="button" class="quick-action" data-goto="meetGreetFeedback">Meet &amp; Greet feedback</button>
                 <button type="button" class="quick-action" data-goto="membership">Membership</button>
                 <button type="button" class="quick-action" data-goto="events">Manage events</button>
                 <button type="button" class="quick-action" data-goto="gallery">Update gallery</button>
@@ -233,6 +238,7 @@
         <section class="panel" data-panel="memberPortal" hidden></section>
         <section class="panel" data-panel="ailcd" hidden></section>
         <section class="panel" data-panel="inbox" hidden></section>
+        <section class="panel" data-panel="meetGreetFeedback" hidden></section>
         <section class="panel" data-panel="pages" hidden></section>
       </div>
     </main>
@@ -240,6 +246,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=32"></script>
+  <script src="admin.js?v=33"></script>
 </body>
 </html>

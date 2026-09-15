@@ -48,6 +48,7 @@
     memberPortal: 'Member Portal',
     ailcd: 'Leadership EOI',
     inbox: 'Contact Inbox',
+    meetGreetFeedback: 'Meet & Greet Feedback',
     pages: 'Page Heroes'
   };
 
@@ -68,6 +69,7 @@
     memberPortal: 'portal',
     ailcd: 'eoi',
     inbox: 'inbox',
+    meetGreetFeedback: 'inbox',
     pages: 'pages'
   };
 
@@ -511,11 +513,17 @@
     if (recentEl) recentEl.innerHTML = '<p class="form-hint">Loading…</p>';
 
     let submissions = [];
+    let feedbackRows = [];
     let pendingMembers = 0;
     try {
       submissions = await loadSubmissions();
     } catch {
       submissions = [];
+    }
+    try {
+      feedbackRows = await loadMeetGreetFeedback();
+    } catch {
+      feedbackRows = [];
     }
     try {
       const res = await authFetch('/api/membership-registrations');
@@ -530,6 +538,7 @@
     }
 
     const unread = submissions.filter(s => !s.read).length;
+    const unreadFeedback = feedbackRows.filter(s => !s.read).length;
     const recent = submissions.slice(0, 4);
 
     if (alertsEl) {
@@ -541,6 +550,14 @@
             <span>Contact inbox needs review</span>
           </div>
           <button type="button" class="btn btn--primary btn--sm" data-goto="inbox">Review now</button>
+        </div>`);
+      cards.push(`
+        <div class="dash-alert">
+          <div>
+            <strong>${unreadFeedback}</strong> unread Meet &amp; Greet response${unreadFeedback === 1 ? '' : 's'}
+            <span>Feedback form needs review</span>
+          </div>
+          <button type="button" class="btn btn--outline btn--sm" data-goto="meetGreetFeedback">Open feedback</button>
         </div>`);
       cards.push(`
         <div class="dash-alert dash-alert--membership">
@@ -2366,6 +2383,144 @@
     }
   }
 
+  async function loadMeetGreetFeedback() {
+    const token = getToken();
+    if (!token) return [];
+
+    const res = await authFetch('/api/meet-greet-feedback-submissions');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Could not load Meet & Greet feedback');
+    }
+
+    const data = await res.json();
+    return data.submissions || [];
+  }
+
+  function joinFeedbackList(value) {
+    if (Array.isArray(value) && value.length) return value.map(v => escapeHtml(String(v))).join(', ');
+    if (value) return escapeHtml(String(value));
+    return '—';
+  }
+
+  function feedbackName(row) {
+    return row?.name || row?.answers?.name || '';
+  }
+
+  function feedbackEmail(row) {
+    return row?.email || row?.answers?.email || '';
+  }
+
+  function renderMeetGreetFeedbackPanel(rows, errorMsg) {
+    if (errorMsg) {
+      return `<div class="card"><p>${escapeHtml(errorMsg)}</p><p class="portal__notice-small">Run <code>supabase/migrate-meet-greet-feedback.sql</code> in Supabase if the table is missing.</p></div>`;
+    }
+
+    const toolbar = `
+      <div class="list-item__header">
+        <h3>Meet &amp; Greet feedback (${rows.length})</h3>
+        <div class="admin-toolbar">
+          <a href="../meet-greet-feedback.html" target="_blank" rel="noopener" class="btn btn--outline btn--sm">Open public form</a>
+          <a href="/api/meet-greet-feedback-submissions?format=csv" class="btn btn--outline btn--sm" id="exportMeetGreetCsv">Download CSV</a>
+        </div>
+      </div>
+    `;
+
+    if (!rows.length) {
+      return `<div class="card">${toolbar}<p class="form-hint">No feedback yet. Tick-box answers from the Meet &amp; Greet form appear here.</p></div>`;
+    }
+
+    return `
+      <div class="card">
+        ${toolbar}
+        <div id="meetGreetFeedbackList">
+          ${rows.map(s => {
+            const name = feedbackName(s) || 'Anonymous';
+            const email = feedbackEmail(s);
+            return `
+            <details class="list-item inbox-item membership-reg-item ${s.read ? 'inbox-item--read' : ''}" data-id="${escapeHtml(s.id)}">
+              <summary class="list-item__header">
+                <h4>${escapeHtml(name)} · ${escapeHtml(s.overall || 'No rating')}</h4>
+                <span class="inbox-item__date">${new Date(s.created_at).toLocaleString()}</span>
+              </summary>
+              <div class="card__body">
+                <p>${email ? `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>` : '<span class="form-hint">No email given</span>'}</p>
+                <dl class="admin-dl">
+                  <dt>Attended</dt><dd>${escapeHtml(s.attended || '—')}</dd>
+                  <dt>State</dt><dd>${escapeHtml(s.state || '—')}</dd>
+                  <dt>Overall</dt><dd>${escapeHtml(s.overall || '—')}</dd>
+                  <dt>Useful</dt><dd>${escapeHtml(s.useful || '—')}</dd>
+                  <dt>Topics</dt><dd>${joinFeedbackList(s.topics)}</dd>
+                  <dt>8:00 pm</dt><dd>${escapeHtml(s.time_ok || '—')}</dd>
+                  <dt>Zoom</dt><dd>${escapeHtml(s.zoom || '—')}</dd>
+                  <dt>Come again</dt><dd>${escapeHtml(s.come_again || '—')}</dd>
+                  <dt>Next</dt><dd>${joinFeedbackList(s.next_steps)}</dd>
+                </dl>
+                <div class="inbox-item__actions">
+                  <button type="button" class="btn btn--outline btn--sm meet-greet-mark-read" data-id="${escapeHtml(s.id)}" data-read="${s.read ? '0' : '1'}">
+                    ${s.read ? 'Mark unread' : 'Mark read'}
+                  </button>
+                </div>
+              </div>
+            </details>
+          `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  async function renderMeetGreetFeedbackSection(panel) {
+    if (isPreviewMode) {
+      panel.innerHTML = renderMeetGreetFeedbackPanel([], 'Sign in to view Meet & Greet feedback.');
+      return;
+    }
+
+    panel.innerHTML = '<div class="card"><p>Loading feedback…</p></div>';
+    try {
+      const rows = await loadMeetGreetFeedback();
+      panel.innerHTML = renderMeetGreetFeedbackPanel(rows);
+
+      panel.querySelector('#exportMeetGreetCsv')?.addEventListener('click', e => {
+        const token = getToken();
+        if (!token) return;
+        e.preventDefault();
+        fetch('/api/meet-greet-feedback-submissions?format=csv', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then(r => r.blob())
+          .then(blob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `meet-greet-feedback-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+          })
+          .catch(() => showStatus('Could not export CSV.', 'error'));
+      });
+
+      panel.querySelectorAll('.meet-greet-mark-read').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const token = getToken();
+          const id = btn.dataset.id;
+          const read = btn.dataset.read === '1';
+          await fetch('/api/meet-greet-feedback-submissions', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ id, read })
+          });
+          renderMeetGreetFeedbackSection(panel);
+        });
+      });
+    } catch (err) {
+      if (isAuthError(err)) return;
+      panel.innerHTML = renderMeetGreetFeedbackPanel([], err.message);
+    }
+  }
+
   async function loadWelfareRegistrationsPanel() {
     const card = document.getElementById('welfareRegistrationsCard');
     if (!card) return;
@@ -2931,6 +3086,10 @@
       if (isActive && section !== 'dashboard') {
         if (section === 'inbox') {
           renderInboxSection(panel);
+          return;
+        }
+        if (section === 'meetGreetFeedback') {
+          renderMeetGreetFeedbackSection(panel);
           return;
         }
         const renderers = {
