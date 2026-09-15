@@ -9126,3 +9126,76 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 @media (max-width: 800px) {
   .members-event-cards { grid-template-columns: 1fr; }
 }
+
+/* Meet & Greet feedback — plain tick boxes only */
+.feedback-form {
+  padding: 28px 24px;
+}
+
+.feedback-q {
+  border: none;
+  margin: 0 0 28px;
+  padding: 0;
+}
+
+.feedback-q legend {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brown-900);
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.feedback-req {
+  color: var(--red-accent);
+}
+
+.feedback-tick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--cream);
+  border: 1.5px solid var(--cream-dark);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.feedback-tick:hover {
+  border-color: var(--tan);
+  background: var(--white);
+}
+
+.feedback-tick:has(input:checked) {
+  border-color: var(--tan);
+  background: rgba(184, 134, 75, 0.12);
+}
+
+.feedback-tick input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--brown-700);
+  cursor: pointer;
+}
+
+.feedback-form .form__error {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(139, 0, 0, 0.08);
+  color: var(--red-accent);
+  font-size: 0.9rem;
+}

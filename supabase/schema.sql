@@ -137,12 +137,35 @@ insert into public.site_content (id, data)
 values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
 
+-- Meet & Greet feedback (website tick-box form)
+create table if not exists public.meet_greet_feedback (
+  id uuid primary key default gen_random_uuid(),
+  attended text not null,
+  state text,
+  overall text not null,
+  useful text not null,
+  topics text[] not null default '{}',
+  time_ok text,
+  zoom text,
+  come_again text not null,
+  next_steps text[] not null default '{}',
+  answers jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  read boolean not null default false
+);
+
+comment on table public.meet_greet_feedback is 'Responses from meet-greet-feedback.html';
+
+create index if not exists meet_greet_feedback_created_at_idx
+  on public.meet_greet_feedback (created_at desc);
+
 -- Row Level Security
 alter table public.site_content enable row level security;
 alter table public.contact_submissions enable row level security;
 alter table public.event_bookings enable row level security;
 alter table public.membership_registrations enable row level security;
 alter table public.ailcd_applications enable row level security;
+alter table public.meet_greet_feedback enable row level security;
 
 drop policy if exists "Public read site content" on public.site_content;
 create policy "Public read site content"
@@ -175,7 +198,12 @@ union all
 select
   'ailcd_applications',
   count(*)
-from public.ailcd_applications;
+from public.ailcd_applications
+union all
+select
+  'meet_greet_feedback',
+  count(*)
+from public.meet_greet_feedback;
 
 -- Gallery bulk upload: create a PUBLIC Storage bucket named "gallery" in
 -- Supabase Dashboard → Storage → New bucket → name: gallery → Public bucket: ON
