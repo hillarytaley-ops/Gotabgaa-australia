@@ -39,10 +39,26 @@
       "Community support network in your state"
     ],
     "types": [
-      { "id": "full", "label": "Full Member", "description": "Adult member (18+)" },
-      { "id": "associate", "label": "Associate Member", "description": "Supporting member" },
-      { "id": "youth", "label": "Youth Member", "description": "Ages 12–17" },
-      { "id": "family", "label": "Family Membership", "description": "Household membership" }
+      {
+        "id": "full",
+        "label": "Full Member",
+        "description": "Adult member (18+)"
+      },
+      {
+        "id": "associate",
+        "label": "Associate Member",
+        "description": "Supporting member"
+      },
+      {
+        "id": "youth",
+        "label": "Youth Member",
+        "description": "Ages 12–17"
+      },
+      {
+        "id": "family",
+        "label": "Family Membership",
+        "description": "Household membership"
+      }
     ]
   },
   "payment": {
@@ -85,10 +101,22 @@
         ]
       },
       "impact": [
-        { "number": "15+", "label": "Years of Heritage" },
-        { "number": "6", "label": "States Connected" },
-        { "number": "100+", "label": "Families & Members" },
-        { "number": "10+", "label": "Annual Gatherings" }
+        {
+          "number": "15+",
+          "label": "Years of Heritage"
+        },
+        {
+          "number": "6",
+          "label": "States Connected"
+        },
+        {
+          "number": "100+",
+          "label": "Families & Members"
+        },
+        {
+          "number": "10+",
+          "label": "Annual Gatherings"
+        }
       ],
       "aboutPreview": {
         "tag": "About",
@@ -122,18 +150,54 @@
       "lead": "We are an independent Australian Kalenjin community association dedicated to connecting, uplifting, and empowering individuals and families across the continent.",
       "mission": "Inspire, connect, and economically empower our members through education, networking, investment opportunities, and cultural awareness in Australia.",
       "vision": "Unite members and provide a platform where talent, leadership, culture, and innovation are nurtured — bridging Kenya and Australia.",
-      "cities": ["Brisbane", "Sydney", "Adelaide", "Perth", "Darwin", "Melbourne"],
+      "cities": [
+        "Brisbane",
+        "Sydney",
+        "Adelaide",
+        "Perth",
+        "Darwin",
+        "Melbourne"
+      ],
       "quote": "From the savannas of Kenya to the shores of Australia — our roots unite us, our dreams propel us forward.",
       "image": "assets/cities/brisbane.png",
       "slides": [
-        { "image": "assets/cities/brisbane.png", "label": "Gotabgaa Brisbane", "alt": "Brisbane city skyline" },
-        { "image": "assets/cities/sydney.png", "label": "Gotabgaa Sydney", "alt": "Sydney Opera House and harbour" },
-        { "image": "assets/cities/adelaide.png", "label": "Gotabgaa Adelaide", "alt": "Adelaide Oval and city skyline" },
-        { "image": "assets/cities/perth.png", "label": "Gotabgaa Perth", "alt": "Perth skyline at sunset" },
-        { "image": "assets/cities/darwin.png", "label": "Gotabgaa Darwin", "alt": "Darwin skyline at sunset" },
-        { "image": "assets/cities/melbourne.png", "label": "Gotabgaa Melbourne", "alt": "Melbourne skyline across the Yarra" }
+        {
+          "image": "assets/cities/brisbane.png",
+          "label": "Gotabgaa Brisbane",
+          "alt": "Brisbane city skyline"
+        },
+        {
+          "image": "assets/cities/sydney.png",
+          "label": "Gotabgaa Sydney",
+          "alt": "Sydney Opera House and harbour"
+        },
+        {
+          "image": "assets/cities/adelaide.png",
+          "label": "Gotabgaa Adelaide",
+          "alt": "Adelaide Oval and city skyline"
+        },
+        {
+          "image": "assets/cities/perth.png",
+          "label": "Gotabgaa Perth",
+          "alt": "Perth skyline at sunset"
+        },
+        {
+          "image": "assets/cities/darwin.png",
+          "label": "Gotabgaa Darwin",
+          "alt": "Darwin skyline at sunset"
+        },
+        {
+          "image": "assets/cities/melbourne.png",
+          "label": "Gotabgaa Melbourne",
+          "alt": "Melbourne skyline across the Yarra"
+        }
       ],
-      "cta": { "title": "Ready to connect?", "description": "Join our community and be part of something meaningful.", "button": "Get in Touch", "buttonUrl": "contact.html" }
+      "cta": {
+        "title": "Ready to connect?",
+        "description": "Join our community and be part of something meaningful.",
+        "button": "Get in Touch",
+        "buttonUrl": "contact.html"
+      }
     },
     "programs": {
       "hero": {
@@ -150,17 +214,54 @@
         "description": "Celebrate heritage, connect with members, and join us across cities for unforgettable community moments.",
         "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
       },
-      "typesHeader": { "tag": "What We Host", "title": "Types of Events", "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family." },
-      "timelineHeader": { "tag": "At a Glance", "title": "2026 Calendar Highlights", "description": "Key dates on the Gotabgaa Australia calendar for 2026 — including gatherings already held and those still ahead." },
-      "upcomingHeader": { "tag": "Register Now", "title": "Upcoming Events", "description": "Book your place through our portal. Paid events use PayID or bank transfer with a unique payment reference." },
-      "pastHeader": { "tag": "Archive", "title": "Past Events", "description": "Highlights from recent gatherings across Australia." },
+      "typesHeader": {
+        "tag": "What We Host",
+        "title": "Types of Events",
+        "description": "From cultural celebrations to sports days and formal meetings — there is something for every member and family."
+      },
+      "timelineHeader": {
+        "tag": "At a Glance",
+        "title": "2026 Calendar Highlights",
+        "description": "Key dates on the Gotabgaa Australia calendar for 2026 — including gatherings already held and those still ahead."
+      },
+      "upcomingHeader": {
+        "tag": "Register Now",
+        "title": "Upcoming Events",
+        "description": "Book your place through our portal. Paid events use PayID or bank transfer with a unique payment reference."
+      },
+      "pastHeader": {
+        "tag": "Archive",
+        "title": "Past Events",
+        "description": "Highlights from recent gatherings across Australia."
+      },
       "impact": [
-        { "number": 24, "label": "Events Hosted", "animate": true },
-        { "number": 1200, "label": "Members Attended", "animate": true },
-        { "number": 6, "label": "Cities Visited", "animate": true },
-        { "number": 2, "label": "Upcoming This Year", "animate": true }
+        {
+          "number": 24,
+          "label": "Events Hosted",
+          "animate": true
+        },
+        {
+          "number": 1200,
+          "label": "Members Attended",
+          "animate": true
+        },
+        {
+          "number": 6,
+          "label": "Cities Visited",
+          "animate": true
+        },
+        {
+          "number": 2,
+          "label": "Upcoming This Year",
+          "animate": true
+        }
       ],
-      "cta": { "title": "Share your Meet & Greet feedback", "description": "Tick the boxes that apply — about 1 minute. Your answers help us plan the next gathering.", "primary": "Meet & Greet Feedback", "secondary": "Contact Events Team" }
+      "cta": {
+        "title": "Share your Meet & Greet feedback",
+        "description": "Tick the boxes that apply — about 1 minute. Your answers help us plan the next gathering.",
+        "primary": "Meet & Greet Feedback",
+        "secondary": "Contact Events Team"
+      }
     },
     "leadership": {
       "hero": {
@@ -177,8 +278,16 @@
         "description": "Celebrating our gatherings, cultural events, and milestones together.",
         "backgroundImage": "assets/hero/page/women-traditional.png"
       },
-      "upcomingHeader": { "tag": "Coming Up", "title": "Upcoming Event Photos", "description": "Preview and download photos from events on the calendar." },
-      "pastHeader": { "tag": "Memories", "title": "Past Event Photos", "description": "Download photos from previous gatherings and celebrations." }
+      "upcomingHeader": {
+        "tag": "Coming Up",
+        "title": "Upcoming Event Photos",
+        "description": "Preview and download photos from events on the calendar."
+      },
+      "pastHeader": {
+        "tag": "Memories",
+        "title": "Past Event Photos",
+        "description": "Download photos from previous gatherings and celebrations."
+      }
     },
     "contact": {
       "hero": {
@@ -254,9 +363,22 @@
         "backgroundImage": "assets/hero/page/community-gathering.png"
       },
       "intro": "Gotabgaa Australia’s welfare initiatives connect members with practical support — from the benevolence fund and hardship assistance to settlement help and health awareness. Our community stands together when families need us most.",
-      "initiativesHeader": { "tag": "How We Help", "title": "Welfare Initiatives", "description": "Programs and services coordinated by our welfare team across Australian states." },
-      "newsHeader": { "tag": "Updates", "title": "Welfare News", "description": "Announcements, fund updates, and community support stories." },
-      "cta": { "title": "Need support or want to contribute?", "description": "Reach out to our welfare team confidentially — or learn how to support the benevolence fund.", "button": "Contact Welfare Team", "buttonUrl": "contact.html" }
+      "initiativesHeader": {
+        "tag": "How We Help",
+        "title": "Welfare Initiatives",
+        "description": "Programs and services coordinated by our welfare team across Australian states."
+      },
+      "newsHeader": {
+        "tag": "Updates",
+        "title": "Welfare News",
+        "description": "Announcements, fund updates, and community support stories."
+      },
+      "cta": {
+        "title": "Need support or want to contribute?",
+        "description": "Reach out to our welfare team confidentially — or learn how to support the benevolence fund.",
+        "button": "Contact Welfare Team",
+        "buttonUrl": "contact.html"
+      }
     },
     "sports": {
       "hero": {
@@ -265,9 +387,21 @@
         "description": "Football, athletics, and family-friendly competitions that build camaraderie across Gotabgaa Australia.",
         "backgroundImage": "assets/hero/page/kokwet-sports-day.png"
       },
-      "vlogHeader": { "tag": "Watch", "title": "Sports Vlog", "description": "Match highlights, training sessions, and community sports stories from our teams." },
-      "eventsHeader": { "tag": "Calendar", "title": "Planned Sports Events", "description": "Upcoming fixtures, tournaments, and sports days — register early where noted." },
-      "newsHeader": { "tag": "Latest", "title": "Sports News", "description": "Results, team updates, and announcements from the Gotabgaa sports committee." }
+      "vlogHeader": {
+        "tag": "Watch",
+        "title": "Sports Vlog",
+        "description": "Match highlights, training sessions, and community sports stories from our teams."
+      },
+      "eventsHeader": {
+        "tag": "Calendar",
+        "title": "Planned Sports Events",
+        "description": "Upcoming fixtures, tournaments, and sports days — register early where noted."
+      },
+      "newsHeader": {
+        "tag": "Latest",
+        "title": "Sports News",
+        "description": "Results, team updates, and announcements from the Gotabgaa sports committee."
+      }
     },
     "business": {
       "hero": {
@@ -276,25 +410,85 @@
         "description": "Member businesses, investment opportunities, and economic initiatives strengthening our community across Australia.",
         "backgroundImage": "assets/hero/page/stage-address.png"
       },
-      "vlogHeader": { "tag": "Watch", "title": "Business Vlog", "description": "Interviews, success stories, and tips from Kalenjin entrepreneurs in Australia." },
-      "advertsHeader": { "tag": "Member Directory", "title": "Business Adverts", "description": "Services and businesses owned or operated by Gotabgaa Australia members." },
-      "investmentsHeader": { "tag": "Opportunities", "title": "Investments", "description": "Community investment initiatives and partnership opportunities open to members." },
-      "newsHeader": { "tag": "Latest", "title": "Business News", "description": "Economic updates, workshops, and networking events for our business community." }
+      "vlogHeader": {
+        "tag": "Watch",
+        "title": "Business Vlog",
+        "description": "Interviews, success stories, and tips from Kalenjin entrepreneurs in Australia."
+      },
+      "advertsHeader": {
+        "tag": "Member Directory",
+        "title": "Business Adverts",
+        "description": "Services and businesses owned or operated by Gotabgaa Australia members."
+      },
+      "investmentsHeader": {
+        "tag": "Opportunities",
+        "title": "Investments",
+        "description": "Community investment initiatives and partnership opportunities open to members."
+      },
+      "newsHeader": {
+        "tag": "Latest",
+        "title": "Business News",
+        "description": "Economic updates, workshops, and networking events for our business community."
+      }
     }
   },
   "eventTypes": [
-    { "id": "cultural", "title": "Cultural Fetes", "description": "Music, dance, dress, and cuisine celebrating Kalenjin heritage across Australia.", "icon": "cultural" },
-    { "id": "sports", "title": "Sports Days", "description": "Football, athletics, and family-friendly competitions that build camaraderie.", "icon": "sports" },
-    { "id": "community", "title": "Community Meetups", "description": "City gatherings, BBQs, and welcome events for new members and families.", "icon": "community" },
-    { "id": "agm", "title": "AGM & Workshops", "description": "Annual general meetings, mentorship workshops, and leadership forums.", "icon": "agm" }
+    {
+      "id": "cultural",
+      "title": "Cultural Fetes",
+      "description": "Music, dance, dress, and cuisine celebrating Kalenjin heritage across Australia.",
+      "icon": "cultural"
+    },
+    {
+      "id": "sports",
+      "title": "Sports Days",
+      "description": "Football, athletics, and family-friendly competitions that build camaraderie.",
+      "icon": "sports"
+    },
+    {
+      "id": "community",
+      "title": "Community Meetups",
+      "description": "City gatherings, BBQs, and welcome events for new members and families.",
+      "icon": "community"
+    },
+    {
+      "id": "agm",
+      "title": "AGM & Workshops",
+      "description": "Annual general meetings, mentorship workshops, and leadership forums.",
+      "icon": "agm"
+    }
   ],
   "timeline": [
-    { "month": "Sep", "title": "Meet & Greet with Bishop Kosgei", "detail": "Online via Zoom · 13 September 2026 · First event" },
-    { "month": "May", "title": "WA Community Gathering", "detail": "Perth · 9 May 2026" },
-    { "month": "Jun", "title": "Kokwet Sports Day", "detail": "Sydney · 14 June 2026" },
-    { "month": "Jul", "title": "Brisbane Community Meetup", "detail": "Brisbane · 18 July 2026" },
-    { "month": "Aug", "title": "Youth Mentorship Workshop", "detail": "Melbourne · 22 August 2026" },
-    { "month": "Sep", "title": "Meet & Greet (Kosgei)", "detail": "Online Zoom · 13 September 2026" }
+    {
+      "month": "Sep",
+      "title": "Meet & Greet with Bishop Kosgei",
+      "detail": "Online via Zoom · 13 September 2026 · First event"
+    },
+    {
+      "month": "May",
+      "title": "WA Community Gathering",
+      "detail": "Perth · 9 May 2026"
+    },
+    {
+      "month": "Jun",
+      "title": "Kokwet Sports Day",
+      "detail": "Sydney · 14 June 2026"
+    },
+    {
+      "month": "Jul",
+      "title": "Brisbane Community Meetup",
+      "detail": "Brisbane · 18 July 2026"
+    },
+    {
+      "month": "Aug",
+      "title": "Youth Mentorship Workshop",
+      "detail": "Melbourne · 22 August 2026"
+    },
+    {
+      "month": "Sep",
+      "title": "Meet & Greet (Kosgei)",
+      "detail": "Online Zoom · 13 September 2026"
+    }
   ],
   "featuredEventId": "",
   "events": [
@@ -316,7 +510,9 @@
       "ticketPriceNote": "Free — online via Zoom",
       "ticketAmount": 0,
       "registerUrl": "meet-greet-feedback.html",
-      "registerLabel": "Share Feedback"
+      "registerLabel": "Share Feedback",
+      "start": "2026-09-13T20:00:00+10:00",
+      "end": "2026-09-13T22:00:00+10:00"
     },
     {
       "id": "evt-brisbane-meetup",
@@ -336,7 +532,9 @@
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
       "registerUrl": "",
-      "registerLabel": ""
+      "registerLabel": "",
+      "start": "2026-07-18T14:00:00+10:00",
+      "end": "2026-07-18T17:00:00+10:00"
     },
     {
       "id": "evt-youth-workshop",
@@ -356,7 +554,9 @@
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
       "registerUrl": "",
-      "registerLabel": ""
+      "registerLabel": "",
+      "start": "2026-08-22T09:30:00+10:00",
+      "end": "2026-08-22T13:00:00+10:00"
     },
     {
       "id": "evt-kokwet-sports",
@@ -376,7 +576,9 @@
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
       "registerUrl": "",
-      "registerLabel": ""
+      "registerLabel": "",
+      "start": "2026-06-14T08:00:00+10:00",
+      "end": "2026-06-14T16:00:00+10:00"
     },
     {
       "id": "evt-wa-gathering",
@@ -396,7 +598,9 @@
       "ticketPriceNote": "Free registration — no payment required",
       "ticketAmount": 0,
       "registerUrl": "",
-      "registerLabel": ""
+      "registerLabel": "",
+      "start": "2026-05-09T11:00:00+08:00",
+      "end": "2026-05-09T15:00:00+08:00"
     },
     {
       "id": "evt-agm-2026",
@@ -412,7 +616,9 @@
       "summary": "Annual reports, elections, and strategic planning for Gotabgaa Australia.",
       "description": "Annual general meeting covering annual reports, elections, and strategic priorities for 2026. Members voted on committee positions and approved the benevolence fund budget. Minutes available on request.",
       "registerUrl": "",
-      "registerLabel": ""
+      "registerLabel": "",
+      "start": "2026-03-15T14:00:00+11:00",
+      "end": "2026-03-15T17:00:00+11:00"
     },
     {
       "id": "evt-heritage-2025",
@@ -428,7 +634,9 @@
       "summary": "Traditional dance, dress, and storytelling honouring our roots.",
       "description": "A vibrant day of traditional dance, dress, and storytelling honouring Kalenjin roots. Over 200 members attended from Victoria and interstate.",
       "registerUrl": "gallery.html",
-      "registerLabel": "See Photos"
+      "registerLabel": "See Photos",
+      "start": "2025-11-08T10:00:00+11:00",
+      "end": "2025-11-08T17:00:00+11:00"
     },
     {
       "id": "evt-bbq-2025",
@@ -444,7 +652,9 @@
       "summary": "BBQ and ceremony recognising members and contributors.",
       "description": "Community BBQ followed by a gifting ceremony recognising outstanding members and benevolence fund contributors. Families enjoyed games and shared meals together.",
       "registerUrl": "gallery.html",
-      "registerLabel": "See Photos"
+      "registerLabel": "See Photos",
+      "start": "2025-10-19T12:00:00+10:30",
+      "end": "2025-10-19T16:00:00+10:30"
     }
   ],
   "programs": [
@@ -506,27 +716,155 @@
     }
   ],
   "leadership": [
-    { "id": "ldr-chair", "name": "To be announced", "role": "Interim Chairperson", "initials": "IC", "photo": "" },
-    { "id": "ldr-deputy", "name": "To be announced", "role": "Interim Deputy Chairperson", "initials": "ID", "photo": "" },
-    { "id": "ldr-secretary", "name": "To be announced", "role": "Interim Secretary", "initials": "IS", "photo": "" },
-    { "id": "ldr-coordinator", "name": "To be announced", "role": "Interim National Coordinator", "initials": "IN", "photo": "" },
-    { "id": "ldr-treasurer", "name": "To be announced", "role": "Interim Treasurer", "initials": "IT", "photo": "" }
+    {
+      "id": "ldr-chair",
+      "name": "To be announced",
+      "role": "Interim Chairperson",
+      "initials": "IC",
+      "photo": ""
+    },
+    {
+      "id": "ldr-deputy",
+      "name": "To be announced",
+      "role": "Interim Deputy Chairperson",
+      "initials": "ID",
+      "photo": ""
+    },
+    {
+      "id": "ldr-secretary",
+      "name": "To be announced",
+      "role": "Interim Secretary",
+      "initials": "IS",
+      "photo": ""
+    },
+    {
+      "id": "ldr-coordinator",
+      "name": "To be announced",
+      "role": "Interim National Coordinator",
+      "initials": "IN",
+      "photo": ""
+    },
+    {
+      "id": "ldr-treasurer",
+      "name": "To be announced",
+      "role": "Interim Treasurer",
+      "initials": "IT",
+      "photo": ""
+    }
   ],
   "gallery": [
-    { "id": "gal-mg1", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/events/meet-greet-kosgei-2026.jpg", "alt": "Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei — Gotabgaa Australia first event", "caption": "First event — Meet & Greet poster", "wide": true },
-    { "id": "gal-u1", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
-    { "id": "gal-u2", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
-    { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane community team", "wide": false },
-    { "id": "gal-u4", "eventId": "evt-brisbane-meetup", "image": "assets/hero/charmen-gifting.png", "alt": "Community gifting ceremony", "caption": "Community gifting", "wide": false },
-    { "id": "gal-u5", "eventId": "evt-kokwet-sports", "image": "assets/hero/kokwet-sports-day.png", "alt": "Kokwet sports day celebration", "caption": "Kokwet sports day", "wide": true },
-    { "id": "gal-u6", "eventId": "evt-wa-gathering", "image": "assets/hero/kitwek-wa.png", "alt": "Western Australia community gathering", "caption": "WA community gathering", "wide": false },
-    { "id": "gal-u7", "eventId": "evt-youth-workshop", "image": "assets/hero/chairman-taunet.png", "alt": "Youth mentorship session", "caption": "Youth mentorship workshop", "wide": false },
-    { "id": "gal-p1", "eventId": "evt-heritage-2025", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Heritage Day cultural performance", "caption": "Heritage Day performance", "wide": true },
-    { "id": "gal-p2", "eventId": "evt-heritage-2025", "image": "assets/about/taunet-women-dance.png", "alt": "Heritage Day women's dance", "caption": "Heritage Day — women's dance", "wide": false },
-    { "id": "gal-p3", "eventId": "evt-bbq-2025", "image": "assets/hero/charmen-gifting.png", "alt": "BBQ gifting ceremony", "caption": "BBQ gifting ceremony", "wide": false },
-    { "id": "gal-p4", "eventId": "evt-bbq-2025", "image": "assets/hero/nick-boit-gifting.png", "alt": "Community BBQ celebrations", "caption": "Community BBQ", "wide": false },
-    { "id": "gal-p5", "eventId": "evt-agm-2026", "image": "assets/hero/berur-brisbane.png", "alt": "AGM community photo", "caption": "AGM 2026 group photo", "wide": true },
-    { "id": "gal-p6", "eventId": "evt-agm-2026", "image": "assets/hero/hosea-sa-team.png", "alt": "South Australia members at AGM", "caption": "SA representatives", "wide": false }
+    {
+      "id": "gal-mg1",
+      "eventId": "evt-meet-greet-kosgei-2026",
+      "image": "assets/events/meet-greet-kosgei-2026.jpg",
+      "alt": "Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei — Gotabgaa Australia first event",
+      "caption": "First event — Meet & Greet poster",
+      "wide": true
+    },
+    {
+      "id": "gal-u1",
+      "eventId": "evt-meet-greet-kosgei-2026",
+      "image": "assets/hero/taunet-cultural-dance.png",
+      "alt": "Traditional Kalenjin dance at Taunet Nelel",
+      "caption": "Cultural dance rehearsal",
+      "wide": true
+    },
+    {
+      "id": "gal-u2",
+      "eventId": "evt-meet-greet-kosgei-2026",
+      "image": "assets/about/taunet-women-dance.png",
+      "alt": "Women performing cultural dance",
+      "caption": "Women's dance group",
+      "wide": false
+    },
+    {
+      "id": "gal-u3",
+      "eventId": "evt-brisbane-meetup",
+      "image": "assets/hero/brisbane-team.png",
+      "alt": "Gotabgaa Brisbane community team",
+      "caption": "Brisbane community team",
+      "wide": false
+    },
+    {
+      "id": "gal-u4",
+      "eventId": "evt-brisbane-meetup",
+      "image": "assets/hero/charmen-gifting.png",
+      "alt": "Community gifting ceremony",
+      "caption": "Community gifting",
+      "wide": false
+    },
+    {
+      "id": "gal-u5",
+      "eventId": "evt-kokwet-sports",
+      "image": "assets/hero/kokwet-sports-day.png",
+      "alt": "Kokwet sports day celebration",
+      "caption": "Kokwet sports day",
+      "wide": true
+    },
+    {
+      "id": "gal-u6",
+      "eventId": "evt-wa-gathering",
+      "image": "assets/hero/kitwek-wa.png",
+      "alt": "Western Australia community gathering",
+      "caption": "WA community gathering",
+      "wide": false
+    },
+    {
+      "id": "gal-u7",
+      "eventId": "evt-youth-workshop",
+      "image": "assets/hero/chairman-taunet.png",
+      "alt": "Youth mentorship session",
+      "caption": "Youth mentorship workshop",
+      "wide": false
+    },
+    {
+      "id": "gal-p1",
+      "eventId": "evt-heritage-2025",
+      "image": "assets/hero/taunet-cultural-dance.png",
+      "alt": "Heritage Day cultural performance",
+      "caption": "Heritage Day performance",
+      "wide": true
+    },
+    {
+      "id": "gal-p2",
+      "eventId": "evt-heritage-2025",
+      "image": "assets/about/taunet-women-dance.png",
+      "alt": "Heritage Day women's dance",
+      "caption": "Heritage Day — women's dance",
+      "wide": false
+    },
+    {
+      "id": "gal-p3",
+      "eventId": "evt-bbq-2025",
+      "image": "assets/hero/charmen-gifting.png",
+      "alt": "BBQ gifting ceremony",
+      "caption": "BBQ gifting ceremony",
+      "wide": false
+    },
+    {
+      "id": "gal-p4",
+      "eventId": "evt-bbq-2025",
+      "image": "assets/hero/nick-boit-gifting.png",
+      "alt": "Community BBQ celebrations",
+      "caption": "Community BBQ",
+      "wide": false
+    },
+    {
+      "id": "gal-p5",
+      "eventId": "evt-agm-2026",
+      "image": "assets/hero/berur-brisbane.png",
+      "alt": "AGM community photo",
+      "caption": "AGM 2026 group photo",
+      "wide": true
+    },
+    {
+      "id": "gal-p6",
+      "eventId": "evt-agm-2026",
+      "image": "assets/hero/hosea-sa-team.png",
+      "alt": "South Australia members at AGM",
+      "caption": "SA representatives",
+      "wide": false
+    }
   ],
   "welfare": {
     "membership": {
@@ -749,17 +1087,61 @@
     "photosIntro": "Download photos from community events. Albums match events on the public gallery.",
     "exploreIntro": "Quick links to public Gotabgaa Australia pages and resources.",
     "exploreLinks": [
-      { "href": "index.html", "label": "Home", "desc": "Gotabgaa Australia homepage" },
-      { "href": "about.html", "label": "About", "desc": "Our story and mission" },
-      { "href": "programs.html", "label": "Programs", "desc": "Education, culture, and outreach" },
-      { "href": "welfare.html", "label": "Welfare", "desc": "Social welfare and benevolence support" },
-      { "href": "sports.html", "label": "Sports", "desc": "Sports vlogs, events, and news" },
-      { "href": "business.html", "label": "Business", "desc": "Member adverts, investments, and business news" },
-      { "href": "events.html", "label": "Events", "desc": "Public events calendar" },
-      { "href": "leadership.html", "label": "Leadership", "desc": "Board and leadership team" },
-      { "href": "gallery.html", "label": "Gallery", "desc": "Public photo gallery" },
-      { "href": "contact.html", "label": "Contact", "desc": "Get in touch with us" },
-      { "href": "book.html", "label": "Book events", "desc": "Reserve places at gatherings" }
+      {
+        "href": "index.html",
+        "label": "Home",
+        "desc": "Gotabgaa Australia homepage"
+      },
+      {
+        "href": "about.html",
+        "label": "About",
+        "desc": "Our story and mission"
+      },
+      {
+        "href": "programs.html",
+        "label": "Programs",
+        "desc": "Education, culture, and outreach"
+      },
+      {
+        "href": "welfare.html",
+        "label": "Welfare",
+        "desc": "Social welfare and benevolence support"
+      },
+      {
+        "href": "sports.html",
+        "label": "Sports",
+        "desc": "Sports vlogs, events, and news"
+      },
+      {
+        "href": "business.html",
+        "label": "Business",
+        "desc": "Member adverts, investments, and business news"
+      },
+      {
+        "href": "events.html",
+        "label": "Events",
+        "desc": "Public events calendar"
+      },
+      {
+        "href": "leadership.html",
+        "label": "Leadership",
+        "desc": "Board and leadership team"
+      },
+      {
+        "href": "gallery.html",
+        "label": "Gallery",
+        "desc": "Public photo gallery"
+      },
+      {
+        "href": "contact.html",
+        "label": "Contact",
+        "desc": "Get in touch with us"
+      },
+      {
+        "href": "book.html",
+        "label": "Book events",
+        "desc": "Reserve places at gatherings"
+      }
     ],
     "elections": {
       "nominationOpen": false,
@@ -770,11 +1152,31 @@
       "nominationUrl": "",
       "nominationButtonLabel": "Open nomination portal",
       "nominationPositions": [
-        { "id": "pos-president", "title": "President", "description": "Board President" },
-        { "id": "pos-vp", "title": "Vice President", "description": "Board Vice President" },
-        { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
-        { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
-        { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }
+        {
+          "id": "pos-president",
+          "title": "President",
+          "description": "Board President"
+        },
+        {
+          "id": "pos-vp",
+          "title": "Vice President",
+          "description": "Board Vice President"
+        },
+        {
+          "id": "pos-secretary",
+          "title": "Secretary General",
+          "description": "Administration and records"
+        },
+        {
+          "id": "pos-coordinator",
+          "title": "National Coordinator",
+          "description": "Programs and events"
+        },
+        {
+          "id": "pos-treasurer",
+          "title": "Treasurer",
+          "description": "Finance"
+        }
       ],
       "electionOpen": false,
       "electionTitle": "Election Portal",
@@ -784,11 +1186,31 @@
       "electionUrl": "",
       "electionButtonLabel": "Open election portal",
       "electionPositions": [
-        { "id": "pos-president", "title": "President", "description": "Board President" },
-        { "id": "pos-vp", "title": "Vice President", "description": "Board Vice President" },
-        { "id": "pos-secretary", "title": "Secretary General", "description": "Administration and records" },
-        { "id": "pos-coordinator", "title": "National Coordinator", "description": "Programs and events" },
-        { "id": "pos-treasurer", "title": "Treasurer", "description": "Finance" }
+        {
+          "id": "pos-president",
+          "title": "President",
+          "description": "Board President"
+        },
+        {
+          "id": "pos-vp",
+          "title": "Vice President",
+          "description": "Board Vice President"
+        },
+        {
+          "id": "pos-secretary",
+          "title": "Secretary General",
+          "description": "Administration and records"
+        },
+        {
+          "id": "pos-coordinator",
+          "title": "National Coordinator",
+          "description": "Programs and events"
+        },
+        {
+          "id": "pos-treasurer",
+          "title": "Treasurer",
+          "description": "Finance"
+        }
       ]
     }
   }

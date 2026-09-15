@@ -368,6 +368,10 @@
   }
 
   function renderEvents(content) {
+    // New Taunet-style phases page owns rendering via events-phases.js
+    if (document.getElementById('eventsPhasesRow') || document.body?.dataset?.page === 'events') {
+      return;
+    }
     const upcomingGrid = document.getElementById('eventsGridUpcoming');
     const pastGrid = document.getElementById('eventsGridPast');
     if ((!upcomingGrid && !pastGrid) || !content.events) return;
