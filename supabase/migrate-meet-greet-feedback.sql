@@ -3,6 +3,8 @@
 
 create table if not exists public.meet_greet_feedback (
   id uuid primary key default gen_random_uuid(),
+  name text,
+  email text,
   attended text not null,
   state text,
   overall text not null,
@@ -24,3 +26,6 @@ create index if not exists meet_greet_feedback_created_at_idx
 
 alter table public.meet_greet_feedback enable row level security;
 -- No public policies: Vercel API uses service_role only
+
+alter table public.meet_greet_feedback add column if not exists name text;
+alter table public.meet_greet_feedback add column if not exists email text;

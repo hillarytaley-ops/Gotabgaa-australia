@@ -140,6 +140,8 @@ on conflict (id) do nothing;
 -- Meet & Greet feedback (website tick-box form)
 create table if not exists public.meet_greet_feedback (
   id uuid primary key default gen_random_uuid(),
+  name text,
+  email text,
   attended text not null,
   state text,
   overall text not null,
@@ -158,6 +160,9 @@ comment on table public.meet_greet_feedback is 'Responses from meet-greet-feedba
 
 create index if not exists meet_greet_feedback_created_at_idx
   on public.meet_greet_feedback (created_at desc);
+
+alter table public.meet_greet_feedback add column if not exists name text;
+alter table public.meet_greet_feedback add column if not exists email text;
 
 -- Row Level Security
 alter table public.site_content enable row level security;

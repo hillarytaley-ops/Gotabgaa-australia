@@ -25,7 +25,16 @@ export default async function handler(req, res) {
     }
   }
 
+  const name = String(answers.name || req.body?.name || '').trim() || null;
+  const email = String(answers.email || req.body?.email || '').trim() || null;
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: 'Please enter a valid email, or leave it blank' });
+    return;
+  }
+
   const row = {
+    name,
+    email,
     attended: String(answers.attended || '').trim(),
     state: String(answers.state || '').trim() || null,
     overall: String(answers.overall || '').trim(),

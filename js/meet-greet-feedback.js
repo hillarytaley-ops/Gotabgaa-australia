@@ -49,7 +49,16 @@
       }
     }
 
+    const name = form.querySelector('[name="name"]')?.value.trim() || '';
+    const email = form.querySelector('[name="email"]')?.value.trim() || '';
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('Please enter a valid email, or leave it blank.');
+      return;
+    }
+
     const answers = {
+      name,
+      email,
       attended: checkedValues('attended')[0] || '',
       state: checkedValues('state')[0] || '',
       overall: checkedValues('overall')[0] || '',
