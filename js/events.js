@@ -145,7 +145,9 @@
         category: card.dataset.category,
         desc: card.dataset.desc,
         bookingUrl: card.dataset.bookingUrl,
-        bookingEnabled: card.dataset.bookingEnabled === '1'
+        bookingEnabled: card.dataset.bookingEnabled === '1',
+        registerUrl: card.dataset.registerUrl,
+        registerLabel: card.dataset.registerLabel
       });
     };
 
@@ -180,8 +182,8 @@
       } else if (data.status === 'past') {
         if (book) book.hidden = true;
         if (register) {
-          register.textContent = 'Contact Us';
-          register.href = 'contact.html';
+          register.textContent = data.registerLabel || 'Contact Us';
+          register.href = data.registerUrl || 'contact.html';
           register.hidden = false;
         }
       } else {
@@ -233,7 +235,9 @@
           category: featured.category,
           desc: featured.description || featured.desc,
           bookingUrl: featured.registerUrl || (featured.id ? `book.html?id=${encodeURIComponent(featured.id)}` : ''),
-          bookingEnabled: featured.status === 'upcoming' && featured.bookingEnabled !== false
+          bookingEnabled: featured.status === 'upcoming' && featured.bookingEnabled !== false,
+          registerUrl: featured.registerUrl,
+          registerLabel: featured.registerLabel
         });
       });
     }

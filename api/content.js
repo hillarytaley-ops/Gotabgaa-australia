@@ -74,6 +74,14 @@ function deepMergeDefaults(base, override) {
   return result;
 }
 
+function prependMissing(localArr, liveArr, key) {
+  const live = Array.isArray(liveArr) ? liveArr : [];
+  const local = Array.isArray(localArr) ? localArr : [];
+  const liveKeys = new Set(live.map(item => item?.[key]));
+  const extras = local.filter(item => item?.[key] && !liveKeys.has(item[key]));
+  return extras.length ? [...extras, ...live] : (live.length ? live : local);
+}
+
 function mergeWithLocalDefaults(liveContent) {
   const local = readLocalContentObject();
   const merged = { ...liveContent };
@@ -92,6 +100,13 @@ function mergeWithLocalDefaults(liveContent) {
         liveContent.pages?.[pageKey] || {}
       );
     }
+  }
+
+  merged.events = prependMissing(local.events, liveContent.events, 'id');
+  merged.gallery = prependMissing(local.gallery, liveContent.gallery, 'id');
+  merged.timeline = prependMissing(local.timeline, liveContent.timeline, 'title');
+  if (local.featuredEventId && (merged.events || []).some(e => e.id === local.featuredEventId)) {
+    merged.featuredEventId = local.featuredEventId;
   }
 
   return merged;

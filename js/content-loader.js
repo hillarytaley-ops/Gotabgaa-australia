@@ -203,7 +203,9 @@
         data-image="${escapeHtml(event.image)}"
         data-desc="${escapeHtml(event.description)}"
         data-booking-url="${escapeHtml(bookingUrl)}"
-        data-booking-enabled="${event.status === 'upcoming' && event.bookingEnabled !== false ? '1' : '0'}">
+        data-booking-enabled="${event.status === 'upcoming' && event.bookingEnabled !== false ? '1' : '0'}"
+        data-register-url="${escapeHtml(event.registerUrl || '')}"
+        data-register-label="${escapeHtml(event.registerLabel || '')}">
         <div class="event-card__media">
           <img src="${escapeHtml(event.image)}" alt="" loading="lazy" decoding="async">
           <span class="event-card__date-pill">${escapeHtml(event.datePill)}</span>
@@ -255,9 +257,14 @@
     const grid = document.getElementById('homeEventsGrid');
     if (!grid || !content.events) return;
 
-    const upcoming = content.events.filter(e => e.status === 'upcoming').slice(0, 2);
-    grid.innerHTML = upcoming.length
-      ? upcoming.map(e => renderHomeEventCard(e)).join('')
+    const featured = content.events.find(e => e.id === content.featuredEventId);
+    const upcoming = content.events.filter(e => e.status === 'upcoming' && e.id !== featured?.id);
+    const homeEvents = [];
+    if (featured) homeEvents.push(featured);
+    homeEvents.push(...upcoming);
+    const shown = homeEvents.slice(0, 2);
+    grid.innerHTML = shown.length
+      ? shown.map(e => renderHomeEventCard(e)).join('')
       : '<p class="home-events__empty">No upcoming events at the moment. Check back soon!</p>';
   }
 

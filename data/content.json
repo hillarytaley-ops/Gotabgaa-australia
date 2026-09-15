@@ -160,7 +160,7 @@
         { "number": 6, "label": "Cities Visited", "animate": true },
         { "number": 2, "label": "Upcoming This Year", "animate": true }
       ],
-      "cta": { "title": "Want to host an event?", "description": "Gotabgaa Australia members can propose gatherings in their city. Our events team will help you plan and promote.", "primary": "Propose an Event", "secondary": "Contact Events Team" }
+      "cta": { "title": "Share your Meet & Greet feedback", "description": "Tick the boxes that apply — about 1 minute. Your answers help us plan the next gathering.", "primary": "Meet & Greet Feedback", "secondary": "Contact Events Team" }
     },
     "leadership": {
       "hero": {
@@ -289,14 +289,35 @@
     { "id": "agm", "title": "AGM & Workshops", "description": "Annual general meetings, mentorship workshops, and leadership forums.", "icon": "agm" }
   ],
   "timeline": [
+    { "month": "Sep", "title": "Meet & Greet with Bishop Kosgei", "detail": "Online via Zoom · 13 September 2026 · First event" },
     { "month": "May", "title": "WA Community Gathering", "detail": "Perth · 9 May 2026" },
     { "month": "Jun", "title": "Kokwet Sports Day", "detail": "Sydney · 14 June 2026" },
     { "month": "Jul", "title": "Brisbane Community Meetup", "detail": "Brisbane · 18 July 2026" },
     { "month": "Aug", "title": "Youth Mentorship Workshop", "detail": "Melbourne · 22 August 2026" },
     { "month": "Sep", "title": "Annual Cultural Fete", "detail": "Brisbane · 12 September 2026" }
   ],
-  "featuredEventId": "evt-cultural-fete-2026",
+  "featuredEventId": "evt-meet-greet-kosgei-2026",
   "events": [
+    {
+      "id": "evt-meet-greet-kosgei-2026",
+      "title": "Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei",
+      "date": "Sunday, 13 September 2026",
+      "datePill": "13 Sep 2026",
+      "time": "8:00 PM (Sydney / Melbourne)",
+      "location": "Online via Zoom",
+      "meta": "Zoom · 8:00 PM AEST",
+      "image": "assets/events/meet-greet-kosgei-2026.jpg",
+      "status": "past",
+      "category": "community",
+      "summary": "The first event hosted by Gotabgaa Australia — Kongoi Bik Chok. An online Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei, moderated by Gilbert Chumba and Jackie.",
+      "description": "Gotabgaa Australia’s first event: an inspiring and interactive Zoom Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei. Moderators Gilbert Chumba and Jackie led discussion on mental health and wellbeing, alcohol and substance misuse, investment and economic empowerment, identity, culture and heritage, the spirit of togetherness, and political awareness. Media by Pampered Films.",
+      "bookingEnabled": false,
+      "bookingLabel": "",
+      "ticketPriceNote": "Free — online via Zoom",
+      "ticketAmount": 0,
+      "registerUrl": "meet-greet-feedback.html",
+      "registerLabel": "Share Feedback"
+    },
     {
       "id": "evt-cultural-fete-2026",
       "title": "Annual Cultural Fete 2026",
@@ -512,6 +533,7 @@
     { "id": "ldr-treasurer", "name": "To be announced", "role": "Interim Treasurer", "initials": "IT", "photo": "" }
   ],
   "gallery": [
+    { "id": "gal-mg1", "eventId": "evt-meet-greet-kosgei-2026", "image": "assets/events/meet-greet-kosgei-2026.jpg", "alt": "Meet & Greet with Hon. Bishop Emeritus Dr Jackson Kosgei — Gotabgaa Australia first event", "caption": "First event — Meet & Greet poster", "wide": true },
     { "id": "gal-u1", "eventId": "evt-cultural-fete-2026", "image": "assets/hero/taunet-cultural-dance.png", "alt": "Traditional Kalenjin dance at Taunet Nelel", "caption": "Cultural dance rehearsal", "wide": true },
     { "id": "gal-u2", "eventId": "evt-cultural-fete-2026", "image": "assets/about/taunet-women-dance.png", "alt": "Women performing cultural dance", "caption": "Women's dance group", "wide": false },
     { "id": "gal-u3", "eventId": "evt-brisbane-meetup", "image": "assets/hero/brisbane-team.png", "alt": "Gotabgaa Brisbane community team", "caption": "Brisbane community team", "wide": false },
