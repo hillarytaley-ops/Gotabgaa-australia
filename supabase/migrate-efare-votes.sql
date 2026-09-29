@@ -16,3 +16,18 @@ create unique index if not exists efare_votes_email_unique_idx
 
 alter table public.efare_votes enable row level security;
 -- No public policies: Vercel API uses service_role only
+
+create table if not exists public.efare_suggestions (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  suggestion text not null,
+  created_at timestamptz not null default now()
+);
+
+comment on table public.efare_suggestions is 'Ideas to improve the E-Fare proposal';
+
+create index if not exists efare_suggestions_created_at_idx
+  on public.efare_suggestions (created_at desc);
+
+alter table public.efare_suggestions enable row level security;

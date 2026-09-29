@@ -28,8 +28,25 @@ export default async function handler(req, res) {
     return;
   }
 
+  const { data: suggestions, error: suggestionError } = await supabase
+    .from('efare_suggestions')
+    .select('id, name, email, suggestion, created_at')
+    .order('created_at', { ascending: false })
+    .limit(300);
+
+  if (suggestionError && !/does not exist|schema cache|PGRST204|42P01/i.test(String(suggestionError.message))) {
+    res.status(500).json({ error: suggestionError.message });
+    return;
+  }
+
   const votes = data || [];
   const aye = votes.filter(v => v.vote === 'aye').length;
   const nay = votes.filter(v => v.vote === 'nay').length;
-  res.status(200).json({ votes, aye, nay, total: votes.length });
+  res.status(200).json({
+    votes,
+    aye,
+    nay,
+    total: votes.length,
+    suggestions: suggestions || []
+  });
 }

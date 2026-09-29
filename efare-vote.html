@@ -141,6 +141,26 @@
 
         <button type="submit" class="btn btn--primary btn--full" style="margin-top:22px;">Submit my vote</button>
       </form>
+
+      <form class="contact__form" id="efareSuggestionForm" novalidate style="margin-top:20px;">
+        <h2 class="section__title" style="font-size:1.45rem;margin-bottom:8px;">Ideas to improve the proposal</h2>
+        <p>Share a suggestion for how the E-Fare proposal could be clearer, fairer, or easier for members. You can send more than one idea.</p>
+        <div class="form__success" id="suggestionSuccess" hidden role="status">Thank you. Your suggestion has been sent to the Interim Leadership Team.</div>
+        <p class="form__error" id="suggestionError" hidden role="alert"></p>
+        <div class="form__group">
+          <label for="suggestionName">Your name <span class="feedback-req">*</span></label>
+          <input type="text" id="suggestionName" name="name" required autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="form__group">
+          <label for="suggestionEmail">Email <span class="feedback-req">*</span></label>
+          <input type="email" id="suggestionEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="form__group">
+          <label for="suggestionText">Your idea <span class="feedback-req">*</span></label>
+          <textarea id="suggestionText" name="suggestion" rows="5" required placeholder="What would you change or add to the E-Fare proposal?"></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Send suggestion</button>
+      </form>
     </div>
   </section>
 
@@ -152,6 +172,6 @@
 
   <script src="js/site-config.js?v=2"></script>
   <script src="js/main.js?v=28" defer></script>
-  <script src="js/efare-vote.js?v=1" defer></script>
+  <script src="js/efare-vote.js?v=2" defer></script>
 </body>
 </html>

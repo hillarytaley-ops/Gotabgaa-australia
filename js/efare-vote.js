@@ -77,4 +77,73 @@
       }
     }
   });
+
+  const suggestionForm = document.getElementById('efareSuggestionForm');
+  const suggestionSuccess = document.getElementById('suggestionSuccess');
+  const suggestionError = document.getElementById('suggestionError');
+  if (!suggestionForm) return;
+
+  function copyFromVote() {
+    const voteName = form.querySelector('[name="name"]')?.value.trim();
+    const voteEmail = form.querySelector('[name="email"]')?.value.trim();
+    const nameInput = suggestionForm.querySelector('[name="name"]');
+    const emailInput = suggestionForm.querySelector('[name="email"]');
+    if (voteName && nameInput && !nameInput.value) nameInput.value = voteName;
+    if (voteEmail && emailInput && !emailInput.value) emailInput.value = voteEmail;
+  }
+  suggestionForm.addEventListener('focusin', copyFromVote);
+
+  suggestionForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (suggestionError) suggestionError.hidden = true;
+
+    const name = suggestionForm.querySelector('[name="name"]')?.value.trim() || '';
+    const email = suggestionForm.querySelector('[name="email"]')?.value.trim() || '';
+    const suggestion = suggestionForm.querySelector('[name="suggestion"]')?.value.trim() || '';
+
+    if (!name) {
+      suggestionError.textContent = 'Please enter your name.';
+      suggestionError.hidden = false;
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      suggestionError.textContent = 'Please enter a valid email.';
+      suggestionError.hidden = false;
+      return;
+    }
+    if (suggestion.length < 8) {
+      suggestionError.textContent = 'Please write your idea in a few words.';
+      suggestionError.hidden = false;
+      return;
+    }
+
+    const btn = suggestionForm.querySelector('button[type="submit"]');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+    }
+
+    try {
+      const res = await fetch('/api/efare-suggestion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, suggestion })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not save your suggestion');
+      suggestionForm.querySelector('[name="suggestion"]').value = '';
+      if (suggestionSuccess) {
+        suggestionSuccess.hidden = false;
+        suggestionSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } catch (err) {
+      suggestionError.textContent = err.message || 'Could not save your suggestion. Please try again.';
+      suggestionError.hidden = false;
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Send suggestion';
+      }
+    }
+  });
 })();

@@ -2534,6 +2534,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not load votes');
       const votes = data.votes || [];
+      const suggestions = data.suggestions || [];
       const rows = votes.map(v => `
         <div class="list-item">
           <div class="list-item__header">
@@ -2541,6 +2542,16 @@
             <span class="inbox-item__date">${new Date(v.created_at).toLocaleString()}</span>
           </div>
           <p><a href="mailto:${escapeHtml(v.email)}">${escapeHtml(v.email)}</a></p>
+        </div>
+      `).join('');
+      const ideaRows = suggestions.map(s => `
+        <div class="list-item">
+          <div class="list-item__header">
+            <h4>${escapeHtml(s.name)}</h4>
+            <span class="inbox-item__date">${new Date(s.created_at).toLocaleString()}</span>
+          </div>
+          <p><a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></p>
+          <p class="inbox-item__message">${escapeHtml(s.suggestion)}</p>
         </div>
       `).join('');
       panel.innerHTML = `
@@ -2551,6 +2562,10 @@
           </div>
           <p><strong>${data.aye || 0}</strong> Aye (adopt) · <strong>${data.nay || 0}</strong> Nay (do not adopt) · ${data.total || 0} total</p>
           ${rows || '<p class="form-hint">No votes yet.</p>'}
+        </div>
+        <div class="card">
+          <h3>Ideas to improve the proposal (${suggestions.length})</h3>
+          ${ideaRows || '<p class="form-hint">No suggestions yet.</p>'}
         </div>
       `;
     } catch (err) {
