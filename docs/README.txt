@@ -42,7 +42,8 @@ EMPOWERMENT FARE — E-FARE (July 2026)
   PDF:  docs\Gotabgaa-Empowerment-Fare-E-Fare.pdf
   HTML: docs\Gotabgaa-Empowerment-Fare-E-Fare.html
   Interest-free community empowerment grants — formal proposal for Interim Leadership review & vote.
-  Includes repayment, recovery body escalation, and E-Fare membership suspension/termination.
+  Borrowers must provide three guarantors and evidence of the business the money will go into
+  (for example business registration). Also covers repayment, recovery, and membership suspension.
   Regenerate PDF: node scripts/generate-efare-pdf.mjs
 
 GOVERNANCE STRUCTURE (new — AGM, Board, Executive, Oversight Council)

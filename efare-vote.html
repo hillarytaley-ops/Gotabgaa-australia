@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interim Leadership vote on the Gotabgaa Australia Empowerment Fare (E-Fare) proposal. Aye to adopt. Nay if you do not adopt it.">
+  <title>E-Fare Vote | Gotabgaa Australia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=49">
+  <link rel="icon" href="assets/logo-round.png" type="image/png">
+  <link rel="canonical" href="https://www.gotabgaaaustralia.org/efare-vote.html">
+  <style>
+    .vote-wrap { max-width: 640px; }
+    .vote-doc {
+      display: block;
+      margin: 0 0 20px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--cream);
+      border: 1.5px solid var(--cream-dark);
+      color: var(--brown-900);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .vote-doc:hover { border-color: var(--tan); }
+    .vote-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .vote-choice {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 22px 12px;
+      border-radius: 14px;
+      border: 2px solid var(--cream-dark);
+      background: var(--cream);
+      cursor: pointer;
+      font-family: var(--font-body);
+      text-align: center;
+    }
+    .vote-choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .vote-choice strong {
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+    }
+    .vote-choice span {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+    .vote-choice--aye:has(input:checked),
+    .vote-choice--aye:hover { border-color: #1f6b3a; background: rgba(31, 107, 58, 0.08); }
+    .vote-choice--nay:has(input:checked),
+    .vote-choice--nay:hover { border-color: var(--red-accent); background: rgba(139, 0, 0, 0.06); }
+    @media (max-width: 560px) {
+      .vote-choices { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="page-sub">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__brand">
+        <img src="assets/logo-round.png" alt="Gotabgaa Australia" class="nav__logo logo-circle">
+        <span class="nav__title">Gotabgaa <strong>Australia</strong></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav__drawer" id="navDrawer">
+        <ul class="nav__menu" id="navMenu">
+          <li><a href="index.html" class="nav__link">Home</a></li>
+          <li><a href="about.html" class="nav__link">About</a></li>
+          <li><a href="programs.html" class="nav__link">Programs</a></li>
+          <li><a href="welfare.html" class="nav__link">Welfare</a></li>
+          <li><a href="sports.html" class="nav__link">Sports</a></li>
+          <li><a href="business.html" class="nav__link">Business</a></li>
+          <li><a href="events.html" class="nav__link">Events</a></li>
+          <li><a href="leadership.html" class="nav__link">Leadership</a></li>
+          <li><a href="gallery.html" class="nav__link">Gallery</a></li>
+          <li><a href="contact.html" class="nav__link">Contact</a></li>
+        </ul>
+        <div class="nav__actions" id="navActions">
+          <a href="login.html" class="btn btn--outline nav__cta nav__cta--member" data-signin-link="">Sign In</a>
+          <a href="join.html" class="btn btn--primary nav__cta">Join Us</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="tribal-border tribal-border--top" aria-hidden="true"><div class="tribal-border__track"></div></div>
+    <div class="container">
+      <span class="section__tag">Interim Leadership</span>
+      <h1 class="page-hero__title">E-Fare vote</h1>
+      <p class="page-hero__desc">After you have read the proposal, cast one vote.</p>
+    </div>
+    <div class="tribal-border tribal-border--bottom" aria-hidden="true"><div class="tribal-border__track tribal-border__track--reverse"></div></div>
+  </section>
+
+  <section class="contact section">
+    <div class="container vote-wrap">
+      <form class="contact__form" id="efareVoteForm" novalidate>
+        <div class="form__success" id="voteSuccess" hidden role="status"></div>
+        <div class="form__success" id="voteAlready" hidden role="status">You have already voted. Each person may vote only once.</div>
+        <p class="form__error" id="voteError" hidden role="alert"></p>
+
+        <p>This vote is for the Interim Leadership Team on whether to adopt <strong>Empowerment Fare (E-Fare)</strong>.</p>
+        <a class="vote-doc" href="docs/Gotabgaa-Empowerment-Fare-E-Fare.pdf" target="_blank" rel="noopener">Read the E-Fare proposal (PDF)</a>
+
+        <div class="form__group">
+          <label for="voteName">Your name <span class="feedback-req">*</span></label>
+          <input type="text" id="voteName" name="name" required autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="form__group">
+          <label for="voteEmail">Email <span class="feedback-req">*</span></label>
+          <input type="email" id="voteEmail" name="email" required autocomplete="email" placeholder="you@example.com">
+          <p class="form-hint">One vote per email.</p>
+        </div>
+
+        <p style="font-weight:600;margin-bottom:8px;">Your vote <span class="feedback-req">*</span></p>
+        <div class="vote-choices">
+          <label class="vote-choice vote-choice--aye">
+            <input type="radio" name="vote" value="aye" required>
+            <strong>Aye</strong>
+            <span>I adopt the proposal</span>
+          </label>
+          <label class="vote-choice vote-choice--nay">
+            <input type="radio" name="vote" value="nay">
+            <strong>Nay</strong>
+            <span>I do not adopt the proposal</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full" style="margin-top:22px;">Submit my vote</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer__bottom">
+      <p>&copy; 2026 Gotabgaa Australia. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/site-config.js?v=2"></script>
+  <script src="js/main.js?v=28" defer></script>
+  <script src="js/efare-vote.js?v=1" defer></script>
+</body>
+</html>

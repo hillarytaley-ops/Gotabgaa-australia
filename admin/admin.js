@@ -49,6 +49,7 @@
     ailcd: 'Leadership EOI',
     inbox: 'Contact Inbox',
     meetGreetFeedback: 'Meet & Greet Feedback',
+    efareVote: 'E-Fare Vote',
     pages: 'Page Heroes'
   };
 
@@ -70,6 +71,7 @@
     ailcd: 'eoi',
     inbox: 'inbox',
     meetGreetFeedback: 'inbox',
+    efareVote: 'eoi',
     pages: 'pages'
   };
 
@@ -2521,6 +2523,42 @@
     }
   }
 
+  async function renderEfareVoteSection(panel) {
+    if (isPreviewMode || !getToken()) {
+      panel.innerHTML = '<div class="card"><p>Sign in to view the E-Fare vote.</p></div>';
+      return;
+    }
+    panel.innerHTML = '<div class="card"><p>Loading votes…</p></div>';
+    try {
+      const res = await authFetch('/api/efare-votes');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not load votes');
+      const votes = data.votes || [];
+      const rows = votes.map(v => `
+        <div class="list-item">
+          <div class="list-item__header">
+            <h4>${escapeHtml(v.name)} · ${v.vote === 'aye' ? 'Aye' : 'Nay'}</h4>
+            <span class="inbox-item__date">${new Date(v.created_at).toLocaleString()}</span>
+          </div>
+          <p><a href="mailto:${escapeHtml(v.email)}">${escapeHtml(v.email)}</a></p>
+        </div>
+      `).join('');
+      panel.innerHTML = `
+        <div class="card">
+          <div class="list-item__header">
+            <h3>E-Fare proposal vote</h3>
+            <a href="../efare-vote.html" target="_blank" rel="noopener" class="btn btn--outline btn--sm">Open voting page</a>
+          </div>
+          <p><strong>${data.aye || 0}</strong> Aye (adopt) · <strong>${data.nay || 0}</strong> Nay (do not adopt) · ${data.total || 0} total</p>
+          ${rows || '<p class="form-hint">No votes yet.</p>'}
+        </div>
+      `;
+    } catch (err) {
+      if (isAuthError(err)) return;
+      panel.innerHTML = `<div class="card"><p>${escapeHtml(err.message)}</p><p class="form-hint">Run <code>supabase/migrate-efare-votes.sql</code> in Supabase if the table is missing.</p></div>`;
+    }
+  }
+
   async function loadWelfareRegistrationsPanel() {
     const card = document.getElementById('welfareRegistrationsCard');
     if (!card) return;
@@ -3090,6 +3128,10 @@
         }
         if (section === 'meetGreetFeedback') {
           renderMeetGreetFeedbackSection(panel);
+          return;
+        }
+        if (section === 'efareVote') {
+          renderEfareVoteSection(panel);
           return;
         }
         const renderers = {

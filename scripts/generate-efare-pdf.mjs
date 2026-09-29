@@ -23,7 +23,7 @@ const BRAND = {
 };
 
 const PAGE = { w: 210, h: 297, margin: 20, footer: 282 };
-const CONTENT_BOTTOM = PAGE.footer - 6;
+const CONTENT_BOTTOM = PAGE.footer - 10;
 const PAGE_BODY_TOP = PAGE.margin + 8;
 const PAGE_BODY_H = CONTENT_BOTTOM - PAGE_BODY_TOP;
 
@@ -157,31 +157,36 @@ function addHighlightBox(doc, label, text, startY, maxWidth) {
   return y + boxH + 6;
 }
 
-function addInfoBox(doc, heading, items, startY, maxWidth) {
-  const pad = 4;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9.5);
-  const headingLines = heading ? doc.splitTextToSize(sanitizePdfText(heading), maxWidth - pad * 2 - 2) : [];
-  let contentH = heading ? headingLines.length * 4.8 + 6 : 4;
-
+function infoItemLines(doc, item, innerW) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  const itemLines = items.map(item =>
-    doc.splitTextToSize(sanitizePdfText(`- ${item}`), maxWidth - pad * 2 - 4)
-  );
-  itemLines.forEach(lines => {
+  return doc.splitTextToSize(sanitizePdfText(`- ${item}`), innerW);
+}
+
+function infoHeadingLines(doc, heading, innerW) {
+  if (!heading) return [];
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  return doc.splitTextToSize(sanitizePdfText(heading), innerW);
+}
+
+/** Draw one cream box. Returns the y after the box. */
+function drawInfoChunk(doc, headingLines, itemLineSets, startY, maxWidth) {
+  const pad = 4;
+  let contentH = pad + 4;
+  if (headingLines.length) contentH += headingLines.length * 4.8 + 4;
+  itemLineSets.forEach(lines => {
     contentH += lines.length * 4.4 + 2;
   });
-  contentH += pad * 2 + 4;
+  contentH += pad;
 
-  const y = startY;
   setFill(doc, BRAND.cream);
-  doc.roundedRect(PAGE.margin, y, maxWidth, contentH, 2, 2, 'F');
+  doc.roundedRect(PAGE.margin, startY, maxWidth, contentH, 2, 2, 'F');
   setFill(doc, BRAND.tan);
-  doc.rect(PAGE.margin, y, 2, contentH, 'F');
+  doc.rect(PAGE.margin, startY, 2, contentH, 'F');
 
-  let innerY = y + pad + 4;
-  if (heading) {
+  let innerY = startY + pad + 4;
+  if (headingLines.length) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9.5);
     setText(doc, BRAND.brown800);
@@ -192,12 +197,54 @@ function addInfoBox(doc, heading, items, startY, maxWidth) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   setText(doc, BRAND.brown900);
-  itemLines.forEach(lines => {
+  itemLineSets.forEach(lines => {
     doc.text(lines, PAGE.margin + pad + 2, innerY);
     innerY += lines.length * 4.4 + 2;
   });
 
-  return y + contentH + 6;
+  return startY + contentH + 6;
+}
+
+function addInfoBox(doc, heading, items, startY, maxWidth) {
+  const pad = 4;
+  const innerW = maxWidth - pad * 2 - 4;
+  const allItems = items.map(item => infoItemLines(doc, item, innerW));
+  let y = startY;
+  let index = 0;
+  let first = true;
+
+  while (index < allItems.length) {
+    if (CONTENT_BOTTOM - y < 36) {
+      doc.addPage();
+      y = PAGE_BODY_TOP;
+    }
+
+    const room = CONTENT_BOTTOM - y;
+    const title = first ? heading : (heading ? `${heading} (continued)` : '');
+    const head = infoHeadingLines(doc, title, innerW);
+    let contentH = pad + 4 + (head.length ? head.length * 4.8 + 4 : 0) + pad;
+    const chunk = [];
+
+    while (index + chunk.length < allItems.length) {
+      const lines = allItems[index + chunk.length];
+      const add = lines.length * 4.4 + 2;
+      if (chunk.length > 0 && contentH + add > room) break;
+      chunk.push(lines);
+      contentH += add;
+      if (contentH >= room) break;
+    }
+
+    y = drawInfoChunk(doc, head, chunk, y, maxWidth);
+    index += chunk.length;
+    first = false;
+
+    if (index < allItems.length) {
+      doc.addPage();
+      y = PAGE_BODY_TOP;
+    }
+  }
+
+  return y;
 }
 
 function addStepItem(doc, stepNum, text, startY, maxWidth) {
@@ -340,8 +387,8 @@ function buildPdf() {
     const steps = [
       'Join. Register for E-Fare by paying a modest participation fee (amount to be agreed by leadership). This builds the shared fund and shows your commitment.',
       'Grow the fund. As more members join, the pool grows. We start granting support only when the fund is strong enough to do so safely.',
-      'Apply with a plan. Only 2-3 members receive support in each six-month cycle. Every applicant submits a clear Statement of Investment plus supporting evidence.',
-      'Fair review. The E-Fare committee reviews plans and documents on merit. Incomplete applications, or ones without evidence, will not be approved.',
+      'Apply with a plan. Only 2-3 members receive support in each six-month cycle. Every applicant submits a clear Statement of Investment, evidence of the business the money will go into, and the names of three guarantors.',
+      'Fair review. The E-Fare committee reviews the plan, business papers, and guarantors on merit. Incomplete applications - missing evidence or fewer than three acceptable guarantors - will not be approved, and no money will be released.',
       'Use and repay. Those 2-3 members repay within the six-month module. There is no interest.',
       'Pass it on. When amounts are returned, the next 2-3 members can be supported. The circle continues gently and continuously.'
     ];
@@ -392,7 +439,7 @@ function buildPdf() {
       'If it is something else: Education, tools, or similar goals need matching evidence - for example enrolment, quotes, invoices, or licences.',
       'Extra help if needed: The committee may kindly ask for more documents, or decline applications that are unclear.'
     ];
-    const paras2 = ['This keeps E-Fare honest, protective of the fund, and focused on genuine empowerment.'];
+    const paras2 = ['This keeps E-Fare honest, protective of the fund, and focused on genuine empowerment. Business borrowers must also meet the mandatory conditions in section 6 before any funds are released.'];
     const bodyH = measureParagraphs(doc, paras1, maxWidth)
       + measureInfoBox(doc, 'What you need to include', items, maxWidth)
       + measureParagraphs(doc, paras2, maxWidth);
@@ -404,15 +451,67 @@ function buildPdf() {
 
   // --- Section 6 ---
   {
+    const paras1 = [
+      'Any member who intends to borrow money from E-Fare must satisfy every condition below before funds are released. These rules protect the shared fund, the borrower, and the members who stand behind them. An application that does not meet them is incomplete and cannot proceed.'
+    ];
+    const must = [
+      'A member who intends to borrow must provide three guarantors, and must provide evidence of the business the money will be injected into - for example business registration and related papers. Both are required. One without the other is not enough.'
+    ];
+    const guarantors = [
+      'Number: Exactly three guarantors must be named and accepted. Two, or one, is not sufficient.',
+      'Who they are: Each guarantor must be a Gotabgaa Australia member in good standing, known to the committee, and willing to be contacted if repayment is missed.',
+      'Written guarantee: Each guarantor signs a short written guarantee before any money is paid out. It states the borrower\'s name, the amount, the purpose, and that the guarantor supports the application.',
+      'Separate people: The three guarantors must be three different people. They must not be the borrower. The committee may refuse a guarantor who lives in the same household as the borrower, or who is already guaranteeing another active E-Fare loan, if that would weaken the fund.',
+      'What we record: Full name, membership details, phone, email, and a signed guarantee form for each guarantor. Unsigned or incomplete forms mean the loan is not approved.',
+      'If repayment fails: Guarantors may be asked to help the committee reach the borrower, encourage a repayment plan, and - where the written guarantee says so - assist recovery of the outstanding amount. This is done with respect, in writing, and on record.',
+      'Committee decision: The E-Fare committee may decline a proposed guarantor and ask for a replacement. Funds are not released until three acceptable guarantors are in place.'
+    ];
+    const business = [
+      'Business registration: Current registration of the business - for example an ABN, a registered business name, an ASIC company or business extract, or the relevant state or territory registration. A trading name alone, with no registration, is not enough.',
+      'If registration is still being completed: Proof that the application has been lodged (receipt or reference number), the expected registration date, and a note that funds will not be used as personal spending while registration is pending. The committee may hold the money until registration is confirmed.',
+      'What the money is for: A clear statement of how the borrowed amount will be injected into that business - for example stock, tools, equipment, licences, fit-out, a vehicle used for the trade, or agreed working capital. Personal bills and purposes not listed in the plan are not allowed.',
+      'Supporting papers: A simple budget; quotes, invoices, or supplier details; and, where relevant, a lease, licence, council permit, or professional registration connected to the business.',
+      'Who owns the business: State your role - owner, partner, or director. If other people own it with you, write their names.',
+      'Use of funds: Money must be used for the approved business purpose. The committee may ask for receipts after the loan is paid.',
+      'No evidence, no loan: If business registration or equivalent evidence is missing, the application stops. The committee will not approve a business loan on a verbal description alone.'
+    ];
+    const checklist = [
+      'The member is a Gotabgaa Australia member in good standing and has joined E-Fare.',
+      'A written Statement of Investment is complete (purpose, benefit, budget, and timeline).',
+      'Three guarantors have been accepted and have signed.',
+      'Business evidence is attached, including registration (or proof that registration is underway, if the committee agrees to wait).',
+      'The E-Fare committee has approved the application in writing, including the amount and the repayment schedule.',
+      'The member has signed the loan agreement, including the interest-free terms and the six-month repayment expectation.'
+    ];
+    const paras2 = [
+      'These conditions apply to every member who intends to borrow for a business. Education or other approved purposes still need matching evidence, and the committee may also require guarantors for those loans. Business borrowing always requires both the three guarantors and the business evidence described above.'
+    ];
+    const bodyH = measureParagraphs(doc, paras1, maxWidth)
+      + measureHighlightBox(doc, must[0], maxWidth)
+      + measureInfoBox(doc, '1. Three guarantors - required', guarantors, maxWidth)
+      + measureInfoBox(doc, '2. Evidence of the business the money will go into - required', business, maxWidth)
+      + measureInfoBox(doc, 'Before any money is released - checklist', checklist, maxWidth)
+      + measureParagraphs(doc, paras2, maxWidth);
+    y = startTopic(doc, y, maxWidth, '6. Borrowing from E-Fare - Mandatory Conditions', bodyH);
+    y = addParagraphs(doc, paras1, y, maxWidth);
+    y = addHighlightBox(doc, 'TWO THINGS THAT ARE NOT OPTIONAL', must[0], y, maxWidth);
+    y = addInfoBox(doc, '1. Three guarantors - required', guarantors, y, maxWidth);
+    y = addInfoBox(doc, '2. Evidence of the business the money will go into - required', business, y, maxWidth);
+    y = addInfoBox(doc, 'Before any money is released - checklist', checklist, y, maxWidth);
+    y = addParagraphs(doc, paras2, y, maxWidth);
+  }
+
+  // --- Section 7 ---
+  {
     const paras = [
       'E-Fare does not charge interest. That is a deliberate choice. We want empowerment to feel light on the shoulders, not heavy with debt.',
       'Grant amounts and detailed rules will be published openly for all members, and refined with care as the programme grows.'
     ];
-    y = startTopic(doc, y, maxWidth, '6. Our Promise - Interest-Free Support', measureParagraphs(doc, paras, maxWidth));
+    y = startTopic(doc, y, maxWidth, '7. Our Promise - Interest-Free Support', measureParagraphs(doc, paras, maxWidth));
     y = addParagraphs(doc, paras, y, maxWidth);
   }
 
-  // --- Section 7 ---
+  // --- Section 8 ---
   {
     const paras1 = [
       'Timely repayment keeps the door open for the next members. We ask every borrower to honour the trust they have been given - and we will meet genuine hardship with listening and kindness first.'
@@ -435,7 +534,7 @@ function buildPdf() {
       + measureInfoBox(doc, 'Simple repayment terms', terms, maxWidth)
       + measureInfoBox(doc, 'If repayment is delayed too long', delay, maxWidth)
       + measureParagraphs(doc, close, maxWidth);
-    y = startTopic(doc, y, maxWidth, '7. Paying Back with Care', bodyH);
+    y = startTopic(doc, y, maxWidth, '8. Paying Back with Care', bodyH);
     y = addParagraphs(doc, paras1, y, maxWidth);
     y = addInfoBox(doc, 'Simple repayment terms', terms, y, maxWidth);
     y = addInfoBox(doc, 'If repayment is delayed too long', delay, y, maxWidth);
@@ -455,12 +554,12 @@ function buildPdf() {
       'Careful oversight under Gotabgaa\'s constitution and Australian law'
     ];
     const bodyH = measureParagraphs(doc, paras, maxWidth) + measureInfoBox(doc, null, items, maxWidth);
-    y = startTopic(doc, y, maxWidth, '8. Open and Accountable', bodyH);
+    y = startTopic(doc, y, maxWidth, '9. Open and Accountable', bodyH);
     y = addParagraphs(doc, paras, y, maxWidth);
     y = addInfoBox(doc, null, items, y, maxWidth);
   }
 
-  // --- Section 9 ---
+  // --- Section 10 ---
   {
     const paras = [
       'E-Fare welcomes Gotabgaa Australia members in good standing across NSW, SA, VIC, QLD, NT, TAS, ACT, and WA - whether you are new to the country, growing a trade, or investing in learning.'
@@ -474,7 +573,7 @@ function buildPdf() {
     ];
     const bodyH = measureParagraphs(doc, paras, maxWidth)
       + measureInfoBox(doc, 'Examples of welcome purposes', items, maxWidth);
-    y = startTopic(doc, y, maxWidth, '9. Who Can Take Part?', bodyH);
+    y = startTopic(doc, y, maxWidth, '10. Who Can Take Part?', bodyH);
     y = addParagraphs(doc, paras, y, maxWidth);
     y = addInfoBox(doc, 'Examples of welcome purposes', items, y, maxWidth);
   }
@@ -485,22 +584,22 @@ function buildPdf() {
       'Gotabgaa Australia will remain a non-profit. E-Fare is not a money-making scheme for anyone. Fees, repaid funds, and any small late fees return only to the empowerment fund and careful running of the programme.',
       'Success is not measured in profit. It is measured in businesses started, families strengthened, and a community that chose to stand together.'
     ];
-    y = startTopic(doc, y, maxWidth, '10. Our Non-Profit Promise', measureParagraphs(doc, paras, maxWidth));
+    y = startTopic(doc, y, maxWidth, '11. Our Non-Profit Promise', measureParagraphs(doc, paras, maxWidth));
     y = addParagraphs(doc, paras, y, maxWidth);
   }
 
-  // --- Section 11 ---
+  // --- Section 12 ---
   {
     const paras1 = [
       'Dear colleagues: please read this with an open heart, share your thoughts freely, and help us decide together.'
     ];
     const ask = [
-      'Read the full proposal (including the 2-3 member circle, investment plans, repayment, and recovery)',
+      'Read the full proposal (including the 2-3 member circle, the three-guarantor rule, business evidence, repayment, and recovery)',
       'Discuss any questions or improvements in an Interim Leadership meeting',
       'Vote to: (a) Approve as presented; (b) Approve with amendments; or (c) Defer for more discussion',
       'Record the outcome clearly so next steps are transparent'
     ];
-    const motion = 'That the Interim Leadership Team of Gotabgaa Australia adopts the Empowerment Fare (E-Fare) proposal - including six-month modules limited to 2-3 members at a time, with the next group supported only after repayments return; a mandatory Statement of Investment with evidence (including business registration for business plans); interest-free support; a 1%-2% late admin fee if overdue; recovery action where repayment is delayed too long or avoided; and the power to suspend or end E-Fare membership in such cases - with detailed operating rules to be finalised by the E-Fare committee.';
+    const motion = 'That the Interim Leadership Team of Gotabgaa Australia adopts the Empowerment Fare (E-Fare) proposal - including six-month modules limited to 2-3 members at a time, with the next group supported only after repayments return; a mandatory Statement of Investment; the rule that any member who intends to borrow must provide three guarantors and evidence of the business the money will be injected into (including business registration or equivalent); interest-free support; a 1%-2% late admin fee if overdue; recovery action where repayment is delayed too long or avoided; and the power to suspend or end E-Fare membership in such cases - with detailed operating rules to be finalised by the E-Fare committee.';
     const paras2 = [
       'Thank you for walking this path with us. May our decision serve our people - in peace, love, and unity.'
     ];
@@ -508,7 +607,7 @@ function buildPdf() {
       + measureInfoBox(doc, 'We kindly ask each interim leader to', ask, maxWidth)
       + measureHighlightBox(doc, motion, maxWidth)
       + measureParagraphs(doc, paras2, maxWidth);
-    y = startTopic(doc, y, maxWidth, '11. Your Review and Vote', bodyH);
+    y = startTopic(doc, y, maxWidth, '12. Your Review and Vote', bodyH);
     y = addParagraphs(doc, paras1, y, maxWidth);
     y = addInfoBox(doc, 'We kindly ask each interim leader to', ask, y, maxWidth);
     y = addHighlightBox(doc, 'SUGGESTED WORDING FOR THE VOTE', motion, y, maxWidth);
