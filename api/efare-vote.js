@@ -18,6 +18,7 @@ export default async function handler(req, res) {
   const name = String(req.body?.name || '').trim();
   const email = normalizeEmail(req.body?.email);
   const vote = String(req.body?.vote || '').trim().toLowerCase();
+  const suggestion = String(req.body?.suggestion || '').trim();
 
   if (!name) {
     res.status(400).json({ error: 'Name is required' });
@@ -29,6 +30,14 @@ export default async function handler(req, res) {
   }
   if (vote !== 'aye' && vote !== 'nay') {
     res.status(400).json({ error: 'Vote must be Aye or Nay' });
+    return;
+  }
+  if (suggestion && suggestion.length < 8) {
+    res.status(400).json({ error: 'Please write your idea in a few words, or leave it blank' });
+    return;
+  }
+  if (suggestion.length > 2000) {
+    res.status(400).json({ error: 'Please keep your idea under 2000 characters' });
     return;
   }
 
@@ -58,5 +67,17 @@ export default async function handler(req, res) {
     return;
   }
 
-  res.status(200).json({ ok: true, vote });
+  if (suggestion) {
+    const { error: suggestionError } = await supabase.from('efare_suggestions').insert({
+      name,
+      email,
+      suggestion
+    });
+    if (suggestionError && !/does not exist|schema cache|PGRST204|42P01/i.test(String(suggestionError.message))) {
+      res.status(200).json({ ok: true, vote, suggestionSaved: false });
+      return;
+    }
+  }
+
+  res.status(200).json({ ok: true, vote, suggestionSaved: Boolean(suggestion) });
 }
