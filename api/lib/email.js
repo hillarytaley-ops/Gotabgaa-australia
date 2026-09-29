@@ -253,3 +253,30 @@ export async function sendMeetGreetFeedbackThanks({ to, name }) {
   });
 }
 
+export async function sendEfareVoteThanks({ to, name, vote }) {
+  const firstName = String(name || 'Friend').trim() || 'Friend';
+  const choice = vote === 'nay' ? 'Nay — I do not adopt the proposal' : 'Aye — I adopt the proposal';
+  const logoUrl = `${siteUrl()}/assets/logo-round.png`;
+  const html = `
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
+      <div style="text-align:center;margin:0 0 24px">
+        <img src="${escapeHtml(logoUrl)}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
+        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
+      </div>
+      <h2 style="color:#3d2e22;margin:0 0 16px;font-size:22px">Thank you for voting</h2>
+      <p>Hi ${escapeHtml(firstName)},</p>
+      <p>Thank you for taking part in the Interim Leadership vote on <strong>Empowerment Fare (E-Fare)</strong>.</p>
+      <p>Your vote has been recorded as <strong>${escapeHtml(choice)}</strong>.</p>
+      <p>Each email can vote only once. This note confirms that your vote is in.</p>
+      <p style="margin-top:28px">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
+      <p style="color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Gotabgaa Australia — thank you for your E-Fare vote',
+    html
+  });
+}
+

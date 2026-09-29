@@ -70,9 +70,10 @@
         const voteLine = vote === 'aye'
           ? 'Aye recorded. Thank you — your vote is to adopt the E-Fare proposal.'
           : 'Nay recorded. Thank you — your vote is not to adopt the E-Fare proposal.';
-        successEl.textContent = suggestion
+        const thanks = ' A thank-you email is on its way.';
+        successEl.textContent = (suggestion
           ? `${voteLine} Your idea was sent with it.`
-          : voteLine;
+          : voteLine) + thanks;
       }
       form.reset();
       lockForm(successEl);

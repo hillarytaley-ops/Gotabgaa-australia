@@ -2535,15 +2535,18 @@
       if (!res.ok) throw new Error(data.error || 'Could not load votes');
       const votes = data.votes || [];
       const suggestions = data.suggestions || [];
-      const rows = votes.map(v => `
+      const rows = votes.map(v => {
+        const idea = v.suggestion || suggestions.find(s => String(s.email).toLowerCase() === String(v.email).toLowerCase())?.suggestion;
+        return `
         <div class="list-item">
           <div class="list-item__header">
             <h4>${escapeHtml(v.name)} · ${v.vote === 'aye' ? 'Aye' : 'Nay'}</h4>
             <span class="inbox-item__date">${new Date(v.created_at).toLocaleString()}</span>
           </div>
           <p><a href="mailto:${escapeHtml(v.email)}">${escapeHtml(v.email)}</a></p>
-        </div>
-      `).join('');
+          <p class="inbox-item__message">${idea ? escapeHtml(idea) : 'No idea added'}</p>
+        </div>`;
+      }).join('');
       const ideaRows = suggestions.map(s => `
         <div class="list-item">
           <div class="list-item__header">

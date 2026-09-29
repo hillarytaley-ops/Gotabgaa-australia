@@ -17,12 +17,26 @@ export default async function handler(req, res) {
   }
 
   const supabase = getSupabase();
-  const { data, error } = await supabase
+  let voteQuery = await supabase
     .from('efare_votes')
-    .select('id, name, email, vote, created_at')
+    .select('id, name, email, vote, suggestion, created_at')
     .order('created_at', { ascending: false })
     .limit(300);
 
+  if (voteQuery.error && /suggestion|schema cache|PGRST204|42703/i.test(String(voteQuery.error.message))) {
+    voteQuery = await supabase
+      .from('efare_votes')
+      .select('id, name, email, vote, created_at')
+      .order('created_at', { ascending: false })
+      .limit(300);
+  }
+
+  if (voteQuery.error) {
+    res.status(500).json({ error: voteQuery.error.message });
+    return;
+  }
+
+  const { data, error } = voteQuery;
   if (error) {
     res.status(500).json({ error: error.message });
     return;

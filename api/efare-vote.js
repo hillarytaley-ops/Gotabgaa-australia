@@ -1,4 +1,5 @@
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
+import { sendEfareVoteThanks } from './lib/email.js';
 
 function normalizeEmail(value) {
   return String(value || '').trim().toLowerCase();
@@ -57,7 +58,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { error } = await supabase.from('efare_votes').insert({ name, email, vote });
+  let { error } = await supabase.from('efare_votes').insert({
+    name,
+    email,
+    vote,
+    suggestion: suggestion || null
+  });
+  if (error && /suggestion|schema cache|PGRST204|42703/i.test(String(error.message))) {
+    ({ error } = await supabase.from('efare_votes').insert({ name, email, vote }));
+  }
   if (error) {
     if (/duplicate|unique|23505/i.test(String(error.message))) {
       res.status(409).json({ error: 'This email has already voted on the E-Fare proposal.' });
@@ -67,17 +76,22 @@ export default async function handler(req, res) {
     return;
   }
 
+  let suggestionSaved = false;
   if (suggestion) {
     const { error: suggestionError } = await supabase.from('efare_suggestions').insert({
       name,
       email,
       suggestion
     });
-    if (suggestionError && !/does not exist|schema cache|PGRST204|42P01/i.test(String(suggestionError.message))) {
-      res.status(200).json({ ok: true, vote, suggestionSaved: false });
-      return;
-    }
+    suggestionSaved = !suggestionError;
   }
 
-  res.status(200).json({ ok: true, vote, suggestionSaved: Boolean(suggestion) });
+  const emailResult = await sendEfareVoteThanks({ to: email, name, vote });
+
+  res.status(200).json({
+    ok: true,
+    vote,
+    suggestionSaved,
+    emailSent: Boolean(emailResult?.ok)
+  });
 }

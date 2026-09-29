@@ -14,6 +14,8 @@ comment on table public.efare_votes is 'Aye / Nay votes on the Empowerment Fare 
 create unique index if not exists efare_votes_email_unique_idx
   on public.efare_votes (lower(email));
 
+alter table public.efare_votes add column if not exists suggestion text;
+
 alter table public.efare_votes enable row level security;
 -- No public policies: Vercel API uses service_role only
 
