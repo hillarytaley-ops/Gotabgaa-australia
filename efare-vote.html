@@ -3,8 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Interim Leadership vote on the Gotabgaa Australia Empowerment Fare (E-Fare) proposal. Aye to adopt. Nay if you do not adopt it.">
+  <meta name="description" content="Interim Leadership vote on Empowerment Fare (E-Fare). Aye means I adopt the proposal. Nay means I do not adopt it.">
   <title>E-Fare Vote | Gotabgaa Australia</title>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gotabgaa Australia">
+  <meta property="og:title" content="E-Fare vote — Aye or Nay | Gotabgaa Australia">
+  <meta property="og:description" content="Empowerment Fare (E-Fare): interest-free support, shared by our community. Aye — I adopt the proposal. Nay — I do not adopt the proposal.">
+  <meta property="og:image" content="https://www.gotabgaaaustralia.org/assets/events/efare-vote-flyer.jpg">
+  <meta property="og:image:secure_url" content="https://www.gotabgaaaustralia.org/assets/events/efare-vote-flyer.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content="Gotabgaa Australia Empowerment Fare (E-Fare) interim leadership vote. Aye to adopt. Nay if you do not adopt.">
+  <meta property="og:url" content="https://www.gotabgaaaustralia.org/efare-vote.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="E-Fare vote — Aye or Nay | Gotabgaa Australia">
+  <meta name="twitter:description" content="Interest-free community support. Aye — I adopt the proposal. Nay — I do not.">
+  <meta name="twitter:image" content="https://www.gotabgaaaustralia.org/assets/events/efare-vote-flyer.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,6 +26,15 @@
   <link rel="canonical" href="https://www.gotabgaaaustralia.org/efare-vote.html">
   <style>
     .vote-wrap { max-width: 640px; }
+    .vote-flyer { margin: 0 0 20px; }
+    .vote-flyer img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1.5px solid var(--cream-dark);
+      box-shadow: 0 12px 32px rgba(42, 31, 23, 0.12);
+    }
     .vote-doc {
       display: block;
       margin: 0 0 20px;
@@ -107,6 +129,9 @@
 
   <section class="contact section">
     <div class="container vote-wrap">
+      <figure class="vote-flyer">
+        <img src="assets/events/efare-vote-flyer.jpg" alt="Empowerment Fare (E-Fare). Interim Leadership vote. Aye — I adopt the proposal. Nay — I do not adopt the proposal." width="1080" height="1440">
+      </figure>
       <form class="contact__form" id="efareVoteForm" novalidate>
         <div class="form__success" id="voteSuccess" hidden role="status"></div>
         <div class="form__success" id="voteAlready" hidden role="status">You have already voted. Each person may vote only once.</div>
