@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /login.html
+Disallow: /members
+Disallow: /members.html
+Disallow: /portal
+Disallow: /portal.html
+Disallow: /set-password.html
+
+Sitemap: https://www.gotabgaaaustralia.org/sitemap.xml
