@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=44">
+  <link rel="stylesheet" href="css/style.css?v=50">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
   <link rel="canonical" href="https://www.gotabgaaaustralia.org/login.html">
 </head>
@@ -73,20 +73,51 @@
       <!-- Join -->
       <div id="panelJoin" class="auth-glass__panel" role="tabpanel" data-auth-panel="join" aria-labelledby="tabJoin" hidden>
         <h1 class="auth-glass__title">Join our community</h1>
-        <p class="auth-glass__lead">Already registered? <button type="button" class="auth-glass__inline" data-auth-tab="signin">Sign in</button> with that email. Join is for new members — complete your application and payment details next.</p>
+        <p class="auth-glass__lead">Already registered? <button type="button" class="auth-glass__inline" data-auth-tab="signin">Sign in</button> with that email. Join is for new members — then pay the $50 membership fee.</p>
 
         <div class="auth-glass__join-fee" aria-label="Membership fee">
           <div class="auth-glass__join-fee-row">
             <span>Membership</span>
             <strong>$50 <span class="auth-glass__join-period">AUD / year</span></strong>
           </div>
-          <p>Access events, programs, and community updates across Australia. Pay via PayID or bank transfer after registering.</p>
+          <p>Access events, programs, and community updates across Australia. Next step is PayID or bank transfer — not a free signup.</p>
         </div>
 
-        <a class="auth-glass__submit" href="join.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Continue to membership form</a>
+        <form id="memberJoinForm" class="auth-glass__form" novalidate>
+          <p class="auth-glass__error" id="memberJoinError" hidden role="alert" aria-live="polite"></p>
+          <p class="auth-glass__success" id="memberJoinSuccess" hidden role="status" aria-live="polite"></p>
+
+          <div class="auth-glass__field">
+            <label for="joinName">Full name</label>
+            <input type="text" id="joinName" name="name" required autocomplete="name" placeholder="Jane Kiprotich">
+          </div>
+          <div class="auth-glass__field">
+            <label for="joinEmail">Email address</label>
+            <input type="email" id="joinEmail" name="email" required autocomplete="email" inputmode="email" placeholder="you@email.com">
+          </div>
+          <div class="auth-glass__field">
+            <label for="joinPhone">Phone</label>
+            <input type="tel" id="joinPhone" name="phone" required autocomplete="tel" inputmode="tel" placeholder="+61 400 000 000">
+          </div>
+          <div class="auth-glass__field">
+            <label for="joinPassword">Password</label>
+            <div class="auth-glass__password">
+              <input type="password" id="joinPassword" name="password" required autocomplete="new-password" placeholder="At least 8 characters" minlength="8">
+              <button type="button" class="auth-glass__eye" id="toggleJoinPassword" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="icon-eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="auth-glass__submit" id="memberJoinBtn">Create account &amp; pay $50</button>
+        </form>
+
+        <div id="joinPaymentInstructions" hidden></div>
 
         <p class="auth-glass__footer">
-          <button type="button" class="auth-glass__inline" data-auth-tab="signin">Back to sign in</button>
+          Already a member?
+          <button type="button" class="auth-glass__inline" data-auth-tab="signin">Sign in</button>
           <span aria-hidden="true"> · </span>
           <a href="contact.html">IT help</a>
           <span aria-hidden="true"> · </span>
@@ -168,6 +199,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/site-config.js?v=26"></script>
-  <script src="js/login.js?v=40"></script>
+  <script src="js/payment-instructions.js?v=1"></script>
+  <script src="js/login.js?v=41"></script>
 </body>
 </html>

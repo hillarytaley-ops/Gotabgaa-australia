@@ -6,6 +6,7 @@ import {
 } from './lib/payment.js';
 import { sendRegistrationConfirmation } from './lib/email.js';
 import { isSchemaColumnError } from './lib/member-registration.js';
+import { ensureMemberAuthUser } from './lib/member-auth.js';
 
 function parseBody(req) {
   if (req.body == null || req.body === '') return {};
@@ -180,7 +181,8 @@ export default async function handler(req, res) {
       notes,
       feeAmount,
       feeCurrency,
-      feeDisplay
+      feeDisplay,
+      password
     } = body;
 
     if (!name?.trim() || !email?.trim()) {
@@ -188,12 +190,32 @@ export default async function handler(req, res) {
       return;
     }
 
+    const chosenPassword = String(password || '');
+    if (chosenPassword && chosenPassword.length < 8) {
+      res.status(400).json({ error: 'Password must be at least 8 characters.' });
+      return;
+    }
+
     const supabase = getSupabase();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const { data: existingRows, error: existingError } = await supabase
+      .from('membership_registrations')
+      .select('id')
+      .ilike('email', normalizedEmail)
+      .limit(1);
+    if (!existingError && existingRows?.length) {
+      res.status(409).json({
+        error: 'That email is already registered. Sign in with it, or use Forgot password.'
+      });
+      return;
+    }
+
     const paymentConfig = await loadPaymentConfig();
 
     const row = await insertMembership(supabase, {
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       phone: (phone || '').trim(),
       state_chapter: (stateChapter || '').trim(),
       membership_type: (membershipType || '').trim(),
@@ -215,6 +237,30 @@ export default async function handler(req, res) {
 
     await savePaymentReference(supabase, row.id, paymentReference);
 
+    let accountReady = false;
+    if (chosenPassword) {
+      try {
+        const authUser = await ensureMemberAuthUser(supabase, {
+          email: normalizedEmail,
+          name: name.trim(),
+          membershipId: '',
+          authUserId: null
+        });
+        const { error: passwordError } = await supabase.auth.admin.updateUserById(authUser.id, {
+          password: chosenPassword,
+          email_confirm: true
+        });
+        if (passwordError) throw passwordError;
+        await supabase
+          .from('membership_registrations')
+          .update({ data: { paymentReference, _authUserId: authUser.id } })
+          .eq('id', row.id);
+        accountReady = true;
+      } catch (authError) {
+        console.error('[membership] could not set login password', authError);
+      }
+    }
+
     let emailResult = { ok: false };
     try {
       emailResult = await sendRegistrationConfirmation({
@@ -235,7 +281,10 @@ export default async function handler(req, res) {
       amount,
       payment: paymentConfig,
       emailSent: emailResult.ok === true,
-      message: 'Registration received! Complete payment using the instructions below. Our team will confirm your membership after payment is received.'
+      accountReady,
+      message: accountReady
+        ? 'Account created. Complete the $50 payment below. You can sign in with this email and password after payment is confirmed.'
+        : 'Registration received! Complete payment using the instructions below. Our team will confirm your membership after payment is received.'
     });
   } catch (error) {
     console.error('[membership] registration failed', error);

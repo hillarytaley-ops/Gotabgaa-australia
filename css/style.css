@@ -8166,60 +8166,64 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px 72px;
-  overflow: hidden;
+  padding: 28px 16px 80px;
+  overflow: auto;
 }
 
 .auth-glass__bg {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
-  filter: blur(2px);
-  transform: scale(1.04);
+  filter: none;
+  transform: none;
 }
 
 .auth-glass__veil {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(18, 12, 8, 0.42);
+  background:
+    linear-gradient(rgba(35, 22, 8, 0.22) 0%, rgba(35, 22, 8, 0.08) 46%, rgba(35, 22, 8, 0.22) 100%);
+  pointer-events: none;
 }
 
 .auth-glass__card {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 440px;
-  padding: 22px 24px 28px;
-  border-radius: 22px;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  max-width: 520px;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: rgba(35, 22, 8, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .auth-glass__logo-link {
   display: flex;
   justify-content: center;
-  margin: 0 auto 18px;
+  margin: 0 auto 10px;
 }
 
 .auth-glass__logo-link img {
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: block;
-  border: 2px solid rgba(255,255,255,0.45);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  border: 0;
+  box-shadow: none;
 }
 
-.auth-glass__title,
-.auth-glass__lead,
-.auth-glass__field label,
-.auth-glass__footer {
-  text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+.auth-glass .payment-instructions {
+  color: #2a1f17;
+  margin-top: 14px;
+}
+
+.auth-glass .payment-instructions a {
+  color: #a85a18;
 }
 
 .auth-glass__tabs {

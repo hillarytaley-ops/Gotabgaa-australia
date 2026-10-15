@@ -341,6 +341,74 @@
     }
   }
 
+  async function handleMemberJoin(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('memberJoinError');
+    const okEl = document.getElementById('memberJoinSuccess');
+    const btn = document.getElementById('memberJoinBtn');
+    const form = document.getElementById('memberJoinForm');
+    const payWrap = document.getElementById('joinPaymentInstructions');
+    showError(errEl, '');
+    showSuccess(okEl, '');
+    if (payWrap) payWrap.hidden = true;
+
+    const name = document.getElementById('joinName')?.value.trim();
+    const email = document.getElementById('joinEmail')?.value.trim().toLowerCase();
+    const phone = document.getElementById('joinPhone')?.value.trim();
+    const password = document.getElementById('joinPassword')?.value || '';
+
+    if (!name || !email || !phone || password.length < 8) {
+      showError(errEl, 'Enter your name, email, phone, and a password of at least 8 characters.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Creating account…';
+    }
+
+    try {
+      const res = await fetch('/api/membership', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          password,
+          membershipType: 'Full Member',
+          feeAmount: 50,
+          feeCurrency: 'AUD',
+          feeDisplay: '$50 AUD / year'
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const detail = data.detail && data.detail !== data.error ? ` (${data.detail})` : '';
+        throw new Error((data.error || 'Could not create your account.') + detail);
+      }
+
+      showSuccess(okEl, data.message || 'Account created. Complete the $50 payment below.');
+      if (payWrap && window.PaymentInstructions) {
+        payWrap.hidden = false;
+        window.PaymentInstructions.render(payWrap, {
+          payment: data.payment,
+          amount: data.amount || '$50 AUD / year',
+          reference: data.paymentReference,
+          title: 'Complete your membership payment'
+        });
+      }
+      form?.reset();
+    } catch (err) {
+      showError(errEl, friendlyClientError(err, 'Could not create your account.'));
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Create account & pay $50';
+      }
+    }
+  }
+
   async function handleMemberLogin(e) {
     e.preventDefault();
     showError(els.memberError, '');
@@ -600,6 +668,11 @@
     });
 
     els.memberForm?.addEventListener('submit', handleMemberLogin);
+    document.getElementById('memberJoinForm')?.addEventListener('submit', handleMemberJoin);
+    bindPasswordToggle(
+      document.getElementById('toggleJoinPassword'),
+      document.getElementById('joinPassword')
+    );
     els.forgotBtn?.addEventListener('click', e => handleForgotPassword(e, 'member'));
     els.goMembersDash?.addEventListener('click', () => {
       try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
