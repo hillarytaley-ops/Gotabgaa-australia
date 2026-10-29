@@ -48,6 +48,7 @@
     membership: 'Membership',
     memberPortal: 'Member Portal',
     ailcd: 'Leadership EOI',
+    admins: 'Onboard admins',
     inbox: 'Contact Inbox',
     meetGreetFeedback: 'Meet & Greet Feedback',
     efareVote: 'E-Fare Vote',
@@ -70,6 +71,7 @@
     membership: 'membership',
     memberPortal: 'portal',
     ailcd: 'eoi',
+    admins: 'admins',
     inbox: 'inbox',
     meetGreetFeedback: 'inbox',
     efareVote: 'eoi',
@@ -2683,6 +2685,231 @@
     }
   }
 
+  function formatAdminAddedAt(value) {
+    if (!value) return '—';
+    try {
+      return new Date(value).toLocaleString(undefined, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    } catch {
+      return String(value);
+    }
+  }
+
+  function getSignedInAdminEmail() {
+    try {
+      return String(sessionStorage.getItem('gaa_admin_email') || localStorage.getItem('gaa_admin_email') || '')
+        .trim()
+        .toLowerCase();
+    } catch {
+      return '';
+    }
+  }
+
+  function renderAdminsPanelShell(statusHtml = '') {
+    return `
+      <div class="card card--elevated">
+        <h3>Invite committee member</h3>
+        <p class="form-hint">
+          Invite committee members by email so they can create a password and sign in to this dashboard.
+          They receive a link from the Gotabgaa Australia mail sender, then sign in at
+          <a href="../login.html?dest=admin" target="_blank" rel="noopener">Sign In → Admin</a>.
+        </p>
+        <form id="adminInviteForm" class="admin-invite-form">
+          <div class="admin-invite-form__grid">
+            <div class="form-group">
+              <label class="form-label" for="adminInviteName">Full name</label>
+              <input id="adminInviteName" name="full_name" type="text" required maxlength="120" placeholder="e.g. Jane Kiprotich" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="adminInviteEmail">Email</label>
+              <input id="adminInviteEmail" name="email" type="email" required maxlength="254" placeholder="committee@example.com" autocomplete="off">
+            </div>
+          </div>
+          <button type="submit" class="btn btn--primary" id="adminInviteSubmit">Send invitation</button>
+          <p id="adminInviteStatus" class="form-hint" ${statusHtml ? '' : 'hidden'}>${statusHtml}</p>
+        </form>
+      </div>
+      <div class="card card--elevated" style="margin-top:14px">
+        <h3>Committee admins</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminAdminsBody">
+              <tr><td colspan="4" class="admin-empty">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderAdminRows(rows) {
+    if (!rows.length) {
+      return `<tr><td colspan="4" class="admin-empty">No committee admins on the list yet. Send an invitation above.</td></tr>`;
+    }
+    const me = getSignedInAdminEmail();
+    return rows.map(row => {
+      const email = String(row.email || '').trim().toLowerCase();
+      const developer = row.is_developer || email === 'hillarytaley@gmail.com';
+      const isSelf = me && email === me;
+      let actions = '';
+      if (developer) {
+        actions = `
+          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
+          <span class="admin-muted">Developer — cannot be removed</span>`;
+      } else if (isSelf) {
+        actions = `
+          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
+          <span class="admin-muted">You</span>`;
+      } else {
+        actions = `
+          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
+          <button type="button" class="btn btn--outline btn--sm" data-admin-remove="${escapeHtml(email)}">Remove</button>`;
+      }
+      return `
+        <tr>
+          <td>${escapeHtml(row.full_name || '—')}</td>
+          <td>${escapeHtml(email)}</td>
+          <td>${escapeHtml(formatAdminAddedAt(row.created_at))}</td>
+          <td class="admin-row-actions">${actions}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadSiteAdminsList() {
+    const body = document.getElementById('adminAdminsBody');
+    if (!body) return;
+    body.innerHTML = `<tr><td colspan="4" class="admin-empty">Loading…</td></tr>`;
+    try {
+      const res = await authFetch('/api/admins');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not load committee admins.');
+      body.innerHTML = renderAdminRows(data.rows || []);
+    } catch (err) {
+      if (isAuthError(err)) return;
+      body.innerHTML = `<tr><td colspan="4" class="admin-empty">${escapeHtml(err.message || 'Could not load committee admins.')}</td></tr>`;
+    }
+  }
+
+  async function inviteSiteAdmin({ fullName, email }) {
+    const res = await authFetch('/api/admins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'invite', full_name: fullName, email })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.error || 'Could not send invitation.');
+      err.setupLink = data.setupLink;
+      throw err;
+    }
+    return data;
+  }
+
+  async function removeSiteAdmin(email) {
+    const res = await authFetch('/api/admins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'remove', email, full_name: 'removed' })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Could not remove admin.');
+    return data;
+  }
+
+  async function renderAdminsSection(panel) {
+    if (isPreviewMode || !getToken()) {
+      panel.innerHTML = `<div class="card"><p>Sign in to invite committee admins.</p></div>`;
+      return;
+    }
+
+    panel.innerHTML = renderAdminsPanelShell();
+    await loadSiteAdminsList();
+
+    const form = document.getElementById('adminInviteForm');
+    const status = document.getElementById('adminInviteStatus');
+    const submit = document.getElementById('adminInviteSubmit');
+
+    form?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const fullName = String(document.getElementById('adminInviteName')?.value || '').trim();
+      const email = String(document.getElementById('adminInviteEmail')?.value || '').trim();
+      if (status) {
+        status.hidden = false;
+        status.classList.remove('is-error');
+        status.textContent = 'Sending invitation…';
+      }
+      if (submit) submit.disabled = true;
+      try {
+        const data = await inviteSiteAdmin({ fullName, email });
+        if (status) {
+          status.classList.remove('is-error');
+          status.textContent = data.message || `Invitation sent to ${email}.`;
+        }
+        form.reset();
+        await loadSiteAdminsList();
+        showStatus(data.message || 'Invitation sent.', 'success');
+      } catch (err) {
+        if (status) {
+          status.classList.add('is-error');
+          status.textContent = err.message || 'Could not send invitation.';
+          if (err.setupLink) {
+            status.innerHTML = `${escapeHtml(err.message)}<br><span class="form-hint">Password link (share manually if email failed): <a href="${escapeHtml(err.setupLink)}" target="_blank" rel="noopener">Open link</a></span>`;
+          }
+        }
+        showStatus(err.message || 'Could not send invitation.', 'error');
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+
+    panel.addEventListener('click', async e => {
+      const resend = e.target.closest('[data-admin-resend]');
+      if (resend) {
+        const email = resend.dataset.adminResend;
+        const fullName = resend.dataset.adminResendName || email;
+        resend.disabled = true;
+        try {
+          const data = await inviteSiteAdmin({ fullName, email });
+          showStatus(data.message || `Invitation re-sent to ${email}.`, 'success');
+          await loadSiteAdminsList();
+        } catch (err) {
+          showStatus(err.message || 'Could not resend invite.', 'error');
+        } finally {
+          resend.disabled = false;
+        }
+        return;
+      }
+
+      const removeBtn = e.target.closest('[data-admin-remove]');
+      if (removeBtn) {
+        const email = removeBtn.dataset.adminRemove;
+        if (!confirm(`Remove admin access for ${email}? They will no longer open this dashboard.`)) return;
+        removeBtn.disabled = true;
+        try {
+          await removeSiteAdmin(email);
+          showStatus(`Removed ${email} from committee admins.`, 'success');
+          await loadSiteAdminsList();
+        } catch (err) {
+          showStatus(err.message || 'Could not remove admin.', 'error');
+          removeBtn.disabled = false;
+        }
+      }
+    });
+  }
+
   async function loadWelfareRegistrationsPanel() {
     const card = document.getElementById('welfareRegistrationsCard');
     if (!card) return;
@@ -3256,6 +3483,10 @@
         }
         if (section === 'efareVote') {
           renderEfareVoteSection(panel);
+          return;
+        }
+        if (section === 'admins') {
+          renderAdminsSection(panel);
           return;
         }
         const renderers = {

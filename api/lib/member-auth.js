@@ -44,7 +44,8 @@ export async function resolveMemberFromRequest(req) {
 
     const row = await findActiveMemberByEmail(supabase, user.email);
     if (!row) {
-      if (isAllowlistedAdminEmail(user.email)) {
+      const listedAdmin = await isListedSiteAdmin(supabase, user.email);
+      if (isAllowlistedAdminEmail(user.email) || listedAdmin) {
         return {
           ok: true,
           user,
@@ -77,7 +78,7 @@ export async function resolveMemberFromRequest(req) {
     }
 
     const member = serializeMemberProfile(row);
-    member.adminAccess = memberHasAdminAccess(row, user);
+    member.adminAccess = await resolveAdminAccess(supabase, { row, user, email: user.email });
     return {
       ok: true,
       user,
@@ -237,6 +238,7 @@ export function getStoredAuthUserId(row) {
 
 /** Founder / bootstrap admins (also add more via Vercel ADMIN_EMAILS). */
 const BOOTSTRAP_ADMIN_EMAILS = ['hillarytaley@gmail.com'];
+const DEVELOPER_ADMIN_EMAILS = ['hillarytaley@gmail.com'];
 
 export function getAdminEmailAllowlist() {
   const fromEnv = String(process.env.ADMIN_EMAILS || '')
@@ -251,12 +253,49 @@ export function isAllowlistedAdminEmail(email) {
   return Boolean(normalized && getAdminEmailAllowlist().includes(normalized));
 }
 
+export function isDeveloperAdmin(email) {
+  const normalized = normalizeMemberEmail(email);
+  return Boolean(normalized && DEVELOPER_ADMIN_EMAILS.includes(normalized));
+}
+
+/** True when email is on the Onboard admins list (site_admins). */
+export async function isListedSiteAdmin(supabase, email) {
+  const normalized = normalizeMemberEmail(email);
+  if (!supabase || !normalized) return false;
+  try {
+    const { data, error } = await supabase
+      .from('site_admins')
+      .select('email')
+      .eq('email', normalized)
+      .maybeSingle();
+    if (error) {
+      // Table missing until migrate-site-admins.sql is applied
+      if (/relation|does not exist|PGRST/i.test(String(error.message || ''))) return false;
+      console.warn('[isListedSiteAdmin]', error.message);
+      return false;
+    }
+    return Boolean(data?.email);
+  } catch (err) {
+    console.warn('[isListedSiteAdmin]', err?.message || err);
+    return false;
+  }
+}
+
 export function memberHasAdminAccess(row, user = null) {
   if (row?.data?._adminAccess === true) return true;
   if (user?.app_metadata?.admin === true || user?.app_metadata?.role === 'admin') return true;
   const email = normalizeMemberEmail(row?.email || user?.email);
   if (email && isAllowlistedAdminEmail(email)) return true;
   return false;
+}
+
+/** Sync + site_admins aware admin check used by session APIs. */
+export async function resolveAdminAccess(supabase, { row = null, user = null, email = '' } = {}) {
+  if (memberHasAdminAccess(row, user)) return true;
+  const target = normalizeMemberEmail(email || row?.email || user?.email);
+  if (!target) return false;
+  if (isAllowlistedAdminEmail(target)) return true;
+  return isListedSiteAdmin(supabase, target);
 }
 
 /** Synthetic profile when an allowlisted admin has no membership row yet. */

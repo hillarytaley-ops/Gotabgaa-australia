@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=28">
+  <link rel="stylesheet" href="admin.css?v=29">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -127,6 +127,10 @@
               <span class="nav-item__icon nav-item__icon--eoi" aria-hidden="true"></span>
               <span class="nav-item__label">Leadership EOI</span>
             </button>
+            <button type="button" class="nav-item" data-section="admins">
+              <span class="nav-item__icon nav-item__icon--admins" aria-hidden="true"></span>
+              <span class="nav-item__label">Onboard admins</span>
+            </button>
           </div>
           <div class="sidebar__group">
             <span class="sidebar__group-label">Inbox</span>
@@ -212,6 +216,7 @@
                 <button type="button" class="quick-action" data-goto="leadership">Edit leadership</button>
                 <button type="button" class="quick-action" data-goto="memberPortal">Member portal</button>
                 <button type="button" class="quick-action" data-goto="ailcd">Leadership EOI</button>
+                <button type="button" class="quick-action" data-goto="admins">Onboard admins</button>
                 <button type="button" class="quick-action" data-goto="welfare">Welfare</button>
                 <button type="button" class="quick-action" data-goto="site">Site &amp; PayID</button>
                 <button type="button" class="quick-action quick-action--muted" id="seedSupabaseBtn">Load into Supabase</button>
@@ -258,6 +263,7 @@
         <section class="panel" data-panel="membership" hidden></section>
         <section class="panel" data-panel="memberPortal" hidden></section>
         <section class="panel" data-panel="ailcd" hidden></section>
+        <section class="panel" data-panel="admins" hidden></section>
         <section class="panel" data-panel="inbox" hidden></section>
         <section class="panel" data-panel="meetGreetFeedback" hidden></section>
         <section class="panel" data-panel="efareVote" hidden></section>
@@ -268,6 +274,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=37"></script>
+  <script src="admin.js?v=38"></script>
 </body>
 </html>

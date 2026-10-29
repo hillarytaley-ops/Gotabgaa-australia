@@ -56,14 +56,25 @@
     localStorage.setItem(SESSION_KEY, JSON.stringify(member));
   }
 
-  function saveAdminToken(token) {
+  function saveAdminToken(token, email) {
     localStorage.setItem(ADMIN_TOKEN_KEY, token);
     sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+    const normalized = String(email || '').trim().toLowerCase();
+    if (normalized) {
+      try {
+        localStorage.setItem('gaa_admin_email', normalized);
+        sessionStorage.setItem('gaa_admin_email', normalized);
+      } catch { /* ignore */ }
+    }
   }
 
   function clearAdminToken() {
     localStorage.removeItem(ADMIN_TOKEN_KEY);
     sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    try {
+      localStorage.removeItem('gaa_admin_email');
+      sessionStorage.removeItem('gaa_admin_email');
+    } catch { /* ignore */ }
   }
 
   function escapeHtml(str) {
@@ -247,7 +258,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not open admin dashboard');
       if (!data.token) throw new Error('Admin session was not created.');
-      saveAdminToken(data.token);
+      saveAdminToken(data.token, data.email);
       try { sessionStorage.removeItem(PENDING_ADMIN_KEY); } catch { /* ignore */ }
       window.location.href = 'admin/';
     } catch (err) {

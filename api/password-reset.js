@@ -9,6 +9,7 @@ import {
   ensureMemberAuthUser,
   getStoredAuthUserId,
   isAllowlistedAdminEmail,
+  isListedSiteAdmin,
   memberHasAdminAccess,
   syncAuthAdminRole
 } from './lib/member-auth.js';
@@ -62,16 +63,29 @@ export default async function handler(req, res) {
   try {
     const supabase = getSupabase();
     const row = await findActiveMemberByEmail(supabase, email);
+    const listedAdmin = await isListedSiteAdmin(supabase, email);
 
-    if (!row && !allowlisted) {
+    if (!row && !allowlisted && !listedAdmin) {
       genericOk(res);
       return;
     }
 
-    const name = row?.name || (email === 'hillarytaley@gmail.com' ? 'Hillary Taley' : email.split('@')[0]);
+    let siteAdminName = '';
+    if (listedAdmin && !row) {
+      const { data: adminRow } = await supabase
+        .from('site_admins')
+        .select('full_name')
+        .eq('email', email)
+        .maybeSingle();
+      siteAdminName = adminRow?.full_name || '';
+    }
+
+    const name = row?.name
+      || siteAdminName
+      || (email === 'hillarytaley@gmail.com' ? 'Hillary Taley' : email.split('@')[0]);
     const membershipId = row
       ? (row.membership_id || row.data?._membershipId || '')
-      : 'GAA-REVIEW';
+      : (listedAdmin ? 'GAA-ADMIN' : 'GAA-REVIEW');
 
     const authUser = await ensureMemberAuthUser(supabase, {
       email,
@@ -80,7 +94,7 @@ export default async function handler(req, res) {
       authUserId: row ? getStoredAuthUserId(row) : null
     });
 
-    if (allowlisted || (row && memberHasAdminAccess(row, authUser))) {
+    if (allowlisted || listedAdmin || (row && memberHasAdminAccess(row, authUser))) {
       await syncAuthAdminRole(supabase, authUser.id, true, membershipId || 'GAA-REVIEW');
     }
 

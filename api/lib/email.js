@@ -208,6 +208,31 @@ export async function sendPasswordReset({ to, name, resetLink }) {
   });
 }
 
+export async function sendAdminInvite({ to, name, setupLink }) {
+  const firstName = String(name || 'Committee member').trim() || 'Committee member';
+  const loginUrl = `${siteUrl()}/login.html?dest=admin`;
+  const fromHint = /onboarding@resend\.dev/i.test(FROM)
+    ? 'Gotabgaa Australia'
+    : (FROM.match(/<([^>]+)>/) || [])[1] || REPLY_TO;
+  const html = `
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
+      <h2 style="color:#3d2e22;margin:0 0 16px">Committee admin invitation</h2>
+      <p>Hi ${escapeHtml(firstName)},</p>
+      <p>You have been invited to the <strong>Gotabgaa Australia</strong> committee admin dashboard.</p>
+      <p>Use this link to create your password (it expires after a short time):</p>
+      <p><a href="${escapeHtml(setupLink)}" style="display:inline-block;padding:12px 18px;background:#3d2b1f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Create password &amp; continue</a></p>
+      <p>After that, sign in at <a href="${escapeHtml(loginUrl)}">${escapeHtml(loginUrl)}</a> with this email and your new password, then open the leadership admin dashboard.</p>
+      <p style="color:#6b5b4f;font-size:14px">If you were not expecting this invitation, you can ignore this email. Questions? Reply to ${escapeHtml(REPLY_TO)} (sent via ${escapeHtml(fromHint)}).</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Gotabgaa Australia — committee admin invitation',
+    html
+  });
+}
+
 export async function sendBookingConfirmation({ to, name, eventTitle, payment, amount, reference, tickets }) {
   const html = `
     <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">

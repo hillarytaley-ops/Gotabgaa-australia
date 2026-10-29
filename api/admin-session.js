@@ -6,8 +6,8 @@ import { createToken, getAdminSecret } from './lib/auth.js';
 import {
   getAuthUserFromToken,
   isAllowlistedAdminEmail,
-  memberHasAdminAccess,
-  readBearerToken
+  readBearerToken,
+  resolveAdminAccess
 } from './lib/member-auth.js';
 import { findActiveMemberByEmail } from './lib/member-registration.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
@@ -45,15 +45,16 @@ export default async function handler(req, res) {
     const supabase = getSupabase();
     const row = await findActiveMemberByEmail(supabase, user.email);
     const allowlisted = isAllowlistedAdminEmail(user.email);
+    const hasAdmin = await resolveAdminAccess(supabase, { row, user, email: user.email });
 
-    if (!row && !allowlisted) {
+    if (!row && !allowlisted && !hasAdmin) {
       res.status(403).json({ error: 'No active membership is linked to this account.' });
       return;
     }
 
-    if (!allowlisted && !memberHasAdminAccess(row, user)) {
+    if (!hasAdmin) {
       res.status(403).json({
-        error: 'This account does not have leadership admin access. Ask an authorised admin to grant it in Membership.'
+        error: 'This account does not have leadership admin access. Ask an authorised admin to invite you under Onboard admins, or grant access in Membership.'
       });
       return;
     }
