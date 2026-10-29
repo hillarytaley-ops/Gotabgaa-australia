@@ -8,34 +8,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=29">
+  <link rel="stylesheet" href="admin.css?v=30">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(location.search);
+        if (params.get('preview') === '1') return;
+        var token = localStorage.getItem('gaa_admin_token') || sessionStorage.getItem('gaa_admin_token');
+        if (!token) {
+          location.replace('../login.html?dest=admin');
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
 </head>
 <body>
-  <div id="loginScreen" class="login-screen">
-    <div class="login-screen__wrap">
-      <div class="login-card" style="text-align:center">
-        <img src="../assets/logo-round.png" alt="" class="login-card__logo" width="72" height="72">
-        <h1>Gotabgaa Australia</h1>
-        <p class="login-card__sub">Admin Dashboard</p>
-        <p class="login-card__hint" id="loginRedirectHint">Opening unified sign in…</p>
-        <p class="login-card__error" id="loginError" hidden role="alert"></p>
-        <p class="login-card__status" id="loginStatus" hidden aria-live="polite"></p>
-        <a class="btn btn--primary" href="../login.html?dest=admin" style="display:inline-flex;margin-top:12px">Go to unified sign in</a>
-        <p class="login-card__hint" style="margin-top:14px">
-          <a href="../login.html?dest=admin&amp;preview=1">Admin preview</a>
-          · Member and leadership share one login.
-        </p>
-        <!-- Kept for admin.js compatibility; hidden — bootstrap lives on login.html -->
-        <form id="loginForm" hidden aria-hidden="true">
-          <input type="password" id="password" name="password" autocomplete="current-password">
-          <button type="submit" id="loginSubmitBtn">Sign In with password</button>
-          <button type="button" id="previewBtn">Open Preview</button>
-          <button type="button" id="continueMemberAdminBtn" hidden>Continue</button>
-          <p id="memberAdminHint" hidden></p>
-        </form>
-      </div>
-    </div>
+  <!-- Sign-in lives on login.html — no intermediate splash. Hidden hooks kept for admin.js. -->
+  <div id="loginScreen" class="login-screen login-screen--boot" hidden>
+    <p class="login-screen__boot" id="loginStatus" aria-live="polite">Loading…</p>
+    <p id="loginError" hidden role="alert"></p>
+    <p id="loginRedirectHint" hidden></p>
+    <form id="loginForm" hidden aria-hidden="true">
+      <input type="password" id="password" name="password" autocomplete="current-password">
+      <button type="submit" id="loginSubmitBtn">Sign In with password</button>
+      <button type="button" id="previewBtn">Open Preview</button>
+      <button type="button" id="continueMemberAdminBtn" hidden>Continue</button>
+      <p id="memberAdminHint" hidden></p>
+    </form>
   </div>
 
   <div id="app" class="app" hidden>
@@ -274,6 +274,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=38"></script>
+  <script src="admin.js?v=39"></script>
 </body>
 </html>

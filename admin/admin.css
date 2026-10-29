@@ -108,6 +108,10 @@ body {
   margin-bottom: 12px;
 }
 
+.login-screen--boot {
+  display: none;
+}
+
 .login-screen.is-hidden {
   display: none !important;
 }

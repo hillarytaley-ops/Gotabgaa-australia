@@ -4519,7 +4519,9 @@
   async function bootAuthenticated() {
     if (!getToken()) return;
 
-    setLoginStatus('Loading dashboard…');
+    // Keep splash hidden — go straight into the app shell while content loads.
+    showApp();
+    setLoginStatus('');
     try {
       const valid = await verifyAdminSession();
       if (!valid) {
@@ -4530,7 +4532,6 @@
       await loadContent();
       setPreviewMode(false);
       clearLoginMessages();
-      showApp();
       openSectionFromHash();
     } catch (err) {
       showLogin(err.message || 'Could not load dashboard. Sign in again.');
