@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=27">
+  <link rel="stylesheet" href="admin.css?v=28">
   <link rel="icon" href="../assets/logo-round.png" type="image/png">
 </head>
 <body>
@@ -59,7 +59,7 @@
             <span class="sidebar__group-label">Overview</span>
             <button type="button" class="nav-item is-active" data-section="dashboard">
               <span class="nav-item__icon nav-item__icon--dashboard" aria-hidden="true"></span>
-              <span class="nav-item__label">Dashboard</span>
+              <span class="nav-item__label">Overview</span>
             </button>
           </div>
           <div class="sidebar__group">
@@ -166,7 +166,7 @@
         <div class="topbar__heading">
           <span class="topbar__icon nav-item__icon nav-item__icon--dashboard" id="sectionIcon" aria-hidden="true"></span>
           <div>
-            <h2 id="sectionTitle">Dashboard</h2>
+            <h2 id="sectionTitle">Overview</h2>
             <p id="lastUpdated" class="topbar__meta"></p>
           </div>
         </div>
@@ -180,15 +180,25 @@
 
       <div class="content" id="contentArea">
         <section class="panel" data-panel="dashboard">
-          <div class="dashboard-hero dashboard-hero--tn" id="dashboardHero">
-            <div class="dashboard-hero__content">
-              <p class="dashboard-hero__eyebrow">Committee home</p>
-              <h3 id="dashboardWelcome">Welcome back</h3>
-              <p class="dashboard-hero__sub">Your leadership overview — counts, alerts, and shortcuts for Gotabgaa Australia.</p>
+          <div class="overview-head" id="dashboardHero">
+            <div>
+              <h3 id="dashboardWelcome">Overview</h3>
+              <p class="overview-head__sub dashboard-hero__sub">Your committee home — counts, alerts, and shortcuts.</p>
             </div>
           </div>
+
           <div class="dashboard-alerts" id="dashboardAlerts" aria-live="polite"></div>
-          <div class="stats-grid stats-grid--tn" id="statsGrid"></div>
+
+          <div class="overview-block">
+            <h3 class="overview-block__title">Community &amp; reach</h3>
+            <div class="stats-grid stats-grid--tn" id="statsGrid"></div>
+          </div>
+
+          <div class="overview-block">
+            <h3 class="overview-block__title">Needs attention</h3>
+            <div class="stats-grid stats-grid--tn" id="attentionGrid"></div>
+          </div>
+
           <div class="dashboard-split">
             <div class="card card--elevated">
               <h3>Quick actions</h3>
@@ -196,6 +206,7 @@
                 <button type="button" class="quick-action" data-goto="inbox">Review enquiries</button>
                 <button type="button" class="quick-action" data-goto="meetGreetFeedback">Meet &amp; Greet feedback</button>
                 <button type="button" class="quick-action" data-goto="membership">Membership</button>
+                <button type="button" class="quick-action" data-goto="efareVote">E-Fare vote</button>
                 <button type="button" class="quick-action" data-goto="events">Manage events</button>
                 <button type="button" class="quick-action" data-goto="gallery">Update gallery</button>
                 <button type="button" class="quick-action" data-goto="leadership">Edit leadership</button>
@@ -218,13 +229,18 @@
               <div id="opsStatusBody" hidden></div>
             </div>
           </div>
-          <div class="card card--tip">
-            <h3>How publishing works</h3>
-            <ol class="help-list">
-              <li>Edit content in any section.</li>
-              <li>Click <strong>Publish Changes</strong> to push live.</li>
-              <li>Or use <strong>Export JSON</strong> for a backup of <code>data/content.json</code>.</li>
-            </ol>
+
+          <div class="card card--elevated overview-backup">
+            <div class="overview-backup__inner">
+              <div>
+                <h3>Data backup</h3>
+                <p class="form-hint">Download a JSON backup of site content, or publish live changes from the top bar.</p>
+              </div>
+              <div class="overview-backup__actions">
+                <button type="button" class="btn btn--primary" id="overviewExportBtn">Export JSON</button>
+                <button type="button" class="btn btn--outline" data-goto="site">Site &amp; PayID</button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -252,6 +268,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.js"></script>
   <script src="../js/supabase-browser.js?v=24"></script>
-  <script src="admin.js?v=36"></script>
+  <script src="admin.js?v=37"></script>
 </body>
 </html>

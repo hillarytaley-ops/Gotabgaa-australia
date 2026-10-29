@@ -28,11 +28,12 @@
     sectionTitle: document.getElementById('sectionTitle'),
     lastUpdated: document.getElementById('lastUpdated'),
     statsGrid: document.getElementById('statsGrid'),
+    attentionGrid: document.getElementById('attentionGrid'),
     sidebarNav: document.getElementById('sidebarNav')
   };
 
   const SECTION_TITLES = {
-    dashboard: 'Dashboard',
+    dashboard: 'Overview',
     site: 'Site & PayID',
     home: 'Home Page',
     about: 'About Page',
@@ -454,42 +455,68 @@
     const past = content.events?.filter(e => e.status === 'past').length || 0;
     const programs = content.programs?.length || 0;
     const leaders = content.leadership?.length || 0;
-    const siteName = content.site?.siteName || 'Gotabgaa Australia';
 
     const welcome = document.getElementById('dashboardWelcome');
-    if (welcome) {
-      const hour = new Date().getHours();
-      const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-      welcome.textContent = `${greeting}`;
-    }
+    if (welcome) welcome.textContent = 'Overview';
 
-    const heroSub = document.querySelector('.dashboard-hero__sub');
+    const heroSub = document.querySelector('.overview-head__sub, .dashboard-hero__sub');
     if (heroSub) {
-      heroSub.textContent = `Your committee home — counts, alerts, and shortcuts for ${siteName}.`;
+      heroSub.textContent = 'Your committee home — counts, alerts, and shortcuts.';
     }
 
-    els.statsGrid.innerHTML = `
-      <div class="stat-card stat-card--upcoming">
-        <span class="stat-card__icon" aria-hidden="true"></span>
-        <strong>${upcoming}</strong>
-        <span>Upcoming events</span>
-      </div>
-      <div class="stat-card stat-card--past">
-        <span class="stat-card__icon" aria-hidden="true"></span>
-        <strong>${past}</strong>
-        <span>Past events</span>
-      </div>
-      <div class="stat-card stat-card--programs">
-        <span class="stat-card__icon" aria-hidden="true"></span>
-        <strong>${programs}</strong>
-        <span>Programs</span>
-      </div>
-      <div class="stat-card stat-card--leaders">
-        <span class="stat-card__icon" aria-hidden="true"></span>
-        <strong>${leaders}</strong>
-        <span>Leaders</span>
-      </div>
-    `;
+    if (els.statsGrid) {
+      els.statsGrid.innerHTML = `
+        <div class="stat-card stat-card--upcoming">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${upcoming}</strong>
+          <span>Upcoming events</span>
+        </div>
+        <div class="stat-card stat-card--past">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${past}</strong>
+          <span>Past events</span>
+        </div>
+        <div class="stat-card stat-card--programs">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${programs}</strong>
+          <span>Programs</span>
+        </div>
+        <div class="stat-card stat-card--leaders">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${leaders}</strong>
+          <span>Leaders</span>
+        </div>
+      `;
+    }
+
+    if (els.attentionGrid) {
+      els.attentionGrid.innerHTML = `
+        <div class="stat-card stat-card--inbox">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Unread enquiries</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
+        <div class="stat-card stat-card--feedback">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Meet &amp; Greet responses</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
+        <div class="stat-card stat-card--membership">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Pending memberships</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
+        <div class="stat-card stat-card--eoi">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Leadership EOI</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
+      `;
+    }
 
     loadOpsStatus();
     loadDashboardAlerts();
@@ -498,25 +525,33 @@
   async function loadDashboardAlerts() {
     const alertsEl = document.getElementById('dashboardAlerts');
     const recentEl = document.getElementById('dashboardRecentInbox');
-    if (!alertsEl && !recentEl) return;
+    const attentionEl = els.attentionGrid || document.getElementById('attentionGrid');
+    if (!alertsEl && !recentEl && !attentionEl) return;
 
     if (isPreviewMode || !getToken()) {
       if (alertsEl) {
         alertsEl.innerHTML = `
-          <div class="dash-alert dash-alert--muted">
+          <div class="dash-alert dash-alert--muted dash-alert--priority">
             <div><strong>Sign in</strong> to see live enquiry and membership alerts.</div>
           </div>`;
       }
       if (recentEl) recentEl.innerHTML = '<p class="form-hint">Sign in to load recent enquiries.</p>';
+      if (attentionEl) {
+        attentionEl.querySelectorAll('.stat-card__hint').forEach(el => {
+          el.textContent = 'Sign in required';
+        });
+      }
       return;
     }
 
-    if (alertsEl) alertsEl.innerHTML = '<div class="dash-alert dash-alert--muted"><div>Loading alerts…</div></div>';
+    if (alertsEl) alertsEl.innerHTML = '<div class="dash-alert dash-alert--muted dash-alert--priority"><div>Loading alerts…</div></div>';
     if (recentEl) recentEl.innerHTML = '<p class="form-hint">Loading…</p>';
 
     let submissions = [];
     let feedbackRows = [];
     let pendingMembers = 0;
+    let eoiPending = 0;
+    let eoiTotal = 0;
     try {
       submissions = await loadSubmissions();
     } catch {
@@ -538,38 +573,100 @@
     } catch {
       pendingMembers = 0;
     }
+    try {
+      const apps = await loadAilcdApplications();
+      eoiTotal = apps.length;
+      eoiPending = apps.filter(a => {
+        const status = String(a.status || 'pending').toLowerCase();
+        return status === 'pending' || !a.read;
+      }).length;
+    } catch {
+      eoiPending = 0;
+      eoiTotal = 0;
+    }
 
     const unread = submissions.filter(s => !s.read).length;
     const unreadFeedback = feedbackRows.filter(s => !s.read).length;
+    const feedbackTotal = feedbackRows.length;
     const recent = submissions.slice(0, 4);
 
     if (alertsEl) {
-      const cards = [];
-      cards.push(`
-        <div class="dash-alert">
-          <div>
-            <strong>${unread}</strong> unread enquir${unread === 1 ? 'y' : 'ies'}
-            <span>Contact inbox needs review</span>
-          </div>
-          <button type="button" class="btn btn--primary btn--sm" data-goto="inbox">Review now</button>
-        </div>`);
-      cards.push(`
-        <div class="dash-alert">
-          <div>
-            <strong>${unreadFeedback}</strong> unread Meet &amp; Greet response${unreadFeedback === 1 ? '' : 's'}
-            <span>Feedback form needs review</span>
-          </div>
-          <button type="button" class="btn btn--outline btn--sm" data-goto="meetGreetFeedback">Open feedback</button>
-        </div>`);
-      cards.push(`
-        <div class="dash-alert dash-alert--membership">
-          <div>
-            <strong>${pendingMembers}</strong> pending membership${pendingMembers === 1 ? '' : 's'}
-            <span>Approve or follow up registrations</span>
-          </div>
-          <button type="button" class="btn btn--outline btn--sm" data-goto="membership">Open membership</button>
-        </div>`);
-      alertsEl.innerHTML = cards.join('');
+      let priority = null;
+      if (pendingMembers > 0) {
+        priority = {
+          html: `<strong>${pendingMembers}</strong> pending membership${pendingMembers === 1 ? '' : 's'}`,
+          hint: 'Approve or follow up registrations',
+          goto: 'membership',
+          label: 'Open membership',
+          cls: 'dash-alert--membership'
+        };
+      } else if (unread > 0) {
+        priority = {
+          html: `<strong>${unread}</strong> unread enquir${unread === 1 ? 'y' : 'ies'}`,
+          hint: 'Contact inbox needs review',
+          goto: 'inbox',
+          label: 'Review now',
+          cls: ''
+        };
+      } else if (unreadFeedback > 0) {
+        priority = {
+          html: `<strong>${unreadFeedback}</strong> unread Meet &amp; Greet response${unreadFeedback === 1 ? '' : 's'}`,
+          hint: 'Feedback form needs review',
+          goto: 'meetGreetFeedback',
+          label: 'Open feedback',
+          cls: ''
+        };
+      } else if (eoiPending > 0) {
+        priority = {
+          html: `<strong>${eoiPending}</strong> Leadership EOI item${eoiPending === 1 ? '' : 's'} to review`,
+          hint: 'Expressions of interest awaiting action',
+          goto: 'ailcd',
+          label: 'Open EOI',
+          cls: ''
+        };
+      }
+
+      if (priority) {
+        alertsEl.innerHTML = `
+          <div class="dash-alert dash-alert--priority ${priority.cls}">
+            <div>
+              ${priority.html}
+              <span>${priority.hint}</span>
+            </div>
+            <button type="button" class="btn btn--primary btn--sm" data-goto="${priority.goto}">${priority.label}</button>
+          </div>`;
+      } else {
+        alertsEl.innerHTML = '';
+      }
+    }
+
+    if (attentionEl) {
+      attentionEl.innerHTML = `
+        <div class="stat-card stat-card--inbox">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${unread}</strong>
+          <span>Unread enquiries</span>
+          <em class="stat-card__hint">Contact inbox</em>
+        </div>
+        <div class="stat-card stat-card--feedback">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${feedbackTotal}</strong>
+          <span>Meet &amp; Greet responses</span>
+          <em class="stat-card__hint">${unreadFeedback} unread</em>
+        </div>
+        <div class="stat-card stat-card--membership">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${pendingMembers}</strong>
+          <span>Pending memberships</span>
+          <em class="stat-card__hint">Awaiting approval</em>
+        </div>
+        <div class="stat-card stat-card--eoi">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>${eoiTotal}</strong>
+          <span>Leadership EOI</span>
+          <em class="stat-card__hint">${eoiPending} to review</em>
+        </div>
+      `;
     }
 
     if (recentEl) {
@@ -578,16 +675,25 @@
       } else {
         recentEl.innerHTML = `
           <ul class="dash-recent-list">
-            ${recent.map(s => `
+            ${recent.map(s => {
+              const when = s.created_at
+                ? new Date(s.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+                : '';
+              const status = s.read ? 'read' : 'new';
+              const subject = escapeHtml(s.subject || 'contact');
+              return `
               <li class="dash-recent-item ${s.read ? 'is-read' : ''}">
                 <div class="dash-recent-item__top">
                   <strong>${escapeHtml(s.name || 'Anonymous')}</strong>
-                  <span>${s.read ? 'read' : 'new'} · ${escapeHtml(s.subject || 'general')}</span>
+                  <time>${when}</time>
                 </div>
                 <p>${escapeHtml(String(s.message || '').slice(0, 140))}${String(s.message || '').length > 140 ? '…' : ''}</p>
-                <time>${new Date(s.created_at).toLocaleString()}</time>
-              </li>
-            `).join('')}
+                <div class="dash-recent-item__tags">
+                  <span class="dash-tag dash-tag--${s.read ? 'muted' : 'new'}">${status}</span>
+                  <span class="dash-tag">${subject}</span>
+                </div>
+              </li>`;
+            }).join('')}
           </ul>`;
       }
     }
@@ -4264,6 +4370,7 @@
   });
   els.publishBtn.addEventListener('click', publish);
   els.exportBtn.addEventListener('click', exportJson);
+  document.getElementById('overviewExportBtn')?.addEventListener('click', exportJson);
 
   document.getElementById('seedSupabaseBtn')?.addEventListener('click', async () => {
     if (isPreviewMode) {
