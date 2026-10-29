@@ -482,20 +482,23 @@
 
   function renderWelcomeCard(member, portal) {
     if (els.welcomeTitle) {
-      els.welcomeTitle.textContent = portal?.welcomeTitle || `Hello, ${member.name || 'Member'}`;
+      const custom = String(portal?.welcomeTitle || '').trim();
+      const name = member.name || 'Member';
+      els.welcomeTitle.textContent = custom && !/^hello[, ]/i.test(custom)
+        ? custom
+        : `Hello, ${name}`;
     }
 
     const welfareLabel = getWelfareStatusLabel();
     const welfareActive = welfareLabel === 'Active';
     if (els.welcomeMeta) {
       els.welcomeMeta.innerHTML = `
-        <p><span>Membership</span> <strong>${escapeHtml(member.membershipType || 'Member')}</strong>
+        <p>Membership: <strong>${escapeHtml(member.membershipType || 'Member')}</strong>
           · Renews <strong>${escapeHtml(member.renewalDate || member.feeDisplay || '—')}</strong></p>
-        <p><span>Membership ID</span> <strong><code>${escapeHtml(member.membershipId || '—')}</code></strong></p>
+        <p>Membership ID: <strong>${escapeHtml(member.membershipId || '—')}</strong></p>
         <p class="members-welcome-meta__welfare">
-          <span>Welfare</span>
-          <strong>${escapeHtml(welfareData?.welfare?.packageTitle || 'Social welfare')}</strong>
-          <span class="members-status ${welfareActive ? 'is-active' : 'is-pending'}">${escapeHtml(welfareLabel)}</span>
+          Welfare: <strong>${escapeHtml(welfareData?.welfare?.packageTitle || 'Social welfare')}</strong>
+          · <span class="members-status status-chip ${welfareActive ? 'is-active status-chip--active' : 'is-pending status-chip--pending'}">${escapeHtml(welfareLabel)}</span>
         </p>
       `;
     }
@@ -991,17 +994,9 @@
         if (!adminLink) {
           adminLink = document.createElement('a');
           adminLink.id = 'memberOpenAdmin';
-          adminLink.className = 'members-app__quick-outline';
+          adminLink.className = 'members-btn members-btn--ghost';
           adminLink.href = 'login.html?dest=admin';
           adminLink.textContent = 'Leadership admin';
-          adminLink.style.display = 'inline-block';
-          adminLink.style.marginTop = '12px';
-          adminLink.style.padding = '10px 14px';
-          adminLink.style.borderRadius = '12px';
-          adminLink.style.border = '1px solid rgba(61,43,31,0.18)';
-          adminLink.style.textDecoration = 'none';
-          adminLink.style.fontWeight = '600';
-          adminLink.style.color = '#3d2b1f';
           actions.appendChild(adminLink);
         }
       } else if (adminLink) {

@@ -8,8 +8,8 @@
   <title>Members Dashboard | Gotabgaa Australia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=44">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=45">
   <link rel="icon" href="assets/logo-round.png" type="image/png">
 </head>
 <body class="page-members-app">
@@ -73,59 +73,61 @@
       <div class="members-dashboard" id="memberDashboard" hidden>
         <!-- Home (Taunet-style) -->
         <div class="members-panel is-active" data-panel="dashboard" id="panelDashboard">
-          <div class="members-app__grid">
-            <section class="members-app__card members-welcome-card">
-              <p class="members-app__eyebrow">Welcome</p>
-              <h2 id="memberWelcomeTitle">Hello</h2>
+          <div class="dash-grid">
+            <section class="dash-card dash-card--welcome members-welcome-card">
+              <h2>Welcome</h2>
+              <p class="members-welcome-hello" id="memberWelcomeTitle">Hello</p>
               <div class="members-welcome-meta" id="memberWelcomeMeta"></div>
               <div class="members-welcome-note" id="memberWelcomeNote"></div>
               <div id="memberOpenAdminSlot"></div>
             </section>
 
-            <section class="members-app__card">
-              <p class="members-app__eyebrow">Quick actions</p>
-              <div class="members-app__quick">
-                <button type="button" class="members-app__quick-primary members-tabs__btn" data-tab="events">Check Events</button>
-                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="feed">Feed</button>
-                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="photos">Photos</button>
-                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="explore">Resources</button>
-                <button type="button" class="members-app__quick-outline members-tabs__btn" data-tab="welfare">Welfare Support</button>
+            <section class="dash-card dash-card--actions">
+              <h2>Quick Actions</h2>
+              <div class="quick-actions">
+                <button type="button" class="members-btn members-btn--primary members-tabs__btn" data-tab="events">Check Events</button>
+                <button type="button" class="members-btn members-btn--ghost members-tabs__btn" data-tab="feed">Feed</button>
+                <button type="button" class="members-btn members-btn--ghost members-tabs__btn" data-tab="photos">Photos</button>
+                <button type="button" class="members-btn members-btn--ghost members-tabs__btn" data-tab="explore">Resources</button>
+                <button type="button" class="members-btn members-btn--ghost members-tabs__btn" data-tab="welfare">Welfare Support</button>
               </div>
             </section>
+
+            <section class="dash-card dash-card--full">
+              <h2>Community Feed</h2>
+              <p class="members-home-block__text">Share community updates, news, and announcements. Browse posts by category in the Feed.</p>
+              <button type="button" class="members-btn members-btn--primary members-tabs__btn" data-tab="feed">Open Feed</button>
+            </section>
+
+            <section class="dash-card dash-card--full">
+              <h2>Announcements</h2>
+              <div id="homeAnnouncements" class="members-announcements">Loading announcements…</div>
+            </section>
+
+            <section class="dash-card dash-card--full dash-card--events-phases">
+              <h2>Community Events</h2>
+              <p class="members-home-block__text event-phases-dashboard__intro">Scroll sideways to see each flyer. Use the tabs to switch Upcoming, Live, Recent, and Past.</p>
+              <div class="event-flyer-board">
+                <div class="event-flyer-board__tabs members-event-tabs" id="homeEventTabs" role="tablist" aria-label="Home event filters">
+                  <button type="button" class="event-flyer-board__tab members-event-tabs__btn is-active" data-home-event-filter="upcoming">Upcoming</button>
+                  <button type="button" class="event-flyer-board__tab members-event-tabs__btn" data-home-event-filter="live">Live</button>
+                  <button type="button" class="event-flyer-board__tab members-event-tabs__btn" data-home-event-filter="recent">Recent</button>
+                  <button type="button" class="event-flyer-board__tab members-event-tabs__btn" data-home-event-filter="past">Past</button>
+                </div>
+                <div id="homeEventsList" class="event-flyer-board__row members-event-cards members-event-cards--scroll"></div>
+              </div>
+              <p class="members-panel__footer-link"><button type="button" class="members-text-link members-tabs__btn" data-tab="events">View all my events →</button></p>
+            </section>
+
+            <section class="dash-card dash-card--registrations dash-card--full">
+              <h2>My event bookings</h2>
+              <p class="members-booking-note members-booking-note--muted" id="homeBookingsNote">
+                Book from Events, then return here for your receipt and ticket details. PayID details appear when payment is pending.
+              </p>
+              <div id="homeBookingsList" class="members-booking-cards"></div>
+              <p class="members-panel__footer-link"><a href="events.html" class="members-text-link">View all events →</a></p>
+            </section>
           </div>
-
-          <section class="members-app__card members-home-block">
-            <p class="members-app__eyebrow">Community feed</p>
-            <p class="members-home-block__text">Share community updates, news, and announcements. Browse posts by category in the Feed.</p>
-            <button type="button" class="members-app__quick-primary members-tabs__btn" data-tab="feed" style="width:auto;display:inline-flex;padding:11px 18px">Open Feed</button>
-          </section>
-
-          <section class="members-app__card members-home-block">
-            <p class="members-app__eyebrow">Announcements</p>
-            <div id="homeAnnouncements" class="members-announcements">Loading announcements…</div>
-          </section>
-
-          <section class="members-app__card members-home-block">
-            <p class="members-app__eyebrow">Community events</p>
-            <p class="members-home-block__text">Scroll sideways to see each flyer. Use the tabs to switch Upcoming, Live, Recent, and Past.</p>
-            <div class="members-event-tabs" id="homeEventTabs" role="tablist" aria-label="Home event filters">
-              <button type="button" class="members-event-tabs__btn is-active" data-home-event-filter="upcoming">Upcoming</button>
-              <button type="button" class="members-event-tabs__btn" data-home-event-filter="live">Live</button>
-              <button type="button" class="members-event-tabs__btn" data-home-event-filter="recent">Recent</button>
-              <button type="button" class="members-event-tabs__btn" data-home-event-filter="past">Past</button>
-            </div>
-            <div id="homeEventsList" class="members-event-cards members-event-cards--scroll"></div>
-            <p class="members-panel__footer-link"><button type="button" class="members-text-link members-tabs__btn" data-tab="events">View all my events →</button></p>
-          </section>
-
-          <section class="members-app__card members-home-block">
-            <p class="members-app__eyebrow">My event bookings</p>
-            <div class="members-booking-note" id="homeBookingsNote">
-              Book from Events, then return here for your receipt and ticket details. PayID details appear when payment is pending.
-            </div>
-            <div id="homeBookingsList" class="members-booking-cards"></div>
-            <p class="members-panel__footer-link"><a href="events.html">View all events →</a></p>
-          </section>
         </div>
 
         <div class="members-panel members-app__card" data-panel="feed" id="panelFeed" hidden>
@@ -214,7 +216,7 @@
   <script src="js/supabase-browser.js?v=24"></script>
   <script src="js/content-loader.js?v=28"></script>
   <script src="js/payment-instructions.js?v=24"></script>
-  <script src="js/members-dashboard.js?v=35"></script>
+  <script src="js/members-dashboard.js?v=36"></script>
   <script>
     (function () {
       const app = document.getElementById('membersApp');
