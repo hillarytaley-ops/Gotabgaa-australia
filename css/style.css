@@ -8522,24 +8522,19 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 /* ========== Members app shell (Taunet-like) ========== */
 .page-members-app {
-  --members-brown: #3d2b1f;
-  --members-accent: #c9792b;
-  --members-accent-deep: #8f4e16;
-  --members-muted: #666;
-  --members-text: #2a1f17;
-  --members-radius: 12px;
-  --members-shadow: 0 4px 24px rgba(51, 51, 51, 0.08);
+  --members-brown: var(--brown-800);
+  --members-brown-deep: var(--brown-900);
+  --members-accent: var(--brown-800);
+  --members-accent-deep: var(--brown-900);
+  --members-muted: var(--text-muted);
+  --members-text: var(--text);
+  --members-radius: var(--radius);
+  --members-shadow: var(--shadow);
   margin: 0;
   min-height: 100svh;
-  background: #f8f5f0;
-  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--cream);
+  font-family: var(--font-body);
   color: var(--members-text);
-}
-
-.page-members-app h1,
-.page-members-app .dash-card h2,
-.page-members-app .members-app__brand strong {
-  font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
 }
 
 .members-app {
@@ -8614,7 +8609,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .members-app__nav-btn.is-active {
-  background: rgba(192, 121, 43, 0.28);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
 }
 
@@ -8765,8 +8760,8 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   margin-top: 12px;
   padding: 12px 14px;
   border-radius: var(--members-radius);
-  background: rgba(192, 120, 48, 0.1);
-  color: #3d2b1f;
+  background: #f7eee6;
+  color: var(--brown-800);
 }
 
 .members-welcome-note p {
@@ -8804,11 +8799,11 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 .dash-card h2 {
   margin: 0 0 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--members-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8a7a6c;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
 }
 
 .quick-actions {
@@ -8839,24 +8834,26 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .members-btn--primary {
-  background: linear-gradient(135deg, var(--members-accent) 0%, var(--members-accent-deep) 100%);
+  background: var(--brown-800);
   color: #fff;
-  border-color: transparent;
-  box-shadow: 0 6px 16px rgba(143, 78, 22, 0.22);
+  border-color: var(--brown-800);
+  box-shadow: 0 6px 16px rgba(42, 31, 23, 0.16);
 }
 
 .members-btn--primary:hover {
+  background: var(--brown-700);
+  border-color: var(--brown-700);
   transform: translateY(-1px);
 }
 
 .members-btn--ghost {
-  background: transparent;
-  color: var(--members-brown);
-  border-color: rgba(61, 43, 31, 0.35);
+  background: #fff;
+  color: var(--brown-800);
+  border-color: rgba(61, 43, 31, 0.18);
 }
 
 .members-btn--ghost:hover {
-  background: rgba(61, 43, 31, 0.05);
+  background: var(--cream-dark);
 }
 
 .status-chip,
@@ -8873,14 +8870,14 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 .status-chip--active,
 .page-members-app .members-status.is-active {
-  background: rgba(34, 139, 34, 0.15);
-  color: #228b22;
+  background: #e8f6ee;
+  color: #1f7a45;
 }
 
 .status-chip--pending,
 .page-members-app .members-status.is-pending {
-  background: rgba(210, 105, 30, 0.15);
-  color: #b8860b;
+  background: rgba(184, 134, 75, 0.18);
+  color: #8a5a28;
 }
 
 .event-flyer-board__tabs {
@@ -8892,7 +8889,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 .event-flyer-board__tab {
   appearance: none;
-  border: 0;
+  border: 1px solid rgba(61, 43, 31, 0.15);
   border-radius: 99px;
   padding: 0.45rem 0.85rem;
   font: inherit;
@@ -8900,16 +8897,16 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #efe7dc;
-  color: #5c4c40;
+  background: #fff;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .event-flyer-board__tab.is-active,
 .page-members-app .members-event-tabs__btn.is-active {
-  background: var(--members-accent);
+  background: var(--brown-800);
   color: #fff;
-  border-color: transparent;
+  border-color: var(--brown-800);
 }
 
 .event-flyer-board__row {
@@ -9005,9 +9002,14 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 .page-members-app .members-panel__footer-link a,
 .page-members-app .members-text-link {
-  color: var(--members-accent-deep);
+  color: var(--brown-800);
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+.page-members-app .members-text-link:hover,
+.page-members-app .members-panel__footer-link a:hover {
+  color: var(--tan);
 }
 
 .members-app__side-foot {
@@ -9042,10 +9044,9 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 
 .members-app__topbar h1 {
   margin: 0;
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: -0.02em;
+  color: var(--brown-900);
 }
 
 .members-app__status {
@@ -9070,7 +9071,7 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e08a2f, #c9792b);
+  background: var(--brown-800);
   color: #fff;
   display: grid;
   place-items: center;
@@ -9117,15 +9118,15 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .members-app__quick-primary {
-  background: linear-gradient(135deg, #c9792b, #8f4e16);
+  background: var(--brown-800);
   color: #fff;
   border: 0;
 }
 
 .members-app__quick-outline {
-  background: transparent;
-  color: #3d2b1f;
-  border: 2px solid rgba(61,43,31,0.35);
+  background: #fff;
+  color: var(--brown-800);
+  border: 1px solid rgba(61, 43, 31, 0.18);
 }
 
 #memberOpenAdminSlot .members-btn,
