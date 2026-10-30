@@ -25,6 +25,44 @@ function siteUrl() {
   return String(process.env.SITE_URL || 'https://www.gotabgaaaustralia.org').replace(/\/$/, '');
 }
 
+function logoUrl() {
+  return `${siteUrl()}/assets/logo-round.png`;
+}
+
+/** Shared Gotabgaa logo header for every outbound email. */
+function emailBrandHeader() {
+  return `
+      <div style="text-align:center;margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid #efe7dc">
+        <img src="${escapeHtml(logoUrl())}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
+        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
+      </div>`;
+}
+
+function emailBrandFooter() {
+  return `
+      <div style="margin-top:28px;padding-top:18px;border-top:1px solid #efe7dc">
+        <p style="margin:0 0 8px;color:#3d2e22">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
+        <p style="margin:0;color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
+      </div>`;
+}
+
+/**
+ * Wrap message body in the standard branded shell with logo.
+ * Skips re-wrapping if the HTML already includes the logo image.
+ */
+function withGotabgaaBrand(html) {
+  const body = String(html || '');
+  if (/logo-round\.png/i.test(body)) return body;
+
+  return `
+    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
+      ${emailBrandHeader()}
+      ${body}
+      ${emailBrandFooter()}
+    </div>
+  `;
+}
+
 export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY);
 }
@@ -71,7 +109,8 @@ export async function sendEmail({ to, subject, html, text }) {
     return { ok: false, skipped: true, reason: 'Missing recipient email' };
   }
 
-  const payload = { to, subject, html, text };
+  const brandedHtml = withGotabgaaBrand(html);
+  const payload = { to, subject, html: brandedHtml, text };
   // Prefer branded domain From (inbox). Fall back to Resend test sender only if domain is not verified.
   let { res, data } = await postResendEmail(key, FROM, payload);
   const firstError = data.message || data.error || (!res.ok ? `Email failed (${res.status})` : '');
@@ -107,14 +146,11 @@ function paymentBlock(payment, amount, reference) {
 
 export async function sendRegistrationConfirmation({ to, name, payment, amount, reference, subject, intro }) {
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Registration received</h2>
+      <h2 style="color:#3d2e22;margin:0 0 16px">Registration received</h2>
       <p>Hi ${escapeHtml(name)},</p>
       <p>${escapeHtml(intro || 'Thank you for registering with Gotabgaa Australia. Please complete payment using the details below.')}</p>
       ${paymentBlock(payment, amount, reference)}
       <p>Our team will confirm your membership after payment is received.</p>
-      <p style="color:#6b5b4f;font-size:14px">Questions? Reply to ${escapeHtml(payment?.receiptEmail || 'info@gotabgaaaustralia.org')}</p>
-    </div>
   `;
 
   return sendEmail({
@@ -146,8 +182,7 @@ export async function sendMembershipApproved({
     : `<p>Visit <strong>login.html</strong> and use <em>Forgot password</em> with this email to create your password.</p>`;
 
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">${isResync ? 'Member login ready' : 'Membership approved'}</h2>
+      <h2 style="color:#3d2e22;margin:0 0 16px">${isResync ? 'Member login ready' : 'Membership approved'}</h2>
       <p>Hi ${escapeHtml(name)},</p>
       <p>${isResync
         ? 'Your Gotabgaa Australia member login has been set up (or refreshed).'
@@ -156,7 +191,6 @@ export async function sendMembershipApproved({
       ${loginSection}
       <p>After setting your password, sign in at <a href="${escapeHtml(siteUrl())}/login.html">the Sign In page</a> with your <strong>email and password</strong>.</p>
       ${paySection}
-    </div>
   `;
 
   return sendEmail({
@@ -170,8 +204,7 @@ export async function sendMembershipApproved({
 
 export async function sendPaymentReceipt({ to, name, type, payment, amount, reference, invoiceNumber }) {
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Payment receipt</h2>
+      <h2 style="color:#3d2e22;margin:0 0 16px">Payment receipt</h2>
       <p>Hi ${escapeHtml(name)},</p>
       <p>We have received your payment for <strong>${escapeHtml(type)}</strong>.</p>
       <p><strong>Receipt #:</strong> ${escapeHtml(invoiceNumber || reference)}</p>
@@ -179,7 +212,6 @@ export async function sendPaymentReceipt({ to, name, type, payment, amount, refe
       <p><strong>Reference:</strong> ${escapeHtml(reference)}</p>
       <p>${escapeHtml(payment?.legalName || 'Gotabgaa Australia')}${payment?.abn ? ` · ABN ${escapeHtml(payment.abn)}` : ''}</p>
       <p style="color:#6b5b4f">${escapeHtml(payment?.gstNote || '')}</p>
-    </div>
   `;
 
   return sendEmail({
@@ -191,14 +223,12 @@ export async function sendPaymentReceipt({ to, name, type, payment, amount, refe
 
 export async function sendPasswordReset({ to, name, resetLink }) {
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Reset your password</h2>
+      <h2 style="color:#3d2e22;margin:0 0 16px">Reset your password</h2>
       <p>Hi ${escapeHtml(name || 'there')},</p>
       <p>Use this link to set a new password for your Gotabgaa Australia account:</p>
       <p><a href="${escapeHtml(resetLink)}" style="display:inline-block;padding:12px 18px;background:#3d2b1f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Set password &amp; sign in</a></p>
       <p style="color:#6b5b4f;font-size:14px">This link expires after a short time. If you did not request it, you can ignore this email.</p>
       <p>After setting your password, sign in at <a href="${escapeHtml(siteUrl())}/login.html">the Sign In page</a>.</p>
-    </div>
   `;
 
   return sendEmail({
@@ -215,7 +245,6 @@ export async function sendAdminInvite({ to, name, setupLink }) {
     ? 'Gotabgaa Australia'
     : (FROM.match(/<([^>]+)>/) || [])[1] || REPLY_TO;
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
       <h2 style="color:#3d2e22;margin:0 0 16px">Committee admin invitation</h2>
       <p>Hi ${escapeHtml(firstName)},</p>
       <p>You have been invited to the <strong>Gotabgaa Australia</strong> committee admin dashboard.</p>
@@ -223,7 +252,6 @@ export async function sendAdminInvite({ to, name, setupLink }) {
       <p><a href="${escapeHtml(setupLink)}" style="display:inline-block;padding:12px 18px;background:#3d2b1f;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Create password &amp; continue</a></p>
       <p>After that, sign in at <a href="${escapeHtml(loginUrl)}">${escapeHtml(loginUrl)}</a> with this email and your new password, then open the leadership admin dashboard.</p>
       <p style="color:#6b5b4f;font-size:14px">If you were not expecting this invitation, you can ignore this email. Questions? Reply to ${escapeHtml(REPLY_TO)} (sent via ${escapeHtml(fromHint)}).</p>
-    </div>
   `;
 
   return sendEmail({
@@ -235,14 +263,12 @@ export async function sendAdminInvite({ to, name, setupLink }) {
 
 export async function sendBookingConfirmation({ to, name, eventTitle, payment, amount, reference, tickets }) {
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17">
-      <h2 style="color:#3d2e22">Event booking received</h2>
+      <h2 style="color:#3d2e22;margin:0 0 16px">Event booking received</h2>
       <p>Hi ${escapeHtml(name)},</p>
       <p>Your booking for <strong>${escapeHtml(eventTitle)}</strong> (${escapeHtml(String(tickets))} place(s)) is registered.</p>
       ${Number(amount?.replace?.(/[^0-9.]/g, '') || 0) > 0
     ? `<p>Please complete payment:</p>${paymentBlock(payment, amount, reference)}`
     : '<p>No payment is required for this event.</p>'}
-    </div>
   `;
 
   return sendEmail({
@@ -254,21 +280,12 @@ export async function sendBookingConfirmation({ to, name, eventTitle, payment, a
 
 export async function sendMeetGreetFeedbackThanks({ to, name }) {
   const firstName = String(name || 'Friend').trim() || 'Friend';
-  const logoUrl = `${siteUrl()}/assets/logo-round.png`;
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
-      <div style="text-align:center;margin:0 0 24px">
-        <img src="${escapeHtml(logoUrl)}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
-        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
-      </div>
       <h2 style="color:#3d2e22;margin:0 0 16px;font-size:22px">Kongoi Bik Chok</h2>
       <p>Hi ${escapeHtml(firstName)},</p>
       <p>Thank you for taking part in the Meet &amp; Greet feedback review with Gotabgaa Australia.</p>
       <p>Your answers help us plan the next gathering for our community.</p>
       <p>We are grateful for your time and participation.</p>
-      <p style="margin-top:28px">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
-      <p style="color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
-    </div>
   `;
 
   return sendEmail({
@@ -281,21 +298,12 @@ export async function sendMeetGreetFeedbackThanks({ to, name }) {
 export async function sendEfareVoteThanks({ to, name, vote }) {
   const firstName = String(name || 'Friend').trim() || 'Friend';
   const choice = vote === 'nay' ? 'Nay — I do not adopt the proposal' : 'Aye — I adopt the proposal';
-  const logoUrl = `${siteUrl()}/assets/logo-round.png`;
   const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
-      <div style="text-align:center;margin:0 0 24px">
-        <img src="${escapeHtml(logoUrl)}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
-        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
-      </div>
       <h2 style="color:#3d2e22;margin:0 0 16px;font-size:22px">Thank you for voting</h2>
       <p>Hi ${escapeHtml(firstName)},</p>
       <p>Thank you for taking part in the Interim Leadership vote on <strong>Empowerment Fare (E-Fare)</strong>.</p>
       <p>Your vote has been recorded as <strong>${escapeHtml(choice)}</strong>.</p>
       <p>Each email can vote only once. This note confirms that your vote is in.</p>
-      <p style="margin-top:28px">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
-      <p style="color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
-    </div>
   `;
 
   return sendEmail({
@@ -304,4 +312,3 @@ export async function sendEfareVoteThanks({ to, name, vote }) {
     html
   });
 }
-
