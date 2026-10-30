@@ -49,6 +49,7 @@
     memberPortal: 'Member Portal',
     ailcd: 'Leadership EOI',
     admins: 'Onboard admins',
+    documents: 'Documents',
     inbox: 'Contact Inbox',
     meetGreetFeedback: 'Meet & Greet Feedback',
     efareVote: 'E-Fare Vote',
@@ -72,6 +73,7 @@
     memberPortal: 'portal',
     ailcd: 'eoi',
     admins: 'admins',
+    documents: 'documents',
     inbox: 'inbox',
     meetGreetFeedback: 'inbox',
     efareVote: 'eoi',
@@ -2910,6 +2912,270 @@
     });
   }
 
+  const DOC_CATEGORIES = [
+    'General', 'Governance', 'Finance', 'Minutes', 'Membership', 'Welfare', 'Events', 'Letters', 'Other'
+  ];
+
+  function formatDocDate(value) {
+    if (!value) return '—';
+    try {
+      return new Date(value).toLocaleString(undefined, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    } catch {
+      return String(value);
+    }
+  }
+
+  function renderDocumentsShell(categories = DOC_CATEGORIES) {
+    const options = categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    return `
+      <div class="card card--elevated">
+        <h3>Upload document</h3>
+        <p class="form-hint">
+          Store committee PDFs, letters, minutes, and spreadsheets here. Files are private — only signed-in admins can download them.
+          Max 4&nbsp;MB per file.
+        </p>
+        <form id="documentUploadForm" class="admin-invite-form docs-upload-form">
+          <div class="admin-invite-form__grid">
+            <div class="form-group">
+              <label class="form-label" for="docTitle">Title</label>
+              <input id="docTitle" name="title" type="text" required maxlength="160" placeholder="e.g. Interim leadership minutes — Oct 2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="docCategory">Category</label>
+              <select id="docCategory" name="category">${options}</select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="docDescription">Short description (optional)</label>
+            <input id="docDescription" name="description" type="text" maxlength="500" placeholder="What this file is for">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="docFile">File</label>
+            <input id="docFile" name="file" type="file" required accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.rtf,.png,.jpg,.jpeg,.webp,.gif,.ppt,.pptx,.odt,.ods">
+          </div>
+          <button type="submit" class="btn btn--primary" id="docUploadBtn">Upload document</button>
+          <p id="docUploadStatus" class="form-hint" hidden></p>
+        </form>
+      </div>
+      <div class="card card--elevated" style="margin-top:14px">
+        <div class="dashboard-card-head">
+          <h3>Document library</h3>
+          <button type="button" class="btn btn--outline btn--sm" id="docsRefreshBtn">Refresh</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Size</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="docsLibraryBody">
+              <tr><td colspan="5" class="admin-empty">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDocumentRows(rows) {
+    if (!rows.length) {
+      return `<tr><td colspan="5" class="admin-empty">No documents yet. Upload a file above.</td></tr>`;
+    }
+    return rows.map(row => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(row.title || 'Untitled')}</strong>
+          ${row.description ? `<div class="form-hint" style="margin:4px 0 0">${escapeHtml(row.description)}</div>` : ''}
+          <div class="form-hint" style="margin:2px 0 0">${escapeHtml(row.file_name || '')}</div>
+        </td>
+        <td>${escapeHtml(row.category || 'General')}</td>
+        <td>${escapeHtml(row.size_label || '—')}</td>
+        <td>${escapeHtml(formatDocDate(row.created_at))}</td>
+        <td class="admin-row-actions">
+          <button type="button" class="btn btn--outline btn--sm" data-doc-download="${escapeHtml(row.id)}">Download</button>
+          <button type="button" class="btn btn--outline btn--sm" data-doc-delete="${escapeHtml(row.id)}" data-doc-title="${escapeHtml(row.title || 'this document')}">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadDocumentsLibrary() {
+    const body = document.getElementById('docsLibraryBody');
+    if (!body) return;
+    body.innerHTML = `<tr><td colspan="5" class="admin-empty">Loading…</td></tr>`;
+    try {
+      const res = await authFetch('/api/documents');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not load documents.');
+      body.innerHTML = renderDocumentRows(data.rows || []);
+      return data;
+    } catch (err) {
+      if (isAuthError(err)) return null;
+      body.innerHTML = `<tr><td colspan="5" class="admin-empty">${escapeHtml(err.message || 'Could not load documents.')}</td></tr>`;
+      return null;
+    }
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result || '');
+        const base64 = result.includes(',') ? result.split(',')[1] : result;
+        resolve(base64);
+      };
+      reader.onerror = () => reject(new Error('Could not read that file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function downloadDocument(id) {
+    const res = await authFetch(`/api/documents?id=${encodeURIComponent(id)}&download=1`);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Could not create download link.');
+    if (!data.url) throw new Error('Download link was empty.');
+    const a = document.createElement('a');
+    a.href = data.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.download = data.fileName || 'document';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  async function deleteDocument(id) {
+    const res = await authFetch(`/api/documents?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Could not delete document.');
+    return data;
+  }
+
+  async function renderDocumentsSection(panel) {
+    if (isPreviewMode || !getToken()) {
+      panel.innerHTML = `<div class="card"><p>Sign in to manage committee documents.</p></div>`;
+      return;
+    }
+
+    panel.innerHTML = renderDocumentsShell();
+    const loaded = await loadDocumentsLibrary();
+    if (loaded?.categories?.length) {
+      const select = document.getElementById('docCategory');
+      if (select) {
+        select.innerHTML = loaded.categories
+          .map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
+          .join('');
+      }
+    }
+
+    document.getElementById('docsRefreshBtn')?.addEventListener('click', () => loadDocumentsLibrary());
+
+    const form = document.getElementById('documentUploadForm');
+    const status = document.getElementById('docUploadStatus');
+    const submit = document.getElementById('docUploadBtn');
+
+    form?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const title = String(document.getElementById('docTitle')?.value || '').trim();
+      const category = String(document.getElementById('docCategory')?.value || 'General').trim();
+      const description = String(document.getElementById('docDescription')?.value || '').trim();
+      const fileInput = document.getElementById('docFile');
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        showStatus('Choose a file to upload.', 'error');
+        return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        showStatus('File too large (max 4 MB).', 'error');
+        return;
+      }
+
+      if (status) {
+        status.hidden = false;
+        status.classList.remove('is-error');
+        status.textContent = 'Uploading…';
+      }
+      if (submit) submit.disabled = true;
+
+      try {
+        const data = await readFileAsBase64(file);
+        const uploadedBy = getSignedInAdminEmail() || '';
+        const res = await authFetch('/api/documents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            category,
+            description,
+            filename: file.name,
+            contentType: file.type || 'application/octet-stream',
+            data,
+            uploadedBy
+          })
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error || 'Upload failed.');
+        if (status) {
+          status.classList.remove('is-error');
+          status.textContent = payload.message || 'Uploaded.';
+        }
+        form.reset();
+        await loadDocumentsLibrary();
+        showStatus(payload.message || 'Document uploaded.', 'success');
+      } catch (err) {
+        if (status) {
+          status.classList.add('is-error');
+          status.textContent = err.message || 'Upload failed.';
+        }
+        showStatus(err.message || 'Upload failed.', 'error');
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    });
+
+    panel.addEventListener('click', async e => {
+      const downloadBtn = e.target.closest('[data-doc-download]');
+      if (downloadBtn) {
+        downloadBtn.disabled = true;
+        try {
+          await downloadDocument(downloadBtn.dataset.docDownload);
+          showStatus('Download started.', 'success');
+        } catch (err) {
+          showStatus(err.message || 'Download failed.', 'error');
+        } finally {
+          downloadBtn.disabled = false;
+        }
+        return;
+      }
+
+      const deleteBtn = e.target.closest('[data-doc-delete]');
+      if (deleteBtn) {
+        const title = deleteBtn.dataset.docTitle || 'this document';
+        if (!confirm(`Delete “${title}”? This cannot be undone.`)) return;
+        deleteBtn.disabled = true;
+        try {
+          await deleteDocument(deleteBtn.dataset.docDelete);
+          showStatus(`Deleted “${title}”.`, 'success');
+          await loadDocumentsLibrary();
+        } catch (err) {
+          showStatus(err.message || 'Could not delete document.', 'error');
+          deleteBtn.disabled = false;
+        }
+      }
+    });
+  }
+
   async function loadWelfareRegistrationsPanel() {
     const card = document.getElementById('welfareRegistrationsCard');
     if (!card) return;
@@ -3487,6 +3753,10 @@
         }
         if (section === 'admins') {
           renderAdminsSection(panel);
+          return;
+        }
+        if (section === 'documents') {
+          renderDocumentsSection(panel);
           return;
         }
         const renderers = {
