@@ -29,37 +29,40 @@ function logoUrl() {
   return `${siteUrl()}/assets/logo-round.png`;
 }
 
-/** Shared Gotabgaa logo header for every outbound email. */
-function emailBrandHeader() {
-  return `
-      <div style="text-align:center;margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid #efe7dc">
-        <img src="${escapeHtml(logoUrl())}" alt="Gotabgaa Australia" width="96" height="96" style="display:block;margin:0 auto;border:0;border-radius:50%" />
-        <p style="margin:12px 0 0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
-      </div>`;
-}
-
-function emailBrandFooter() {
-  return `
-      <div style="margin-top:28px;padding-top:18px;border-top:1px solid #efe7dc">
-        <p style="margin:0 0 8px;color:#3d2e22">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
-        <p style="margin:0;color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
-      </div>`;
-}
-
 /**
- * Wrap message body in the standard branded shell with logo.
- * Skips re-wrapping if the HTML already includes the logo image.
+ * One branded message: logo on top, then the copy, then a short sign-off.
+ * No separate “header card” — logo and message read as a single email.
  */
 function withGotabgaaBrand(html) {
-  const body = String(html || '');
-  if (/logo-round\.png/i.test(body)) return body;
+  let body = String(html || '').trim();
+  // Strip a prior logo block if a template already included one, so we never double up.
+  body = body.replace(
+    /<div[^>]*>\s*<img[^>]*logo-round\.png[^>]*>[\s\S]*?<\/div>/i,
+    ''
+  ).trim();
 
   return `
-    <div style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
-      ${emailBrandHeader()}
-      ${body}
-      ${emailBrandFooter()}
-    </div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0;padding:0;background:#faf7f2">
+  <tr>
+    <td align="center" style="padding:24px 12px">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden">
+        <tr>
+          <td style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;padding:28px 24px 32px">
+            <div style="text-align:center;margin:0 0 20px">
+              <img src="${escapeHtml(logoUrl())}" alt="Gotabgaa Australia" width="88" height="88" style="display:block;margin:0 auto 10px;border:0;border-radius:50%" />
+              <p style="margin:0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
+            </div>
+            <div style="color:#2a1f17">
+              ${body}
+            </div>
+            <p style="margin:24px 0 0;color:#3d2e22">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
+            <p style="margin:10px 0 0;color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
   `;
 }
 
