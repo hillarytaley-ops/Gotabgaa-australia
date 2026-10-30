@@ -2744,12 +2744,13 @@
               <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Status</th>
                 <th>Added</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="adminAdminsBody">
-              <tr><td colspan="4" class="admin-empty">Loading…</td></tr>
+              <tr><td colspan="5" class="admin-empty">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -2757,9 +2758,22 @@
     `;
   }
 
+  function renderAdminInviteStatus(row) {
+    const accepted = row.invite_status === 'accepted' || Boolean(row.last_sign_in_at);
+    if (accepted) {
+      const when = row.last_sign_in_at ? formatAdminAddedAt(row.last_sign_in_at) : '';
+      return `
+        <span class="admin-status-pill admin-status-pill--accepted">Accepted</span>
+        ${when ? `<div class="form-hint" style="margin:4px 0 0">Signed in ${escapeHtml(when)}</div>` : ''}`;
+    }
+    return `
+      <span class="admin-status-pill admin-status-pill--pending">Pending</span>
+      <div class="form-hint" style="margin:4px 0 0">Invite sent — waiting for password setup</div>`;
+  }
+
   function renderAdminRows(rows) {
     if (!rows.length) {
-      return `<tr><td colspan="4" class="admin-empty">No committee admins on the list yet. Send an invitation above.</td></tr>`;
+      return `<tr><td colspan="5" class="admin-empty">No committee admins on the list yet. Send an invitation above.</td></tr>`;
     }
     const me = getSignedInAdminEmail();
     return rows.map(row => {
@@ -2784,6 +2798,7 @@
         <tr>
           <td>${escapeHtml(row.full_name || '—')}</td>
           <td>${escapeHtml(email)}</td>
+          <td>${renderAdminInviteStatus(row)}</td>
           <td>${escapeHtml(formatAdminAddedAt(row.created_at))}</td>
           <td class="admin-row-actions">${actions}</td>
         </tr>`;
@@ -2793,7 +2808,7 @@
   async function loadSiteAdminsList() {
     const body = document.getElementById('adminAdminsBody');
     if (!body) return;
-    body.innerHTML = `<tr><td colspan="4" class="admin-empty">Loading…</td></tr>`;
+    body.innerHTML = `<tr><td colspan="5" class="admin-empty">Loading…</td></tr>`;
     try {
       const res = await authFetch('/api/admins');
       const data = await res.json().catch(() => ({}));
@@ -2801,7 +2816,7 @@
       body.innerHTML = renderAdminRows(data.rows || []);
     } catch (err) {
       if (isAuthError(err)) return;
-      body.innerHTML = `<tr><td colspan="4" class="admin-empty">${escapeHtml(err.message || 'Could not load committee admins.')}</td></tr>`;
+      body.innerHTML = `<tr><td colspan="5" class="admin-empty">${escapeHtml(err.message || 'Could not load committee admins.')}</td></tr>`;
     }
   }
 

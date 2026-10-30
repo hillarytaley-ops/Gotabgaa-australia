@@ -33,6 +33,37 @@ async function listAdmins(supabase) {
   return data || [];
 }
 
+/** Map auth users by email so we can tell who has signed in after invite. */
+async function loadAuthUsersByEmail(supabase) {
+  const map = new Map();
+  let page = 1;
+  const perPage = 200;
+  while (page <= 10) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) throw error;
+    const users = data?.users || [];
+    for (const user of users) {
+      const email = normalizeMemberEmail(user.email);
+      if (email) map.set(email, user);
+    }
+    if (users.length < perPage) break;
+    page += 1;
+  }
+  return map;
+}
+
+function enrichAdminRow(row, authUser) {
+  const lastSignIn = authUser?.last_sign_in_at || null;
+  const accepted = Boolean(lastSignIn);
+  return {
+    ...row,
+    is_developer: isDeveloperAdmin(row.email),
+    invite_status: accepted ? 'accepted' : 'pending',
+    last_sign_in_at: lastSignIn,
+    auth_created_at: authUser?.created_at || null
+  };
+}
+
 export default async function handler(req, res) {
   const token = readAuthToken(req);
   if (!verifyToken(token, getAdminSecret())) {
@@ -51,11 +82,17 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       try {
         const rows = await listAdmins(supabase);
+        let authByEmail = new Map();
+        try {
+          authByEmail = await loadAuthUsersByEmail(supabase);
+        } catch (err) {
+          console.warn('[admins] auth status lookup', err?.message || err);
+        }
         res.status(200).json({
-          rows: rows.map(row => ({
-            ...row,
-            is_developer: isDeveloperAdmin(row.email)
-          }))
+          rows: rows.map(row => {
+            const email = normalizeMemberEmail(row.email);
+            return enrichAdminRow(row, authByEmail.get(email) || null);
+          })
         });
       } catch (error) {
         if (missingTable(error)) {

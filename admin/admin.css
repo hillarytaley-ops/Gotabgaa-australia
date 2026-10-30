@@ -2493,6 +2493,27 @@ details.list-item[open] > summary {
   color: #9b2c2c;
 }
 
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-status-pill--accepted {
+  background: #e8f6ee;
+  color: #1f7a45;
+}
+
+.admin-status-pill--pending {
+  background: #f7eee6;
+  color: #8a5a28;
+}
+
 @media (max-width: 700px) {
   .admin-invite-form__grid {
     grid-template-columns: 1fr;
