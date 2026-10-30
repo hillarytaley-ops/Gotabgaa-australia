@@ -1,6 +1,10 @@
+import fs from 'fs';
+import path from 'path';
+
 const TEST_FROM = 'Gotabgaa Australia <onboarding@resend.dev>';
 const FROM = process.env.EMAIL_FROM || TEST_FROM;
 const REPLY_TO = process.env.EMAIL_REPLY_TO || 'info@gotabgaaaustralia.org';
+const LOGO_CID = 'gotabgaa-logo';
 
 function isUnverifiedDomainError(message) {
   return /associated domain with your API key is not verified|domain is not verified|create a new API key with full access/i.test(String(message || ''));
@@ -22,47 +26,72 @@ function escapeHtml(str) {
 }
 
 function siteUrl() {
-  return String(process.env.SITE_URL || 'https://www.gotabgaaaustralia.org').replace(/\/$/, '');
+  const raw = String(process.env.SITE_URL || 'https://www.gotabgaaaustralia.org').trim().replace(/\/$/, '');
+  // Prefer www so logo + password links open on the live site.
+  if (/^https?:\/\/gotabgaaaustralia\.org$/i.test(raw)) {
+    return 'https://www.gotabgaaaustralia.org';
+  }
+  return raw || 'https://www.gotabgaaaustralia.org';
 }
 
-function logoUrl() {
-  return `${siteUrl()}/assets/logo-round.png`;
+function stripHtmlToText(html) {
+  return String(html || '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/h[1-6]>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+/** Inline logo so it opens inside the email (not a separate remote image / attachment view). */
+function getLogoAttachment() {
+  try {
+    const filePath = path.join(process.cwd(), 'assets', 'logo-round.png');
+    if (fs.existsSync(filePath)) {
+      return {
+        filename: 'logo-round.png',
+        content: fs.readFileSync(filePath).toString('base64'),
+        content_id: LOGO_CID,
+        content_type: 'image/png'
+      };
+    }
+  } catch (_) {
+    /* fall through to hosted path */
+  }
+  return {
+    filename: 'logo-round.png',
+    path: `${siteUrl()}/assets/logo-round.png`,
+    content_id: LOGO_CID
+  };
 }
 
 /**
- * One branded message: logo on top, then the copy, then a short sign-off.
- * No separate “header card” — logo and message read as a single email.
+ * One branded message: logo on top of the same body as the copy.
  */
 function withGotabgaaBrand(html) {
   let body = String(html || '').trim();
-  // Strip a prior logo block if a template already included one, so we never double up.
-  body = body.replace(
-    /<div[^>]*>\s*<img[^>]*logo-round\.png[^>]*>[\s\S]*?<\/div>/i,
-    ''
-  ).trim();
+  body = body
+    .replace(/<div[^>]*>\s*<img[^>]*(?:logo-round\.png|cid:gotabgaa-logo)[^>]*>[\s\S]*?<\/div>/i, '')
+    .trim();
 
   return `
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0;padding:0;background:#faf7f2">
-  <tr>
-    <td align="center" style="padding:24px 12px">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden">
-        <tr>
-          <td style="font-family:system-ui,sans-serif;line-height:1.6;color:#2a1f17;padding:28px 24px 32px">
-            <div style="text-align:center;margin:0 0 20px">
-              <img src="${escapeHtml(logoUrl())}" alt="Gotabgaa Australia" width="88" height="88" style="display:block;margin:0 auto 10px;border:0;border-radius:50%" />
-              <p style="margin:0;font-size:15px;font-weight:700;color:#3d2e22;letter-spacing:0.02em">Gotabgaa Australia</p>
-            </div>
-            <div style="color:#2a1f17">
-              ${body}
-            </div>
-            <p style="margin:24px 0 0;color:#3d2e22">Unity · Heritage · Excellence<br><strong>Gotabgaa Australia</strong></p>
-            <p style="margin:10px 0 0;color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+<div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6;color:#2a1f17;max-width:560px;margin:0 auto;padding:24px 16px">
+  <p style="margin:0 0 18px;text-align:center">
+    <img src="cid:${LOGO_CID}" alt="Gotabgaa Australia" width="88" height="88" style="display:inline-block;border:0;border-radius:50%;outline:none;text-decoration:none" />
+    <br />
+    <span style="display:inline-block;margin-top:10px;font-size:15px;font-weight:700;color:#3d2e22">Gotabgaa Australia</span>
+  </p>
+  ${body}
+  <p style="margin:24px 0 0;color:#3d2e22">Unity · Heritage · Excellence<br /><strong>Gotabgaa Australia</strong></p>
+  <p style="margin:10px 0 0;color:#6b5b4f;font-size:14px">Questions? Reply to this email or write to ${escapeHtml(REPLY_TO)}.</p>
+</div>
   `;
 }
 
@@ -74,13 +103,14 @@ export function isUsingCustomFromDomain() {
   return Boolean(FROM) && !/onboarding@resend\.dev/i.test(FROM);
 }
 
-async function postResendEmail(key, from, { to, subject, html, text }) {
+async function postResendEmail(key, from, { to, subject, html, text, attachments }) {
   const body = {
     from,
     to: Array.isArray(to) ? to : [to],
     subject,
     html,
-    text: text || html.replace(/<[^>]+>/g, ' ')
+    text: text || stripHtmlToText(html),
+    attachments: attachments || undefined
   };
   // Custom-domain From improves inbox placement; Reply-To helps Gmail trust the brand.
   if (REPLY_TO && !/onboarding@resend\.dev/i.test(from)) {
@@ -113,7 +143,14 @@ export async function sendEmail({ to, subject, html, text }) {
   }
 
   const brandedHtml = withGotabgaaBrand(html);
-  const payload = { to, subject, html: brandedHtml, text };
+  const plainText = text || stripHtmlToText(brandedHtml);
+  const payload = {
+    to,
+    subject,
+    html: brandedHtml,
+    text: plainText,
+    attachments: [getLogoAttachment()]
+  };
   // Prefer branded domain From (inbox). Fall back to Resend test sender only if domain is not verified.
   let { res, data } = await postResendEmail(key, FROM, payload);
   const firstError = data.message || data.error || (!res.ok ? `Email failed (${res.status})` : '');

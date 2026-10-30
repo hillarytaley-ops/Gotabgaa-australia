@@ -9,8 +9,13 @@ import {
 
 export function getPublicSiteUrl() {
   const fromEnv = String(process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '').trim().replace(/\/$/, '');
-  if (fromEnv) return fromEnv;
-  return 'https://gotabgaaaustralia.org';
+  if (fromEnv) {
+    if (/^https?:\/\/gotabgaaaustralia\.org$/i.test(fromEnv)) {
+      return 'https://www.gotabgaaaustralia.org';
+    }
+    return fromEnv;
+  }
+  return 'https://www.gotabgaaaustralia.org';
 }
 
 export function readBearerToken(req) {
