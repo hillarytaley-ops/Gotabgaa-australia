@@ -2398,28 +2398,365 @@ details.list-item[open] > summary {
 }
 
 /* Onboard admins */
+.admins-page {
+  display: grid;
+  gap: 18px;
+}
+
+.admins-invite {
+  overflow: hidden;
+  padding: 0;
+}
+
+.admins-invite__hero {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 22px 24px 18px;
+  background:
+    radial-gradient(ellipse 80% 120% at 0% 0%, rgba(184, 134, 75, 0.16), transparent 55%),
+    linear-gradient(135deg, #fbf6ef 0%, #fff 58%);
+  border-bottom: 1px solid rgba(61, 43, 31, 0.08);
+}
+
+.admins-invite__icon {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--brown-800), #5c4332);
+  box-shadow: 0 8px 18px rgba(61, 43, 31, 0.22);
+  position: relative;
+}
+
+.admins-invite__icon::before {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  background: #f3e6d4;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.admins-invite__copy {
+  min-width: 0;
+}
+
+.admins-invite__copy h3 {
+  margin: 0 0 8px;
+  padding: 0;
+  border: 0;
+  font-size: 1.2rem;
+}
+
+.admins-invite__copy h3::after {
+  display: none;
+}
+
+.admins-invite__copy p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  max-width: 52rem;
+}
+
+.admins-invite__copy a {
+  color: var(--brown-800);
+  font-weight: 700;
+}
+
 .admin-invite-form {
   display: grid;
-  gap: 14px;
-  margin-top: 12px;
+  gap: 16px;
+  padding: 20px 24px 24px;
 }
 
 .admin-invite-form__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
 }
 
-.admin-invite-form .form-group {
+.admin-invite-form .form-field {
   margin: 0;
 }
 
-.admin-invite-form input {
-  width: 100%;
+.admin-invite-form .form-field label {
+  color: var(--brown-800);
+  letter-spacing: 0.01em;
 }
 
-#adminInviteStatus.is-error {
+.admins-input {
+  position: relative;
+}
+
+.admins-input__icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  opacity: 0.45;
+  background: var(--brown-700);
+  pointer-events: none;
+}
+
+.admins-input__icon--user {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.admins-input__icon--mail {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.admins-input input {
+  width: 100%;
+  padding: 13px 14px 13px 40px;
+  border: 1px solid rgba(61, 43, 31, 0.14);
+  border-radius: 12px;
+  font: inherit;
+  color: var(--brown-800);
+  background: linear-gradient(180deg, #fff 0%, #fbf8f3 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.admins-input input::placeholder {
+  color: #a8927c;
+}
+
+.admins-input input:hover {
+  border-color: rgba(184, 134, 75, 0.45);
+  background: #fff;
+}
+
+.admins-input input:focus {
+  outline: none;
+  border-color: rgba(184, 134, 75, 0.75);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(184, 134, 75, 0.16);
+}
+
+.admin-invite-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-invite-form__actions .btn--primary {
+  min-width: 190px;
+  gap: 8px;
+  padding: 12px 22px;
+}
+
+.admins-invite__btn-icon {
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M2.01 21 23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E") center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M2.01 21 23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.admins-invite__status {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #eef7f1;
+  color: #1f6b40;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admins-invite__status.is-error {
+  background: #fdf0ef;
   color: #9b2c2c;
+}
+
+.admins-roster {
+  padding: 0;
+  overflow: hidden;
+}
+
+.admins-roster__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid rgba(61, 43, 31, 0.08);
+}
+
+.admins-roster__head h3 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 1.15rem;
+}
+
+.admins-roster__head h3::after {
+  display: none;
+}
+
+.admins-roster__sub {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.admins-roster__count {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(184, 134, 75, 0.12);
+  color: var(--brown-800);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.admins-roster__list {
+  display: grid;
+  gap: 0;
+}
+
+.admins-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 28px 16px;
+  font-size: 0.92rem;
+}
+
+.admins-person {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(61, 43, 31, 0.07);
+  transition: background 0.15s ease;
+}
+
+.admins-person:last-child {
+  border-bottom: 0;
+}
+
+.admins-person:hover {
+  background: linear-gradient(90deg, rgba(251, 246, 239, 0.9), transparent 70%);
+}
+
+.admins-person__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #f7ead8;
+  background: linear-gradient(145deg, #5a4030, #3d2b1f);
+  box-shadow: 0 4px 12px rgba(61, 43, 31, 0.18);
+}
+
+.admins-person.is-pending .admins-person__avatar {
+  background: linear-gradient(145deg, #c4a06a, #8a5a28);
+  color: #fff8ef;
+}
+
+.admins-person__name {
+  font-weight: 750;
+  color: var(--brown-800);
+  font-size: 0.98rem;
+}
+
+.admins-person__email {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+.admins-person__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.admins-meta {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.admins-person__side {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  text-align: right;
+}
+
+.admins-person__added {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.admin-muted {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.btn--danger-soft {
+  color: #9b2c2c;
+  border-color: rgba(155, 44, 44, 0.35);
+}
+
+.btn--danger-soft:hover {
+  background: #fdf0ef;
+  border-color: #9b2c2c;
+}
+
+.docs-upload-form {
+  padding: 0;
+}
+
+.docs-upload-form .form-group {
+  margin: 0;
+}
+
+.docs-upload-form .form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--brown-800);
+}
+
+.docs-upload-form input[type="text"],
+.docs-upload-form input[type="file"],
+.docs-upload-form select {
+  width: 100%;
+  font: inherit;
+}
+
+.docs-upload-form input[type="text"] {
+  padding: 11px 14px;
+  border: 1px solid rgba(61, 43, 31, 0.14);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff 0%, #fbf8f3 100%);
 }
 
 .admin-table-wrap {
@@ -2459,19 +2796,6 @@ details.list-item[open] > summary {
   color: var(--text-muted);
   text-align: center;
   padding: 22px 12px !important;
-}
-
-.admin-row-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.admin-muted {
-  color: var(--text-muted);
-  font-size: 0.84rem;
-  font-weight: 600;
 }
 
 .docs-upload-form select,
@@ -2514,8 +2838,43 @@ details.list-item[open] > summary {
   color: #8a5a28;
 }
 
+@media (max-width: 800px) {
+  .admins-person {
+    grid-template-columns: auto 1fr;
+  }
+
+  .admins-person__side {
+    grid-column: 1 / -1;
+    justify-items: start;
+    text-align: left;
+  }
+
+  .admin-row-actions {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 700px) {
   .admin-invite-form__grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-invite-form__actions {
+    justify-content: stretch;
+  }
+
+  .admin-invite-form__actions .btn--primary {
+    width: 100%;
+  }
+
+  .admins-invite__hero {
+    padding: 18px 18px 14px;
+  }
+
+  .admin-invite-form,
+  .admins-roster__head,
+  .admins-person {
+    padding-left: 18px;
+    padding-right: 18px;
   }
 }

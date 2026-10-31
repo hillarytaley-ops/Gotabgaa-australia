@@ -2712,48 +2712,73 @@
     }
   }
 
+  function adminInitials(name, email) {
+    const parts = String(name || '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    if (parts.length === 1 && parts[0].length) return parts[0].slice(0, 2).toUpperCase();
+    const local = String(email || '').split('@')[0] || '?';
+    return local.slice(0, 2).toUpperCase();
+  }
+
   function renderAdminsPanelShell(statusHtml = '') {
     return `
-      <div class="card card--elevated">
-        <h3>Invite committee member</h3>
-        <p class="form-hint">
-          Invite committee members by email so they can create a password and sign in to this dashboard.
-          They receive a link from the Gotabgaa Australia mail sender, then sign in at
-          <a href="../login.html?dest=admin" target="_blank" rel="noopener">Sign In → Admin</a>.
-        </p>
-        <form id="adminInviteForm" class="admin-invite-form">
-          <div class="admin-invite-form__grid">
-            <div class="form-group">
-              <label class="form-label" for="adminInviteName">Full name</label>
-              <input id="adminInviteName" name="full_name" type="text" required maxlength="120" placeholder="e.g. Jane Kiprotich" autocomplete="name">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="adminInviteEmail">Email</label>
-              <input id="adminInviteEmail" name="email" type="email" required maxlength="254" placeholder="committee@example.com" autocomplete="off">
+      <div class="admins-page">
+        <section class="admins-invite card card--elevated">
+          <div class="admins-invite__hero">
+            <div class="admins-invite__icon" aria-hidden="true"></div>
+            <div class="admins-invite__copy">
+              <h3>Invite committee member</h3>
+              <p>
+                Send a secure email so they can create a password and open this dashboard.
+                After accepting, they sign in at
+                <a href="../login.html?dest=admin" target="_blank" rel="noopener">Sign In → Admin</a>.
+              </p>
             </div>
           </div>
-          <button type="submit" class="btn btn--primary" id="adminInviteSubmit">Send invitation</button>
-          <p id="adminInviteStatus" class="form-hint" ${statusHtml ? '' : 'hidden'}>${statusHtml}</p>
-        </form>
-      </div>
-      <div class="card card--elevated" style="margin-top:14px">
-        <h3>Committee admins</h3>
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Added</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="adminAdminsBody">
-              <tr><td colspan="5" class="admin-empty">Loading…</td></tr>
-            </tbody>
-          </table>
-        </div>
+          <form id="adminInviteForm" class="admin-invite-form">
+            <div class="admin-invite-form__grid">
+              <div class="form-field">
+                <label for="adminInviteName">Full name</label>
+                <div class="admins-input">
+                  <span class="admins-input__icon admins-input__icon--user" aria-hidden="true"></span>
+                  <input id="adminInviteName" name="full_name" type="text" required maxlength="120" placeholder="e.g. Jane Kiprotich" autocomplete="name">
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="adminInviteEmail">Email</label>
+                <div class="admins-input">
+                  <span class="admins-input__icon admins-input__icon--mail" aria-hidden="true"></span>
+                  <input id="adminInviteEmail" name="email" type="email" required maxlength="254" placeholder="committee@example.com" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="admin-invite-form__actions">
+              <button type="submit" class="btn btn--primary" id="adminInviteSubmit">
+                <span class="admins-invite__btn-icon" aria-hidden="true"></span>
+                Send invitation
+              </button>
+            </div>
+            <p id="adminInviteStatus" class="admins-invite__status" ${statusHtml ? '' : 'hidden'}>${statusHtml}</p>
+          </form>
+        </section>
+
+        <section class="admins-roster card card--elevated">
+          <div class="admins-roster__head">
+            <div>
+              <h3>Committee admins</h3>
+              <p class="admins-roster__sub">People with access to this dashboard</p>
+            </div>
+            <div class="admins-roster__count" id="adminAdminsCount">—</div>
+          </div>
+          <div id="adminAdminsBody" class="admins-roster__list" aria-live="polite">
+            <div class="admins-empty">Loading…</div>
+          </div>
+        </section>
       </div>
     `;
   }
@@ -2764,51 +2789,57 @@
       const when = row.last_sign_in_at ? formatAdminAddedAt(row.last_sign_in_at) : '';
       return `
         <span class="admin-status-pill admin-status-pill--accepted">Accepted</span>
-        ${when ? `<div class="form-hint" style="margin:4px 0 0">Signed in ${escapeHtml(when)}</div>` : ''}`;
+        ${when ? `<span class="admins-meta">Signed in ${escapeHtml(when)}</span>` : ''}`;
     }
     return `
       <span class="admin-status-pill admin-status-pill--pending">Pending</span>
-      <div class="form-hint" style="margin:4px 0 0">Invite sent — waiting for password setup</div>`;
+      <span class="admins-meta">Waiting for password setup</span>`;
   }
 
   function renderAdminRows(rows) {
+    const countEl = document.getElementById('adminAdminsCount');
+    if (countEl) {
+      countEl.textContent = rows.length ? `${rows.length} admin${rows.length === 1 ? '' : 's'}` : 'None yet';
+    }
     if (!rows.length) {
-      return `<tr><td colspan="5" class="admin-empty">No committee admins on the list yet. Send an invitation above.</td></tr>`;
+      return `<div class="admins-empty">No committee admins yet. Send an invitation above.</div>`;
     }
     const me = getSignedInAdminEmail();
     return rows.map(row => {
       const email = String(row.email || '').trim().toLowerCase();
+      const name = row.full_name || '—';
       const developer = row.is_developer || email === 'hillarytaley@gmail.com';
       const isSelf = me && email === me;
-      let actions = '';
+      const accepted = row.invite_status === 'accepted' || Boolean(row.last_sign_in_at);
+      let actions = `
+        <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>`;
       if (developer) {
-        actions = `
-          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
-          <span class="admin-muted">Developer — cannot be removed</span>`;
+        actions += `<span class="admin-muted">Developer — cannot be removed</span>`;
       } else if (isSelf) {
-        actions = `
-          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
-          <span class="admin-muted">You</span>`;
+        actions += `<span class="admin-muted">You</span>`;
       } else {
-        actions = `
-          <button type="button" class="btn btn--outline btn--sm" data-admin-resend="${escapeHtml(email)}" data-admin-resend-name="${escapeHtml(row.full_name || '')}">Resend invite</button>
-          <button type="button" class="btn btn--outline btn--sm" data-admin-remove="${escapeHtml(email)}">Remove</button>`;
+        actions += `<button type="button" class="btn btn--outline btn--sm btn--danger-soft" data-admin-remove="${escapeHtml(email)}">Remove</button>`;
       }
       return `
-        <tr>
-          <td>${escapeHtml(row.full_name || '—')}</td>
-          <td>${escapeHtml(email)}</td>
-          <td>${renderAdminInviteStatus(row)}</td>
-          <td>${escapeHtml(formatAdminAddedAt(row.created_at))}</td>
-          <td class="admin-row-actions">${actions}</td>
-        </tr>`;
+        <article class="admins-person ${accepted ? 'is-accepted' : 'is-pending'}">
+          <div class="admins-person__avatar" aria-hidden="true">${escapeHtml(adminInitials(name, email))}</div>
+          <div class="admins-person__main">
+            <div class="admins-person__name">${escapeHtml(name)}</div>
+            <div class="admins-person__email">${escapeHtml(email)}</div>
+            <div class="admins-person__status">${renderAdminInviteStatus(row)}</div>
+          </div>
+          <div class="admins-person__side">
+            <div class="admins-person__added">Added ${escapeHtml(formatAdminAddedAt(row.created_at))}</div>
+            <div class="admin-row-actions">${actions}</div>
+          </div>
+        </article>`;
     }).join('');
   }
 
   async function loadSiteAdminsList() {
     const body = document.getElementById('adminAdminsBody');
     if (!body) return;
-    body.innerHTML = `<tr><td colspan="5" class="admin-empty">Loading…</td></tr>`;
+    body.innerHTML = `<div class="admins-empty">Loading…</div>`;
     try {
       const res = await authFetch('/api/admins');
       const data = await res.json().catch(() => ({}));
@@ -2816,7 +2847,7 @@
       body.innerHTML = renderAdminRows(data.rows || []);
     } catch (err) {
       if (isAuthError(err)) return;
-      body.innerHTML = `<tr><td colspan="5" class="admin-empty">${escapeHtml(err.message || 'Could not load committee admins.')}</td></tr>`;
+      body.innerHTML = `<div class="admins-empty">${escapeHtml(err.message || 'Could not load committee admins.')}</div>`;
     }
   }
 
