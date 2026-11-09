@@ -8,6 +8,7 @@
     { "source": "/book", "destination": "/book.html" },
     { "source": "/join", "destination": "/join.html" },
     { "source": "/ailcd-apply", "destination": "/ailcd-apply.html" },
-    { "source": "/members", "destination": "/members.html" }
+    { "source": "/members", "destination": "/members.html" },
+    { "source": "/constitution", "destination": "/constitution.html" }
   ]
 }
