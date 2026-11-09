@@ -1,6 +1,11 @@
 {
   "buildCommand": "",
   "outputDirectory": ".",
+  "functions": {
+    "api/constitution.js": {
+      "includeFiles": "api/_private/**"
+    }
+  },
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/login", "destination": "/login.html" },

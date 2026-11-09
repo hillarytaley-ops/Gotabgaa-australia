@@ -7,10 +7,20 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PDF_PATH = path.join(__dirname, '_private', 'constitution-draft-view.pdf');
+
+function resolvePdfPath() {
+  const candidates = [
+    path.join(__dirname, '_private', 'constitution-draft-view.pdf'),
+    path.join(process.cwd(), 'api', '_private', 'constitution-draft-view.pdf'),
+    path.join(process.cwd(), '_private', 'constitution-draft-view.pdf')
+  ];
+  return candidates.find((p) => fs.existsSync(p)) || null;
+}
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Headers', 'X-Gotabgaa-Viewer, Accept');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
     res.status(204).end();
     return;
   }
@@ -19,7 +29,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Soft same-site check — viewer always sends X-Gotabgaa-Viewer
   const referer = String(req.headers.referer || '');
   const origin = String(req.headers.origin || '');
   const host = String(req.headers.host || '');
@@ -37,12 +46,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (!fs.existsSync(PDF_PATH)) {
+  const pdfPath = resolvePdfPath();
+  if (!pdfPath) {
     res.status(404).json({ error: 'Constitution document is not available yet.' });
     return;
   }
 
-  const stat = fs.statSync(PDF_PATH);
+  const stat = fs.statSync(pdfPath);
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Length', String(stat.size));
   res.setHeader('Content-Disposition', 'inline; filename="Gotabgaa-Constitution-Draft-View.pdf"');
@@ -51,7 +61,6 @@ export default async function handler(req, res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  // Discourage download managers / attachment sniffing
   res.setHeader('X-Download-Options', 'noopen');
 
   if (req.method === 'HEAD') {
@@ -59,7 +68,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const stream = fs.createReadStream(PDF_PATH);
+  const stream = fs.createReadStream(pdfPath);
   stream.on('error', () => {
     if (!res.headersSent) res.status(500).json({ error: 'Could not read document.' });
   });

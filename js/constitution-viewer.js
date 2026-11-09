@@ -32,6 +32,25 @@
     if (BTN_NEXT) BTN_NEXT.disabled = pageNum >= pdfDoc.numPages;
   }
 
+  function waitForPdfJs(timeoutMs) {
+    return new Promise((resolve, reject) => {
+      if (window.pdfjsLib) {
+        resolve(window.pdfjsLib);
+        return;
+      }
+      const started = Date.now();
+      const timer = setInterval(() => {
+        if (window.pdfjsLib) {
+          clearInterval(timer);
+          resolve(window.pdfjsLib);
+        } else if (Date.now() - started > timeoutMs) {
+          clearInterval(timer);
+          reject(new Error('PDF viewer library failed to load. Please refresh the page.'));
+        }
+      }, 40);
+    });
+  }
+
   async function renderPage(num) {
     if (!pdfDoc) return;
     rendering = true;
@@ -53,8 +72,7 @@
       await page.render({
         canvasContext: ctx,
         viewport,
-        transform,
-        // No text layer → harder to copy/paste body text
+        transform
       }).promise;
 
       STAGE.replaceChildren(canvas);
@@ -68,7 +86,7 @@
       if (pending !== null) {
         const next = pending;
         pending = null;
-        queue queue renderPage(next);
+        queue void renderPage(next);
       }
     }
   }
@@ -84,25 +102,38 @@
   async function loadPdf() {
     setStatus('Loading constitution…');
     try {
-      if (!window.pdfjsLib) throw new Error('PDF viewer library failed to load.');
-      const pdfjsLib = window.pdfjsLib;
+      const pdfjsLib = await waitForPdfJs(10000);
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
       const res = await fetch('/api/constitution', {
-        headers: { 'X-Gotabgaa-Viewer': '1' },
+        headers: { 'X-Gotabgaa-Viewer': '1', Accept: 'application/pdf' },
         credentials: 'same-origin',
         cache: 'no-store'
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Could not open the constitution.');
+        let message = 'Could not open the constitution.';
+        try {
+          const data = await res.json();
+          if (data && data.error) message = data.error;
+        } catch {
+          /* ignore */
+        }
+        throw new Error(message);
       }
       const buffer = await res.arrayBuffer();
-      pdfDoc = await pdfjsLib.getDocument({ data: buffer, disableAutoFetch: true }).promise;
+      if (!buffer || buffer.byteLength < 100) {
+        throw new Error('Constitution file is empty or unavailable.');
+      }
+      pdfDoc = await pdfjsLib.getDocument({
+        data: buffer,
+        disableAutoFetch: true,
+        disableStream: true
+      }).promise;
       updateChrome();
       await renderPage(1);
     } catch (err) {
+      console.error('Constitution viewer error:', err);
       setStatus(err.message || 'Could not load the constitution.', true);
     }
   }
@@ -122,16 +153,19 @@
     queueRender(pageNum);
   });
 
-  // Deter casual copy / save shortcuts on the viewer surface
   STAGE.addEventListener('contextmenu', (e) => e.preventDefault());
   document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
     if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p')) {
-      if (e.target && STAGE.contains(e.target) || document.activeElement === document.body) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     }
   });
 
-  void loadPdf();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      void loadPdf();
+    });
+  } else {
+    void loadPdf();
+  }
 })();
