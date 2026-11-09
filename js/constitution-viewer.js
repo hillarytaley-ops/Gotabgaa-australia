@@ -9,14 +9,16 @@
   const btnNext = document.getElementById('constitutionNext');
   const btnZoomIn = document.getElementById('constitutionZoomIn');
   const btnZoomOut = document.getElementById('constitutionZoomOut');
+  const toolbar = document.querySelector('.constitution-toolbar');
 
   if (!stage) return;
 
   let pdfDoc = null;
   let pageNum = 1;
-  let scale = 1.15;
+  let scale = 1;
   let rendering = false;
   let pendingPage = null;
+  let basePageWidth = 612;
 
   function setStatus(msg, isError) {
     if (!statusEl) return;
@@ -30,6 +32,11 @@
     if (pageLabel) pageLabel.textContent = 'Page ' + pageNum + ' of ' + pdfDoc.numPages;
     if (btnPrev) btnPrev.disabled = pageNum <= 1;
     if (btnNext) btnNext.disabled = pageNum >= pdfDoc.numPages;
+  }
+
+  function fitScaleToStage() {
+    var available = Math.max(280, stage.clientWidth - 24);
+    scale = Math.max(0.55, Math.min(1.6, available / basePageWidth));
   }
 
   function waitForPdfJs(timeoutMs) {
@@ -51,10 +58,20 @@
     });
   }
 
+  function scrollViewerIntoView() {
+    var target = toolbar || stage;
+    if (!target || typeof target.scrollIntoView !== 'function') return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function renderPage(num) {
     if (!pdfDoc) return Promise.resolve();
     rendering = true;
     return pdfDoc.getPage(num).then(function (page) {
+      var base = page.getViewport({ scale: 1 });
+      basePageWidth = base.width;
+      fitScaleToStage();
+
       var viewport = page.getViewport({ scale: scale });
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d', { alpha: false });
@@ -80,6 +97,7 @@
         pageNum = num;
         updateChrome();
         setStatus('');
+        stage.scrollTop = 0;
       });
     }).catch(function (err) {
       setStatus((err && err.message) || 'Could not render this page.', true);
@@ -136,7 +154,9 @@
       }).then(function (doc) {
         pdfDoc = doc;
         updateChrome();
-        return renderPage(1);
+        return renderPage(1).then(function () {
+          scrollViewerIntoView();
+        });
       });
     }).catch(function (err) {
       console.error('Constitution viewer error:', err);
@@ -156,16 +176,21 @@
   }
   if (btnZoomIn) {
     btnZoomIn.addEventListener('click', function () {
-      scale = Math.min(2.2, scale + 0.15);
+      scale = Math.min(2.2, scale + 0.12);
       scheduleRender(pageNum);
     });
   }
   if (btnZoomOut) {
     btnZoomOut.addEventListener('click', function () {
-      scale = Math.max(0.7, scale - 0.15);
+      scale = Math.max(0.5, scale - 0.12);
       scheduleRender(pageNum);
     });
   }
+
+  window.addEventListener('resize', function () {
+    if (!pdfDoc) return;
+    scheduleRender(pageNum);
+  });
 
   stage.addEventListener('contextmenu', function (e) {
     e.preventDefault();

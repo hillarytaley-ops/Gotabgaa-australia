@@ -9509,31 +9509,51 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 /* Constitution view-only viewer */
+.page-constitution .page-hero--compact {
+  padding-top: 5.5rem;
+  padding-bottom: 1.25rem;
+}
+
+.page-constitution .page-hero--compact .page-hero__title {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.page-constitution .page-hero--compact .page-hero__desc {
+  font-size: 0.95rem;
+  max-width: 36rem;
+}
+
 .constitution-section {
-  padding-top: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
 .constitution-notice {
-  margin: 0 0 1.25rem;
-  padding: 14px 16px;
+  margin: 0 0 0.85rem;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid rgba(184, 134, 75, 0.35);
   background: linear-gradient(135deg, #fff9eb 0%, #fffdf6 100%);
   color: var(--brown-800);
-  font-size: 0.92rem;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  line-height: 1.45;
 }
 
 .constitution-toolbar {
+  position: sticky;
+  top: 72px;
+  z-index: 20;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(61, 43, 31, 0.04);
-  border: 1px solid rgba(61, 43, 31, 0.08);
+  background: rgba(255, 252, 247, 0.96);
+  border: 1px solid rgba(61, 43, 31, 0.1);
+  backdrop-filter: blur(8px);
+  scroll-margin-top: 84px;
 }
 
 .constitution-toolbar__page {
@@ -9563,23 +9583,27 @@ body.page-sub .section__tag:not(.page-hero .section__tag) {
 }
 
 .constitution-viewer {
-  min-height: 70vh;
+  min-height: calc(100vh - 220px);
+  max-height: calc(100vh - 180px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 16px;
+  padding: 12px;
   border-radius: 16px;
-  background: linear-gradient(180deg, #f4ebe0 0%, #ebe0d2 100%);
-  border: 1px solid rgba(61, 43, 31, 0.1);
+  background: #e8ddd0;
+  border: 1px solid rgba(61, 43, 31, 0.12);
   overflow: auto;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .constitution-viewer__canvas {
+  display: block;
   max-width: 100%;
+  width: auto;
   height: auto;
-  box-shadow: 0 12px 40px rgba(61, 43, 31, 0.18);
+  box-shadow: 0 12px 40px rgba(61, 43, 31, 0.2);
   background: #fff;
   border-radius: 2px;
 }
