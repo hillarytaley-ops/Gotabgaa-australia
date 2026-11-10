@@ -39,6 +39,42 @@
     });
   }
 
+  function cleanAuthParamsFromUrl() {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('token_hash') || url.searchParams.has('type') || window.location.hash) {
+        window.history.replaceState({}, document.title, url.pathname);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function establishRecoverySession(client) {
+    const params = new URLSearchParams(window.location.search);
+    const tokenHash = params.get('token_hash');
+    const type = params.get('type') || 'recovery';
+
+    if (tokenHash) {
+      const { data, error } = await client.auth.verifyOtp({
+        token_hash: tokenHash,
+        type
+      });
+      if (error) throw error;
+      cleanAuthParamsFromUrl();
+      return data?.session || null;
+    }
+
+    // Supabase recovery redirects may place tokens in the URL hash
+    const { data, error } = await client.auth.getSession();
+    if (error) throw error;
+    if (data?.session) {
+      cleanAuthParamsFromUrl();
+      return data.session;
+    }
+    return null;
+  }
+
   async function init() {
     if (!window.GaaAuth) {
       showError('Auth library failed to load. Refresh and try again.');
@@ -49,19 +85,20 @@
 
     try {
       const client = await window.GaaAuth.getClient();
-      // Recovery / invite links land with tokens in the URL hash
-      const { data, error } = await client.auth.getSession();
-      if (error) throw error;
-      if (!data?.session) {
+      const session = await establishRecoverySession(client);
+      if (!session) {
         if (subtitle) {
-          subtitle.textContent = 'Open the link from your approval or reset email first. If it expired, use Forgot password on the sign-in page.';
+          subtitle.textContent = 'Open the link from your invitation or reset email first. If it expired, ask an admin to resend the invite or use Forgot password on the sign-in page.';
         }
-        showError('No active reset session found. Request a new password link from the sign-in page.');
+        showError('No active reset session found. Open the Create password link from your email again, or request a new one.');
         if (btn) btn.disabled = true;
         return;
       }
+      if (subtitle) {
+        subtitle.textContent = 'Choose a secure password for your Gotabgaa Australia account.';
+      }
     } catch (err) {
-      showError(err.message || 'Could not start password setup.');
+      showError(err.message || 'Could not start password setup. The email link may have expired — ask for a new invitation.');
       if (btn) btn.disabled = true;
       return;
     }
@@ -91,7 +128,7 @@
         if (error) throw error;
         showSuccess('Password saved. Redirecting to sign in…');
         window.setTimeout(() => {
-          window.location.href = 'login.html?password=updated';
+          window.location.href = 'login.html?dest=admin&password=updated';
         }, 1200);
       } catch (err) {
         showError(err.message || 'Could not save password. Request a new reset link and try again.');

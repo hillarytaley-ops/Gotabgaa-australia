@@ -217,7 +217,8 @@ export async function ensureMemberAuthUser(supabase, { email, name, membershipId
 }
 
 export async function createPasswordSetupLink(supabase, email) {
-  const redirectTo = `${getPublicSiteUrl()}/set-password.html`;
+  const site = getPublicSiteUrl();
+  const redirectTo = `${site}/set-password.html`;
   const { data, error } = await supabase.auth.admin.generateLink({
     type: 'recovery',
     email: normalizeMemberEmail(email),
@@ -225,7 +226,27 @@ export async function createPasswordSetupLink(supabase, email) {
   });
   if (error) throw error;
 
-  const actionLink = data?.properties?.action_link || data?.action_link || null;
+  const props = data?.properties || {};
+  const hashedToken = props.hashed_token || null;
+  let actionLink = props.action_link || data?.action_link || null;
+
+  // Prefer a first-party set-password URL. Supabase's action_link verify step often
+  // redirects to the project Site URL (homepage) when redirect allowlist mismatches.
+  if (hashedToken) {
+    const url = new URL(redirectTo);
+    url.searchParams.set('token_hash', hashedToken);
+    url.searchParams.set('type', 'recovery');
+    actionLink = url.toString();
+  } else if (actionLink) {
+    try {
+      const u = new URL(actionLink);
+      u.searchParams.set('redirect_to', redirectTo);
+      actionLink = u.toString();
+    } catch {
+      // keep original action_link
+    }
+  }
+
   return { actionLink, redirectTo };
 }
 

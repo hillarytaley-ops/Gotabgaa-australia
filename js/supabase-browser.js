@@ -69,7 +69,11 @@
   async function resetPasswordForEmail(email) {
     const client = await getClient();
     const cfg = await loadConfig();
-    const redirectTo = `${(cfg.siteUrl || window.location.origin).replace(/\/$/, '')}/set-password.html`;
+    let site = String(cfg.siteUrl || window.location.origin).trim().replace(/\/$/, '');
+    if (/^https?:\/\/gotabgaaaustralia\.org$/i.test(site)) {
+      site = 'https://www.gotabgaaaustralia.org';
+    }
+    const redirectTo = `${site}/set-password.html`;
     return client.auth.resetPasswordForEmail(String(email || '').trim().toLowerCase(), { redirectTo });
   }
 
