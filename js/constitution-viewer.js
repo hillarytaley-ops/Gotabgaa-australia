@@ -59,9 +59,8 @@
   }
 
   function scrollViewerIntoView() {
-    var target = toolbar || stage;
-    if (!target || typeof target.scrollIntoView !== 'function') return;
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!stage || typeof stage.scrollIntoView !== 'function') return;
+    stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function renderPage(num) {
