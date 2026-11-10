@@ -33,7 +33,7 @@ STEP 3 — Domain (recommended for real members)
     In Vercel set:
       EMAIL_FROM = Gotabgaa Australia <noreply@gotabgaaaustralia.org>
     Optional:
-      EMAIL_REPLY_TO = info@gotabgaaaustralia.org
+      EMAIL_REPLY_TO = gotabgaaaustralia@gmail.com
     Then Redeploy.
 
     Do NOT keep EMAIL_FROM on onboarding@resend.dev for real members —

@@ -7,7 +7,7 @@
     "siteUrl": "https://gotabgaaaustralia.org",
     "siteName": "Gotabgaa Australia",
     "tagline": "Unity • Heritage • Excellence",
-    "contactEmail": "info@gotabgaaaustralia.org",
+    "contactEmail": "gotabgaaaustralia@gmail.com",
     "copyrightYear": 2026,
     "affiliationText": "Connecting Kalenjin communities across Australia",
     "social": {
@@ -71,7 +71,7 @@
     "accountName": "Gotabgaa Australia",
     "gstNote": "No GST has been charged unless stated on your receipt. Confirm GST treatment with your accountant.",
     "instructions": "Pay via PayID or bank transfer. You must include the payment reference exactly as shown.",
-    "receiptEmail": "info@gotabgaaaustralia.org",
+    "receiptEmail": "gotabgaaaustralia@gmail.com",
     "memReferencePrefix": "GAA-MEM",
     "evtReferencePrefix": "GAA-EVT"
   },
@@ -1040,7 +1040,7 @@
         "description": "Members can advertise services to the community — contact us to list your business.",
         "image": "assets/logo-round.png",
         "link": "contact.html",
-        "contactEmail": "info@gotabgaaaustralia.org",
+        "contactEmail": "gotabgaaaustralia@gmail.com",
         "category": "Services",
         "published": false
       }

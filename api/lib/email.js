@@ -3,7 +3,7 @@ import path from 'path';
 
 const TEST_FROM = 'Gotabgaa Australia <onboarding@resend.dev>';
 const FROM = process.env.EMAIL_FROM || TEST_FROM;
-const REPLY_TO = process.env.EMAIL_REPLY_TO || 'info@gotabgaaaustralia.org';
+const REPLY_TO = process.env.EMAIL_REPLY_TO || 'gotabgaaaustralia@gmail.com';
 const LOGO_CID = 'gotabgaa-logo';
 
 function isUnverifiedDomainError(message) {

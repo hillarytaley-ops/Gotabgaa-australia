@@ -71,7 +71,7 @@
           ${payment.abn ? row('ABN', payment.abn, false) : ''}
         </div>
         ${payment.gstNote ? `<p class="payment-instructions__gst">${escapeHtml(payment.gstNote)}</p>` : ''}
-        <p class="payment-instructions__footer">Include the <strong>reference exactly</strong> when paying. Contact <a href="mailto:${escapeHtml(payment.receiptEmail || 'info@gotabgaaaustralia.org')}">${escapeHtml(payment.receiptEmail || 'info@gotabgaaaustralia.org')}</a> if you need help.</p>
+        <p class="payment-instructions__footer">Include the <strong>reference exactly</strong> when paying. Contact <a href="mailto:${escapeHtml(payment.receiptEmail || 'gotabgaaaustralia@gmail.com')}">${escapeHtml(payment.receiptEmail || 'gotabgaaaustralia@gmail.com')}</a> if you need help.</p>
       </div>
     `;
 

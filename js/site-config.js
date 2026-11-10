@@ -6,7 +6,7 @@
 window.SITE_CONFIG = {
   siteUrl: 'https://gotabgaaaustralia.org',
   siteName: 'Gotabgaa Australia',
-  contactEmail: 'info@gotabgaaaustralia.org',
+  contactEmail: 'gotabgaaaustralia@gmail.com',
   social: {
     facebook: '',
     tiktok: '',

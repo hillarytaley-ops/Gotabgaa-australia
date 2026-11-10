@@ -145,7 +145,7 @@
       form.reset();
       lockForm(successEl);
     } catch (err) {
-      showError(err.message || 'Failed to send. Please try again or email info@gotabgaaaustralia.org.');
+      showError(err.message || 'Failed to send. Please try again or email gotabgaaaustralia@gmail.com.');
       if (btn) {
         btn.textContent = 'Submit feedback';
         btn.disabled = false;

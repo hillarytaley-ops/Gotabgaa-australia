@@ -754,7 +754,7 @@
       accountName: 'Gotabgaa Australia',
       gstNote: 'No GST has been charged unless stated on your receipt. Confirm GST treatment with your accountant.',
       instructions: 'Pay via PayID or bank transfer. You must include the payment reference exactly as shown.',
-      receiptEmail: 'info@gotabgaaaustralia.org',
+      receiptEmail: 'gotabgaaaustralia@gmail.com',
       memReferencePrefix: 'GAA-MEM',
       evtReferencePrefix: 'GAA-EVT'
     };
@@ -791,7 +791,7 @@
         ${field('BSB', 'payBsb', p.bsb || '')}
         ${field('Account number', 'payAccountNumber', p.accountNumber || '')}
         ${field('Account name', 'payAccountName', p.accountName || p.legalName || 'Gotabgaa Australia')}
-        ${field('Receipt / enquiries email', 'payReceiptEmail', p.receiptEmail || 'info@gotabgaaaustralia.org', 'email')}
+        ${field('Receipt / enquiries email', 'payReceiptEmail', p.receiptEmail || 'gotabgaaaustralia@gmail.com', 'email')}
         ${field('Payment instructions (public)', 'payInstructions', p.instructions || '', 'textarea', { full: true })}
         ${field('GST note (public)', 'payGstNote', p.gstNote || '', 'textarea', { full: true })}
       </div></div>

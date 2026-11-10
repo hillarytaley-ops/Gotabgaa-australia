@@ -10,7 +10,7 @@ export const DEFAULT_PAYMENT_CONFIG = {
   accountName: 'Gotabgaa Australia',
   gstNote: 'No GST has been charged unless stated on your receipt.',
   instructions: 'Pay via PayID or bank transfer. You must include the payment reference exactly as shown.',
-  receiptEmail: 'info@gotabgaaaustralia.org',
+  receiptEmail: 'gotabgaaaustralia@gmail.com',
   memReferencePrefix: 'GAA-MEM',
   evtReferencePrefix: 'GAA-EVT',
   welReferencePrefix: 'GAA-WEL'
