@@ -9,13 +9,13 @@
   const btnNext = document.getElementById('constitutionNext');
   const btnZoomIn = document.getElementById('constitutionZoomIn');
   const btnZoomOut = document.getElementById('constitutionZoomOut');
-  const toolbar = document.querySelector('.constitution-toolbar');
 
   if (!stage) return;
 
   let pdfDoc = null;
   let pageNum = 1;
   let scale = 1;
+  let userZoomed = false;
   let rendering = false;
   let pendingPage = null;
   let basePageWidth = 612;
@@ -32,6 +32,8 @@
     if (pageLabel) pageLabel.textContent = 'Page ' + pageNum + ' of ' + pdfDoc.numPages;
     if (btnPrev) btnPrev.disabled = pageNum <= 1;
     if (btnNext) btnNext.disabled = pageNum >= pdfDoc.numPages;
+    if (btnZoomOut) btnZoomOut.disabled = scale <= 0.5;
+    if (btnZoomIn) btnZoomIn.disabled = scale >= 2.4;
   }
 
   function fitScaleToStage() {
@@ -69,7 +71,8 @@
     return pdfDoc.getPage(num).then(function (page) {
       var base = page.getViewport({ scale: 1 });
       basePageWidth = base.width;
-      fitScaleToStage();
+      // Keep manual +/- zoom; only auto-fit before the user zooms
+      if (!userZoomed) fitScaleToStage();
 
       var viewport = page.getViewport({ scale: scale });
       var canvas = document.createElement('canvas');
@@ -152,6 +155,7 @@
         }).promise;
       }).then(function (doc) {
         pdfDoc = doc;
+        userZoomed = false;
         updateChrome();
         return renderPage(1).then(function () {
           scrollViewerIntoView();
@@ -174,20 +178,26 @@
     });
   }
   if (btnZoomIn) {
-    btnZoomIn.addEventListener('click', function () {
-      scale = Math.min(2.2, scale + 0.12);
+    btnZoomIn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!pdfDoc) return;
+      userZoomed = true;
+      scale = Math.min(2.4, +(scale + 0.2).toFixed(2));
       scheduleRender(pageNum);
     });
   }
   if (btnZoomOut) {
-    btnZoomOut.addEventListener('click', function () {
-      scale = Math.max(0.5, scale - 0.12);
+    btnZoomOut.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!pdfDoc) return;
+      userZoomed = true;
+      scale = Math.max(0.5, +(scale - 0.2).toFixed(2));
       scheduleRender(pageNum);
     });
   }
 
   window.addEventListener('resize', function () {
-    if (!pdfDoc) return;
+    if (!pdfDoc || userZoomed) return;
     scheduleRender(pageNum);
   });
 
