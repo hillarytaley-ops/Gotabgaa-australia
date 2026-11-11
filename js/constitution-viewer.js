@@ -19,6 +19,76 @@
   let rendering = false;
   let pendingPage = null;
   let basePageWidth = 612;
+  let sessionId = null;
+  let openedAt = Date.now();
+  let lastTrackedPage = 0;
+  let heartbeatTimer = null;
+
+  function getSessionId() {
+    try {
+      var key = 'gaa_cr_sid';
+      var existing = sessionStorage.getItem(key);
+      if (existing && /^[a-zA-Z0-9_-]{8,80}$/.test(existing)) return existing;
+      var id =
+        (window.crypto && crypto.randomUUID && crypto.randomUUID().replace(/-/g, '')) ||
+        ('s' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+      sessionStorage.setItem(key, id);
+      return id;
+    } catch (e) {
+      return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+    }
+  }
+
+  function dwellSeconds() {
+    return Math.max(0, Math.floor((Date.now() - openedAt) / 1000));
+  }
+
+  function trackProgress(force) {
+    if (!sessionId) return;
+    if (!force && pageNum === lastTrackedPage && dwellSeconds() < 2) return;
+    lastTrackedPage = pageNum;
+    var payload = JSON.stringify({
+      sessionId: sessionId,
+      page: pageNum,
+      totalPages: pdfDoc ? pdfDoc.numPages : null,
+      dwellSeconds: dwellSeconds(),
+      path: location.pathname || '/constitution.html',
+      referrer: document.referrer || ''
+    });
+    try {
+      if (navigator.sendBeacon) {
+        var blob = new Blob([payload], { type: 'application/json' });
+        if (navigator.sendBeacon('/api/constitution-track', blob)) return;
+      }
+    } catch (e) {}
+    try {
+      fetch('/api/constitution-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        credentials: 'same-origin',
+        keepalive: true,
+        cache: 'no-store'
+      }).catch(function () {});
+    } catch (e2) {}
+  }
+
+  function startTracking() {
+    sessionId = getSessionId();
+    openedAt = Date.now();
+    trackProgress(true);
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    heartbeatTimer = setInterval(function () {
+      if (document.visibilityState === 'hidden') return;
+      trackProgress(true);
+    }, 20000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') trackProgress(true);
+    });
+    window.addEventListener('pagehide', function () {
+      trackProgress(true);
+    });
+  }
 
   function setStatus(msg, isError) {
     if (!statusEl) return;
@@ -100,6 +170,7 @@
         updateChrome();
         setStatus('');
         stage.scrollTop = 0;
+        trackProgress(true);
       });
     }).catch(function (err) {
       setStatus((err && err.message) || 'Could not render this page.', true);
@@ -157,6 +228,7 @@
         pdfDoc = doc;
         userZoomed = false;
         updateChrome();
+        startTracking();
         return renderPage(1).then(function () {
           scrollViewerIntoView();
         });

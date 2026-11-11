@@ -53,6 +53,7 @@
     inbox: 'Contact Inbox',
     meetGreetFeedback: 'Meet & Greet Feedback',
     efareVote: 'E-Fare Vote',
+    constitutionReads: 'Constitution reads',
     pages: 'Page Heroes'
   };
 
@@ -77,6 +78,7 @@
     inbox: 'inbox',
     meetGreetFeedback: 'inbox',
     efareVote: 'eoi',
+    constitutionReads: 'documents',
     pages: 'pages'
   };
 
@@ -490,8 +492,21 @@
           <strong>${leaders}</strong>
           <span>Leaders</span>
         </div>
+        <div class="stat-card stat-card--documents" data-constitution-stat="visitors">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Constitution visitors</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
+        <div class="stat-card stat-card--documents" data-constitution-stat="readers">
+          <span class="stat-card__icon" aria-hidden="true"></span>
+          <strong>—</strong>
+          <span>Constitution readers</span>
+          <em class="stat-card__hint">Loading…</em>
+        </div>
       `;
     }
+    loadConstitutionDashboardStats();
 
     if (els.attentionGrid) {
       els.attentionGrid.innerHTML = `
@@ -2633,6 +2648,93 @@
     }
   }
 
+  async function loadConstitutionDashboardStats() {
+    const visitorCard = document.querySelector('[data-constitution-stat="visitors"]');
+    const readerCard = document.querySelector('[data-constitution-stat="readers"]');
+    if (!visitorCard && !readerCard) return;
+
+    const setCard = (card, value, hint) => {
+      if (!card) return;
+      const strong = card.querySelector('strong');
+      const hintEl = card.querySelector('.stat-card__hint');
+      if (strong) strong.textContent = value;
+      if (hintEl) hintEl.textContent = hint;
+    };
+
+    if (isPreviewMode || !getToken()) {
+      setCard(visitorCard, '—', 'Sign in required');
+      setCard(readerCard, '—', 'Sign in required');
+      return;
+    }
+
+    try {
+      const res = await authFetch('/api/constitution-track');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not load');
+      setCard(visitorCard, String(data.visitors || 0), `${data.today || 0} today`);
+      setCard(readerCard, String(data.readers || 0), `${data.todayReaders || 0} today`);
+    } catch {
+      setCard(visitorCard, '—', 'Unavailable');
+      setCard(readerCard, '—', 'Unavailable');
+    }
+  }
+
+  function formatDwell(seconds) {
+    const s = Math.max(0, Number(seconds) || 0);
+    if (s < 60) return `${s}s`;
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    return rem ? `${m}m ${rem}s` : `${m}m`;
+  }
+
+  async function renderConstitutionReadsSection(panel) {
+    if (isPreviewMode || !getToken()) {
+      panel.innerHTML = '<div class="card"><p>Sign in to view constitution reader stats.</p></div>';
+      return;
+    }
+    panel.innerHTML = '<div class="card"><p>Loading constitution reads…</p></div>';
+    try {
+      const res = await authFetch('/api/constitution-track');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Could not load constitution reads');
+      }
+      const recent = data.recent || [];
+      const rows = recent.map(r => `
+        <div class="list-item">
+          <div class="list-item__header">
+            <h4>${r.engaged ? 'Read' : 'Visited'} · page ${escapeHtml(String(r.max_page || 1))}${r.total_pages ? ` / ${escapeHtml(String(r.total_pages))}` : ''}</h4>
+            <span class="inbox-item__date">${new Date(r.last_seen_at || r.visited_at).toLocaleString()}</span>
+          </div>
+          <p class="inbox-item__message">${formatDwell(r.dwell_seconds)} on page · ${escapeHtml(String(r.pages_viewed || 1))} page step${(r.pages_viewed || 1) === 1 ? '' : 's'}</p>
+        </div>
+      `).join('');
+      panel.innerHTML = `
+        <div class="card">
+          <div class="list-item__header">
+            <h3>Constitution draft reads</h3>
+            <a href="../constitution.html" target="_blank" rel="noopener" class="btn btn--outline btn--sm">Open page</a>
+          </div>
+          <p>Visitors see no tracking notice. Counts are anonymous browser sessions.</p>
+          <div class="stats-grid stats-grid--tn" style="margin-top:1rem">
+            <div class="stat-card"><strong>${data.visitors || 0}</strong><span>Visitors</span><em class="stat-card__hint">${data.today || 0} today</em></div>
+            <div class="stat-card"><strong>${data.readers || 0}</strong><span>Readers</span><em class="stat-card__hint">${data.todayReaders || 0} today</em></div>
+            <div class="stat-card"><strong>${data.avgMaxPage || 0}</strong><span>Avg furthest page</span></div>
+            <div class="stat-card"><strong>${formatDwell(data.avgDwell || 0)}</strong><span>Avg time on page</span></div>
+          </div>
+          <p class="form-hint" style="margin-top:1rem">A <strong>reader</strong> is someone who reached page 3+ or stayed about 45+ seconds.</p>
+        </div>
+        <div class="card">
+          <h3>Recent activity</h3>
+          ${rows || '<p class="form-hint">No visits recorded yet.</p>'}
+        </div>
+      `;
+    } catch (err) {
+      if (isAuthError(err)) return;
+      panel.innerHTML = `<div class="card"><p>${escapeHtml(err.message)}</p><p class="form-hint">Run <code>supabase/migrate-constitution-reads.sql</code> in Supabase if the table is missing.</p></div>`;
+    }
+  }
+
   async function renderEfareVoteSection(panel) {
     if (isPreviewMode || !getToken()) {
       panel.innerHTML = '<div class="card"><p>Sign in to view the E-Fare vote.</p></div>';
@@ -3795,6 +3897,10 @@
         }
         if (section === 'efareVote') {
           renderEfareVoteSection(panel);
+          return;
+        }
+        if (section === 'constitutionReads') {
+          renderConstitutionReadsSection(panel);
           return;
         }
         if (section === 'admins') {
