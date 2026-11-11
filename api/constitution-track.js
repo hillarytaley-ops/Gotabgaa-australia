@@ -135,14 +135,26 @@ async function handleStats(req, res) {
   }
 
   const rows = data || [];
-  const now = Date.now();
-  const dayMs = 24 * 60 * 60 * 1000;
+  const tz = 'Australia/Sydney';
+  const dayKey = (value) =>
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date(value));
+
+  const todayKey = dayKey(Date.now());
+  const yesterdayKey = dayKey(Date.now() - 24 * 60 * 60 * 1000);
+
   const visitors = rows.length;
   const readers = rows.filter((r) => r.engaged).length;
-  const today = rows.filter((r) => now - new Date(r.visited_at).getTime() < dayMs).length;
-  const todayReaders = rows.filter(
-    (r) => r.engaged && now - new Date(r.visited_at).getTime() < dayMs
-  ).length;
+  const todayRows = rows.filter((r) => dayKey(r.visited_at) === todayKey);
+  const yesterdayRows = rows.filter((r) => dayKey(r.visited_at) === yesterdayKey);
+  const today = todayRows.length;
+  const todayReaders = todayRows.filter((r) => r.engaged).length;
+  const yesterday = yesterdayRows.length;
+  const yesterdayReaders = yesterdayRows.filter((r) => r.engaged).length;
   const avgMaxPage =
     visitors === 0
       ? 0
@@ -152,11 +164,27 @@ async function handleStats(req, res) {
       ? 0
       : Math.round(rows.reduce((sum, r) => sum + (r.dwell_seconds || 0), 0) / visitors);
 
+  // Last 7 calendar days (AU), oldest → newest
+  const byDay = [];
+  for (let i = 6; i >= 0; i -= 1) {
+    const key = dayKey(Date.now() - i * 24 * 60 * 60 * 1000);
+    const dayRows = rows.filter((r) => dayKey(r.visited_at) === key);
+    byDay.push({
+      date: key,
+      visitors: dayRows.length,
+      readers: dayRows.filter((r) => r.engaged).length
+    });
+  }
+
   res.status(200).json({
     visitors,
     readers,
     today,
     todayReaders,
+    yesterday,
+    yesterdayReaders,
+    timezone: tz,
+    byDay,
     avgMaxPage,
     avgDwell,
     recent: rows.slice(0, 50)

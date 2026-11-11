@@ -2675,8 +2675,16 @@
         const needsTable = /constitution_reads|schema cache|does not exist|PGRST|relation/i.test(msg);
         throw new Error(needsTable ? 'Run SQL migration' : (msg || 'Could not load'));
       }
-      setCard(visitorCard, String(data.visitors || 0), `${data.today || 0} today`);
-      setCard(readerCard, String(data.readers || 0), `${data.todayReaders || 0} today`);
+      setCard(
+        visitorCard,
+        String(data.visitors || 0),
+        `${data.today || 0} today · ${data.yesterday || 0} yesterday`
+      );
+      setCard(
+        readerCard,
+        String(data.readers || 0),
+        `${data.todayReaders || 0} today · ${data.yesterdayReaders || 0} yesterday`
+      );
     } catch (err) {
       const hint = err && err.message ? err.message : 'Unavailable';
       setCard(visitorCard, '—', hint);
@@ -2722,12 +2730,23 @@
           </div>
           <p>Visitors see no tracking notice. Counts are anonymous browser sessions.</p>
           <div class="stats-grid stats-grid--tn" style="margin-top:1rem">
-            <div class="stat-card"><strong>${data.visitors || 0}</strong><span>Visitors</span><em class="stat-card__hint">${data.today || 0} today</em></div>
-            <div class="stat-card"><strong>${data.readers || 0}</strong><span>Readers</span><em class="stat-card__hint">${data.todayReaders || 0} today</em></div>
+            <div class="stat-card"><strong>${data.visitors || 0}</strong><span>Visitors</span><em class="stat-card__hint">${data.today || 0} today · ${data.yesterday || 0} yesterday</em></div>
+            <div class="stat-card"><strong>${data.readers || 0}</strong><span>Readers</span><em class="stat-card__hint">${data.todayReaders || 0} today · ${data.yesterdayReaders || 0} yesterday</em></div>
             <div class="stat-card"><strong>${data.avgMaxPage || 0}</strong><span>Avg furthest page</span></div>
             <div class="stat-card"><strong>${formatDwell(data.avgDwell || 0)}</strong><span>Avg time on page</span></div>
           </div>
-          <p class="form-hint" style="margin-top:1rem">A <strong>reader</strong> is someone who reached page 3+ or stayed about 45+ seconds.</p>
+          <p class="form-hint" style="margin-top:1rem">A <strong>reader</strong> is someone who reached page 3+ or stayed about 45+ seconds. Days use Australia/Sydney time.</p>
+        </div>
+        <div class="card">
+          <h3>Last 7 days</h3>
+          ${(data.byDay || []).map(d => `
+            <div class="list-item">
+              <div class="list-item__header">
+                <h4>${escapeHtml(d.date)}</h4>
+                <span class="inbox-item__date">${d.visitors} visitor${d.visitors === 1 ? '' : 's'} · ${d.readers} reader${d.readers === 1 ? '' : 's'}</span>
+              </div>
+            </div>
+          `).join('') || '<p class="form-hint">No daily data yet.</p>'}
         </div>
         <div class="card">
           <h3>Recent activity</h3>
