@@ -2670,12 +2670,17 @@
     try {
       const res = await authFetch('/api/constitution-track');
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Could not load');
+      if (!res.ok) {
+        const msg = String(data.error || data.hint || '');
+        const needsTable = /constitution_reads|schema cache|does not exist|PGRST|relation/i.test(msg);
+        throw new Error(needsTable ? 'Run SQL migration' : (msg || 'Could not load'));
+      }
       setCard(visitorCard, String(data.visitors || 0), `${data.today || 0} today`);
       setCard(readerCard, String(data.readers || 0), `${data.todayReaders || 0} today`);
-    } catch {
-      setCard(visitorCard, '—', 'Unavailable');
-      setCard(readerCard, '—', 'Unavailable');
+    } catch (err) {
+      const hint = err && err.message ? err.message : 'Unavailable';
+      setCard(visitorCard, '—', hint);
+      setCard(readerCard, '—', hint);
     }
   }
 
