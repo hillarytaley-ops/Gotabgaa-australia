@@ -82,6 +82,41 @@ function prependMissing(localArr, liveArr, key) {
   return extras.length ? [...extras, ...live] : (live.length ? live : local);
 }
 
+/** Keep live edits, add new roles from repo, fill empty photo/bio from local defaults. */
+function mergeLeadership(localArr, liveArr) {
+  const local = Array.isArray(localArr) ? localArr : [];
+  const live = Array.isArray(liveArr) ? liveArr : [];
+  if (!local.length) return live;
+  if (!live.length) return local;
+
+  const liveById = new Map(live.map((item) => [item?.id, { ...item }]));
+  const result = [];
+
+  for (const loc of local) {
+    if (!loc?.id) continue;
+    const existing = liveById.get(loc.id);
+    if (existing) {
+      result.push({
+        ...loc,
+        ...existing,
+        name: existing.name || loc.name || '',
+        role: existing.role || loc.role || '',
+        initials: existing.initials || loc.initials || '',
+        photo: existing.photo || loc.photo || '',
+        bio: existing.bio || loc.bio || ''
+      });
+      liveById.delete(loc.id);
+    } else {
+      result.push({ ...loc });
+    }
+  }
+
+  for (const leftover of liveById.values()) {
+    result.push(leftover);
+  }
+  return result;
+}
+
 function mergeWithLocalDefaults(liveContent) {
   const local = readLocalContentObject();
   const merged = { ...liveContent };
@@ -105,6 +140,7 @@ function mergeWithLocalDefaults(liveContent) {
   merged.events = prependMissing(local.events, liveContent.events, 'id');
   merged.gallery = prependMissing(local.gallery, liveContent.gallery, 'id');
   merged.timeline = prependMissing(local.timeline, liveContent.timeline, 'title');
+  merged.leadership = mergeLeadership(local.leadership, liveContent.leadership);
   if (local.featuredEventId !== undefined) {
     // Empty string clears a stale live featured event (e.g. removed placeholder fete)
     merged.featuredEventId = local.featuredEventId;

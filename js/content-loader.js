@@ -536,9 +536,12 @@
     if (!grid || !content.leadership) return;
 
     grid.innerHTML = content.leadership.map((leader, i) => {
-      const photo = String(leader.photo || '').trim();
+      let photo = String(leader.photo || '').trim();
+      if (photo && !/^https?:\/\//i.test(photo) && !photo.startsWith('data:')) {
+        photo = photo.replace(/^\//, '');
+      }
       const avatar = photo
-        ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(leader.name)}" class="leader-card__photo">`
+        ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(leader.name)}" class="leader-card__photo" loading="lazy">`
         : `<div class="leader-card__avatar">${escapeHtml(leader.initials || '')}</div>`;
       const bio = String(leader.bio || '').trim();
       const bioHtml = bio
