@@ -755,6 +755,22 @@
       "initials": "IT",
       "photo": "",
       "bio": ""
+    },
+    {
+      "id": "ldr-cultural",
+      "name": "To be announced",
+      "role": "Interim Cultural Coordinator",
+      "initials": "CC",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "id": "ldr-it",
+      "name": "To be announced",
+      "role": "Interim Information Technology Coordinator",
+      "initials": "ITC",
+      "photo": "",
+      "bio": ""
     }
   ],
   "gallery": [
