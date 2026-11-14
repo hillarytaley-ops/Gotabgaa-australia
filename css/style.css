@@ -1352,12 +1352,16 @@ body.page-sub .section {
 }
 
 .leader-card__photo {
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  object-fit: cover;
+  width: 100%;
+  max-width: 180px;
+  height: 220px;
+  border-radius: var(--radius);
+  object-fit: contain;
+  object-position: center;
+  background: var(--cream, #f5f0e8);
   margin: 0 auto 16px;
   display: block;
+  border: 1px solid var(--cream-dark, #e8dfd0);
 }
 
 .leader-card h3 {
@@ -4572,7 +4576,8 @@ body.modal-open {
   box-shadow: var(--shadow-lg);
 }
 
-.leader-card__avatar {
+.leader-card__avatar,
+.leader-card__photo {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -4580,6 +4585,11 @@ body.modal-open {
   transform: scale(1.08);
   box-shadow: 0 0 0 4px rgba(184, 134, 75, 0.3);
   animation: avatar-glow 1.5s ease-in-out infinite;
+}
+
+.leader-card:hover .leader-card__photo {
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(61, 40, 23, 0.12);
 }
 
 @keyframes avatar-glow {
@@ -6824,6 +6834,11 @@ body.modal-open {
     width: 60px;
     height: 60px;
     font-size: 0.95rem;
+  }
+
+  .leader-card__photo {
+    max-width: 140px;
+    height: 170px;
   }
 }
 
