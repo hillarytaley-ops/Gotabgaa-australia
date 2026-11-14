@@ -721,35 +721,40 @@
       "name": "To be announced",
       "role": "Interim Chairperson",
       "initials": "IC",
-      "photo": ""
+      "photo": "",
+      "bio": ""
     },
     {
       "id": "ldr-deputy",
       "name": "To be announced",
       "role": "Interim Deputy Chairperson",
       "initials": "ID",
-      "photo": ""
+      "photo": "",
+      "bio": ""
     },
     {
       "id": "ldr-secretary",
       "name": "To be announced",
       "role": "Interim Secretary",
       "initials": "IS",
-      "photo": ""
+      "photo": "",
+      "bio": ""
     },
     {
       "id": "ldr-coordinator",
       "name": "To be announced",
       "role": "Interim National Coordinator",
       "initials": "IN",
-      "photo": ""
+      "photo": "",
+      "bio": ""
     },
     {
       "id": "ldr-treasurer",
       "name": "To be announced",
       "role": "Interim Treasurer",
       "initials": "IT",
-      "photo": ""
+      "photo": "",
+      "bio": ""
     }
   ],
   "gallery": [

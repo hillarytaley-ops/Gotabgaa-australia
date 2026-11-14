@@ -878,6 +878,51 @@ body {
   line-height: 1.5;
 }
 
+.leader-admin-photo {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 0 16px;
+  padding: 12px;
+  border: 1px solid var(--cream-dark, #e8dfd2);
+  border-radius: 12px;
+  background: #faf7f2;
+}
+
+.leader-admin-photo__preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #5c3d2e, #c4a574);
+  display: grid;
+  place-items: center;
+}
+
+.leader-admin-photo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.leader-admin-photo__placeholder {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.leader-admin-photo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  min-width: 200px;
+}
+
 .form-hint code {
   font-size: 0.8rem;
 }

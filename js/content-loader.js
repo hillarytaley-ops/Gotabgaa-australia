@@ -536,14 +536,20 @@
     if (!grid || !content.leadership) return;
 
     grid.innerHTML = content.leadership.map((leader, i) => {
-      const avatar = leader.photo
-        ? `<img src="${escapeHtml(leader.photo)}" alt="${escapeHtml(leader.name)}" class="leader-card__photo">`
-        : `<div class="leader-card__avatar">${escapeHtml(leader.initials)}</div>`;
+      const photo = String(leader.photo || '').trim();
+      const avatar = photo
+        ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(leader.name)}" class="leader-card__photo">`
+        : `<div class="leader-card__avatar">${escapeHtml(leader.initials || '')}</div>`;
+      const bio = String(leader.bio || '').trim();
+      const bioHtml = bio
+        ? `<p class="leader-card__bio">${escapeHtml(bio)}</p>`
+        : '';
       return `
         <div class="leader-card animate-on-scroll" data-animate="flip-up" data-delay="${i}">
           ${avatar}
           <h3>${escapeHtml(leader.name)}</h3>
           <p class="leader-card__role">${escapeHtml(leader.role)}</p>
+          ${bioHtml}
         </div>
       `;
     }).join('');

@@ -1000,6 +1000,7 @@
     return `
       <div class="card">
         <h3>Leadership team</h3>
+        <p class="form-hint">Edit interim leaders shown on <a href="../leadership.html" target="_blank" rel="noopener">leadership.html</a>. Upload a photo and add a short profile summary for each role, then publish.</p>
         <div class="list-item__actions" style="margin:0 0 12px">
           <button type="button" class="btn btn--outline btn--sm" id="addLeader">+ Add Leader</button>
         </div>
@@ -1008,20 +1009,41 @@
     `;
   }
 
+  function leaderPhotoSrc(photo) {
+    const p = String(photo || '').trim();
+    if (!p) return '';
+    if (/^https?:\/\//i.test(p) || p.startsWith('data:')) return p;
+    return `../${p.replace(/^\//, '')}`;
+  }
+
   function leaderItemHtml(l, i) {
     const openAttr = openLeaderIndex === i ? ' open' : '';
+    const photoSrc = leaderPhotoSrc(l.photo);
+    const preview = photoSrc
+      ? `<img src="${escapeHtml(photoSrc)}" alt="" class="leader-admin-photo__img">`
+      : `<span class="leader-admin-photo__placeholder">${escapeHtml(l.initials || '??')}</span>`;
     return `
       <details class="list-item list-item--accordion" data-leader-index="${i}"${openAttr}>
         <summary class="list-item__header">
-          <h4>${escapeHtml(l.name)}</h4>
+          <h4>${escapeHtml(l.name)} <span class="form-hint" style="font-weight:400">· ${escapeHtml(l.role || 'Role')}</span></h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-leader="${i}">Remove</button>
         </summary>
         <div class="list-item__body">
+          <div class="leader-admin-photo">
+            <div class="leader-admin-photo__preview" id="ldrPreview${i}">${preview}</div>
+            <div class="leader-admin-photo__actions">
+              <input type="file" id="ldrFile${i}" data-leader-upload="${i}" accept="image/*" hidden>
+              <button type="button" class="btn btn--primary btn--sm" data-leader-upload-btn="${i}">Upload photo</button>
+              <button type="button" class="btn btn--outline btn--sm" data-leader-clear-photo="${i}" ${photoSrc ? '' : 'disabled'}>Remove photo</button>
+              <p class="form-hint" id="ldrUploadStatus${i}" hidden></p>
+            </div>
+          </div>
           <div class="form-grid">
-            ${field('Name / title', `ldrName${i}`, l.name)}
+            ${field('Name', `ldrName${i}`, l.name)}
             ${field('Role', `ldrRole${i}`, l.role)}
-            ${field('Initials', `ldrInitials${i}`, l.initials)}
-            ${field('Photo URL (optional)', `ldrPhoto${i}`, l.photo)}
+            ${field('Initials (shown if no photo)', `ldrInitials${i}`, l.initials)}
+            ${field('Photo path / URL', `ldrPhoto${i}`, l.photo || '')}
+            ${field('Short profile summary', `ldrBio${i}`, l.bio || '', 'textarea', { full: true, rows: 4 })}
           </div>
         </div>
       </details>
@@ -1033,15 +1055,77 @@
     const leaders = ensureLeadershipList();
     leaders.unshift({
       id: `ldr-${Date.now()}`,
-      name: 'New Leader',
+      name: 'To be announced',
       role: '',
       initials: 'NL',
-      photo: ''
+      photo: '',
+      bio: ''
     });
     openLeaderIndex = 0;
     renderSection('leadership');
     openLeaderIndex = null;
     document.querySelector('[data-leader-index="0"]')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  async function uploadLeaderPhoto(leaderId, file) {
+    const token = getToken();
+    if (!token) throw new Error('Sign in to upload photos.');
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const res = await fetch('/api/upload-gallery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        eventId: `leadership/${String(leaderId || 'leader').replace(/[^a-zA-Z0-9_-]/g, '-')}`,
+        filename: file.name,
+        contentType: file.type,
+        data
+      })
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.detail || json.error || 'Upload failed');
+    return json.url;
+  }
+
+  async function handleLeaderPhotoUpload(index, file) {
+    if (isPreviewMode) {
+      showStatus('Sign in to upload leadership photos.', 'error');
+      return;
+    }
+    if (!file || !file.type.startsWith('image/')) return;
+    collectFromForm();
+    const leaders = ensureLeadershipList();
+    const leader = leaders[index];
+    if (!leader) return;
+    const statusEl = document.getElementById(`ldrUploadStatus${index}`);
+    if (statusEl) {
+      statusEl.hidden = false;
+      statusEl.textContent = 'Uploading…';
+    }
+    try {
+      const url = await uploadLeaderPhoto(leader.id || `ldr-${index}`, file);
+      leader.photo = url;
+      const photoInput = document.getElementById(`ldrPhoto${index}`);
+      if (photoInput) photoInput.value = url;
+      const preview = document.getElementById(`ldrPreview${index}`);
+      if (preview) {
+        preview.innerHTML = `<img src="${escapeHtml(leaderPhotoSrc(url))}" alt="" class="leader-admin-photo__img">`;
+      }
+      const clearBtn = document.querySelector(`[data-leader-clear-photo="${index}"]`);
+      if (clearBtn) clearBtn.disabled = false;
+      if (statusEl) statusEl.textContent = 'Photo uploaded. Publish to update the live site.';
+      showStatus('Leadership photo uploaded. Click Publish Changes to go live.', 'success');
+    } catch (err) {
+      if (statusEl) statusEl.textContent = err.message;
+      showStatus(err.message, 'error');
+    }
   }
 
   function removeLeaderItem(index) {
@@ -4377,6 +4461,22 @@
       });
     }
 
+    if (section === 'leadership') {
+      document.querySelectorAll('[data-leader-upload]').forEach(input => {
+        input.addEventListener('change', () => {
+          const index = +input.dataset.leaderUpload;
+          const file = input.files?.[0];
+          handleLeaderPhotoUpload(index, file);
+          input.value = '';
+        });
+      });
+      document.querySelectorAll('[data-leader-index]').forEach(details => {
+        details.addEventListener('toggle', () => {
+          if (details.open) openLeaderIndex = +details.dataset.leaderIndex;
+        });
+      });
+    }
+
     if (section === 'gallery') {
       document.querySelectorAll('.gallery-admin-album').forEach(details => {
         details.addEventListener('toggle', () => {
@@ -4559,6 +4659,7 @@
         l.role = val(`ldrRole${i}`);
         l.initials = val(`ldrInitials${i}`);
         l.photo = val(`ldrPhoto${i}`);
+        l.bio = val(`ldrBio${i}`);
       }
     });
 
@@ -5099,6 +5200,34 @@
       e.preventDefault();
       e.stopPropagation();
       removeLeaderItem(+removeLeaderBtn.dataset.removeLeader);
+      return;
+    }
+
+    const uploadLeaderBtn = e.target.closest('[data-leader-upload-btn]');
+    if (uploadLeaderBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const idx = +uploadLeaderBtn.dataset.leaderUploadBtn;
+      document.getElementById(`ldrFile${idx}`)?.click();
+      return;
+    }
+
+    const clearLeaderPhotoBtn = e.target.closest('[data-leader-clear-photo]');
+    if (clearLeaderPhotoBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const idx = +clearLeaderPhotoBtn.dataset.leaderClearPhoto;
+      collectFromForm();
+      const leaders = ensureLeadershipList();
+      if (leaders[idx]) leaders[idx].photo = '';
+      const photoInput = document.getElementById(`ldrPhoto${idx}`);
+      if (photoInput) photoInput.value = '';
+      const preview = document.getElementById(`ldrPreview${idx}`);
+      if (preview) {
+        const initials = leaders[idx]?.initials || '??';
+        preview.innerHTML = `<span class="leader-admin-photo__placeholder">${escapeHtml(initials)}</span>`;
+      }
+      clearLeaderPhotoBtn.disabled = true;
       return;
     }
 
