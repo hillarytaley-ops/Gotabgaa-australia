@@ -103,7 +103,8 @@ function mergeLeadership(localArr, liveArr) {
         role: existing.role || loc.role || '',
         initials: existing.initials || loc.initials || '',
         photo: existing.photo || loc.photo || '',
-        bio: existing.bio || loc.bio || ''
+        bio: existing.bio || loc.bio || '',
+        state: existing.state || loc.state || ''
       });
       liveById.delete(loc.id);
     } else {

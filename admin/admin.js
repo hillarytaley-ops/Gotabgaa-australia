@@ -1000,7 +1000,7 @@
     return `
       <div class="card">
         <h3>Leadership team</h3>
-        <p class="form-hint">Edit interim leaders shown on <a href="../leadership.html" target="_blank" rel="noopener">leadership.html</a>. Upload a photo and add a short profile summary for each role, then publish. If upload fails, paste a path like <code>assets/leadership/interim-chairperson.jpg</code> into Photo path / URL.</p>
+        <p class="form-hint">Edit interim leaders shown on <a href="../leadership.html" target="_blank" rel="noopener">leadership.html</a>. Upload a photo, set the state they come from, and add a short profile summary for each role, then publish. If upload fails, paste a path like <code>assets/leadership/interim-chairperson.jpg</code> into Photo path / URL.</p>
         <div class="list-item__actions" style="margin:0 0 12px">
           <button type="button" class="btn btn--outline btn--sm" id="addLeader">+ Add Leader</button>
         </div>
@@ -1025,7 +1025,7 @@
     return `
       <details class="list-item list-item--accordion" data-leader-index="${i}"${openAttr}>
         <summary class="list-item__header">
-          <h4>${escapeHtml(l.name)} <span class="form-hint" style="font-weight:400">· ${escapeHtml(l.role || 'Role')}</span></h4>
+          <h4>${escapeHtml(l.name)} <span class="form-hint" style="font-weight:400">· ${escapeHtml(l.role || 'Role')}${l.state ? ` · ${escapeHtml(l.state)}` : ''}</span></h4>
           <button type="button" class="btn btn--danger btn--sm" data-remove-leader="${i}">Remove</button>
         </summary>
         <div class="list-item__body">
@@ -1041,6 +1041,7 @@
           <div class="form-grid">
             ${field('Name', `ldrName${i}`, l.name)}
             ${field('Role', `ldrRole${i}`, l.role)}
+            ${field('State (where they come from)', `ldrState${i}`, l.state || '')}
             ${field('Initials (shown if no photo)', `ldrInitials${i}`, l.initials)}
             ${field('Photo path / URL', `ldrPhoto${i}`, l.photo || '')}
             ${field('Short profile summary', `ldrBio${i}`, l.bio || '', 'textarea', { full: true, rows: 4 })}
@@ -1059,7 +1060,8 @@
       role: '',
       initials: 'NL',
       photo: '',
-      bio: ''
+      bio: '',
+      state: ''
     });
     openLeaderIndex = 0;
     renderSection('leadership');
@@ -4663,6 +4665,7 @@
       if (document.getElementById(`ldrName${i}`)) {
         l.name = val(`ldrName${i}`);
         l.role = val(`ldrRole${i}`);
+        l.state = val(`ldrState${i}`);
         l.initials = val(`ldrInitials${i}`);
         l.photo = val(`ldrPhoto${i}`);
         l.bio = val(`ldrBio${i}`);

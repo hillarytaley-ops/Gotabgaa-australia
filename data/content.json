@@ -722,7 +722,8 @@
       "role": "Interim Chairperson",
       "initials": "IC",
       "photo": "assets/leadership/interim-chairperson.jpg",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-deputy",
@@ -730,7 +731,8 @@
       "role": "Interim Deputy Chairperson",
       "initials": "ID",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-secretary",
@@ -738,7 +740,8 @@
       "role": "Interim Secretary",
       "initials": "IS",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-coordinator",
@@ -746,7 +749,8 @@
       "role": "Interim National Coordinator",
       "initials": "IN",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-treasurer",
@@ -754,7 +758,8 @@
       "role": "Interim Treasurer",
       "initials": "IT",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-cultural",
@@ -762,7 +767,8 @@
       "role": "Interim Cultural Ambassador",
       "initials": "CA",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-events",
@@ -770,7 +776,8 @@
       "role": "Interim Events Coordinator",
       "initials": "EC",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     },
     {
       "id": "ldr-it",
@@ -778,7 +785,8 @@
       "role": "Interim Information Technology Coordinator",
       "initials": "ITC",
       "photo": "",
-      "bio": ""
+      "bio": "",
+      "state": ""
     }
   ],
   "gallery": [

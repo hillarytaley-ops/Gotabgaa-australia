@@ -543,6 +543,10 @@
       const avatar = photo
         ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(leader.name)}" class="leader-card__photo" loading="lazy">`
         : `<div class="leader-card__avatar">${escapeHtml(leader.initials || '')}</div>`;
+      const state = String(leader.state || '').trim();
+      const stateHtml = state
+        ? `<p class="leader-card__state">${escapeHtml(state)}</p>`
+        : '';
       const bio = String(leader.bio || '').trim();
       const bioHtml = bio
         ? `<p class="leader-card__bio">${escapeHtml(bio)}</p>`
@@ -552,6 +556,7 @@
           ${avatar}
           <h3>${escapeHtml(leader.name)}</h3>
           <p class="leader-card__role">${escapeHtml(leader.role)}</p>
+          ${stateHtml}
           ${bioHtml}
         </div>
       `;
