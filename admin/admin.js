@@ -1000,7 +1000,7 @@
     return `
       <div class="card">
         <h3>Leadership team</h3>
-        <p class="form-hint">Edit interim leaders shown on <a href="../leadership.html" target="_blank" rel="noopener">leadership.html</a>. Upload a photo and add a short profile summary for each role, then publish.</p>
+        <p class="form-hint">Edit interim leaders shown on <a href="../leadership.html" target="_blank" rel="noopener">leadership.html</a>. Upload a photo and add a short profile summary for each role, then publish. If upload fails, paste a path like <code>assets/leadership/interim-chairperson.jpg</code> into Photo path / URL.</p>
         <div class="list-item__actions" style="margin:0 0 12px">
           <button type="button" class="btn btn--outline btn--sm" id="addLeader">+ Add Leader</button>
         </div>
