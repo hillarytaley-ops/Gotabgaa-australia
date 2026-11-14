@@ -759,8 +759,16 @@
     {
       "id": "ldr-cultural",
       "name": "To be announced",
-      "role": "Interim Cultural Coordinator",
-      "initials": "CC",
+      "role": "Interim Cultural Ambassador",
+      "initials": "CA",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "id": "ldr-events",
+      "name": "To be announced",
+      "role": "Interim Events Coordinator",
+      "initials": "EC",
       "photo": "",
       "bio": ""
     },
