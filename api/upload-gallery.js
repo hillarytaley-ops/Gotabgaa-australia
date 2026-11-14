@@ -43,7 +43,36 @@ async function githubUploadFile(repo, token, filePath, buffer, message) {
   }
 
   const data = await res.json();
-  return data.content?.download_url || data.content?.html_url?.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/') || null;
+  return (
+    data.content?.download_url ||
+    data.content?.html_url?.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/') ||
+    null
+  );
+}
+
+async function uploadViaGithub(storagePath, buffer, kind) {
+  const githubToken = process.env.GITHUB_TOKEN;
+  const githubRepo = process.env.GITHUB_REPO;
+  if (!githubToken || !githubRepo) {
+    return null;
+  }
+
+  const isLeadership = String(storagePath).startsWith('leadership/');
+  const githubPath = isLeadership
+    ? `assets/${storagePath}`
+    : `assets/gallery/${storagePath}`;
+
+  const url = await githubUploadFile(
+    githubRepo,
+    githubToken,
+    githubPath,
+    buffer,
+    `Admin: upload ${kind} (${storagePath})`
+  );
+
+  // Prefer site-relative path so Publish + live site stay stable
+  const relative = `/${githubPath}`;
+  return { url: url || relative, path: githubPath, relative };
 }
 
 export default async function handler(req, res) {
@@ -73,46 +102,60 @@ export default async function handler(req, res) {
   }
 
   const storagePath = `${eventId.trim()}/${Date.now()}-${safeName}`;
-  const githubPath = `assets/gallery/${storagePath}`;
+  const isLeadership = String(eventId).startsWith('leadership');
+  const kind = isLeadership ? 'leadership photo' : 'gallery photo';
 
   try {
     if (isSupabaseConfigured()) {
       const supabase = getSupabase();
-      const { error } = await supabase.storage
-        .from('gallery')
-        .upload(storagePath, buffer, {
-          contentType: contentType || 'image/jpeg',
-          upsert: false
-        });
+      const { error } = await supabase.storage.from('gallery').upload(storagePath, buffer, {
+        contentType: contentType || 'image/jpeg',
+        upsert: false
+      });
 
-      if (error) {
-        if (error.message?.includes('Bucket not found')) {
-          throw new Error('Create a public Supabase Storage bucket named "gallery" first.');
-        }
-        throw new Error(error.message);
+      if (!error) {
+        const { data: urlData } = supabase.storage.from('gallery').getPublicUrl(storagePath);
+        res.status(200).json({ url: urlData.publicUrl, path: storagePath });
+        return;
       }
 
-      const { data: urlData } = supabase.storage.from('gallery').getPublicUrl(storagePath);
-      res.status(200).json({ url: urlData.publicUrl, path: storagePath });
-      return;
+      const msg = String(error.message || '');
+      const missingBucket = /bucket not found/i.test(msg);
+      // Fall through to GitHub when gallery bucket is missing or storage fails
+      const githubResult = await uploadViaGithub(storagePath, buffer, kind);
+      if (githubResult) {
+        res.status(200).json({
+          url: githubResult.relative || githubResult.url,
+          path: githubResult.path,
+          via: 'github',
+          warning: missingBucket
+            ? 'Supabase gallery bucket missing — uploaded via GitHub instead.'
+            : `Supabase upload failed (${msg}) — uploaded via GitHub instead.`
+        });
+        return;
+      }
+
+      if (missingBucket) {
+        throw new Error(
+          'Create a public Supabase Storage bucket named "gallery", or set GITHUB_TOKEN + GITHUB_REPO in Vercel.'
+        );
+      }
+      throw new Error(msg);
     }
 
-    const githubToken = process.env.GITHUB_TOKEN;
-    const githubRepo = process.env.GITHUB_REPO;
-    if (githubToken && githubRepo) {
-      const url = await githubUploadFile(
-        githubRepo,
-        githubToken,
-        githubPath,
-        buffer,
-        `Admin: upload gallery photo (${storagePath})`
-      );
-      res.status(200).json({ url: url || `/${githubPath}`, path: githubPath });
+    const githubResult = await uploadViaGithub(storagePath, buffer, kind);
+    if (githubResult) {
+      res.status(200).json({
+        url: githubResult.relative || githubResult.url,
+        path: githubResult.path,
+        via: 'github'
+      });
       return;
     }
 
     res.status(503).json({
-      error: 'Upload not configured. Set Supabase Storage bucket "gallery", or GITHUB_TOKEN + GITHUB_REPO in Vercel.'
+      error:
+        'Upload not configured. Set a public Supabase Storage bucket named "gallery", or GITHUB_TOKEN + GITHUB_REPO in Vercel.'
     });
   } catch (err) {
     res.status(500).json({ error: 'Upload failed', detail: err.message });

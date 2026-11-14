@@ -1091,7 +1091,7 @@
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(json.detail || json.error || 'Upload failed');
-    return json.url;
+    return { url: json.url, warning: json.warning || '' };
   }
 
   async function handleLeaderPhotoUpload(index, file) {
@@ -1110,7 +1110,8 @@
       statusEl.textContent = 'Uploading…';
     }
     try {
-      const url = await uploadLeaderPhoto(leader.id || `ldr-${index}`, file);
+      const uploaded = await uploadLeaderPhoto(leader.id || `ldr-${index}`, file);
+      const url = uploaded.url;
       leader.photo = url;
       const photoInput = document.getElementById(`ldrPhoto${index}`);
       if (photoInput) photoInput.value = url;
@@ -1120,8 +1121,13 @@
       }
       const clearBtn = document.querySelector(`[data-leader-clear-photo="${index}"]`);
       if (clearBtn) clearBtn.disabled = false;
-      if (statusEl) statusEl.textContent = 'Photo uploaded. Publish to update the live site.';
+      if (statusEl) {
+        statusEl.textContent = uploaded.warning
+          ? `${uploaded.warning} Publish to update the live site.`
+          : 'Photo uploaded. Publish to update the live site.';
+      }
       showStatus('Leadership photo uploaded. Click Publish Changes to go live.', 'success');
+      openLeaderIndex = index;
     } catch (err) {
       if (statusEl) statusEl.textContent = err.message;
       showStatus(err.message, 'error');
