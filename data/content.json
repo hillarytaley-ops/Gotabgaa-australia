@@ -787,6 +787,15 @@
       "photo": "",
       "bio": "",
       "state": ""
+    },
+    {
+      "id": "ldr-pr",
+      "name": "To be announced",
+      "role": "Interim Public Relations",
+      "initials": "PR",
+      "photo": "",
+      "bio": "",
+      "state": ""
     }
   ],
   "gallery": [
